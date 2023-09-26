@@ -1,0 +1,138 @@
+id: org.reactome.server.graph.domain.model
+name: reactome-data-model
+description: Reactome Data Model
+prefixes:
+  linkml: https://w3id.org/linkml/
+  model: org.reactome.server.graph.domain.model
+default_prefix: org.reactome.server.graph.domain.model
+default_range: string
+# version: TBC
+imports:
+  - linkml:types
+
+# types:
+# TBC
+
+subsets:
+  web_schema:
+    description: >-
+      Reactome schema used for the web service
+  curator_schema_only:
+    description: >-
+      Reactome schema used for by the curator tool only
+  schema_annotations:
+    description: >-
+      Annotations used in java classes - external to the schema
+
+classes:
+
+  DatabaseObject:
+    attributes:
+      isLoaded:
+        annotations:
+          reactome_transient: true
+        range: boolean
+      preventLazyLoading:
+        range: boolean
+        annotations:
+          reactome_transient: true
+      DB_ID:
+        identifier: true
+        annotations:
+          constraint: NOMANUALEDIT
+        readonly: true
+      _displayName:
+        readonly: true
+        annotations:
+          addedField: false
+      _timestamp:
+      created:
+        range: InstanceEdit
+        annotations:
+          constraint: NOMANUALEDIT
+          type: "created"
+          direction: INCOMING
+      modified:
+        range: InstanceEdit
+        annotations:
+          constraint: NOMANUALEDIT
+          type: "modified"
+          direction: INCOMING
+      stableIdentifier:
+        # TBC
+
+    in_subset:
+      - curator_schema_only
+
+  InstanceEdit:
+    is_a: DatabaseObject
+    attributes:
+      dateTime:
+        annotations:
+          addedField: false
+      note:
+        annotations:
+          addedField: false
+      _applyToAllEditedInstances:
+        annotations:
+          addedField: false
+      author:
+        multivalued: true
+        range: Person
+        annotations:
+          type: "author"
+          direction: INCOMING
+
+  Person:
+    is_a: DatabaseObject
+    attributes:
+        firstname:
+        # TBC
+
+  Annotations:
+    attributes:
+      reactome_transient:
+        range: boolean
+      reactome_constraint:
+        range: ReactomeConstraint
+      reactome_property:
+        range: ReactomeProperty
+      relationship:
+        range: ReactomeRelationship
+    in_subset:
+      - schema_annotations
+
+  ReactomeProperty:
+    attributes:
+      addedField:
+        range: boolean
+    in_subset:
+      - schema_annotations
+
+  ReactomeConstraint:
+    attributes:
+        constraint:
+          range: ReactomeConstraintValues
+    in_subset:
+      - schema_annotations
+
+  ReactomeRelationship:
+    attributes:
+        type:
+        direction: RelationshipDirectionValues
+    in_subset:
+      - schema_annotations
+
+enums:
+  ReactomeConstraintValues:
+    permissible_values:
+      NOMANUALEDIT:
+      MANDATORY:
+      OPTIONAL:
+      REQUIRED:
+  RelationshipDirectionValues:
+    permissible_values:
+      INCOMING:
+      OUTGOING:
+      NA:
+
