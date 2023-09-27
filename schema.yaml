@@ -26,6 +26,18 @@ subsets:
 
 classes:
 
+  #### AbstractModifiedResidue ####
+  AbstractModifiedResidue:
+    is_a: DatabaseObject
+    attributes:
+      referenceSequence:
+        # TODO: ReferenceSequence class
+        range: ReferenceSequence
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "referenceSequence"
+
   #### Affiliation ####
   Affiliation:
     is_a: DatabaseObject
@@ -38,6 +50,22 @@ classes:
         annotations:
           constraint: MANDATORY
           category: all
+          addedField: false
+    in_subset:
+      - curator_schema_only
+
+  #### ControlledVocabulary ####
+  ControlledVocabulary:
+    is_a: DatabaseObject
+    attributes:
+      definition:
+        annotations:
+          constraint: OPTIONAL
+          addedField: False
+      name:
+        multivalued: true
+        annotations:
+          constraint: MANDATORY
           addedField: false
     in_subset:
       - curator_schema_only
@@ -59,8 +87,7 @@ classes:
           constraint: OPTIONAL
           type: "crossReference"
       referenceDatabase:
-        # TODO: class ReferenceDatabase
-        # range: ReferenceDatabase
+        range: ReferenceDatabase
         annotations:
           constraint: MANDATORY
           category: all
@@ -105,6 +132,82 @@ classes:
           annotations:
             constraint: NOMANUALEDIT
             type: "stableIdentifier"
+    in_subset:
+      - curator_schema_only
+
+  #### _Deleted ####
+  _Deleted:
+    is_a: DatabaseObject
+    attributes:
+      curatorComment:
+        annotations:
+          constraint: NOMANUALEDIT
+          addedField: false
+      deletedInstanceDB_ID:
+        multivalued: true
+        range: long
+        annotations:
+          constraint: NOMANUALEDIT
+          addedField: false
+      reason:
+        range: DeletedControlledVocabulary
+        annotations:
+          constraint: NOMANUALEDIT
+          type: "reason"
+      deletedInstance:
+        multivalued: true
+        range: _DeletedInstance
+        annotations:
+          constraint: NOMANUALEDIT
+          type: "deletedInstance"
+      replacementInstances:
+        multivalued: true
+        range: DatabaseObject
+        annotations:
+          constraint: NOMANUALEDIT
+          type: "replacementInstances"
+    in_subset:
+      - curator_schema_only
+
+  #### DeletedControlledVocabulary ####
+  DeletedControlledVocabulary:
+    is_a: ControlledVocabulary
+    in_subset:
+      - curator_schema_only
+
+  #### _DeletedInstance ####
+  _DeletedInstance:
+    is_a: DatabaseObject
+    attributes:
+      deletedInstanceDB_ID:
+        multivalued: true
+        range: long
+        annotations:
+          constraint: NOMANUALEDIT
+          category: all
+          addedField: false
+      name:
+        annotations:
+          constraint: NOMANUALEDIT
+          category: all
+          addedField: false
+      className:
+        annotations:
+          constraint: NOMANUALEDIT
+          addedField: false
+      deletedStableIdentifier:
+        range: StableIdentifier
+        annotations:
+          constraint: NOMANUALEDIT
+          category: all
+          type: "deletedStableIdentifier"
+      species:
+        multivalued: true
+        range: Taxon
+        annotations:
+          constraint: NOMANUALEDIT
+          category: all
+          type: "species"
     in_subset:
       - curator_schema_only
 
@@ -193,6 +296,104 @@ classes:
     in_subset:
       - curator_schema_only
 
+  #### ReferenceDatabase ####
+  ReferenceDatabase:
+    is_a: DatabaseObject
+    attributes:
+      accessUrl:
+        annotations:
+          constraint: MANDATORY
+          category: any
+          addedField: false
+      name:
+        multivalued: true
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      url:
+        annotations:
+          constraint: MANDATORY
+          addedField: false
+      resourceIdentifier:
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+    in_subset:
+      - curator_schema_only
+
+  #### AbstractModifiedResidue ####
+  ReferenceSequence:
+    is_a: DatabaseObject
+    attributes:
+      checksum:
+        annotations:
+          constraint: NOMANUALEDIT
+          addedField: false
+      comment:
+        multivalued: true
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      description:
+        multivalued: true
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      geneName:
+        multivalued: true
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      isSequenceChanged:
+        range: boolean
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      keyword:
+        multivalued: true
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      secondaryIdentifier:
+        multivalued: true
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      sequenceLength:
+        range: integer
+        annotations:
+          addedField: false
+      species:
+        # TODO: Species class
+        # range: Species
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "species"
+      otherIdentifier:
+        multivalued: true
+        annotations:
+          constraint: NOMANUALEDIT
+          addedField: false
+    in_subset:
+      - curator_schema_only
+
+  #### Release ####
+  Release:
+    is_a: DatabaseObject
+    attributes:
+      releaseNumber:
+        range: integer
+        annotations:
+          constraint: MANDATORY
+          addedField: false
+      releaseDate:
+        annotations:
+          constraint: MANDATORY
+          addedField: false
+    in_subset:
+      - curator_schema_only
+
   #### StableIdentifier ####
   StableIdentifier:
     is_a: DatabaseObject
@@ -250,9 +451,64 @@ classes:
     in_subset:
       - curator_schema_only
 
+  #### Taxon ####
+  Taxon:
+    is_a: DatabaseObject
+    attributes:
+      name:
+        multivalued: true
+        annotations:
+          constraint: MANDATORY
+          category: any
+          addedField: false
+      crossReference:
+        multivalued: true
+        range: DatabaseIdentifier
+        annotations:
+          deprecated: true
+          constraint: MANDATORY
+          type: "crossReference"
+      superTaxon:
+        range: Taxon
+        annotations:
+          constraint: REQUIRED
+          type: "superTaxon"
+    in_subset:
+      - curator_schema_only
+
+  #### _UpdateTracker ####
+  _UpdateTracker:
+    is_a: DatabaseObject
+    attributes:
+      action:
+        multivalued: true
+        annotations:
+          constraint: NOMANUALEDIT
+          addedField: false
+      _release:
+        range: _Release
+        annotations:
+          constraint: NOMANUALEDIT
+          type: "_release"
+      updatedInstance:
+        multivalued: true
+        range: DatabaseObject
+        annotations:
+          constraint: NOMANUALEDIT
+          type: "updatedInstance"
+          # TBC: allowed:
+          # - Event.class
+          # - PhysicalEntity.class
+          # did not work
+          allowed: "Event.class, PhysicalEntity.class"
+    in_subset:
+      - curator_schema_only
+
   #### Annotations classes - start ####
   Annotations:
     attributes:
+      reactome_allowed_classes:
+        range: ReactomeAllowedClasses
       reactome_transient:
         range: boolean
       reactome_constraint:
@@ -263,7 +519,18 @@ classes:
         range: boolean
       relationship:
         range: ReactomeRelationship
-      reactome_instance_defining_value: ReactomeInstanceDefiningValue
+      reactome_instance_defining_value:
+        range: ReactomeInstanceDefiningValue
+      deprecated:
+        range: boolean
+    in_subset:
+      - schema_annotations
+
+  ReactomeAllowedClasses:
+    attributes:
+      allowed:
+        # TBC - note the {} notation in java
+        multivalued: true
     in_subset:
       - schema_annotations
 
