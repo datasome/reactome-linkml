@@ -54,14 +54,85 @@ classes:
     in_subset:
       - curator_schema_only
 
+  #### Anatomy ####
+  Anatomy:
+    is_a: ExternalOntology
+    in_subset:
+      - curator_schema_only
+
+  #### BlackBoxEvent ####
+  BlackBoxEvent:
+    # TODO: ReactionlikeEvent class
+    is_a: ReactionlikeEvent
+    attributes:
+      templateEvent:
+        # TODO: Event class
+        range: Event
+        annotations:
+          constraint: OPTIONAL
+          type: "templateEvent"
+      goBiologicalProcess:
+        # TODO: GO_BiologicalProcess class
+        range: GO_BiologicalProcess
+        annotations:
+          constraint: OPTIONAL
+          type: "goBiologicalProcess"
+      literatureReference:
+        multivalued: true
+        # TODO: Publication class
+        range: Publication
+        annotations:
+          constraint: REQUIRED
+          type: "Publication"
+      input:
+        # TBC - Note Set instead of List in Java class
+        multivalued: true
+        # TODO: Input class
+        range: Input
+        annotations:
+          constraint: REQUIRED
+          category: all
+          type: "input"
+      output:
+        # TBC - Note Set instead of List in Java class
+        multivalued: true
+        # TODO: Output class
+        range: Output
+        annotations:
+          constraint: REQUIRED
+          category: all
+          type: "output"
+      catalystActivity:
+        multivalued: true
+        # TODO: CatalystActivity class
+        range: CatalystActivity
+        annotations:
+          constraint: OPTIONAL
+          category: all
+          type: "catalystActivity"
+      edited:
+        mulitvalued: true
+        range: InstanceEdit
+        annotations:
+          constraint: REQUIRED
+          type: "edited"
+          direction: INCOMING
+      authored:
+        mulitvalued: true
+        range: InstanceEdit
+        annotations:
+          constraint: REQUIRED
+          type: "authored"
+          direction: INCOMING
+    in_subset:
+      - curator_schema_only
+
   #### ControlledVocabulary ####
   ControlledVocabulary:
     is_a: DatabaseObject
+    slots:
+      - definition
     attributes:
-      definition:
-        annotations:
-          constraint: OPTIONAL
-          addedField: False
       name:
         multivalued: true
         annotations:
@@ -211,6 +282,41 @@ classes:
     in_subset:
       - curator_schema_only
 
+  #### ExternalOntology ####
+  ExternalOntology:
+    is_a: DatabaseObject
+    slots:
+      - definition
+    attributes:
+      identifier:
+        annotations:
+          constraint: MANDATORY
+          category: all
+          addedField: false
+      name:
+        multivalued: true
+        annotations:
+          constraint: MANDATORY
+          addedField: false
+      synonym:
+        multivalued: true
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      instanceOf:
+        multivalued: true
+        range: ExternalOntology
+        annotations:
+          constraint: OPTIONAL
+          type: "instanceOf"
+      referenceDatabase:
+        range: ReferenceDatabase
+        annotations:
+          constraint: MANDATORY
+          type: "referenceDatabase"
+    in_subset:
+      - curator_schema_only
+
   #### Figure ####
   Figure:
     is_a: DatabaseObject
@@ -296,6 +402,84 @@ classes:
     in_subset:
       - curator_schema_only
 
+  #### ReactionlikeEvent ####
+  ReactionlikeEvent:
+    # TODO: Event class
+    is_a: Event
+    attributes:
+      isChimeric:
+        range: boolean
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      systematicName:
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      catalystActivity:
+        multivalued: true
+        # TODO: CatalystActivity class
+        range: CatalystActivity
+        annotations:
+          constraint: REQUIRED
+          category: all
+          type: "catalystActivity"
+      catalystActivityReference:
+        # TODO: CatalystActivityReference class
+        range: CatalystActivityReference
+        annotations:
+          constraint: OPTIONAL
+          type: "catalystActivityReference"
+      entityFunctionalStatus:
+        multivalued: true
+        # TODO: EntityFunctionalStatus  class
+        range: EntityFunctionalStatus
+        annotations:
+          constraint: OPTIONAL
+          category: all
+          type: "entityFunctionalStatus"
+      entityOnOtherCell:
+        multivalued: true
+        # TODO: PhysicalEntity class
+        range: PhysicalEntity
+        annotations:
+          constraint: OPTIONAL
+          type: "entityOnOtherCell"
+      input:
+        # TBC - Note Set instead of List in Java class
+        multivalued: true
+        # TODO: Input class
+        range: Input
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "input"
+      output:
+        # TBC - Note Set instead of List in Java class
+        multivalued: true
+        # TODO: Output class
+        range: Output
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "output"
+      normalReaction:
+        # TODO: ReactionlikeEvent class
+        range: ReactionlikeEvent
+        annotations:
+          constraint: OPTIONAL
+          type: "normalReaction"
+      regulatedBy:
+        multivalued: true
+        # TODO: Regulation class
+        range: Regulation
+        annotations:
+          constraint: OPTIONAL
+          type: "regulatedBy"
+      regulationReference:
+        TBC..
+
+
   #### ReferenceDatabase ####
   ReferenceDatabase:
     is_a: DatabaseObject
@@ -321,7 +505,7 @@ classes:
     in_subset:
       - curator_schema_only
 
-  #### AbstractModifiedResidue ####
+  #### ReferenceSequence ####
   ReferenceSequence:
     is_a: DatabaseObject
     attributes:
@@ -364,8 +548,7 @@ classes:
         annotations:
           addedField: false
       species:
-        # TODO: Species class
-        # range: Species
+        range: Species
         annotations:
           constraint: MANDATORY
           category: all
@@ -393,6 +576,15 @@ classes:
           addedField: false
     in_subset:
       - curator_schema_only
+
+  #### Species ####
+  Species:
+    is_a: Taxon
+    attributes:
+      abbreviation:
+        annotations:
+          constraint: MANDATORY
+          addedField: false
 
   #### StableIdentifier ####
   StableIdentifier:
@@ -595,3 +787,7 @@ slots:
   identifierVersion:
     annotations:
       addedField: false
+  definition:
+    annotations:
+      constraint: OPTIONAL
+      addedField: False
