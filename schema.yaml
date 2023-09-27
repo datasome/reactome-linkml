@@ -26,6 +26,49 @@ subsets:
 
 classes:
 
+  #### Affiliation ####
+  Affiliation:
+    is_a: DatabaseObject
+    attributes:
+      address:
+        annotations:
+          constraint: REQUIRED
+      name:
+        multivalued: true
+        annotations:
+          constraint: MANDATORY
+          category: all
+          addedField: false
+    in_subset:
+      - curator_schema_only
+
+  #### DatabaseIdentifier ####
+  DatabaseIdentifier:
+    is_a: DatabaseObject
+    attributes:
+      identifier:
+        # TODO: Confirm - this attribute has to be different from identifier slot because of different annotations
+        annotations:
+          constraint: MANDATORY
+          category: all
+          addedField: false
+      crossReference:
+        multivalued: true
+        range: DatabaseIdentifier
+        annotations:
+          constraint: OPTIONAL
+          type: "crossReference"
+      referenceDatabase:
+        # TODO: class ReferenceDatabase
+        # range: ReferenceDatabase
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "referenceDatabase"
+    in_subset:
+      - curator_schema_only
+
+  #### DatabaseObject ####
   DatabaseObject:
     attributes:
       isLoaded:
@@ -59,11 +102,26 @@ classes:
           type: "modified"
           direction: INCOMING
       stableIdentifier:
-        # TBC
-
+          annotations:
+            constraint: NOMANUALEDIT
+            type: "stableIdentifier"
     in_subset:
       - curator_schema_only
 
+  #### Figure ####
+  Figure:
+    is_a: DatabaseObject
+    attributes:
+      url:
+        annotations:
+          constraint: MANDATORY
+          category: all
+          addedField: false
+          property: true
+    in_subset:
+      - curator_schema_only
+
+  #### InstanceEdit ####
   InstanceEdit:
     is_a: DatabaseObject
     attributes:
@@ -82,13 +140,117 @@ classes:
         annotations:
           type: "author"
           direction: INCOMING
+    in_subset:
+      - curator_schema_only
 
+  #### Person ####
   Person:
     is_a: DatabaseObject
     attributes:
         firstname:
-        # TBC
+          annotations:
+            constraint: OPTIONAL
+            category: all
+            addedField: false
+        initial:
+          annotations:
+            constraint: MANDATORY
+            category: all
+            addedField: false
+        project:
+          annotations:
+            constraint: OPTIONAL
+            category: all
+            addedField: false
+        surname:
+          annotations:
+            constraint: MANDATORY
+            category: all
+            addedField: false
+        url:
+          annotations:
+            constraint: OPTIONAL
+            category: all
+            addedField: false
+        affiliation:
+          multivalued: true
+          range: Affiliation
+          annotations:
+            constraint: OPTIONAL
+            type: "affiliation"
+        figure:
+          multivalued: true
+          range: Figure
+          annotations:
+            constraint: OPTIONAL
+            type: "figure"
+        crossReference:
+          multivalued: true
+          range: DatabaseIdentifier
+          annotations:
+            constraint: OPTIONAL
+            type: "crossReference"
+    in_subset:
+      - curator_schema_only
 
+  #### StableIdentifier ####
+  StableIdentifier:
+    is_a: DatabaseObject
+    slots:
+      - identifier
+      - identifierVersion
+    attributes:
+      oldIdentifier:
+        annotations:
+          addedField: false
+      oldIdentifierVersion:
+        annotations:
+          addedField: false
+      released:
+        range: boolean
+        annotations:
+          addedField: false
+      history:
+        multivalued: true
+        range: StableIdentifierHistory
+        annotations:
+          type: "history"
+    in_subset:
+      - curator_schema_only
+
+  #### StableIdentifierHistory ####
+  StableIdentifierHistory:
+    is_a: DatabaseObject
+    slots:
+      - identifier
+      - identifierVersion
+    attributes:
+      historyStatus:
+        multivalued: true
+        range: StableIdentifierReleaseStatus
+        annotations:
+          type: "historyStatus"
+    in_subset:
+      - curator_schema_only
+
+  #### StableIdentifierReleaseStatus ####
+  StableIdentifierReleaseStatus:
+    is_a: DatabaseObject
+    attributes:
+      releaseNumber:
+        range: integer
+        annotations:
+          addedField: false
+          category: all
+      status:
+        range: integer
+        annotations:
+          addedField: false
+          category: all
+    in_subset:
+      - curator_schema_only
+
+  #### Annotations classes - start ####
   Annotations:
     attributes:
       reactome_transient:
@@ -97,8 +259,24 @@ classes:
         range: ReactomeConstraint
       reactome_property:
         range: ReactomeProperty
+      property:
+        range: boolean
       relationship:
         range: ReactomeRelationship
+      reactome_instance_defining_value: ReactomeInstanceDefiningValue
+    in_subset:
+      - schema_annotations
+
+  ReactomeConstraint:
+    attributes:
+      constraint:
+        range: ReactomeConstraintValues
+    in_subset:
+      - schema_annotations
+
+  ReactomeInstanceDefiningValue:
+    attributes:
+      category: CategoryValues
     in_subset:
       - schema_annotations
 
@@ -109,20 +287,15 @@ classes:
     in_subset:
       - schema_annotations
 
-  ReactomeConstraint:
-    attributes:
-        constraint:
-          range: ReactomeConstraintValues
-    in_subset:
-      - schema_annotations
-
   ReactomeRelationship:
     attributes:
         type:
         direction: RelationshipDirectionValues
     in_subset:
       - schema_annotations
+  #### Annotations classes - end ####
 
+#### Enumerations ####
 enums:
   ReactomeConstraintValues:
     permissible_values:
@@ -134,5 +307,24 @@ enums:
     permissible_values:
       INCOMING:
       OUTGOING:
-      NA:
+  ReleaseStatusValues:
+    permissible_values:
+      EXISTS:
+      CREATED:
+      INCREMENTED:
+      REPLACED:
+      ORTHO:
+  CategoryValues:
+     permissible_values:
+       none:
+       any:
+       all:
 
+#### Enumerations ####
+slots:
+  identifier:
+    annotations:
+      addedField: false
+  identifierVersion:
+    annotations:
+      addedField: false
