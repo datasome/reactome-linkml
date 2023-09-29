@@ -124,6 +124,67 @@ classes:
     in_subset:
       - curator_schema_only
 
+  #### Book ####
+  Book:
+    is_a: Publication
+    anotations:
+      node: true
+    attributes:
+      ISBN:
+        annotations:
+          constraint: OPTIONAL
+          category: any
+          addedField: false
+      chapterTitle:
+        annotations:
+          constraint: OPTIONAL
+          category: any
+          addedField: false
+      pages:
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      year:
+        # TBC: Note Integer instead of int in java class
+        range: integer
+        annotations:
+          constraint: MANDATORY
+          addedField: false
+      chapterAuthors:
+        multivalued: true
+        range: Person
+        annotations:
+          constraint: OPTIONAL
+          type: "chapterAuthors"
+      publisher:
+        range: Affiliation
+        annotations:
+          constraint: OPTIONAL
+          type: "publisher"
+    in_subset:
+      - curator_schema_only
+
+  #### CatalystActivity ####
+  CandidateSet:
+    is_a: EntitySet
+    anotations:
+      node: true
+    attributes:
+      hasCandidate:
+        range: HasCandidate
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "hasCandidate"
+      hasMember:
+        range: HasMember
+        annotations:
+          constraint: REQUIRED
+          category: all
+          type: "hasMember"
+    in_subset:
+      - curator_schema_only
+
   #### CatalystActivity ####
   CatalystActivity:
     is_a: DatabaseObject
@@ -171,6 +232,100 @@ classes:
           constraint: MANDATORY
           category: all
           type: "catalystActivity"
+    in_subset:
+      - curator_schema_only
+
+  #### Cell ####
+  Cell:
+    is_a: PhysicalEntity
+    anotations:
+      node: true
+    slots:
+      - cellType
+    attributes:
+      RNAMarker:
+        multivalued: true
+        range: EntityWithAccessionedSequence
+        annotations:
+          constraint: REQUIRED
+          type: "rnaMarker"
+      markerReference:
+        multivalued: true
+        range: MarkerReference
+        annotations:
+          constraint: REQUIRED
+          type: "markerReference"
+      organ:
+        range: Anatomy
+        annotations:
+          constraint: OPTIONAL
+          type: "organ"
+      proteinMarker:
+        multivalued: true
+        range: PhysicalEntity
+        annotations:
+          constraint: REQUIRED
+          type: "proteinMarker"
+          allowed: "Complex.class, EntityWithAccessionedSequence.class"
+      species:
+        multivalued: true
+        range: Taxon
+        annotations:
+          constraint: MANDATORY
+          type: "species"
+      tissue:
+        range: Anatomy
+        annotations:
+          constraint: MANDATORY
+          type: "tissue"
+      tissueLayer:
+        range: Anatomy
+        annotations:
+          constraint: OPTIONAL
+          type: "tissueLayer"
+    in_subset:
+      - curator_schema_only
+
+  #### Compartment ####
+  Compartment:
+    is_a: GO_CellularComponent
+    anotations:
+      node: true
+    in_subset:
+      - curator_schema_only
+
+  #### Complex ####
+  Complex:
+    is_a: PhysicalEntity
+    anotations:
+      node: true
+    slots:
+      - compartment
+      - entityOnOtherCell
+      - isChimeric
+      - relatedSpecies
+      - species
+    attributes:
+      hasComponent:
+        # TBC - Note SortedSet instead of List in Java class
+        multivalued: true
+        range: HasComponent
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "hasComponent"
+      stoichiometryKnown:
+        range: boolean
+        annotations:
+          constraint: OPTIONAL
+          addedFiled: false
+      includedLocation:
+        # TBC - Note SortedSet instead of List in Java class
+        multivalued: true
+        range: HasCompartment
+        annotations:
+          constraint: NOMANUALEDIT
+          type: "includedLocation"
     in_subset:
       - curator_schema_only
 
@@ -363,25 +518,100 @@ classes:
     is_a: DatabaseObject
     anotations:
       node: true
-      attributes:
-        functionalStatus:
-          range: FunctionalStatus
-          annotations:
-            constraint: MANDATORY
-            category: all
-            type: "functionalStatus"
-        diseaseEntity:
-          range: PhysicalEntity
-          annotations:
-            constraint: MANDATORY
-            category: all
-            type: "diseaseEntity"
-        normalEntity:
-          range: PhysicalEntity
-          annotations:
-            constraint: REQUIRED
-            category: all
-            type: "normalEntity"
+    attributes:
+      functionalStatus:
+        range: FunctionalStatus
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "functionalStatus"
+      diseaseEntity:
+        range: PhysicalEntity
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "diseaseEntity"
+      normalEntity:
+        range: PhysicalEntity
+        annotations:
+          constraint: REQUIRED
+          category: all
+          type: "normalEntity"
+    in_subset:
+      - curator_schema_only
+
+  #### EntitySet ####
+  EntitySet:
+    is_a: PhysicalEntity
+    anotations:
+      node: true
+    slots:
+      - compartment
+      - relatedSpecies
+      - species
+    attributes:
+      isOrdered:
+        range: boolean
+        annotations:
+          constraint: OPTIONAL
+          addedField: true
+      hasMember:
+        # TBC - Note SortedSet instead of List in Java class
+        multivalued: true
+        range: HasMember
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "hasMember"
+    in_subset:
+      - curator_schema_only
+
+  #### EntityWithAccessionedSequence ####
+  EntityWithAccessionedSequence:
+    is_a: GenomeEncodedEntity
+    anotations:
+      node: true
+    attributes:
+      endCoordinate:
+        # TBC: Note Integer instead of int in java class
+        range: integer
+        annotations:
+          constraint: REQUIRED
+          category: all
+          addedField: false
+      startCoordinate:
+        # TBC: Note Integer instead of int in java class
+        range: integer
+        annotations:
+          constraint: REQUIRED
+          category: all
+          addedField: false
+      hasModifiedResidue:
+        # TBC - Note SortedSet instead of List in Java class
+        multivalued: true
+        range: HasModifiedResidue
+        annotations:
+          constraint: REQUIRED
+          category: all
+          type: "hasModifiedResidue"
+      referenceEntity:
+        range: ReferenceSequence
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "referenceEntity"
+      name:
+        multivalued: true
+        annotations:
+          constraint: MANDATORY
+          category: none
+          addedField: false
+      species:
+        range: Taxon
+        annotations:
+          constraint: MANDATORY
+          category: none
+          type: "species"
     in_subset:
       - curator_schema_only
 
@@ -578,11 +808,33 @@ classes:
   #### FunctionalStatusType ####
   FunctionalStatusType:
     is_a: DatabaseObject
+    anotations:
+      node: true
     slots:
       - definition
       - name
+    in_subset:
+      - curator_schema_only
+
+  #### GenomeEncodedEntity ####
+  GenomeEncodedEntity:
+    is_a: PhysicalEntity
     anotations:
       node: true
+    attributes:
+      species:
+        range: Taxon
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "species"
+      compartment:
+        multivalued: true
+        range: Compartment
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "compartment"
     in_subset:
       - curator_schema_only
 
@@ -672,6 +924,72 @@ classes:
     in_subset:
       - curator_schema_only
 
+  #### HasCandidate ####
+  HasCandidate:
+    annotations:
+      relationship_properties: true
+    slots:
+      - id
+      - order
+      - physicalEntity
+      - stoichiometry
+    in_subset:
+      - curator_schema_only
+
+  #### HasCompartment ####
+  HasCompartment:
+    annotations:
+      relationship_properties: true
+    slots:
+      - id
+      - order
+    attributes:
+      compartment:
+        range: Compartment
+        annotations:
+          target_node: true
+    in_subset:
+      - curator_schema_only
+
+  #### HasComponent ####
+  HasComponent:
+    annotations:
+      relationship_properties: true
+    slots:
+      - id
+      - order
+      - physicalEntity
+      - stoichiometry
+    in_subset:
+      - curator_schema_only
+
+  #### HasMember ####
+  HasMember:
+    annotations:
+      relationship_properties: true
+    slots:
+      - id
+      - order
+      - physicalEntity
+      - stoichiometry
+    in_subset:
+      - curator_schema_only
+
+  #### HasModifiedResidue ####
+  HasModifiedResidue:
+    annotations:
+      relationship_properties: true
+    slots:
+      - id
+      - order
+      - stoichiometry
+    attributes:
+      abstractModifiedResidue:
+        range: AbstractModifiedResidue
+        annotations:
+          target_node: true
+    in_subset:
+      - curator_schema_only
 
   #### Input ####
   Input:
@@ -707,6 +1025,36 @@ classes:
         annotations:
           type: "author"
           direction: INCOMING
+    in_subset:
+      - curator_schema_only
+
+  #### InteractionEvent ####
+  InteractionEvent:
+    is_a: Event
+    anotations:
+      node: true
+    attributes:
+      partners:
+        multivalued: true
+        range: PhysicalEntity
+        annotations:
+          constraint: MANDATORY
+          type: "partners"
+    in_subset:
+      - curator_schema_only
+
+  #### MarkerReference ####
+  MarkerReference:
+    is_a: ControlReference
+    anotations:
+      node: true
+    attributes:
+      marker:
+        multivalued: true
+        range: EntityWithAccessionedSequence
+        annotations:
+          constraint: MANDATORY
+          type: "marker"
     in_subset:
       - curator_schema_only
 
@@ -810,6 +1158,7 @@ classes:
       node: true
     slots:
       - authored
+      - cellType
       - definition
       - edited
       - figure
@@ -861,13 +1210,6 @@ classes:
           constraint: OPTIONAL
           direction: INCOMING
           type: "reviewed"
-      cellType:
-        multivalued: true
-        range: CellType
-        annotations:
-          constraint: OPTIONAL
-          category: all
-          type: "cellType"
     in_subset:
       - curator_schema_only
 
@@ -916,12 +1258,10 @@ classes:
     is_a: Event
     anotations:
       node: true
+    slots:
+      - isChimeric
+      - entityOnOtherCell
     attributes:
-      isChimeric:
-        range: boolean
-        annotations:
-          constraint: OPTIONAL
-          addedField: false
       systematicName:
         annotations:
           constraint: OPTIONAL
@@ -945,12 +1285,6 @@ classes:
           constraint: OPTIONAL
           category: all
           type: "entityFunctionalStatus"
-      entityOnOtherCell:
-        multivalued: true
-        range: PhysicalEntity
-        annotations:
-          constraint: OPTIONAL
-          type: "entityOnOtherCell"
       input:
         # TBC - Note Set instead of List in Java class
         multivalued: true
@@ -980,7 +1314,6 @@ classes:
           type: "regulatedBy"
       regulationReference:
         multivalued: true
-        # TODO: RegulationReference class
         range: RegulationReference
         annotations:
           constraint: OPTIONAL
@@ -995,21 +1328,18 @@ classes:
       hasInteraction:
         # TBC - Note Set instead of List in Java class
         multivalued: true
-        # TODO: InteractionEvent class
         range: InteractionEvent
         annotations:
           constraint: OPTIONAL
           type: "hasInteraction"
       reactionType:
         multivalued: true
-        # TODO: ReactionType class
         range: ReactionType
         annotations:
           constraint: OPTIONAL
           type: "reactionType"
       compartment:
         multivalued: true
-        # TODO: Compartment class
         range: Compartment
         annotations:
           constraint: OPTIONAL
@@ -1017,6 +1347,13 @@ classes:
     in_subset:
       - curator_schema_only
 
+  #### ReactionType ####
+  ReactionType:
+    is_a: ControlledVocabulary
+    anotations:
+      node: true
+    in_subset:
+      - curator_schema_only
 
   #### ReferenceDatabase ####
   ReferenceDatabase:
@@ -1139,6 +1476,21 @@ classes:
     in_subset:
       - curator_schema_only
 
+  #### RegulationReference ####
+  RegulationReference:
+    is_a: ControlReference
+    anotations:
+      node: true
+    attributes:
+      regulation:
+        range: Regulation
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "regulation"
+    in_subset:
+      - curator_schema_only
+
   #### _Release ####
   _Release:
     is_a: DatabaseObject
@@ -1158,6 +1510,8 @@ classes:
   #### SequenceOntology ####
   SequenceOntology:
     is_a: ExternalOntology
+    anotations:
+      node: true
     attributes:
       identifier:
         # TBC: Confirm - this attribute has to be different from identifier slot because of different annotations
@@ -1165,8 +1519,6 @@ classes:
           constraint: MANDATORY
           category: any
           addedField: false
-    anotations:
-      node: true
     in_subset:
       - curator_schema_only
 
@@ -1259,7 +1611,6 @@ classes:
           addedField: false
     in_subset:
       - curator_schema_only
-      -
   #### Taxon ####
   Taxon:
     is_a: DatabaseObject
@@ -1425,12 +1776,24 @@ slots:
       constraint: OPTIONAL
       type: "authored"
       direction: INCOMING
+  cellType:
+    multivalued: true
+    range: CellType
+    annotations:
+      constraint: MANDATORY
+      category: all
+      type: "cellType"
   crossReference:
     multivalued: true
     range: DatabaseIdentifier
     annotations:
       constraint: OPTIONAL
       type: "crossReference"
+  compartment:
+    range: Compartment
+    annotations:
+      constraint: MANDATORY
+      type: "compartment"
   definition:
     annotations:
       constraint: OPTIONAL
@@ -1442,6 +1805,12 @@ slots:
       constraint: OPTIONAL
       direction: INCOMING
       type: "edited"
+  entityOnOtherCell:
+    multivalued: true
+    range: PhysicalEntity
+    annotations:
+      constraint: OPTIONAL
+      type: "entityOnOtherCell"
   figure:
     multivalued: true
     range: Figure
@@ -1463,6 +1832,11 @@ slots:
       addedField: false
   identifierVersion:
     annotations:
+      addedField: false
+  isChimeric:
+    range: boolean
+    annotations:
+      constraint: OPTIONAL
       addedField: false
   literatureReference:
     multivalued: true
@@ -1495,6 +1869,18 @@ slots:
       constraint: OPTIONAL
       direction: INCOMING
       type: "revised"
+  species:
+    multivalued: true
+    range: Species
+    annotations:
+      constraint: REQUIRED
+      type: "species"
+  relatedSpecies:
+    multivalued: true
+    range: Species
+    annotations:
+      constraint: OPTIONAL
+      type: "relatedSpecies"
   stoichiometry:
     # TBC: How to store the default value of 1
     # TBC: Note Integer instead of int in java class
