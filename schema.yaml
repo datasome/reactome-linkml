@@ -29,7 +29,7 @@ classes:
   #### AbstractModifiedResidue ####
   AbstractModifiedResidue:
     is_a: DatabaseObject
-    anotations:
+    annotations:
       node: true
     attributes:
       referenceSequence:
@@ -42,7 +42,7 @@ classes:
   #### Affiliation ####
   Affiliation:
     is_a: DatabaseObject
-    anotations:
+    annotations:
       node: true
     attributes:
       address:
@@ -60,7 +60,7 @@ classes:
   #### Anatomy ####
   Anatomy:
     is_a: ExternalOntology
-    anotations:
+    annotations:
       node: true
     in_subset:
       - curator_schema_only
@@ -68,7 +68,7 @@ classes:
   #### BlackBoxEvent ####
   BlackBoxEvent:
     is_a: ReactionlikeEvent
-    anotations:
+    annotations:
       node: true
     slots:
       - goBiologicalProcess
@@ -108,14 +108,14 @@ classes:
           category: all
           type: "catalystActivity"
       edited:
-        mulitvalued: true
+        multivalued: true
         range: InstanceEdit
         annotations:
           constraint: REQUIRED
           type: "edited"
           direction: INCOMING
       authored:
-        mulitvalued: true
+        multivalued: true
         range: InstanceEdit
         annotations:
           constraint: REQUIRED
@@ -127,7 +127,7 @@ classes:
   #### Book ####
   Book:
     is_a: Publication
-    anotations:
+    annotations:
       node: true
     attributes:
       ISBN:
@@ -167,7 +167,7 @@ classes:
   #### CatalystActivity ####
   CandidateSet:
     is_a: EntitySet
-    anotations:
+    annotations:
       node: true
     attributes:
       hasCandidate:
@@ -188,7 +188,7 @@ classes:
   #### CatalystActivity ####
   CatalystActivity:
     is_a: DatabaseObject
-    anotations:
+    annotations:
       node: true
     attributes:
       activeUnit:
@@ -215,7 +215,7 @@ classes:
   #### CellType ####
   CellType:
     is_a: ExternalOntology
-    anotations:
+    annotations:
       node: true
     in_subset:
       - curator_schema_only
@@ -223,7 +223,7 @@ classes:
   #### CatalystActivityReference ####
   CatalystActivityReference:
     is_a: ControlReference
-    anotations:
+    annotations:
       node: true
     attributes:
       catalystActivity:
@@ -238,7 +238,7 @@ classes:
   #### Cell ####
   Cell:
     is_a: PhysicalEntity
-    anotations:
+    annotations:
       node: true
     slots:
       - cellType
@@ -289,7 +289,7 @@ classes:
   #### Compartment ####
   Compartment:
     is_a: GO_CellularComponent
-    anotations:
+    annotations:
       node: true
     in_subset:
       - curator_schema_only
@@ -297,7 +297,7 @@ classes:
   #### Complex ####
   Complex:
     is_a: PhysicalEntity
-    anotations:
+    annotations:
       node: true
     slots:
       - compartment
@@ -332,7 +332,7 @@ classes:
   #### ControlReference ####
   ControlReference:
     is_a: DatabaseObject
-    anotations:
+    annotations:
       node: true
     attributes:
       literatureReference:
@@ -348,7 +348,7 @@ classes:
   #### ControlledVocabulary ####
   ControlledVocabulary:
     is_a: DatabaseObject
-    anotations:
+    annotations:
       node: true
     slots:
       - definition
@@ -364,7 +364,7 @@ classes:
   #### DatabaseIdentifier ####
   DatabaseIdentifier:
     is_a: DatabaseObject
-    anotations:
+    annotations:
       node: true
     slots:
       - crossReference
@@ -387,7 +387,7 @@ classes:
   #### DatabaseObject ####
   DatabaseObject:
     # TBC - how to express Java implements clause
-    anotations:
+    annotations:
       node: true
       generator: "ObjectIdGenerators.PropertyGenerator.class"
       property: "DB_ID"
@@ -508,7 +508,7 @@ classes:
   #### Disease ####
   Disease:
     is_a: ExternalOntology
-    anotations:
+    annotations:
       node: true
     in_subset:
       - curator_schema_only
@@ -516,7 +516,7 @@ classes:
   #### EntityFunctionalStatus ####
   EntityFunctionalStatus:
     is_a: DatabaseObject
-    anotations:
+    annotations:
       node: true
     attributes:
       functionalStatus:
@@ -543,7 +543,7 @@ classes:
   #### EntitySet ####
   EntitySet:
     is_a: PhysicalEntity
-    anotations:
+    annotations:
       node: true
     slots:
       - compartment
@@ -569,7 +569,7 @@ classes:
   #### EntityWithAccessionedSequence ####
   EntityWithAccessionedSequence:
     is_a: GenomeEncodedEntity
-    anotations:
+    annotations:
       node: true
     attributes:
       endCoordinate:
@@ -618,7 +618,7 @@ classes:
   #### Event ####
   Event:
     is_a: DatabaseObject
-    anotations:
+    annotations:
       node: true
     slots:
       - authored
@@ -721,7 +721,7 @@ classes:
   #### EvidenceType ####
   EvidenceType:
     is_a: DatabaseObject
-    anotations:
+    annotations:
       node: true
     slots:
       - definition
@@ -739,7 +739,7 @@ classes:
   #### ExternalOntology ####
   ExternalOntology:
     is_a: DatabaseObject
-    anotations:
+    annotations:
       node: true
     slots:
       - definition
@@ -772,7 +772,7 @@ classes:
   #### Figure ####
   Figure:
     is_a: DatabaseObject
-    anotations:
+    annotations:
       node: true
     attributes:
       url:
@@ -787,7 +787,7 @@ classes:
   #### FunctionalStatus ####
   FunctionalStatus:
     is_a: DatabaseObject
-    anotations:
+    annotations:
       node: true
     attributes:
       functionalStatusType:
@@ -808,7 +808,7 @@ classes:
   #### FunctionalStatusType ####
   FunctionalStatusType:
     is_a: DatabaseObject
-    anotations:
+    annotations:
       node: true
     slots:
       - definition
@@ -819,7 +819,7 @@ classes:
   #### GenomeEncodedEntity ####
   GenomeEncodedEntity:
     is_a: PhysicalEntity
-    anotations:
+    annotations:
       node: true
     attributes:
       species:
@@ -841,7 +841,7 @@ classes:
   #### GO_BiologicalProcess ####
   GO_BiologicalProcess:
     is_a: DatabaseObject
-    anotations:
+    annotations:
       node: true
     slots:
       - accession
@@ -863,13 +863,13 @@ classes:
   #### GO_CellularComponent ####
   GO_CellularComponent:
     is_a: DatabaseObject
-    anotations:
+    annotations:
       node: true
     slots:
       - accession
       - definition
       - referenceDatabase
-    attrinbutes:
+    attributes:
       name:
         multivalued: true
         annotations:
@@ -905,7 +905,7 @@ classes:
   #### GO_MolecularFunction ####
   GO_MolecularFunction:
     is_a: DatabaseObject
-    anotations:
+    annotations:
       node: true
     slots:
       - accession
@@ -1007,7 +1007,7 @@ classes:
   #### InstanceEdit ####
   InstanceEdit:
     is_a: DatabaseObject
-    anotations:
+    annotations:
       node: true
     attributes:
       dateTime:
@@ -1031,7 +1031,7 @@ classes:
   #### InteractionEvent ####
   InteractionEvent:
     is_a: Event
-    anotations:
+    annotations:
       node: true
     attributes:
       partners:
@@ -1046,7 +1046,7 @@ classes:
   #### MarkerReference ####
   MarkerReference:
     is_a: ControlReference
-    anotations:
+    annotations:
       node: true
     attributes:
       marker:
@@ -1061,7 +1061,7 @@ classes:
   #### NegativePrecedingEvent ####
   NegativePrecedingEvent:
     is_a: DatabaseObject
-    anotations:
+    annotations:
       node: true
     attributes:
       comment:
@@ -1086,7 +1086,7 @@ classes:
   #### NegativePrecedingEventReason ####
   NegativePrecedingEventReason:
     is_a: ControlledVocabulary
-    anotations:
+    annotations:
       node: true
     in_subset:
       - curator_schema_only
@@ -1107,7 +1107,7 @@ classes:
   #### Person ####
   Person:
     is_a: DatabaseObject
-    anotations:
+    annotations:
       node: true
     slots:
       - figure
@@ -1154,7 +1154,7 @@ classes:
   #### PhysicalEntity ####
   PhysicalEntity:
     is_a: DatabaseObject
-    anotations:
+    annotations:
       node: true
     slots:
       - authored
@@ -1216,7 +1216,7 @@ classes:
   #### Publication ####
   Publication:
     is_a: DatabaseObject
-    anotations:
+    annotations:
       node: true
     attributes:
       title:
@@ -1240,7 +1240,7 @@ classes:
   PublicationAuthor:
     # TBC - how to express Java implements clause
     is_a: Event
-    anotations:
+    annotations:
       relationship_properties: true
     slots:
       - id
@@ -1256,7 +1256,7 @@ classes:
   #### ReactionlikeEvent ####
   ReactionlikeEvent:
     is_a: Event
-    anotations:
+    annotations:
       node: true
     slots:
       - isChimeric
@@ -1350,7 +1350,7 @@ classes:
   #### ReactionType ####
   ReactionType:
     is_a: ControlledVocabulary
-    anotations:
+    annotations:
       node: true
     in_subset:
       - curator_schema_only
@@ -1358,7 +1358,7 @@ classes:
   #### ReferenceDatabase ####
   ReferenceDatabase:
     is_a: DatabaseObject
-    anotations:
+    annotations:
       node: true
     attributes:
       accessUrl:
@@ -1385,7 +1385,7 @@ classes:
   #### ReferenceSequence ####
   ReferenceSequence:
     is_a: DatabaseObject
-    anotations:
+    annotations:
       node: true
     attributes:
       checksum:
@@ -1443,7 +1443,7 @@ classes:
   #### Regulation ####
   Regulation:
     is_a: DatabaseObject
-    anotations:
+    annotations:
       node: true
     slots:
       - goBiologicalProcess
@@ -1479,7 +1479,7 @@ classes:
   #### RegulationReference ####
   RegulationReference:
     is_a: ControlReference
-    anotations:
+    annotations:
       node: true
     attributes:
       regulation:
@@ -1510,7 +1510,7 @@ classes:
   #### SequenceOntology ####
   SequenceOntology:
     is_a: ExternalOntology
-    anotations:
+    annotations:
       node: true
     attributes:
       identifier:
@@ -1525,7 +1525,7 @@ classes:
   #### Species ####
   Species:
     is_a: Taxon
-    anotations:
+    annotations:
       node: true
     attributes:
       abbreviation:
@@ -1536,7 +1536,7 @@ classes:
   #### StableIdentifier ####
   StableIdentifier:
     is_a: DatabaseObject
-    anotations:
+    annotations:
       node: true
     slots:
       - identifier
@@ -1563,7 +1563,7 @@ classes:
   #### StableIdentifierHistory ####
   StableIdentifierHistory:
     is_a: DatabaseObject
-    anotations:
+    annotations:
       node: true
     slots:
       - identifier
@@ -1580,7 +1580,7 @@ classes:
   #### StableIdentifierReleaseStatus ####
   StableIdentifierReleaseStatus:
     is_a: DatabaseObject
-    anotations:
+    annotations:
       node: true
     attributes:
       releaseNumber:
@@ -1599,7 +1599,7 @@ classes:
   #### Summation ####
   Summation:
     is_a: DatabaseObject
-    anotations:
+    annotations:
       node: true
     slots:
       - literatureReference
@@ -1614,7 +1614,7 @@ classes:
   #### Taxon ####
   Taxon:
     is_a: DatabaseObject
-    anotations:
+    annotations:
       node: true
     slots:
       - name
