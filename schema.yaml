@@ -70,23 +70,20 @@ classes:
     is_a: ReactionlikeEvent
     anotations:
       node: true
+    slots:
+      - goBiologicalProcess
     attributes:
       templateEvent:
         range: Event
         annotations:
           constraint: OPTIONAL
           type: "templateEvent"
-      goBiologicalProcess:
-        range: GO_BiologicalProcess
-        annotations:
-          constraint: OPTIONAL
-          type: "goBiologicalProcess"
       literatureReference:
         multivalued: true
         range: Publication
         annotations:
           constraint: REQUIRED
-          type: "Publication"
+          type: "literatureReference"
       input:
         # TBC - Note Set instead of List in Java class
         multivalued: true
@@ -162,6 +159,37 @@ classes:
     in_subset:
       - curator_schema_only
 
+  #### CatalystActivityReference ####
+  CatalystActivityReference:
+    is_a: ControlReference
+    anotations:
+      node: true
+    attributes:
+      catalystActivity:
+        range: CatalystActivity
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "catalystActivity"
+    in_subset:
+      - curator_schema_only
+
+  #### ControlReference ####
+  ControlReference:
+    is_a: DatabaseObject
+    anotations:
+      node: true
+    attributes:
+      literatureReference:
+        multivalued: true
+        range: Publication
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "literatureReference"
+    in_subset:
+      - curator_schema_only
+
   #### ControlledVocabulary ####
   ControlledVocabulary:
     is_a: DatabaseObject
@@ -187,7 +215,7 @@ classes:
       - crossReference
     attributes:
       identifier:
-        # TODO: Confirm - this attribute has to be different from identifier slot because of different annotations
+        # TBC: Confirm - this attribute has to be different from identifier slot because of different annotations
         annotations:
           constraint: MANDATORY
           category: all
@@ -327,6 +355,35 @@ classes:
     is_a: ExternalOntology
     anotations:
       node: true
+    in_subset:
+      - curator_schema_only
+
+  #### EntityFunctionalStatus ####
+  EntityFunctionalStatus:
+    is_a: DatabaseObject
+    anotations:
+      node: true
+      attributes:
+        functionalStatus:
+          range: FunctionalStatus
+          annotations:
+            constraint: MANDATORY
+            category: all
+            type: "functionalStatus"
+        diseaseEntity:
+          range: PhysicalEntity
+          annotations:
+            constraint: MANDATORY
+            category: all
+            type: "diseaseEntity"
+        normalEntity:
+          range: PhysicalEntity
+          annotations:
+            constraint: REQUIRED
+            category: all
+            type: "normalEntity"
+    in_subset:
+      - curator_schema_only
 
   #### Event ####
   Event:
@@ -497,6 +554,38 @@ classes:
     in_subset:
       - curator_schema_only
 
+  #### FunctionalStatus ####
+  FunctionalStatus:
+    is_a: DatabaseObject
+    anotations:
+      node: true
+    attributes:
+      functionalStatusType:
+        range: FunctionalStatusType
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "functionalStatusType"
+      structuralVariant:
+        range: SequenceOntology
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "structuralVariant"
+    in_subset:
+      - curator_schema_only
+
+  #### FunctionalStatusType ####
+  FunctionalStatusType:
+    is_a: DatabaseObject
+    slots:
+      - definition
+      - name
+    anotations:
+      node: true
+    in_subset:
+      - curator_schema_only
+
   #### GO_BiologicalProcess ####
   GO_BiologicalProcess:
     is_a: DatabaseObject
@@ -516,6 +605,48 @@ classes:
         annotations:
           constraint: MANDATORY
           type: "referenceDatabase"
+    in_subset:
+      - curator_schema_only
+
+  #### GO_CellularComponent ####
+  GO_CellularComponent:
+    is_a: DatabaseObject
+    anotations:
+      node: true
+    slots:
+      - accession
+      - definition
+      - referenceDatabase
+    attrinbutes:
+      name:
+        multivalued: true
+        annotations:
+          constraint: MANDATORY
+          addedField: false
+      componentOf:
+        multivalued: true
+        range: GO_CellularComponent
+        annotations:
+          constraint: REQUIRED
+          type: "componentOf"
+      hasPart:
+        multivalued: true
+        range: GO_CellularComponent
+        annotations:
+          constraint: OPTIONAL
+          type: "hasPart"
+      instanceOf:
+        multivalued: true
+        range: GO_CellularComponent
+        annotations:
+          constraint: REQUIRED
+          type: "instanceOf"
+      surroundedBy:
+        multivalued: true
+        range: GO_CellularComponent
+        annotations:
+          constraint: OPTIONAL
+          type: "surroundedBy"
     in_subset:
       - curator_schema_only
 
@@ -597,11 +728,18 @@ classes:
           direction: INCOMING
           type: "negativePrecedingEvent"
       reason:
-        # TODO: NegativePrecedingEventReason class
         range: NegativePrecedingEventReason
         annotations:
           constraint: REQUIRED
           type: "reason"
+    in_subset:
+      - curator_schema_only
+
+  #### NegativePrecedingEventReason ####
+  NegativePrecedingEventReason:
+    is_a: ControlledVocabulary
+    anotations:
+      node: true
     in_subset:
       - curator_schema_only
 
@@ -678,6 +816,7 @@ classes:
       - literatureReference
       - name
       - revised
+      - summation
     attributes:
       systematicName:
         annotations:
@@ -697,7 +836,6 @@ classes:
           category: all
           type: "disease"
       goCellularComponent:
-        # TODO: GO_CellularComponent class
         range: GO_CellularComponent
         annotations:
           constraint: OPTIONAL
@@ -723,12 +861,6 @@ classes:
           constraint: OPTIONAL
           direction: INCOMING
           type: "reviewed"
-      summation:
-        multivalued: true
-        range: Summation
-        annotations:
-          constraint: OPTIONAL
-          type: "summation"
       cellType:
         multivalued: true
         range: CellType
@@ -753,13 +885,29 @@ classes:
       author:
         # TBC - Note SortedSet instead of List in Java class
         multivalued: true
-        # TODO: PublicationAuthor class
         range: PublicationAuthor
         annotations:
           constraint: MANDATORY
           category: all
           type: "author"
           direction: INCOMING
+    in_subset:
+      - curator_schema_only
+
+  #### PublicationAuthor ####
+  PublicationAuthor:
+    # TBC - how to express Java implements clause
+    is_a: Event
+    anotations:
+      relationship_properties: true
+    slots:
+      - id
+      - order
+    attributes:
+      author:
+        range: Person
+        annotations:
+          target_node: true
     in_subset:
       - curator_schema_only
 
@@ -786,14 +934,12 @@ classes:
           category: all
           type: "catalystActivity"
       catalystActivityReference:
-        # TODO: CatalystActivityReference class
         range: CatalystActivityReference
         annotations:
           constraint: OPTIONAL
           type: "catalystActivityReference"
       entityFunctionalStatus:
         multivalued: true
-        # TODO: EntityFunctionalStatus  class
         range: EntityFunctionalStatus
         annotations:
           constraint: OPTIONAL
@@ -828,7 +974,6 @@ classes:
           type: "normalReaction"
       regulatedBy:
         multivalued: true
-        # TODO: Regulation class
         range: Regulation
         annotations:
           constraint: OPTIONAL
@@ -958,6 +1103,42 @@ classes:
     in_subset:
       - curator_schema_only
 
+  #### Regulation ####
+  Regulation:
+    is_a: DatabaseObject
+    anotations:
+      node: true
+    slots:
+      - goBiologicalProcess
+      - summation
+    attributes:
+      activeUnit:
+        # TBC - Note List in Java class (compared to set in CatalystActivity)
+        multivalued: true
+        range: PhysicalEntity
+        annotations:
+          constraint: OPTIONAL
+          category: all
+          type: "activeUnit"
+          # TBC: Is the following an error in java class - given it's a relationship field?
+          addedFiled: false
+      activity:
+        range: GO_MolecularFunction
+        annotations:
+          constraint: OPTIONAL
+          category: all
+          type: "activity"
+          # TBC: Is the following an error in java class - given it's a relationship field?
+          addedFiled: false
+      regulator:
+        range: PhysicalEntity
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "regulator"
+    in_subset:
+      - curator_schema_only
+
   #### _Release ####
   _Release:
     is_a: DatabaseObject
@@ -971,6 +1152,21 @@ classes:
         annotations:
           constraint: MANDATORY
           addedField: false
+    in_subset:
+      - curator_schema_only
+
+  #### SequenceOntology ####
+  SequenceOntology:
+    is_a: ExternalOntology
+    attributes:
+      identifier:
+        # TBC: Confirm - this attribute has to be different from identifier slot because of different annotations
+        annotations:
+          constraint: MANDATORY
+          category: any
+          addedField: false
+    anotations:
+      node: true
     in_subset:
       - curator_schema_only
 
@@ -1252,6 +1448,11 @@ slots:
     annotations:
       constraint: OPTIONAL
       type: "figure"
+  goBiologicalProcess:
+    range: GO_BiologicalProcess
+    annotations:
+      constraint: OPTIONAL
+      type: "goBiologicalProcess"
   id:
     range: long
     annotations:
@@ -1298,3 +1499,9 @@ slots:
     # TBC: How to store the default value of 1
     # TBC: Note Integer instead of int in java class
     range: integer
+  summation:
+    multivalued: true
+    range: Summation
+    annotations:
+      constraint: OPTIONAL
+      type: "summation"
