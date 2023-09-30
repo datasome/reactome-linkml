@@ -69,6 +69,7 @@ classes:
 
   #### BlackBoxEvent ####
   BlackBoxEvent:
+    # TBC: Java class has method annotations - how do we represent them here?
     is_a: ReactionlikeEvent
     annotations:
       node: true
@@ -160,13 +161,15 @@ classes:
     in_subset:
       - curator_schema_only
 
-  #### CatalystActivity ####
+  #### CandidateSet ####
   CandidateSet:
     is_a: EntitySet
     annotations:
       node: true
     attributes:
       hasCandidate:
+        # TBC - Note SortedSet instead of List in Java class
+        multivalued: true
         range: HasCandidate
         annotations:
           constraint: MANDATORY
@@ -207,6 +210,8 @@ classes:
           constraint: MANDATORY
           category: all
           type: "physicalEntity"
+    in_subset:
+      - curator_schema_only
 
   #### CatalystActivityReference ####
   CatalystActivityReference:
