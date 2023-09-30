@@ -38,6 +38,8 @@ classes:
           constraint: MANDATORY
           category: all
           type: "referenceSequence"
+    in_subset:
+      - curator_schema_only
 
   #### Affiliation ####
   Affiliation:
@@ -71,6 +73,7 @@ classes:
     annotations:
       node: true
     slots:
+      - catalystActivity
       - goBiologicalProcess
     attributes:
       templateEvent:
@@ -100,13 +103,6 @@ classes:
           constraint: REQUIRED
           category: all
           type: "output"
-      catalystActivity:
-        multivalued: true
-        range: CatalystActivity
-        annotations:
-          constraint: OPTIONAL
-          category: all
-          type: "catalystActivity"
       edited:
         multivalued: true
         range: InstanceEdit
@@ -212,14 +208,6 @@ classes:
           category: all
           type: "physicalEntity"
 
-  #### CellType ####
-  CellType:
-    is_a: ExternalOntology
-    annotations:
-      node: true
-    in_subset:
-      - curator_schema_only
-
   #### CatalystActivityReference ####
   CatalystActivityReference:
     is_a: ControlReference
@@ -286,6 +274,51 @@ classes:
     in_subset:
       - curator_schema_only
 
+  #### CellDevelopmentStep ####
+  CellDevelopmentStep:
+    is_a: ReactionlikeEvent
+    annotations:
+      node: true
+    slots:
+      - catalystActivity
+      - tissue
+    attributes:
+      requiredInputComponent:
+        # TBC - Note Set instead of List in Java class
+        multivalued: true
+        range: PhysicalEntity
+        annotations:
+          constraint: REQUIRED
+          type: "requiredInputComponent"
+    in_subset:
+      - curator_schema_only
+
+  #### CellLineagePath ####
+  CellLineagePath:
+    is_a: ReactionlikeEvent
+    annotations:
+      node: true
+    slots:
+      - tissue
+    in_subset:
+      - curator_schema_only
+
+  #### CellType ####
+  CellType:
+    is_a: ExternalOntology
+    annotations:
+      node: true
+    in_subset:
+      - curator_schema_only
+
+  #### ChemicalDrug ####
+  ChemicalDrug:
+    is_a: Drug
+    annotations:
+      node: true
+    in_subset:
+      - curator_schema_only
+
   #### Compartment ####
   Compartment:
     is_a: GO_CellularComponent
@@ -329,6 +362,22 @@ classes:
     in_subset:
       - curator_schema_only
 
+  #### ControlledVocabulary ####
+  ControlledVocabulary:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+    slots:
+      - definition
+    attributes:
+      name:
+        multivalued: true
+        annotations:
+          constraint: MANDATORY
+          addedField: false
+    in_subset:
+      - curator_schema_only
+
   #### ControlReference ####
   ControlReference:
     is_a: DatabaseObject
@@ -345,19 +394,25 @@ classes:
     in_subset:
       - curator_schema_only
 
-  #### ControlledVocabulary ####
-  ControlledVocabulary:
-    is_a: DatabaseObject
+  #### CrosslinkedResidue ####
+  CrosslinkedResidue:
+    is_a: TranslationalModification
     annotations:
       node: true
-    slots:
-      - definition
     attributes:
-      name:
-        multivalued: true
+      secondCoordinate:
+        range: integer
         annotations:
-          constraint: MANDATORY
+          constraint: REQUIRED
+          category: all
           addedField: false
+      modification:
+        range: DatabaseObject
+        annotations:
+          constraint: OPTIONAL
+          category: all
+          type: "modification"
+          allowed: "EntitySet.class, Polymer.class, ReferenceGroup.class"
     in_subset:
       - curator_schema_only
 
@@ -426,6 +481,33 @@ classes:
           annotations:
             constraint: NOMANUALEDIT
             type: "stableIdentifier"
+    in_subset:
+      - curator_schema_only
+
+  #### DBInfo ####
+  DBInfo:
+    annotations:
+      node: true
+    attributes:
+      id:
+        range: long
+        annotations:
+          id: true
+          json_ignore: true
+      name:
+      version:
+        range: integer
+      checksum:
+        range: long
+    in_subset:
+      - curator_schema_only
+
+  #### DefinedSet ####
+  DefinedSet:
+    is_a: EntitySet
+    annotations:
+      node: true
+    # TBC: Java class has method annotations - how do we represent them here?
     in_subset:
       - curator_schema_only
 
@@ -505,11 +587,82 @@ classes:
     in_subset:
       - curator_schema_only
 
+  #### Depolymerisation ####
+  Depolymerisation:
+    is_a: ReactionlikeEvent
+    annotations:
+      node: true
+    slots:
+      - goBiologicalProcess
+    attributes:
+      literatureReference:
+        multivalued: true
+        range: Publication
+        annotations:
+          constraint: REQUIRED
+          type: "literatureReference"
+      edited:
+        multivalued: true
+        range: InstanceEdit
+        annotations:
+          constraint: REQUIRED
+          type: "edited"
+          direction: INCOMING
+      authored:
+        multivalued: true
+        range: InstanceEdit
+        annotations:
+          constraint: REQUIRED
+          type: "authored"
+          direction: INCOMING
+    in_subset:
+      - curator_schema_only
+
   #### Disease ####
   Disease:
     is_a: ExternalOntology
     annotations:
       node: true
+    in_subset:
+      - curator_schema_only
+
+  #### Drug ####
+  Drug:
+    is_a: PhysicalEntity
+    annotations:
+      node: true
+    slots:
+      - referenceEntity
+    attributes:
+      compartment:
+        multivalued: true
+        range: Compartment
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "compartment"
+      disease:
+        multivalued: true
+        range: Disease
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "disease"
+    in_subset:
+      - curator_schema_only
+
+  #### DrugActionType ####
+  DrugActionType:
+    is_a: ReactionType
+    annotations:
+      node: true
+    attributes:
+      instanceOf:
+        multivalued: true
+        range: DrugActionType
+        annotations:
+          constraint: OPTIONAL
+          type: "instanceOf"
     in_subset:
       - curator_schema_only
 
@@ -571,6 +724,8 @@ classes:
     is_a: GenomeEncodedEntity
     annotations:
       node: true
+    slots:
+      - referenceEntity
     attributes:
       endCoordinate:
         # TBC: Note Integer instead of int in java class
@@ -594,12 +749,6 @@ classes:
           constraint: REQUIRED
           category: all
           type: "hasModifiedResidue"
-      referenceEntity:
-        range: ReferenceSequence
-        annotations:
-          constraint: MANDATORY
-          category: all
-          type: "referenceEntity"
       name:
         multivalued: true
         annotations:
@@ -769,6 +918,51 @@ classes:
     in_subset:
       - curator_schema_only
 
+  #### FailedReaction ####
+  FailedReaction:
+    is_a: ReactionlikeEvent
+    annotations:
+      node: true
+    slots:
+      - catalystActivity
+      - goBiologicalProcess
+    attributes:
+      normalReaction:
+        range: ReactionlikeEvent
+        annotations:
+          constraint: MANDATORY
+          type: "normalReaction"
+      literatureReference:
+        multivalued: true
+        range: Publication
+        annotations:
+          constraint: REQUIRED
+          type: "literatureReference"
+      output:
+        # TBC - Note Set instead of List in Java class
+        multivalued: true
+        range: Output
+        annotations:
+          constraint: NOMANUALEDIT
+          category: all
+          type: "output"
+      edited:
+        multivalued: true
+        range: InstanceEdit
+        annotations:
+          constraint: REQUIRED
+          type: "edited"
+          direction: INCOMING
+      authored:
+        multivalued: true
+        range: InstanceEdit
+        annotations:
+          constraint: REQUIRED
+          type: "authored"
+          direction: INCOMING
+    in_subset:
+      - curator_schema_only
+
   #### Figure ####
   Figure:
     is_a: DatabaseObject
@@ -781,6 +975,74 @@ classes:
           category: all
           addedField: false
           property: true
+    in_subset:
+      - curator_schema_only
+
+  #### FragmentDeletionModification ####
+  FragmentDeletionModification:
+    is_a: FragmentModification
+    annotations:
+      node: true
+    in_subset:
+      - curator_schema_only
+
+  #### FragmentInsertionModification ####
+  FragmentInsertionModification:
+    is_a: FragmentModification
+    annotations:
+      node: true
+    slots:
+      - coordinate
+    in_subset:
+      - curator_schema_only
+
+  #### FragmentModification ####
+  FragmentModification:
+    is_a: GeneticallyModifiedResidue
+    annotations:
+      node: true
+    attributes:
+      endPositionInReferenceSequence:
+        range: integer
+        annotations:
+          constraint: MANDATORY
+          category: all
+          addedField: false
+      startPositionInReferenceSequence:
+        range: integer
+        annotations:
+          constraint: MANDATORY
+          category: all
+          addedField: false
+    in_subset:
+      - curator_schema_only
+
+  #### FragmentReplacedModification ####
+  FragmentReplacedModification:
+    is_a: FragmentModification
+    annotations:
+      node: true
+    attributes:
+      alteredAminoAcidFragment:
+        annotations:
+          constraint: OPTIONAL
+          category: all
+          addedField: false
+    in_subset:
+      - curator_schema_only
+
+  #### FrontPage ####
+  FrontPage:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+    attributes:
+      frontPageItem:
+        multivalued: true
+        range: Event
+        annotations:
+          constraint: MANDATORY
+          type: "frontPageItem"
     in_subset:
       - curator_schema_only
 
@@ -813,6 +1075,14 @@ classes:
     slots:
       - definition
       - name
+    in_subset:
+      - curator_schema_only
+
+  #### GeneticallyModifiedResidue ####
+  GeneticallyModifiedResidue:
+    is_a: AbstractModifiedResidue
+    annotations:
+      node: true
     in_subset:
       - curator_schema_only
 
@@ -924,6 +1194,16 @@ classes:
     in_subset:
       - curator_schema_only
 
+  #### GroupModifiedResidue ####
+  GroupModifiedResidue:
+    is_a: TranslationalModification
+    annotations:
+      node: true
+    slots:
+      - modification
+    in_subset:
+      - curator_schema_only
+
   #### HasCandidate ####
   HasCandidate:
     annotations:
@@ -960,6 +1240,39 @@ classes:
       - order
       - physicalEntity
       - stoichiometry
+    in_subset:
+      - curator_schema_only
+
+  #### HasEncapsulatedEvent ####
+  HasEncapsulatedEvent:
+    # TBC - how to express Java implements clause
+    annotations:
+      relationship_properties: true
+    slots:
+      - id
+      - order
+    attributes:
+      event:
+        range: Event
+        annotations:
+          target_node: true
+    in_subset:
+      - curator_schema_only
+
+  #### HasEvent ####
+  HasEvent:
+    # TBC - how to express Java implements clause
+    annotations:
+      relationship_properties: true
+    slots:
+      - id
+      - order
+      - stoichiometry
+    attributes:
+      event:
+        range: Event
+        annotations:
+          target_node: true
     in_subset:
       - curator_schema_only
 
@@ -1043,6 +1356,74 @@ classes:
     in_subset:
       - curator_schema_only
 
+
+  #### InterChainCrosslinkedResidue ####
+  InterChainCrosslinkedResidue:
+    is_a: CrosslinkedResidue
+    annotations:
+      node: true
+    attributes:
+      equivalentTo:
+        multivalued: true
+        range: InterChainCrosslinkedResidue
+        annotations:
+          constraint: MANDATORY
+          type: "equivalentTo"
+      secondReferenceSequence:
+        # TBC - Note Set instead of List in Java class
+        multivalued: true
+        range: InterChainCrosslinkedResidue
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "secondReferenceSequence"
+    in_subset:
+      - curator_schema_only
+
+  #### IntraChainCrosslinkedResidue ####
+  IntraChainCrosslinkedResidue:
+    is_a: CrosslinkedResidue
+    annotations:
+      node: true
+    in_subset:
+      - curator_schema_only
+
+  #### LiteratureReference ####
+  LiteratureReference:
+    is_a: Publication
+    annotations:
+      node: true
+    attributes:
+      PUBMED_URL:
+        annotations:
+          value: "http://www.ncbi.nlm.nih.gov/pubmed/"
+      journal:
+        annotations:
+          constraint: REQUIRED
+          addedField: false
+      pages:
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      pubMedIdentifier:
+        range: integer
+        annotations:
+          constraint: REQUIRED
+          category: all
+          addedField: false
+      volume:
+        range: integer
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      year:
+        range: integer
+        annotations:
+          constraint: MANDATORY
+          addedField: false
+    in_subset:
+      - curator_schema_only
+
   #### MarkerReference ####
   MarkerReference:
     is_a: ControlReference
@@ -1055,6 +1436,40 @@ classes:
         annotations:
           constraint: MANDATORY
           type: "marker"
+    in_subset:
+      - curator_schema_only
+
+  #### ModifiedNucleotide ####
+  ModifiedNucleotide:
+    is_a: TranscriptionalModification
+    annotations:
+      node: true
+    slots:
+      - modification
+    attributes:
+      coordinate:
+        range: integer
+        annotations:
+          constraint: MANDATORY
+          category: all
+          addedField: false
+    in_subset:
+      - curator_schema_only
+
+  #### ModifiedResidue ####
+  ModifiedResidue:
+    is_a: TranslationalModification
+    annotations:
+      node: true
+    in_subset:
+      - curator_schema_only
+
+  #### NegativeGeneExpressionRegulation ####
+  NegativeGeneExpressionRegulation:
+    # TBC: Java class has method annotations - how do we represent them here?
+    is_a: DatabaseObject
+    annotations:
+      node: true
     in_subset:
       - curator_schema_only
 
@@ -1086,6 +1501,23 @@ classes:
   #### NegativePrecedingEventReason ####
   NegativePrecedingEventReason:
     is_a: ControlledVocabulary
+    annotations:
+      node: true
+    in_subset:
+      - curator_schema_only
+
+  #### NegativeRegulation ####
+  NegativeRegulation:
+     # TBC: Java class has method annotations - how do we represent them here?
+    is_a: Regulation
+    annotations:
+      node: true
+    in_subset:
+      - curator_schema_only
+
+  #### NonsenseMutation ####
+  NonsenseMutation:
+    is_a: ReplacedResidue
     annotations:
       node: true
     in_subset:
@@ -1213,6 +1645,107 @@ classes:
     in_subset:
       - curator_schema_only
 
+
+  #### Polymer ####
+  Polymer:
+    is_a: PhysicalEntity
+    annotations:
+      node: true
+    slots:
+      - species
+      - compartment
+    attributes:
+      maxUnitCount:
+        range: integer
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      minUnitCount:
+        range: integer
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      repeatedUnit:
+        # TBC - Note SortedSet instead of List in Java class
+        multivalued: true
+        range: RepeatedUnit
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "repeatedUnit"
+    in_subset:
+      - curator_schema_only
+
+  #### Polymerisation ####
+  Polymerisation:
+    is_a: ReactionlikeEvent
+    annotations:
+      node: true
+    slots:
+      - goBiologicalProcess
+    attributes:
+      literatureReference:
+        multivalued: true
+        range: Publication
+        annotations:
+          constraint: REQUIRED
+          type: "literatureReference"
+      edited:
+        multivalued: true
+        range: InstanceEdit
+        annotations:
+          constraint: REQUIRED
+          type: "edited"
+          direction: INCOMING
+      authored:
+        multivalued: true
+        range: InstanceEdit
+        annotations:
+          constraint: REQUIRED
+          type: "authored"
+          direction: INCOMING
+    in_subset:
+      - curator_schema_only
+
+  #### PositiveGeneExpressionRegulation ####
+  PositiveGeneExpressionRegulation:
+    # TBC: Java class has method annotations - how do we represent them here?
+    is_a: PositiveRegulation
+    annotations:
+      node: true
+    in_subset:
+      - curator_schema_only
+
+  #### PositiveRegulation ####
+  PositiveRegulation:
+    # TBC: Java class has method annotations - how do we represent them here?
+    is_a: Regulation
+    annotations:
+      node: true
+    in_subset:
+      - curator_schema_only
+
+  #### ProteinDrug ####
+  ProteinDrug:
+    is_a: Drug
+    annotations:
+      node: true
+    in_subset:
+      - curator_schema_only
+
+  #### PsiMod ####
+  PsiMod:
+    is_a: ExternalOntology
+    annotations:
+      node: true
+    attributes:
+      label:
+        annotations:
+          constraint: REQUIRED
+          addedField: false
+    in_subset:
+      - curator_schema_only
+
   #### Publication ####
   Publication:
     is_a: DatabaseObject
@@ -1250,6 +1783,42 @@ classes:
         range: Person
         annotations:
           target_node: true
+    in_subset:
+      - curator_schema_only
+
+  #### Reaction ####
+  Reaction:
+    is_a: ReactionlikeEvent
+    annotations:
+      node: true
+    slots:
+      - goBiologicalProcess
+    attributes:
+      reverseReaction:
+        range: Reaction
+        annotations:
+          constraint: OPTIONAL
+          type: "reverseReaction"
+      literatureReference:
+        multivalued: true
+        range: Publication
+        annotations:
+          constraint: REQUIRED
+          type: "literatureReference"
+      edited:
+        multivalued: true
+        range: InstanceEdit
+        annotations:
+          constraint: REQUIRED
+          type: "edited"
+          direction: INCOMING
+      authored:
+        multivalued: true
+        range: InstanceEdit
+        annotations:
+          constraint: REQUIRED
+          type: "authored"
+          direction: INCOMING
     in_subset:
       - curator_schema_only
 
@@ -1382,11 +1951,151 @@ classes:
     in_subset:
       - curator_schema_only
 
+  #### ReferenceDNASequence ####
+  ReferenceDNASequence:
+    is_a: ReferenceSequence
+    annotations:
+      node: true
+    in_subset:
+      - curator_schema_only
+
+  #### ReferenceEntity ####
+  ReferenceEntity:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+    slots:
+      - crossReference
+    attributes:
+      identifier:
+        # TBC: Confirm - this attribute has to be different from identifier slot because of different annotations
+        annotations:
+          constraint: MANDATORY
+          category: all
+          addedField: false
+      name:
+        multivalued: true
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      otherIdentifier:
+        multivalued: true
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      referenceDatabase:
+        range: ReferenceDatabase
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "referenceDatabase"
+    in_subset:
+      - curator_schema_only
+
+  #### ReferenceGeneProduct ####
+  ReferenceGeneProduct:
+    is_a: ReferenceSequence
+    annotations:
+      node: true
+    attributes:
+      chain:
+        multivalued: true
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      _chainChangeLog:
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      referenceGene:
+        multivalued: true
+        range: ReferenceDNASequence
+        annotations:
+          type: "referenceGene"
+      referenceTranscript:
+        multivalued: true
+        range: ReferenceRNASequence
+        annotations:
+          type: "referenceTranscript"
+    in_subset:
+      - curator_schema_only
+
+  #### ReferenceGroup ####
+  ReferenceGroup:
+    is_a: ReferenceEntity
+    annotations:
+      node: true
+    slots:
+      - otherIdentifier
+      - formula
+    attributes:
+      name:
+        multivalued: true
+        annotations:
+          constraint: MANDATORY
+          addedField: false
+    in_subset:
+      - curator_schema_only
+
+  #### ReferenceIsoform ####
+  ReferenceIsoform:
+    is_a: ReferenceGeneProduct
+    annotations:
+      node: true
+    attributes:
+      variantIdentifier:
+        annotations:
+          constraint: MANDATORY
+          category: all
+          addedField: false
+      isoformParent:
+        multivalued: true
+        range: ReferenceGeneProduct
+        annotations:
+          constraint: MANDATORY
+          type: "isoformParent"
+    in_subset:
+      - curator_schema_only
+
+  #### ReferenceMolecule ####
+  ReferenceMolecule:
+    is_a: ReferenceEntity
+    annotations:
+      node: true
+    slots:
+      - formula
+      - otherIdentifier
+    attributes:
+      name:
+        multivalued: true
+        annotations:
+          constraint: MANDATORY
+          addedField: false
+    in_subset:
+      - curator_schema_only
+
+  #### ReferenceRNASequence ####
+  ReferenceRNASequence:
+    is_a: ReferenceSequence
+    annotations:
+      node: true
+    attributes:
+      referenceGene:
+        multivalued: true
+        range: ReferenceDNASequence
+        annotations:
+          constraint: OPTIONAL
+          type: "referenceGene"
+    in_subset:
+      - curator_schema_only
+
   #### ReferenceSequence ####
   ReferenceSequence:
     is_a: DatabaseObject
     annotations:
       node: true
+    slots:
+      - otherIdentifier
     attributes:
       checksum:
         annotations:
@@ -1432,10 +2141,50 @@ classes:
           constraint: MANDATORY
           category: all
           type: "species"
-      otherIdentifier:
+    in_subset:
+      - curator_schema_only
+
+  #### ReferenceTherapeutic ####
+  ReferenceTherapeutic:
+    is_a: ReferenceEntity
+    annotations:
+      node: true
+    attributes:
+      abbreviation:
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      approvalSource:
         multivalued: true
         annotations:
-          constraint: NOMANUALEDIT
+          constraint: OPTIONAL
+          addedField: false
+      activeDrugIds:
+        multivalued: true
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      proDrugIds:
+        multivalued: true
+        annotations:
+          addedField: false
+      approved:
+        range: boolean
+        annotations:
+          constraint: MANDATORY
+          addedField: false
+      withdrawn:
+        range: boolean
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      inn:
+        annotations:
+          constraint: REQUIRED
+          addedField: false
+      type:
+        annotations:
+          constraint: REQUIRED
           addedField: false
     in_subset:
       - curator_schema_only
@@ -1491,6 +2240,17 @@ classes:
     in_subset:
       - curator_schema_only
 
+  #### ReplacedResidue ####
+  ReplacedResidue:
+    is_a: GeneticallyModifiedResidue
+    annotations:
+      node: true
+    slots:
+      - coordinate
+      - psiMod
+    in_subset:
+      - curator_schema_only
+
   #### _Release ####
   _Release:
     is_a: DatabaseObject
@@ -1504,6 +2264,52 @@ classes:
         annotations:
           constraint: MANDATORY
           addedField: false
+    in_subset:
+      - curator_schema_only
+
+  #### RepeatedUnit ####
+  RepeatedUnit:
+    annotations:
+      relationship_properties: true
+    slots:
+      - id
+      - order
+      - physicalEntity
+      - stoichiometry
+    in_subset:
+      - curator_schema_only
+
+  #### RepresentedPathway ####
+  RepresentedPathway:
+    # TBC - how to express Java implements clause
+    annotations:
+      relationship_properties: true
+    slots:
+      - id
+      - order
+      - stoichiometry
+    attributes:
+      pathway:
+        range: Pathway
+        annotations:
+          target_node: true
+    in_subset:
+      - curator_schema_only
+
+  #### Requirement ####
+  Requirement:
+    # TBC: Java class has method annotations - how do we represent them here?
+    is_a: PositiveRegulation
+    annotations:
+      node: true
+    in_subset:
+      - curator_schema_only
+
+  #### RNADrug ####
+  RNADrug:
+    is_a: Drug
+    annotations:
+      node: true
     in_subset:
       - curator_schema_only
 
@@ -1611,6 +2417,7 @@ classes:
           addedField: false
     in_subset:
       - curator_schema_only
+
   #### Taxon ####
   Taxon:
     is_a: DatabaseObject
@@ -1631,6 +2438,25 @@ classes:
         annotations:
           constraint: REQUIRED
           type: "superTaxon"
+    in_subset:
+      - curator_schema_only
+
+  #### TranscriptionalModification ####
+  TranscriptionalModification:
+    is_a: AbstractModifiedResidue
+    annotations:
+      node: true
+    in_subset:
+      - curator_schema_only
+
+  #### TranslationalModification ####
+  TranslationalModification:
+    is_a: AbstractModifiedResidue
+    annotations:
+      node: true
+    slots:
+      - coordinate
+      - psiMod
     in_subset:
       - curator_schema_only
 
@@ -1662,6 +2488,20 @@ classes:
     in_subset:
       - curator_schema_only
 
+  #### URL ####
+  URL:
+    is_a: Publication
+    annotations:
+      node: true
+    attributes:
+      uniformResourceLocator:
+        annotations:
+          constraint: MANDATORY
+          category: "any"
+          addedField: false
+    in_subset:
+      - curator_schema_only
+
   #### Annotations classes - start ####
   Annotations:
     attributes:
@@ -1669,9 +2509,11 @@ classes:
         range: boolean
       generated_value:
         range: boolean
+      id:
+        range: boolean
       json_identity_info:
         range: JsonIdentityInfo
-      id:
+      json_ignore:
         range: boolean
       node:
         range: boolean
@@ -1691,7 +2533,6 @@ classes:
         range: ReactomeInstanceDefiningValue
       target_node:
         range: boolean
-
       relationship_properties:
         range: boolean
     in_subset:
@@ -1763,7 +2604,7 @@ enums:
        any:
        all:
 
-#### Enumerations ####
+#### Slots ####
 slots:
   accession:
     annotations:
@@ -1776,6 +2617,13 @@ slots:
       constraint: OPTIONAL
       type: "authored"
       direction: INCOMING
+  catalystActivity:
+    multivalued: true
+    range: CatalystActivity
+    annotations:
+      constraint: OPTIONAL
+      category: all
+      type: "catalystActivity"
   cellType:
     multivalued: true
     range: CellType
@@ -1783,6 +2631,12 @@ slots:
       constraint: MANDATORY
       category: all
       type: "cellType"
+  coordinate:
+    range: integer
+    annotations:
+      constraint: REQUIRED
+      category: all
+      addedField: false
   crossReference:
     multivalued: true
     range: DatabaseIdentifier
@@ -1817,6 +2671,10 @@ slots:
     annotations:
       constraint: OPTIONAL
       type: "figure"
+  formula:
+    annotations:
+      constraint: OPTIONAL
+      addedField: false
   goBiologicalProcess:
     range: GO_BiologicalProcess
     annotations:
@@ -1844,6 +2702,13 @@ slots:
     annotations:
       constraint: OPTIONAL
       type: "literatureReference"
+  modification:
+    range: DatabaseObject
+    annotations:
+      constraint: MANDATORY
+      category: all
+      type: "modification"
+      allowed: "EntitySet.class, Polymer.class, ReferenceGroup.class"
   name:
     multivalued: true
     annotations:
@@ -1853,15 +2718,38 @@ slots:
   order:
     # TBC: Note primitive int type in java class
     range: integer
+  otherIdentifier:
+    multivalued: true
+    annotations:
+      constraint: NOMANUALEDIT
+      addedField: false
   physicalEntity:
     range: PhysicalEntity
     annotations:
       target_node: true
+  psiMod:
+    range: PsiMod
+    annotations:
+      constraint: MANDATORY
+      category: all
+      type: "psiMod"
   referenceDatabase:
     range: ReferenceDatabase
     annotations:
       constraint: MANDATORY
       type: "referenceDatabase"
+  referenceEntity:
+    range: ReferenceSequence
+    annotations:
+      constraint: MANDATORY
+      category: all
+      type: "referenceEntity"
+  relatedSpecies:
+    multivalued: true
+    range: Species
+    annotations:
+      constraint: OPTIONAL
+      type: "relatedSpecies"
   revised:
     multivalued: true
     range: InstanceEdit
@@ -1875,12 +2763,6 @@ slots:
     annotations:
       constraint: REQUIRED
       type: "species"
-  relatedSpecies:
-    multivalued: true
-    range: Species
-    annotations:
-      constraint: OPTIONAL
-      type: "relatedSpecies"
   stoichiometry:
     # TBC: How to store the default value of 1
     # TBC: Note Integer instead of int in java class
@@ -1891,3 +2773,10 @@ slots:
     annotations:
       constraint: OPTIONAL
       type: "summation"
+  tissue:
+    range: Anatomy
+    annotations:
+      constraint: REQUIRED
+      type: "tissue"
+  # TBC - is this the correct way to assign constant values to variables?
+  constant_value:
