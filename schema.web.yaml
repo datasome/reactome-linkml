@@ -35,11 +35,9 @@ classes:
       referenceSequence:
         range: ReferenceSequence
         annotations:
-          constraint: MANDATORY
-          category: all
           type: "referenceSequence"
     in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### Affiliation ####
   Affiliation:
@@ -48,16 +46,12 @@ classes:
       node: true
     attributes:
       address:
-        annotations:
-          constraint: REQUIRED
       name:
         multivalued: true
         annotations:
-          constraint: MANDATORY
-          category: all
           addedField: false
     in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### Anatomy ####
   Anatomy:
@@ -65,60 +59,21 @@ classes:
     annotations:
       node: true
     in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### BlackBoxEvent ####
   BlackBoxEvent:
+    # TBC: Java class has method annotations - how do we represent them here?
     is_a: ReactionlikeEvent
     annotations:
       node: true
-    slots:
-      - catalystActivity
-      - goBiologicalProcess
     attributes:
       templateEvent:
         range: Event
         annotations:
-          constraint: OPTIONAL
           type: "templateEvent"
-      literatureReference:
-        multivalued: true
-        range: Publication
-        annotations:
-          constraint: REQUIRED
-          type: "literatureReference"
-      input:
-        # TBC - Note Set instead of List in Java class
-        multivalued: true
-        range: Input
-        annotations:
-          constraint: REQUIRED
-          category: all
-          type: "input"
-      output:
-        # TBC - Note Set instead of List in Java class
-        multivalued: true
-        range: Output
-        annotations:
-          constraint: REQUIRED
-          category: all
-          type: "output"
-      edited:
-        multivalued: true
-        range: InstanceEdit
-        annotations:
-          constraint: REQUIRED
-          type: "edited"
-          direction: INCOMING
-      authored:
-        multivalued: true
-        range: InstanceEdit
-        annotations:
-          constraint: REQUIRED
-          type: "authored"
-          direction: INCOMING
     in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### Book ####
   Book:
@@ -128,58 +83,39 @@ classes:
     attributes:
       ISBN:
         annotations:
-          constraint: OPTIONAL
-          category: any
           addedField: false
       chapterTitle:
         annotations:
-          constraint: OPTIONAL
-          category: any
           addedField: false
       pages:
         annotations:
-          constraint: OPTIONAL
           addedField: false
       year:
         # TBC: Note Integer instead of int in java class
         range: integer
         annotations:
-          constraint: MANDATORY
           addedField: false
-      chapterAuthors:
-        multivalued: true
-        range: Person
-        annotations:
-          constraint: OPTIONAL
-          type: "chapterAuthors"
       publisher:
         range: Affiliation
         annotations:
-          constraint: OPTIONAL
           type: "publisher"
     in_subset:
-      - curator_schema_only
+      - web_schema
 
-  #### CatalystActivity ####
+  #### CandidateSet ####
   CandidateSet:
     is_a: EntitySet
     annotations:
       node: true
     attributes:
       hasCandidate:
+        # TBC - Note SortedSet instead of List in Java class
+        multivalued: true
         range: HasCandidate
         annotations:
-          constraint: MANDATORY
-          category: all
           type: "hasCandidate"
-      hasMember:
-        range: HasMember
-        annotations:
-          constraint: REQUIRED
-          category: all
-          type: "hasMember"
     in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### CatalystActivity ####
   CatalystActivity:
@@ -192,21 +128,28 @@ classes:
         multivalued: true
         range: PhysicalEntity
         annotations:
-          constraint: OPTIONAL
-          category: all
           type: "activeUnit"
       activity:
         range: GO_MolecularFunction
         annotations:
-          constraint: REQUIRED
-          category: all
           type: "activity"
+      catalyzedEvent:
+        multivalued: true
+        range: ReactionLikeEvent
+        annotations:
+          type: "catalystActivity"
+          direction: INCOMING
       physicalEntity:
         range: PhysicalEntity
         annotations:
-          constraint: MANDATORY
-          category: all
           type: "physicalEntity"
+      literatureReference:
+        multivalued: true
+        range: Publication
+        annotations:
+          type: "literatureReference"
+    in_subset:
+      - web_schema
 
   #### CatalystActivityReference ####
   CatalystActivityReference:
