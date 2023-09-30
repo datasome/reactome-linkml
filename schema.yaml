@@ -461,13 +461,13 @@ classes:
         annotations:
           reactome_transient: true
       DB_ID:
-        identifier: true
+        range: long
         annotations:
           constraint: NOMANUALEDIT
-        readonly: true
+          id: true
       _displayName:
-        readonly: true
         annotations:
+          constraint: NOMANUALEDIT
           addedField: false
       _timestamp:
       created:
@@ -1361,7 +1361,6 @@ classes:
     in_subset:
       - curator_schema_only
 
-
   #### InterChainCrosslinkedResidue ####
   InterChainCrosslinkedResidue:
     is_a: CrosslinkedResidue
@@ -1472,7 +1471,7 @@ classes:
   #### NegativeGeneExpressionRegulation ####
   NegativeGeneExpressionRegulation:
     # TBC: Java class has method annotations - how do we represent them here?
-    is_a: DatabaseObject
+    is_a: NegativeRegulation
     annotations:
       node: true
     in_subset:
@@ -1528,6 +1527,22 @@ classes:
     in_subset:
       - curator_schema_only
 
+  #### OtherEntity ####
+  OtherEntity:
+    is_a: PhysicalEntity
+    annotations:
+      node: true
+    attributes:
+      compartment:
+        multivalued: true
+        range: Compartment
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "compartment"
+    in_subset:
+      - curator_schema_only
+
   #### Output ####
   Output:
     # TBC - how to express Java implements clause
@@ -1538,6 +1553,51 @@ classes:
       - order
       - physicalEntity
       - stoichiometry
+    in_subset:
+      - curator_schema_only
+
+  #### Pathway ####
+  Pathway:
+    is_a: Event
+    annotations:
+      node: true
+    slots:
+      - authored
+      - edited
+      - goBiologicalProcess
+    attributes:
+      doi:
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      hasEHLD:
+        range: boolean
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      isCanonical:
+        range: boolean
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      compartment:
+        range: Compartment
+        annotations:
+          constraint: REQUIRED
+          type: "compartment"
+      hasEvent:
+        # TBC - Note SortedSet instead of List in Java class
+        multivalued: true
+        range: HasEvent
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "hasEvent"
+      normalPathway:
+        range: Pathway
+        annotations:
+          constraint: OPTIONAL
+          type: "normalPathway"
     in_subset:
       - curator_schema_only
 
@@ -1649,7 +1709,6 @@ classes:
           type: "reviewed"
     in_subset:
       - curator_schema_only
-
 
   #### Polymer ####
   Polymer:
@@ -2533,7 +2592,7 @@ classes:
       property:
         range: boolean
       relationship:
-        range: ReactomeRelationship
+        range: Relationship
       reactome_instance_defining_value:
         range: ReactomeInstanceDefiningValue
       target_node:
@@ -2571,7 +2630,7 @@ classes:
     in_subset:
       - schema_annotations
 
-  ReactomeRelationship:
+  Relationship:
     attributes:
         type:
         direction: RelationshipDirectionValues
