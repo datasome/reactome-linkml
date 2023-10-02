@@ -1639,6 +1639,7 @@ classes:
           range: Affiliation
           annotations:
             constraint: OPTIONAL
+            type: "affiliation"
         crossReference:
           multivalued: true
           range: DatabaseIdentifier

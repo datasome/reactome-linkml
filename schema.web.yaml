@@ -429,7 +429,6 @@ classes:
 
   #### DirectedInteraction ####
   DirectedInteraction:
-    # TODO: Interaction class
     is_a: Interaction
     annotations:
       node: true
@@ -1031,6 +1030,21 @@ classes:
     in_subset:
       - curator_schema_only
 
+  #### AuthorPublication ####
+  AuthorPublication:
+    annotations:
+      relationship_properties: true
+    slots:
+      - id
+      - order
+    attributes:
+      publication:
+        range: Publication
+        annotations:
+          target_node: true
+    in_subset:
+      - curator_schema_only
+
   #### HasCandidate ####
   HasCandidate:
     annotations:
@@ -1070,19 +1084,33 @@ classes:
     in_subset:
       - curator_schema_only
 
-  #### HasEncapsulatedEvent ####
-  HasEncapsulatedEvent:
-    # TBC - how to express Java implements clause
+  #### HasComponentForComplex ####
+  HasComponentForComplex:
+        # TBC - how to express Java implements clause
     annotations:
       relationship_properties: true
     slots:
       - id
       - order
+      - stoichiometry
     attributes:
       event:
-        range: Event
+        range: Complex
         annotations:
           target_node: true
+    in_subset:
+      - web_schema
+
+
+  #### HasEncapsulatedEvent ####
+  HasEncapsulatedEvent:
+    annotations:
+      relationship_properties: true
+    slots:
+      - id
+      - order
+      - physicalEntity
+      - stoichiometry
     in_subset:
       - curator_schema_only
 
@@ -1143,6 +1171,23 @@ classes:
       - stoichiometry
     in_subset:
       - curator_schema_only
+
+  #### InputForReactionLikeEvent ####
+  InputForReactionLikeEvent:
+    # TBC - how to express Java implements clause
+    annotations:
+      relationship_properties: true
+    slots:
+      - id
+      - order
+      - stoichiometry
+    attributes:
+      reactionLikeEvent:
+        range: ReactionLikeEvent
+        annotations:
+          target_node: true
+    in_subset:
+      - web_schema
 
   #### InstanceEdit ####
   InstanceEdit:
@@ -1397,6 +1442,23 @@ classes:
     in_subset:
       - web_schema
 
+  #### OutputForReactionLikeEvent ####
+  OutputForReactionLikeEvent:
+    # TBC - how to express Java implements clause
+    annotations:
+      relationship_properties: true
+    slots:
+      - id
+      - order
+      - stoichiometry
+    attributes:
+      reactionLikeEvent:
+        range: ReactionLikeEvent
+        annotations:
+          target_node: true
+    in_subset:
+      - web_schema
+
   #### Pathway ####
   Pathway:
     is_a: Event
@@ -1454,46 +1516,41 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
-    slots:
-      - figure
     attributes:
         firstname:
           annotations:
-            constraint: OPTIONAL
-            category: all
             addedField: false
         initial:
           annotations:
-            constraint: MANDATORY
-            category: all
+            addedField: true
+        orcidId:
+          annotations:
             addedField: false
         project:
           annotations:
-            constraint: OPTIONAL
-            category: all
             addedField: false
         surname:
           annotations:
-            constraint: MANDATORY
-            category: all
-            addedField: false
-        url:
-          annotations:
-            constraint: OPTIONAL
-            category: all
             addedField: false
         affiliation:
           multivalued: true
           range: Affiliation
           annotations:
-            constraint: OPTIONAL
+            type: "affiliation"
         crossReference:
           multivalued: true
           range: DatabaseIdentifier
           annotations:
             type: "crossReference"
+            deprecated: true
+        publicationAuthorList:
+          multivalued: true
+          range: AuthorPublication
+          annotations:
+            type: "author"
+            reactome_transient: true
     in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### PhysicalEntity ####
   PhysicalEntity:
@@ -1511,52 +1568,133 @@ classes:
       - revised
       - summation
     attributes:
+      negativelyRegulates:
+        multivalued: true
+        range: NegativeRegulation
+        annotations:
+          type: "regulator"
+            direction: INCOMING
+            reactome_transient: true
+            json_ignore: true
+      positivelyRegulates:
+        multivalued: true
+        range: NegativeRegulation
+        annotations:
+          type: "regulator"
+            direction: INCOMING
+            reactome_transient: true
+            json_ignore: true
+      repeatedUnitOf:
+        multivalued: true
+        range: RepeatedUnitForPhysicalEntity
+        annotations:
+          type: "repeatedUnit"
+            direction: INCOMING
+            reactome_transient: true
+            json_ignore: true
+      consumedByEvent:
+        multivalued: true
+        range: InputForReactionLikeEvent
+        annotations:
+          type: "input"
+            direction: INCOMING
+            reactome_transient: true
+      producedByEvent:
+        multivalued: true
+        range: OutputForReactionLikeEvent
+        annotations:
+          type: "output"
+            direction: INCOMING
+            reactome_transient: true
+      memberOf:
+        multivalued: true
+        range: PhysicalEntity
+        annotations:
+          type: "hasMember"
+            direction: INCOMING
+            reactome_transient: true
+            json_ignore: true
+      isRequired:
+        multivalued: true
+        range: Requirement
+        annotations:
+          type: "regulator"
+            direction: INCOMING
+            reactome_transient: true
+            json_ignore: true
+      componentOf:
+        # TBC - Note SortedSet instead of List in Java class
+        multivalued: true
+        range: HasComponentForComplex
+        anotations:
+          type: "hasComponent"
+          direction: INCOMING
+          reactome_transient: true
+          json_ignore: true
+      compartment:
+        # TBC - Note SortedSet instead of List in Java class
+        multivalued: true
+        annotations:
+          type: "compartment"
+      catalystActivities:
+        multivalued: true
+        range: CatalystActivity
+        annotations:
+          direction: INCOMING
+          type: "physicalEntity"
+          reactome_transient: true
+          json_ignore: true
       systematicName:
         annotations:
-          constraint: OPTIONAL
           addedField: false
+      isInDisease:
+        annotations:
+          addedField: true
+      speciesName:
+         multivalued: true
+         annotations:
+           addedField: true
       crossReference:
         multivalued: true
         range: DatabaseIdentifier
         annotations:
-          constraint: OPTIONAL
           type: "crossReference"
       disease:
         multivalued: true
         range: Disease
         annotations:
-          constraint: OPTIONAL
-          category: all
           type: "disease"
       goCellularComponent:
         range: GO_CellularComponent
         annotations:
-          constraint: OPTIONAL
           type: "goCellularComponent"
       inferredTo:
         multivalued: true
         range: PhysicalEntity
         annotations:
-          constraint: OPTIONAL
           type: "inferredTo"
       inferredFrom:
         multivalued: true
         range: PhysicalEntity
         annotations:
           constraint: OPTIONAL
-          direction: INCOMING
           type: "inferredTo"
           reactome_transient: true
       reviewed:
         multivalued: true
         range: InstanceEdit
         annotations:
-          constraint: OPTIONAL
           direction: INCOMING
           type: "reviewed"
+      markingReferences:
+        multivalued: true
+        range: MarkerReference
+        annotations:
+          direction: INCOMING
+          type: "marker"
+          reactome_transient: true
     in_subset:
-      - curator_schema_only
-
+      - web_schema
 
   #### Polymer ####
   Polymer:
@@ -1565,59 +1703,32 @@ classes:
       node: true
     slots:
       - species
-      - compartment
     attributes:
       maxUnitCount:
         range: integer
         annotations:
-          constraint: OPTIONAL
           addedField: false
       minUnitCount:
         range: integer
         annotations:
-          constraint: OPTIONAL
           addedField: false
       repeatedUnit:
         # TBC - Note SortedSet instead of List in Java class
         multivalued: true
         range: RepeatedUnit
         annotations:
-          constraint: MANDATORY
-          category: all
           type: "repeatedUnit"
     in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### Polymerisation ####
   Polymerisation:
+    # TBC: Java class has method annotations - how do we represent them here?
     is_a: ReactionlikeEvent
     annotations:
       node: true
-    slots:
-      - goBiologicalProcess
-    attributes:
-      literatureReference:
-        multivalued: true
-        range: Publication
-        annotations:
-          constraint: REQUIRED
-          type: "literatureReference"
-      edited:
-        multivalued: true
-        range: InstanceEdit
-        annotations:
-          constraint: REQUIRED
-          type: "edited"
-          direction: INCOMING
-      authored:
-        multivalued: true
-        range: InstanceEdit
-        annotations:
-          constraint: REQUIRED
-          type: "authored"
-          direction: INCOMING
     in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### PositiveGeneExpressionRegulation ####
   PositiveGeneExpressionRegulation:
@@ -1626,7 +1737,7 @@ classes:
     annotations:
       node: true
     in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### PositiveRegulation ####
   PositiveRegulation:
@@ -1635,7 +1746,7 @@ classes:
     annotations:
       node: true
     in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### ProteinDrug ####
   ProteinDrug:
@@ -1643,7 +1754,7 @@ classes:
     annotations:
       node: true
     in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### PsiMod ####
   PsiMod:
@@ -1653,10 +1764,9 @@ classes:
     attributes:
       label:
         annotations:
-          constraint: REQUIRED
           addedField: false
     in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### Publication ####
   Publication:
@@ -2191,6 +2301,23 @@ classes:
     in_subset:
       - curator_schema_only
 
+  #### RepeatedUnitForPhysicalEntity ####
+  RepeatedUnitForPhysicalEntity:
+    # TBC - how to express Java implements clause
+    annotations:
+      relationship_properties: true
+    slots:
+      - id
+      - order
+      - stoichiometry
+    attributes:
+      polymer:
+        range: Polymer
+        annotations:
+          target_node: true
+    in_subset:
+      - curator_schema_only
+
   #### RepresentedPathway ####
   RepresentedPathway:
     # TBC - how to express Java implements clause
@@ -2522,45 +2649,37 @@ enums:
 slots:
   accession:
     annotations:
-      constraint: MANDATORY
       category: any
       addedField: false
   authored:
     range: InstanceEdit
     annotations:
-      constraint: OPTIONAL
       type: "authored"
       direction: INCOMING
   catalystActivity:
     multivalued: true
     range: CatalystActivity
     annotations:
-      constraint: OPTIONAL
-      category: all
       type: "catalystActivity"
   cellType:
     multivalued: true
     range: CellType
     annotations:
-      constraint: MANDATORY
       category: all
       type: "cellType"
   coordinate:
     range: integer
     annotations:
-      constraint: REQUIRED
       category: all
       addedField: false
   crossReference:
     multivalued: true
     range: DatabaseIdentifier
     annotations:
-      constraint: OPTIONAL
       type: "crossReference"
   compartment:
     range: Compartment
     annotations:
-      constraint: MANDATORY
       type: "compartment"
   definition:
     annotations:
@@ -2569,7 +2688,6 @@ slots:
     multivalued: true
     range: InstanceEdit
     annotations:
-      constraint: OPTIONAL
       direction: INCOMING
       type: "edited"
   entityOnOtherCell:
@@ -2581,16 +2699,13 @@ slots:
     multivalued: true
     range: Figure
     annotations:
-      constraint: OPTIONAL
       type: "figure"
   formula:
     annotations:
-      constraint: OPTIONAL
       addedField: false
   goBiologicalProcess:
     range: GO_BiologicalProcess
     annotations:
-      constraint: OPTIONAL
       type: "goBiologicalProcess"
   id:
     range: long
@@ -2611,20 +2726,16 @@ slots:
     multivalued: true
     range: Publication
     annotations:
-      constraint: OPTIONAL
       type: "literatureReference"
   modification:
     range: DatabaseObject
     annotations:
-      constraint: MANDATORY
       category: all
       type: "modification"
       allowed: "EntitySet.class, Polymer.class, ReferenceGroup.class"
   name:
     multivalued: true
     annotations:
-      constraint: MANDATORY
-      category: any
       addedField: false
   order:
     # TBC: Note primitive int type in java class
@@ -2632,7 +2743,6 @@ slots:
   otherIdentifier:
     multivalued: true
     annotations:
-      constraint: NOMANUALEDIT
       addedField: false
   physicalEntity:
     range: PhysicalEntity
@@ -2641,18 +2751,15 @@ slots:
   psiMod:
     range: PsiMod
     annotations:
-      constraint: MANDATORY
       category: all
       type: "psiMod"
   referenceDatabase:
     range: ReferenceDatabase
     annotations:
-      constraint: MANDATORY
       type: "referenceDatabase"
   referenceEntity:
     range: ReferenceSequence
     annotations:
-      constraint: MANDATORY
       category: all
       type: "referenceEntity"
   relatedSpecies:
@@ -2664,7 +2771,6 @@ slots:
     multivalued: true
     range: InstanceEdit
     annotations:
-      constraint: OPTIONAL
       direction: INCOMING
       type: "revised"
   species:
@@ -2680,7 +2786,6 @@ slots:
     multivalued: true
     range: Summation
     annotations:
-      constraint: OPTIONAL
       type: "summation"
   tissue:
     range: Anatomy
