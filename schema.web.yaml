@@ -1573,60 +1573,60 @@ classes:
         range: NegativeRegulation
         annotations:
           type: "regulator"
-            direction: INCOMING
-            reactome_transient: true
-            json_ignore: true
+          direction: INCOMING
+          reactome_transient: true
+          json_ignore: true
       positivelyRegulates:
         multivalued: true
         range: NegativeRegulation
         annotations:
           type: "regulator"
-            direction: INCOMING
-            reactome_transient: true
-            json_ignore: true
+          direction: INCOMING
+          reactome_transient: true
+          json_ignore: true
       repeatedUnitOf:
         multivalued: true
         range: RepeatedUnitForPhysicalEntity
         annotations:
           type: "repeatedUnit"
-            direction: INCOMING
-            reactome_transient: true
-            json_ignore: true
+          direction: INCOMING
+          reactome_transient: true
+          json_ignore: true
       consumedByEvent:
         multivalued: true
         range: InputForReactionLikeEvent
         annotations:
           type: "input"
-            direction: INCOMING
-            reactome_transient: true
+          direction: INCOMING
+          reactome_transient: true
       producedByEvent:
         multivalued: true
         range: OutputForReactionLikeEvent
         annotations:
           type: "output"
-            direction: INCOMING
-            reactome_transient: true
+          direction: INCOMING
+          reactome_transient: true
       memberOf:
         multivalued: true
         range: PhysicalEntity
         annotations:
           type: "hasMember"
-            direction: INCOMING
-            reactome_transient: true
-            json_ignore: true
+          direction: INCOMING
+          reactome_transient: true
+          json_ignore: true
       isRequired:
         multivalued: true
         range: Requirement
         annotations:
           type: "regulator"
-            direction: INCOMING
-            reactome_transient: true
-            json_ignore: true
+          direction: INCOMING
+          reactome_transient: true
+          json_ignore: true
       componentOf:
         # TBC - Note SortedSet instead of List in Java class
         multivalued: true
         range: HasComponentForComplex
-        anotations:
+        annotations:
           type: "hasComponent"
           direction: INCOMING
           reactome_transient: true
