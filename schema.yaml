@@ -2393,6 +2393,34 @@ classes:
     in_subset:
       - curator_schema_only
 
+  #### SimpleEntity ####
+  SimpleEntity:
+    is_a: PhysicalEntity
+    annotations:
+      node: true
+    attributes:
+      referenceEntity:
+        range: ReferenceMolecule
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "referenceEntity"
+      species:
+        range: Species
+        annotations:
+          constraint: OPTIONAL
+          category: all
+          type: "species"
+      compartment:
+        multivalued: true
+        range: Compartment
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "compartment"
+    in_subset:
+      - curator_schema_only
+
   #### Species ####
   Species:
     is_a: Taxon
@@ -2403,6 +2431,8 @@ classes:
         annotations:
           constraint: MANDATORY
           addedField: false
+    in_subset:
+      - curator_schema_only
 
   #### StableIdentifier ####
   StableIdentifier:
@@ -2562,7 +2592,7 @@ classes:
       uniformResourceLocator:
         annotations:
           constraint: MANDATORY
-          category: "any"
+          category: any
           addedField: false
     in_subset:
       - curator_schema_only
