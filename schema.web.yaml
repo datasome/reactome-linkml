@@ -450,7 +450,7 @@ classes:
     annotations:
       node: true
     in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### Drug ####
   Drug:
@@ -459,23 +459,8 @@ classes:
       node: true
     slots:
       - referenceEntity
-    attributes:
-      compartment:
-        multivalued: true
-        range: Compartment
-        annotations:
-          constraint: MANDATORY
-          category: all
-          type: "compartment"
-      disease:
-        multivalued: true
-        range: Disease
-        annotations:
-          constraint: MANDATORY
-          category: all
-          type: "disease"
     in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### DrugActionType ####
   DrugActionType:
@@ -487,10 +472,25 @@ classes:
         multivalued: true
         range: DrugActionType
         annotations:
-          constraint: OPTIONAL
           type: "instanceOf"
     in_subset:
-      - curator_schema_only
+      - web_schema
+
+  #### DrugType ####
+  DrugType:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+    attributes:
+      definition:
+        annotations:
+          addedField: true
+      name:
+        multivalued: true
+        annotations:
+          addedField: true
+    in_subset:
+      - web_schema
 
   #### EntityFunctionalStatus ####
   EntityFunctionalStatus:
@@ -499,25 +499,20 @@ classes:
       node: true
     attributes:
       functionalStatus:
+        multivalued: true
         range: FunctionalStatus
         annotations:
-          constraint: MANDATORY
-          category: all
           type: "functionalStatus"
       diseaseEntity:
         range: PhysicalEntity
         annotations:
-          constraint: MANDATORY
-          category: all
           type: "diseaseEntity"
       normalEntity:
         range: PhysicalEntity
         annotations:
-          constraint: REQUIRED
-          category: all
           type: "normalEntity"
     in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### EntitySet ####
   EntitySet:
@@ -525,25 +520,21 @@ classes:
     annotations:
       node: true
     slots:
-      - compartment
       - relatedSpecies
       - species
     attributes:
       isOrdered:
         range: boolean
         annotations:
-          constraint: OPTIONAL
           addedField: true
       hasMember:
         # TBC - Note SortedSet instead of List in Java class
         multivalued: true
         range: HasMember
         annotations:
-          constraint: MANDATORY
-          category: all
           type: "hasMember"
     in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### EntityWithAccessionedSequence ####
   EntityWithAccessionedSequence:
@@ -557,38 +548,23 @@ classes:
         # TBC: Note Integer instead of int in java class
         range: integer
         annotations:
-          constraint: REQUIRED
-          category: all
           addedField: false
+      referenceType:
+        annotations:
+          addedField: true
       startCoordinate:
         # TBC: Note Integer instead of int in java class
         range: integer
         annotations:
-          constraint: REQUIRED
-          category: all
           addedField: false
       hasModifiedResidue:
         # TBC - Note SortedSet instead of List in Java class
         multivalued: true
         range: HasModifiedResidue
         annotations:
-          constraint: REQUIRED
-          category: all
           type: "hasModifiedResidue"
-      name:
-        multivalued: true
-        annotations:
-          constraint: MANDATORY
-          category: none
-          addedField: false
-      species:
-        range: Taxon
-        annotations:
-          constraint: MANDATORY
-          category: none
-          type: "species"
     in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### Event ####
   Event:
@@ -604,112 +580,117 @@ classes:
       - literatureReference
       - revised
     attributes:
-      _doRelease:
+      isInDisease:
         range: boolean
         annotations:
-          constraint: OPTIONAL
-          addedField: false
+          addedField: true
+      isInferred:
+        range: boolean
+        annotations:
+          addedField: true
       name:
         multivalued: true
         annotations:
-          constraint: MANDATORY
-          category: none
           addedField: false
       releaseDate:
         annotations:
-          constraint: MANDATORY
           addedField: false
       releaseStatus:
         annotations:
-          constraint: NOMANUALEDIT
           addedField: false
+      speciesName:
+        range: boolean
+        annotations:
+          addedField: true
+      compartment:
+        # TBC - Note SortedSet instead of List in Java class
+        multivalued: true
+        range: HasCompartment
+        annotations:
+          type: "compartment"
       disease:
         multivalued: true
         range: Disease
         annotations:
-          constraint: OPTIONAL
           type: "disease"
+      eventOf:
+        multivalued: true
+        range: Disease
+        annotations:
+          type: "hasEvent"
+          direction: INCOMING
+          reactome_transient: true
+          json_ignore: true
       evidenceType:
         range: EvidenceType
         annotations:
-          constraint: OPTIONAL
           type: "evidenceType"
       precedingEvent:
         multivalued: true
         range: Event
         annotations:
-          constraint: OPTIONAL
           type: "precedingEvent"
+      followingEvent:
+        multivalued: true
+        range: Event
+        annotations:
+          type: "precedingEvent"
+          direction: INCOMING
+          reactome_transient: true
+          json_ignore: true
       goBiologicalProcess:
         range: GO_BiologicalProcess
         annotations:
-          constraint: NOMANUALEDIT
           type: "goBiologicalProcess"
       inferredFrom:
         # TBC - Note Set instead of List in Java class
         multivalued: true
         range: Event
         annotations:
-          constraint: OPTIONAL
           type: "inferredFrom"
       orthologousEvent:
         # TBC - Note Set instead of List in Java class
         multivalued: true
         range: Event
         annotations:
-          constraint: OPTIONAL
-          type: "orthologousEvent"
+          # TBC - Shouldn't the type be "orthologousEvent" ?
+          type: "inferredTo"
       relatedSpecies:
         multivalued: true
         range: Species
         annotations:
-          constraint: OPTIONAL
           type: "relatedSpecies"
       reviewed:
         multivalued: true
         range: InstanceEdit
         annotations:
-          constraint: REQUIRED
           direction: INCOMING
           type: "reviewed"
       species:
         multivalued: true
         range: Species
         annotations:
-          constraint: MANDATORY
           type: "species"
       summation:
         multivalued: true
         range: Summation
         annotations:
-          constraint: MANDATORY
           type: "summation"
       negativePrecedingEvent:
         multivalued: true
         range: NegativePrecedingEvent
         annotations:
-          constraint: OPTIONAL
           type: "negativePrecedingEvent"
     in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### EvidenceType ####
   EvidenceType:
     is_a: DatabaseObject
     annotations:
       node: true
-    slots:
-      - definition
-      - name
-    attributes:
-      instanceOf:
-        multivalued: true
-        range: EvidenceType
-        annotations:
-          constraint: OPTIONAL
-          type: "instanceOf"
     in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### ExternalOntology ####
   ExternalOntology:
@@ -720,74 +701,39 @@ classes:
       - definition
       - referenceDatabase
     attributes:
+      databaseName:
+        annotations:
+          addedFiled: false
       identifier:
         annotations:
-          constraint: MANDATORY
-          category: all
           addedField: false
       name:
         multivalued: true
         annotations:
-          constraint: MANDATORY
           addedField: false
       synonym:
         multivalued: true
         annotations:
-          constraint: OPTIONAL
-          addedField: false
+          addedField: true
+      url:
+        annotations:
+          addedField: true
       instanceOf:
         multivalued: true
         range: ExternalOntology
         annotations:
-          constraint: OPTIONAL
           type: "instanceOf"
     in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### FailedReaction ####
   FailedReaction:
+    # TBC: Java class has method annotations - how do we represent them here?
     is_a: ReactionLikeEvent
     annotations:
       node: true
-    slots:
-      - catalystActivity
-      - goBiologicalProcess
-    attributes:
-      normalReaction:
-        range: ReactionLikeEvent
-        annotations:
-          constraint: MANDATORY
-          type: "normalReaction"
-      literatureReference:
-        multivalued: true
-        range: Publication
-        annotations:
-          constraint: REQUIRED
-          type: "literatureReference"
-      output:
-        # TBC - Note Set instead of List in Java class
-        multivalued: true
-        range: Output
-        annotations:
-          constraint: NOMANUALEDIT
-          category: all
-          type: "output"
-      edited:
-        multivalued: true
-        range: InstanceEdit
-        annotations:
-          constraint: REQUIRED
-          type: "edited"
-          direction: INCOMING
-      authored:
-        multivalued: true
-        range: InstanceEdit
-        annotations:
-          constraint: REQUIRED
-          type: "authored"
-          direction: INCOMING
     in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### Figure ####
   Figure:
@@ -797,12 +743,10 @@ classes:
     attributes:
       url:
         annotations:
-          constraint: MANDATORY
-          category: all
           addedField: false
           property: true
     in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### FragmentDeletionModification ####
   FragmentDeletionModification:
@@ -810,7 +754,7 @@ classes:
     annotations:
       node: true
     in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### FragmentInsertionModification ####
   FragmentInsertionModification:
@@ -820,7 +764,7 @@ classes:
     slots:
       - coordinate
     in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### FragmentModification ####
   FragmentModification:
@@ -831,17 +775,13 @@ classes:
       endPositionInReferenceSequence:
         range: integer
         annotations:
-          constraint: MANDATORY
-          category: all
           addedField: false
       startPositionInReferenceSequence:
         range: integer
         annotations:
-          constraint: MANDATORY
-          category: all
           addedField: false
     in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### FragmentReplacedModification ####
   FragmentReplacedModification:
@@ -851,26 +791,9 @@ classes:
     attributes:
       alteredAminoAcidFragment:
         annotations:
-          constraint: OPTIONAL
-          category: all
           addedField: false
     in_subset:
-      - curator_schema_only
-
-  #### FrontPage ####
-  FrontPage:
-    is_a: DatabaseObject
-    annotations:
-      node: true
-    attributes:
-      frontPageItem:
-        multivalued: true
-        range: Event
-        annotations:
-          constraint: MANDATORY
-          type: "frontPageItem"
-    in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### FunctionalStatus ####
   FunctionalStatus:
@@ -881,17 +804,13 @@ classes:
       functionalStatusType:
         range: FunctionalStatusType
         annotations:
-          constraint: MANDATORY
-          category: all
           type: "functionalStatusType"
       structuralVariant:
         range: SequenceOntology
         annotations:
-          constraint: MANDATORY
-          category: all
           type: "structuralVariant"
     in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### FunctionalStatusType ####
   FunctionalStatusType:
@@ -902,7 +821,7 @@ classes:
       - definition
       - name
     in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### GeneticallyModifiedResidue ####
   GeneticallyModifiedResidue:
@@ -910,7 +829,7 @@ classes:
     annotations:
       node: true
     in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### GenomeEncodedEntity ####
   GenomeEncodedEntity:
@@ -921,104 +840,81 @@ classes:
       species:
         range: Taxon
         annotations:
-          constraint: MANDATORY
-          category: all
           type: "species"
-      compartment:
-        multivalued: true
-        range: Compartment
-        annotations:
-          constraint: MANDATORY
-          category: all
-          type: "compartment"
     in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### GO_BiologicalProcess ####
   GO_BiologicalProcess:
-    is_a: DatabaseObject
+    is_a: GO_Term
     annotations:
       node: true
-    slots:
-      - accession
-      - definition
-    attributes:
-      name:
-        multivalued: true
-        annotations:
-          constraint: MANDATORY
-          addedField: false
-      referenceDatabase:
-        range: ReferenceDatabase
-        annotations:
-          constraint: MANDATORY
-          type: "referenceDatabase"
     in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### GO_CellularComponent ####
   GO_CellularComponent:
-    is_a: DatabaseObject
+    is_a: GO_Term
     annotations:
       node: true
-    slots:
-      - accession
-      - definition
-      - referenceDatabase
     attributes:
-      name:
-        multivalued: true
-        annotations:
-          constraint: MANDATORY
-          addedField: false
       componentOf:
         multivalued: true
         range: GO_CellularComponent
         annotations:
-          constraint: REQUIRED
           type: "componentOf"
       hasPart:
         multivalued: true
         range: GO_CellularComponent
         annotations:
-          constraint: OPTIONAL
           type: "hasPart"
       instanceOf:
         multivalued: true
         range: GO_CellularComponent
         annotations:
-          constraint: REQUIRED
           type: "instanceOf"
       surroundedBy:
         multivalued: true
         range: GO_CellularComponent
         annotations:
-          constraint: OPTIONAL
           type: "surroundedBy"
     in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### GO_MolecularFunction ####
   GO_MolecularFunction:
+    is_a: GO_Term
+    annotations:
+      node: true
+    attributes:
+      ecNumber:
+        annotations:
+          addedField: false
+    in_subset:
+      - web_schema
+
+  #### GO_Term ####
+  GO_Term:
     is_a: DatabaseObject
     annotations:
       node: true
     slots:
       - accession
       - definition
-      - referenceDatabase
     attributes:
+      databaseName:
       name:
-        multivalued: true
         annotations:
-          constraint: MANDATORY
           addedField: false
-      ecNumber:
+      url:
         annotations:
-          constraint: OPTIONAL
-          addedField: false
+          addedField: true
+      referenceDatabase:
+        range: ReferenceDatabase
+        annotations:
+          type: "referenceDatabase"
     in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### GroupModifiedResidue ####
   GroupModifiedResidue:
@@ -1028,7 +924,7 @@ classes:
     slots:
       - modification
     in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### AuthorPublication ####
   AuthorPublication:
@@ -1043,7 +939,7 @@ classes:
         annotations:
           target_node: true
     in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### HasCandidate ####
   HasCandidate:
@@ -1055,7 +951,7 @@ classes:
       - physicalEntity
       - stoichiometry
     in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### HasCompartment ####
   HasCompartment:
@@ -1070,7 +966,7 @@ classes:
         annotations:
           target_node: true
     in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### HasComponent ####
   HasComponent:
@@ -1082,7 +978,7 @@ classes:
       - physicalEntity
       - stoichiometry
     in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### HasComponentForComplex ####
   HasComponentForComplex:
@@ -1112,7 +1008,7 @@ classes:
       - physicalEntity
       - stoichiometry
     in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### HasEvent ####
   HasEvent:
@@ -1129,7 +1025,7 @@ classes:
         annotations:
           target_node: true
     in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### HasMember ####
   HasMember:
@@ -1141,7 +1037,7 @@ classes:
       - physicalEntity
       - stoichiometry
     in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### HasModifiedResidue ####
   HasModifiedResidue:
@@ -1157,7 +1053,7 @@ classes:
         annotations:
           target_node: true
     in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### Input ####
   Input:
@@ -1170,7 +1066,7 @@ classes:
       - physicalEntity
       - stoichiometry
     in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### InputForReactionLikeEvent ####
   InputForReactionLikeEvent:
@@ -1201,9 +1097,6 @@ classes:
       note:
         annotations:
           addedField: false
-      _applyToAllEditedInstances:
-        annotations:
-          addedField: false
       author:
         multivalued: true
         range: Person
@@ -1211,7 +1104,7 @@ classes:
           type: "author"
           direction: INCOMING
     in_subset:
-      - curator_schema_only
+      - web_schema
 
   #### Interaction ####
   Interaction:
@@ -2543,7 +2436,6 @@ slots:
   coordinate:
     range: integer
     annotations:
-      category: all
       addedField: false
   crossReference:
     multivalued: true
@@ -2632,7 +2524,6 @@ slots:
   referenceEntity:
     range: ReferenceSequence
     annotations:
-      category: all
       type: "referenceEntity"
   relatedSpecies:
     multivalued: true
