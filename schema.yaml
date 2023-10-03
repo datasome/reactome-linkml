@@ -2650,7 +2650,8 @@ classes:
 
   ReactomeInstanceDefiningValue:
     attributes:
-      category: CategoryValues
+      category:
+        range: CategoryValues
     in_subset:
       - schema_annotations
 
