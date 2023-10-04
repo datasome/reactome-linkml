@@ -1310,7 +1310,7 @@ classes:
       - web_schema
 
   #### Ontology ####
-  # TBC - deprecated
+  # TBC - deprecated/unused
 
   #### OtherEntity ####
   OtherEntity:
@@ -2023,7 +2023,7 @@ classes:
         annotations:
           addedField: false
       activeUnit:
-        # TBC - Note List in Java class (compared to set in CatalystActivity)
+        # TBC - Note List in Java class (compared to set in CatalystActivity for the same named field)
         multivalued: true
         range: PhysicalEntity
         annotations:
