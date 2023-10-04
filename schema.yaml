@@ -89,21 +89,21 @@ classes:
           constraint: REQUIRED
           type: "literatureReference"
       input:
-        # TBC - Note Set instead of List in Java class
         multivalued: true
         range: Input
         annotations:
           constraint: REQUIRED
           category: all
           type: "input"
+          set: true
       output:
-        # TBC - Note Set instead of List in Java class
         multivalued: true
         range: Output
         annotations:
           constraint: REQUIRED
           category: all
           type: "output"
+          set: true
       edited:
         multivalued: true
         range: InstanceEdit
@@ -142,7 +142,6 @@ classes:
           constraint: OPTIONAL
           addedField: false
       year:
-        # TBC: Note Integer instead of int in java class
         range: integer
         annotations:
           constraint: MANDATORY
@@ -168,13 +167,13 @@ classes:
       node: true
     attributes:
       hasCandidate:
-        # TBC - Note SortedSet instead of List in Java class
         multivalued: true
         range: HasCandidate
         annotations:
           constraint: MANDATORY
           category: all
           type: "hasCandidate"
+          sorted_set: true
       hasMember:
         range: HasMember
         annotations:
@@ -191,13 +190,13 @@ classes:
       node: true
     attributes:
       activeUnit:
-        # TBC - Note Set instead of List in Java class
         multivalued: true
         range: PhysicalEntity
         annotations:
           constraint: OPTIONAL
           category: all
           type: "activeUnit"
+          set: true
       activity:
         range: GO_MolecularFunction
         annotations:
@@ -289,12 +288,12 @@ classes:
       - tissue
     attributes:
       requiredInputComponent:
-        # TBC - Note Set instead of List in Java class
         multivalued: true
         range: PhysicalEntity
         annotations:
           constraint: REQUIRED
           type: "requiredInputComponent"
+          set: true
     in_subset:
       - curator_schema_only
 
@@ -345,25 +344,25 @@ classes:
       - species
     attributes:
       hasComponent:
-        # TBC - Note SortedSet instead of List in Java class
         multivalued: true
         range: HasComponent
         annotations:
           constraint: MANDATORY
           category: all
           type: "hasComponent"
+          sorted_set: true
       stoichiometryKnown:
         range: boolean
         annotations:
           constraint: OPTIONAL
           addedFiled: false
       includedLocation:
-        # TBC - Note SortedSet instead of List in Java class
         multivalued: true
         range: HasCompartment
         annotations:
           constraint: NOMANUALEDIT
           type: "includedLocation"
+          sorted_set: true
     in_subset:
       - curator_schema_only
 
@@ -446,11 +445,11 @@ classes:
 
   #### DatabaseObject ####
   DatabaseObject:
-    # TBC - how to express Java implements clause
     annotations:
       node: true
       generator: "ObjectIdGenerators.PropertyGenerator.class"
       property: "DB_ID"
+      implements: "Serializable, Comparable<DatabaseObject>, DatabaseObjectLike"
     attributes:
       isLoaded:
         annotations:
@@ -715,13 +714,13 @@ classes:
           constraint: OPTIONAL
           addedField: true
       hasMember:
-        # TBC - Note SortedSet instead of List in Java class
         multivalued: true
         range: HasMember
         annotations:
           constraint: MANDATORY
           category: all
           type: "hasMember"
+          sorted_set: true
     in_subset:
       - curator_schema_only
 
@@ -734,27 +733,25 @@ classes:
       - referenceEntity
     attributes:
       endCoordinate:
-        # TBC: Note Integer instead of int in java class
         range: integer
         annotations:
           constraint: REQUIRED
           category: all
           addedField: false
       startCoordinate:
-        # TBC: Note Integer instead of int in java class
         range: integer
         annotations:
           constraint: REQUIRED
           category: all
           addedField: false
       hasModifiedResidue:
-        # TBC - Note SortedSet instead of List in Java class
         multivalued: true
         range: HasModifiedResidue
         annotations:
           constraint: REQUIRED
           category: all
           type: "hasModifiedResidue"
+          sorted_set: true
       name:
         multivalued: true
         annotations:
@@ -826,19 +823,19 @@ classes:
           constraint: NOMANUALEDIT
           type: "goBiologicalProcess"
       inferredFrom:
-        # TBC - Note Set instead of List in Java class
         multivalued: true
         range: Event
         annotations:
           constraint: OPTIONAL
           type: "inferredFrom"
+          set: true
       orthologousEvent:
-        # TBC - Note Set instead of List in Java class
         multivalued: true
         range: Event
         annotations:
           constraint: OPTIONAL
           type: "orthologousEvent"
+          set: true
       relatedSpecies:
         multivalued: true
         range: Species
@@ -945,13 +942,13 @@ classes:
           constraint: REQUIRED
           type: "literatureReference"
       output:
-        # TBC - Note Set instead of List in Java class
         multivalued: true
         range: Output
         annotations:
           constraint: NOMANUALEDIT
           category: all
           type: "output"
+          set: true
       edited:
         multivalued: true
         range: InstanceEdit
@@ -1251,9 +1248,9 @@ classes:
 
   #### HasEncapsulatedEvent ####
   HasEncapsulatedEvent:
-    # TBC - how to express Java implements clause
     annotations:
       relationship_properties: true
+      implements: "Comparable<HasEncapsulatedEvent>"
     slots:
       - id
       - order
@@ -1267,9 +1264,9 @@ classes:
 
   #### HasEvent ####
   HasEvent:
-    # TBC - how to express Java implements clause
     annotations:
       relationship_properties: true
+      implements: "Comparable<HasEvent>"
     slots:
       - id
       - order
@@ -1312,9 +1309,9 @@ classes:
 
   #### Input ####
   Input:
-    # TBC - how to express Java implements clause
     annotations:
       relationship_properties: true
+      implements: "implements Comparable<Input>"
     slots:
       - id
       - order
@@ -1375,13 +1372,13 @@ classes:
           constraint: MANDATORY
           type: "equivalentTo"
       secondReferenceSequence:
-        # TBC - Note Set instead of List in Java class
         multivalued: true
         range: InterChainCrosslinkedResidue
         annotations:
           constraint: MANDATORY
           category: all
           type: "secondReferenceSequence"
+          set: true
     in_subset:
       - curator_schema_only
 
@@ -1546,9 +1543,9 @@ classes:
 
   #### Output ####
   Output:
-    # TBC - how to express Java implements clause
     annotations:
       relationship_properties: true
+      implements: "Comparable<Output>"
     slots:
       - id
       - order
@@ -1587,13 +1584,13 @@ classes:
           constraint: REQUIRED
           type: "compartment"
       hasEvent:
-        # TBC - Note SortedSet instead of List in Java class
         multivalued: true
         range: HasEvent
         annotations:
           constraint: MANDATORY
           category: all
           type: "hasEvent"
+          sorted_set: true
       normalPathway:
         range: Pathway
         annotations:
@@ -1732,13 +1729,13 @@ classes:
           constraint: OPTIONAL
           addedField: false
       repeatedUnit:
-        # TBC - Note SortedSet instead of List in Java class
         multivalued: true
         range: RepeatedUnit
         annotations:
           constraint: MANDATORY
           category: all
           type: "repeatedUnit"
+          sorted_set: true
     in_subset:
       - curator_schema_only
 
@@ -1824,7 +1821,6 @@ classes:
           category: any
           addedField: false
       author:
-        # TBC - Note SortedSet instead of List in Java class
         multivalued: true
         range: PublicationAuthor
         annotations:
@@ -1832,15 +1828,16 @@ classes:
           category: all
           type: "author"
           direction: INCOMING
+          sorted_set: true
     in_subset:
       - curator_schema_only
 
   #### PublicationAuthor ####
   PublicationAuthor:
-    # TBC - how to express Java implements clause
     is_a: Event
     annotations:
       relationship_properties: true
+      implements: "Comparable<PublicationAuthor>"
     slots:
       - id
       - order
@@ -1921,21 +1918,21 @@ classes:
           category: all
           type: "entityFunctionalStatus"
       input:
-        # TBC - Note Set instead of List in Java class
         multivalued: true
         range: Input
         annotations:
           constraint: MANDATORY
           category: all
           type: "input"
+          set: true
       output:
-        # TBC - Note Set instead of List in Java class
         multivalued: true
         range: Output
         annotations:
           constraint: MANDATORY
           category: all
           type: "output"
+          set: true
       normalReaction:
         range: ReactionlikeEvent
         annotations:
@@ -1954,19 +1951,19 @@ classes:
           constraint: OPTIONAL
           type: "regulationReference"
       requiredInputComponent:
-        # TBC - Note Set instead of List in Java class
         multivalued: true
         range: PhysicalEntity
         annotations:
           constraint: OPTIONAL
           type: "requiredInputComponent"
+          set: true
       hasInteraction:
-        # TBC - Note Set instead of List in Java class
         multivalued: true
         range: InteractionEvent
         annotations:
           constraint: OPTIONAL
           type: "hasInteraction"
+          set: true
       reactionType:
         multivalued: true
         range: ReactionType
@@ -2347,9 +2344,9 @@ classes:
 
   #### RepresentedPathway ####
   RepresentedPathway:
-    # TBC - how to express Java implements clause
     annotations:
       relationship_properties: true
+      implements: "Comparable<RepresentedPathway>"
     slots:
       - id
       - order
@@ -2607,6 +2604,9 @@ classes:
         range: boolean
       id:
         range: boolean
+      int_value:
+        range: integer
+      implements:
       json_identity_info:
         range: JsonIdentityInfo
       json_ignore:
@@ -2621,15 +2621,20 @@ classes:
         range: ReactomeConstraint
       reactome_property:
         range: ReactomeProperty
+      reactome_instance_defining_value:
+        range: ReactomeInstanceDefiningValue
       property:
         range: boolean
       relationship:
         range: Relationship
-      reactome_instance_defining_value:
-        range: ReactomeInstanceDefiningValue
-      target_node:
-        range: boolean
       relationship_properties:
+        range: boolean
+      set:
+        range: boolean
+      sorted_set:
+        range: boolean
+      string_value:
+      target_node:
         range: boolean
     in_subset:
       - schema_annotations
@@ -2861,9 +2866,9 @@ slots:
       constraint: REQUIRED
       type: "species"
   stoichiometry:
-    # TBC: How to store the default value of 1
-    # TBC: Note Integer instead of int in java class
     range: integer
+    annotations:
+      int_value: 1
   summation:
     multivalued: true
     range: Summation
@@ -2875,5 +2880,3 @@ slots:
     annotations:
       constraint: REQUIRED
       type: "tissue"
-  # TBC - is this the correct way to assign constant values to variables?
-  constant_value:

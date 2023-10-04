@@ -91,7 +91,6 @@ classes:
         annotations:
           addedField: false
       year:
-        # TBC: Note Integer instead of int in java class
         range: integer
         annotations:
           addedField: false
@@ -109,11 +108,11 @@ classes:
       node: true
     attributes:
       hasCandidate:
-        # TBC - Note SortedSet instead of List in Java class
         multivalued: true
         range: HasCandidate
         annotations:
           type: "hasCandidate"
+          sorted_set: true
     in_subset:
       - web_schema
 
@@ -124,11 +123,11 @@ classes:
       node: true
     attributes:
       activeUnit:
-        # TBC - Note Set instead of List in Java class
         multivalued: true
         range: PhysicalEntity
         annotations:
           type: "activeUnit"
+          set: true
       activity:
         range: GO_MolecularFunction
         annotations:
@@ -263,21 +262,21 @@ classes:
       - species
     attributes:
       hasComponent:
-        # TBC - Note SortedSet instead of List in Java class
         multivalued: true
         range: HasComponent
         annotations:
           type: "hasComponent"
+          sorted_set: true
       stoichiometryKnown:
         range: boolean
         annotations:
           addedFiled: false
       includedLocation:
-        # TBC - Note SortedSet instead of List in Java class
         multivalued: true
         range: HasCompartment
         annotations:
           type: "includedLocation"
+          sorted_set: true
     in_subset:
       - web_schema
 
@@ -355,11 +354,11 @@ classes:
 
   #### DatabaseObject ####
   DatabaseObject:
-    # TBC - how to express Java implements clause
     annotations:
       node: true
       generator: "ObjectIdGenerators.PropertyGenerator.class"
       property: "dbId"
+      implements: "Serializable, Comparable<DatabaseObject>, DatabaseObjectLike"
     attributes:
       isLoaded:
         annotations:
@@ -528,11 +527,11 @@ classes:
         annotations:
           addedField: true
       hasMember:
-        # TBC - Note SortedSet instead of List in Java class
         multivalued: true
         range: HasMember
         annotations:
           type: "hasMember"
+          sorted_set: true
     in_subset:
       - web_schema
 
@@ -545,7 +544,6 @@ classes:
       - referenceEntity
     attributes:
       endCoordinate:
-        # TBC: Note Integer instead of int in java class
         range: integer
         annotations:
           addedField: false
@@ -553,16 +551,15 @@ classes:
         annotations:
           addedField: true
       startCoordinate:
-        # TBC: Note Integer instead of int in java class
         range: integer
         annotations:
           addedField: false
       hasModifiedResidue:
-        # TBC - Note SortedSet instead of List in Java class
         multivalued: true
         range: HasModifiedResidue
         annotations:
           type: "hasModifiedResidue"
+          sorted_set: true
     in_subset:
       - web_schema
 
@@ -603,11 +600,11 @@ classes:
         annotations:
           addedField: true
       compartment:
-        # TBC - Note SortedSet instead of List in Java class
         multivalued: true
         range: HasCompartment
         annotations:
           type: "compartment"
+          sorted_set: true
       disease:
         multivalued: true
         range: Disease
@@ -643,18 +640,18 @@ classes:
         annotations:
           type: "goBiologicalProcess"
       inferredFrom:
-        # TBC - Note Set instead of List in Java class
         multivalued: true
         range: Event
         annotations:
           type: "inferredFrom"
+          set: true
       orthologousEvent:
-        # TBC - Note Set instead of List in Java class
         multivalued: true
         range: Event
         annotations:
           # TBC - Shouldn't the type be "orthologousEvent" ?
           type: "inferredTo"
+          set: true
       relatedSpecies:
         multivalued: true
         range: Species
@@ -982,9 +979,9 @@ classes:
 
   #### HasComponentForComplex ####
   HasComponentForComplex:
-        # TBC - how to express Java implements clause
     annotations:
       relationship_properties: true
+      implements: "implements Comparable<HasComponentForComplex>"
     slots:
       - id
       - order
@@ -1012,9 +1009,9 @@ classes:
 
   #### HasEvent ####
   HasEvent:
-    # TBC - how to express Java implements clause
     annotations:
       relationship_properties: true
+      implements: "Comparable<HasEvent>"
     slots:
       - id
       - order
@@ -1057,9 +1054,9 @@ classes:
 
   #### Input ####
   Input:
-    # TBC - how to express Java implements clause
     annotations:
       relationship_properties: true
+      implements: "Comparable<Input>"
     slots:
       - id
       - order
@@ -1070,9 +1067,9 @@ classes:
 
   #### InputForReactionLikeEvent ####
   InputForReactionLikeEvent:
-    # TBC - how to express Java implements clause
     annotations:
       relationship_properties: true
+      implements: "Comparable<InputForReactionLikeEvent>"
     slots:
       - id
       - order
@@ -1163,11 +1160,11 @@ classes:
         annotations:
           type: "equivalentTo"
       secondReferenceSequence:
-        # TBC - Note Set instead of List in Java class
         multivalued: true
         range: InterChainCrosslinkedResidue
         annotations:
           type: "secondReferenceSequence"
+          set: true
     in_subset:
       - web_schema
 
@@ -1323,9 +1320,9 @@ classes:
 
   #### Output ####
   Output:
-    # TBC - how to express Java implements clause
     annotations:
       relationship_properties: true
+      implements: "Comparable<Output>"
     slots:
       - id
       - order
@@ -1336,9 +1333,9 @@ classes:
 
   #### OutputForReactionLikeEvent ####
   OutputForReactionLikeEvent:
-    # TBC - how to express Java implements clause
     annotations:
       relationship_properties: true
+      implements: "Comparable<OutputForReactionLikeEvent>"
     slots:
       - id
       - order
@@ -1384,18 +1381,18 @@ classes:
         annotations:
           addedField: false
       hasEvent:
-        # TBC - Note SortedSet instead of List in Java class
         multivalued: true
         range: HasEvent
         annotations:
           type: "hasEvent"
+          sorted_set: true
       hasEncapsulatedEvent:
-        # TBC - Note SortedSet instead of List in Java class
         multivalued: true
         range: HasEncapsulatedEvent
         annotations:
           type: "hasEncapsulatedEvent"
           reactome_relationship: true
+          sorted_set: true
       normalPathway:
         range: Pathway
         annotations:
@@ -1515,7 +1512,6 @@ classes:
           reactome_transient: true
           json_ignore: true
       componentOf:
-        # TBC - Note SortedSet instead of List in Java class
         multivalued: true
         range: HasComponentForComplex
         annotations:
@@ -1523,11 +1519,12 @@ classes:
           direction: INCOMING
           reactome_transient: true
           json_ignore: true
+          sorted_set: true
       compartment:
-        # TBC - Note SortedSet instead of List in Java class
         multivalued: true
         annotations:
           type: "compartment"
+          sorted_set: true
       catalystActivities:
         multivalued: true
         range: CatalystActivity
@@ -1604,11 +1601,11 @@ classes:
         annotations:
           addedField: false
       repeatedUnit:
-        # TBC - Note SortedSet instead of List in Java class
         multivalued: true
         range: RepeatedUnit
         annotations:
           type: "repeatedUnit"
+          sorted_set: true
     in_subset:
       - web_schema
 
@@ -1669,21 +1666,21 @@ classes:
         annotations:
           addedField: false
       author:
-        # TBC - Note SortedSet instead of List in Java class
         multivalued: true
         range: PublicationAuthor
         annotations:
           type: "author"
           direction: INCOMING
+          sorted_set: true
     in_subset:
       - web_schema
 
   #### PublicationAuthor ####
   PublicationAuthor:
-    # TBC - how to express Java implements clause
     is_a: Event
     annotations:
       relationship_properties: true
+      implements: "Comparable<PublicationAuthor>"
     slots:
       - id
       - order
@@ -1738,17 +1735,17 @@ classes:
         annotations:
           type: "entityFunctionalStatus"
       input:
-        # TBC - Note Set instead of List in Java class
         multivalued: true
         range: Input
         annotations:
           type: "input"
+          set: true
       output:
-        # TBC - Note Set instead of List in Java class
         multivalued: true
         range: Output
         annotations:
           type: "output"
+          set: true
       normalReaction:
         range: ReactionLikeEvent
         annotations:
@@ -1764,17 +1761,17 @@ classes:
         annotations:
           type: "regulationReference"
       requiredInputComponent:
-        # TBC - Note Set instead of List in Java class
         multivalued: true
         range: PhysicalEntity
         annotations:
           type: "requiredInputComponent"
+          set: true
       hasInteraction:
-        # TBC - Note Set instead of List in Java class
         multivalued: true
         range: InteractionEvent
         annotations:
           type: "hasInteraction"
+          set: true
       reactionType:
         multivalued: true
         range: ReactionType
@@ -2129,9 +2126,9 @@ classes:
 
   #### RepeatedUnitForPhysicalEntity ####
   RepeatedUnitForPhysicalEntity:
-    # TBC - how to express Java implements clause
     annotations:
       relationship_properties: true
+      implements: "Comparable<RepeatedUnitForPhysicalEntity>"
     slots:
       - id
       - order
@@ -2314,6 +2311,7 @@ classes:
         range: boolean
       id:
         range: boolean
+      implements:
       json_identity_info:
         range: JsonIdentityInfo
       json_ignore:
@@ -2330,15 +2328,19 @@ classes:
         range: ReactomeProperty
       reactome_relationship:
         range: boolean
+      reactome_instance_defining_value:
+        range: ReactomeInstanceDefiningValue
       property:
         range: boolean
       relationship:
         range: ReactomeRelationship
-      reactome_instance_defining_value:
-        range: ReactomeInstanceDefiningValue
+      relationship_properties:
+        range: boolean
       target_node:
         range: boolean
-      relationship_properties:
+      set:
+        range: boolean
+      sorted_set:
         range: boolean
     in_subset:
       - schema_annotations
@@ -2479,6 +2481,8 @@ slots:
   identifierVersion:
     annotations:
       addedField: false
+  int_value:
+    range: integer
   isChimeric:
     range: boolean
     annotations:
@@ -2498,7 +2502,6 @@ slots:
     annotations:
       addedField: false
   order:
-    # TBC: Note primitive int type in java class
     range: integer
   otherIdentifier:
     multivalued: true
@@ -2537,9 +2540,10 @@ slots:
     annotations:
       type: "species"
   stoichiometry:
-    # TBC: How to store the default value of 1
-    # TBC: Note Integer instead of int in java class
     range: integer
+    annotations:
+      int_value: 1
+  string_value:
   summation:
     multivalued: true
     range: Summation
@@ -2549,5 +2553,4 @@ slots:
     range: Anatomy
     annotations:
       type: "tissue"
-  # TBC - is this the correct way to assign constant values to variables?
-  constant_value:
+
