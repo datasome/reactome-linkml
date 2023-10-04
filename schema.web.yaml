@@ -1167,7 +1167,6 @@ classes:
         multivalued: true
         range: InterChainCrosslinkedResidue
         annotations:
-          category: all
           type: "secondReferenceSequence"
     in_subset:
       - web_schema
@@ -1570,7 +1569,6 @@ classes:
         multivalued: true
         range: PhysicalEntity
         annotations:
-          constraint: OPTIONAL
           type: "inferredTo"
           reactome_transient: true
       reviewed:
@@ -2415,7 +2413,6 @@ enums:
 slots:
   accession:
     annotations:
-      category: any
       addedField: false
   authored:
     range: InstanceEdit
@@ -2431,7 +2428,6 @@ slots:
     multivalued: true
     range: CellType
     annotations:
-      category: all
       type: "cellType"
   coordinate:
     range: integer
@@ -2495,7 +2491,6 @@ slots:
   modification:
     range: DatabaseObject
     annotations:
-      category: all
       type: "modification"
       allowed: "EntitySet.class, Polymer.class, ReferenceGroup.class"
   name:
