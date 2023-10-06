@@ -118,6 +118,13 @@ classes:
           constraint: REQUIRED
           type: "authored"
           direction: INCOMING
+      explanation:
+        annotations:
+          getter_only: true
+          reactome_schema_ignore: true
+          json_ignore: true
+          override: true
+          value: "Shortcut reactions that make the connection between input and output, but don't provide complete mechanistic detail. Used for reactions that do not balance, or complicated processes for which we either don't know all the details, or we choose not to represent every step. (e.g. degradation of a protein)"
     in_subset:
       - curator_schema_only
 
@@ -180,6 +187,13 @@ classes:
           constraint: REQUIRED
           category: all
           type: "hasMember"
+      explanation:
+        annotations:
+          getter_only: true
+          reactome_schema_ignore: true
+          json_ignore: true
+          override: true
+          value: "A set of entities that are interchangeable in function, with two subclasses, members that are hypothetical and members that have been demonstrated. Hypothetical members are identified as values of the hasCandidate slot. Members that have been demonstrated are identified in the hasMember slot. At least one hasCandidate value is required; hasMember values are optional"
     in_subset:
       - curator_schema_only
 
@@ -363,6 +377,13 @@ classes:
           constraint: NOMANUALEDIT
           type: "includedLocation"
           sorted_set: true
+      explanation:
+        annotations:
+          getter_only: true
+          reactome_schema_ignore: true
+          json_ignore: true
+          override: true
+          value: "An entity formed by the association of two or more component entities (these components can themselves be complexes). At least one component must be specified. Complexes represent all experimentally verified components and their stoichiometry where this is known but may not include as yet unidentified components"
     in_subset:
       - curator_schema_only
 
@@ -485,6 +506,17 @@ classes:
           annotations:
             constraint: NOMANUALEDIT
             type: "stableIdentifier"
+      explanation:
+        annotations:
+          getter_only: true
+          reactome_schema_ignore: true
+          json_ignore: true
+          value: "Not available"
+      className:
+        annotations:
+          getter_only: true
+          reactome_schema_ignore: true
+          # TBC - how to encode getClass().getSimpleName()
     in_subset:
       - curator_schema_only
 
@@ -511,7 +543,14 @@ classes:
     is_a: EntitySet
     annotations:
       node: true
-    # TBC: Java class has method annotations - how do we represent them here?
+    attributes:
+      explanation:
+        annotations:
+          getter_only: true
+          reactome_schema_ignore: true
+          json_ignore: true
+          override: true
+          value: "Two or more entities that are interchangeable in function"
     in_subset:
       - curator_schema_only
 
@@ -721,6 +760,19 @@ classes:
           category: all
           type: "hasMember"
           sorted_set: true
+      explanation:
+        annotations:
+          getter_only: true
+          reactome_schema_ignore: true
+          json_ignore: true
+          override: true
+          value: "Two or more entities grouped because of a shared molecular feature. The superclass for CandidateSet and DefinedSet"
+      className:
+        annotations:
+          getter_only: true
+          reactome_schema_ignore: true
+          override: true
+          value: "Set"
     in_subset:
       - curator_schema_only
 
@@ -771,6 +823,12 @@ classes:
           json_ignore: true
           override: true
           value: "A protein, RNA, or DNA molecule or fragment thereof in a specified cellular compartment and specific post-translational state. Must be linked to an external database reference, given as the value of referenceSequence. An EWAS typically corresponds to the entire protein or polynucleotide described in the external database. Fragments are defined by setting the first and last residue using the numbering scheme of the external database, entered as startCoordinate and endCoordinate values. Values of 1 and -1 respectively indicate that the true start and end are unconfirmed. EWAS instances are specific to a subcellular compartment; if the same molecule is found in two cellular components it will have two EWASes. EWAS instances by default define an unmodified protein sequence, any post-translational modification (PTM), such as phosphorylation, requires a new EWAS instance. The location and type of any PTM are defined in the hasModifiedResidue slot"
+      className:
+        annotations:
+          getter_only: true
+          reactome_schema_ignore: true
+          override: true
+          value: "Genes and Transcripts"
     in_subset:
       - curator_schema_only
 
@@ -1129,8 +1187,8 @@ classes:
           json_ignore: true
           override: true
           value: "A peptide or polynucleotide whose sequence is unknown and thus cannot be linked to external sequence databases or used for orthology inference"
-      in_subset:
-      - curator_schema_only
+    in_subset:
+    - curator_schema_only
 
   #### GO_BiologicalProcess ####
   GO_BiologicalProcess:
@@ -1489,10 +1547,17 @@ classes:
 
   #### NegativeGeneExpressionRegulation ####
   NegativeGeneExpressionRegulation:
-    # TBC: Java class has method annotations - how do we represent them here?
     is_a: NegativeRegulation
     annotations:
       node: true
+    attributes:
+      explanation:
+        annotations:
+          getter_only: true
+          reactome_schema_ignore: true
+          json_ignore: true
+          override: true
+          value: "A negative gene expression regulation"
     in_subset:
       - curator_schema_only
 
@@ -1531,10 +1596,17 @@ classes:
 
   #### NegativeRegulation ####
   NegativeRegulation:
-     # TBC: Java class has method annotations - how do we represent them here?
     is_a: Regulation
     annotations:
       node: true
+    attributes:
+      explanation:
+        annotations:
+          getter_only: true
+          reactome_schema_ignore: true
+          json_ignore: true
+          override: true
+          value: "This describes an Event/CatalystActivity that is negatively regulated by the Regulator (e.g., allosteric inhibition, competitive inhibition"
     in_subset:
       - curator_schema_only
 
@@ -1809,6 +1881,13 @@ classes:
           constraint: REQUIRED
           type: "authored"
           direction: INCOMING
+      explanation:
+        annotations:
+          getter_only: true
+          reactome_schema_ignore: true
+          json_ignore: true
+          override: true
+          value: "Reactions that follow the pattern: Polymer + Unit -> Polymer (there may be a catalyst involved). Used to describe the mechanistic detail of a polymerisation"
     in_subset:
       - curator_schema_only
 
@@ -1818,6 +1897,14 @@ classes:
     is_a: PositiveRegulation
     annotations:
       node: true
+    attributes:
+      explanation:
+        annotations:
+          getter_only: true
+          reactome_schema_ignore: true
+          json_ignore: true
+          override: true
+          value: "A positive gene expression regulation"
     in_subset:
       - curator_schema_only
 
@@ -1827,8 +1914,16 @@ classes:
     is_a: Regulation
     annotations:
       node: true
+    attributes:
+      explanation:
+        annotations:
+          getter_only: true
+          reactome_schema_ignore: true
+          json_ignore: true
+          override: true
+          value: "This describes an Event/CatalystActivity that is positively regulated by the Regulator (e.g., allosteric activation)"
     in_subset:
-      - curator_schema_only
+    - curator_schema_only
 
   #### ProteinDrug ####
   ProteinDrug:
@@ -1924,6 +2019,13 @@ classes:
           constraint: REQUIRED
           type: "authored"
           direction: INCOMING
+      explanation:
+        annotations:
+          getter_only: true
+          reactome_schema_ignore: true
+          json_ignore: true
+          override: true
+          value: "Defines a change of state for one or more molecular entities. Most reactions in Reactome involve either a) the interaction of entities to form a complex, or b) the movement of entities between compartments, or c) the chemical conversion of entities as part of a metabolic process. Reactions have a molecular balance between input and output entities"
     in_subset:
       - curator_schema_only
 
@@ -2018,6 +2120,12 @@ classes:
         annotations:
           constraint: OPTIONAL
           type: "compartment"
+      className:
+        annotations:
+          getter_only: true
+          reactome_schema_ignore: true
+          override: true
+          value: "Reaction"
     in_subset:
       - curator_schema_only
 
@@ -2403,10 +2511,17 @@ classes:
 
   #### Requirement ####
   Requirement:
-    # TBC: Java class has method annotations - how do we represent them here?
     is_a: PositiveRegulation
     annotations:
       node: true
+    attributes:
+      explanation:
+        annotations:
+          getter_only: true
+          reactome_schema_ignore: true
+          json_ignore: true
+          override: true
+          value: "A regulator that is required for an Event/CatalystActivity to happen"
     in_subset:
       - curator_schema_only
 
@@ -2471,8 +2586,8 @@ classes:
           reactome_schema_ignore: true
           override: true
           value: "Chemical Compound"
-      in_subset:
-      - curator_schema_only
+    in_subset:
+    - curator_schema_only
 
   #### Species ####
   Species:
