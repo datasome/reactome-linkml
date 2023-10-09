@@ -230,13 +230,12 @@ classes:
     is_a: ControlReference
     annotations:
       node: true
-    attributes:
+    slots:
+      - catalystActivity
+    slot_usage:
       catalystActivity:
-        range: CatalystActivity
         annotations:
           constraint: MANDATORY
-          category: all
-          type: "catalystActivity"
     in_subset:
       - curator_schema_only
 
@@ -2032,20 +2031,18 @@ classes:
     annotations:
       node: true
     slots:
+      - catalystActivity
       - isChimeric
       - entityOnOtherCell
+    slot_usage:
+      catalystActivity:
+        annotations:
+          constraint: REQUIRED
     attributes:
       systematicName:
         annotations:
           constraint: OPTIONAL
           addedField: false
-      catalystActivity:
-        multivalued: true
-        range: CatalystActivity
-        annotations:
-          constraint: REQUIRED
-          category: all
-          type: "catalystActivity"
       catalystActivityReference:
         range: CatalystActivityReference
         annotations:
@@ -2896,9 +2893,9 @@ slots:
     multivalued: true
     range: CatalystActivity
     annotations:
+      type: "catalystActivity"
       constraint: OPTIONAL
       category: all
-      type: "catalystActivity"
   cellType:
     multivalued: true
     range: CellType

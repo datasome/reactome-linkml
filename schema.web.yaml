@@ -168,11 +168,8 @@ classes:
     is_a: ControlReference
     annotations:
       node: true
-    attributes:
-      catalystActivity:
-        range: CatalystActivity
-        annotations:
-          type: "catalystActivity"
+    slots:
+      - catalystActivity
     in_subset:
       - web_schema
 
@@ -1875,6 +1872,7 @@ classes:
     annotations:
       node: true
     slots:
+      - catalystActivity
       - isChimeric
       - entityOnOtherCell
     attributes:
@@ -1884,11 +1882,6 @@ classes:
       category:
         annotations:
           addedField: false
-      catalystActivity:
-        multivalued: true
-        range: CatalystActivity
-        annotations:
-          type: "catalystActivity"
       catalystActivityReference:
         range: CatalystActivityReference
         annotations:
