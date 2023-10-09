@@ -73,8 +73,13 @@ classes:
     annotations:
       node: true
     slots:
+      - authored
       - catalystActivity
       - goBiologicalProcess
+    slot_usage:
+      authored:
+        annotations:
+          constraint: REQUIRED
     attributes:
       templateEvent:
         range: Event
@@ -109,13 +114,6 @@ classes:
         annotations:
           constraint: REQUIRED
           type: "edited"
-          direction: INCOMING
-      authored:
-        multivalued: true
-        range: InstanceEdit
-        annotations:
-          constraint: REQUIRED
-          type: "authored"
           direction: INCOMING
       explanation:
         annotations:
@@ -367,7 +365,7 @@ classes:
         range: boolean
         annotations:
           constraint: OPTIONAL
-          addedFiled: false
+          addedField: false
       includedLocation:
         multivalued: true
         range: HasCompartment
@@ -634,7 +632,12 @@ classes:
     annotations:
       node: true
     slots:
+      - authored
       - goBiologicalProcess
+    slot_usage:
+      authored:
+        annotations:
+          constraint: REQUIRED
     attributes:
       literatureReference:
         multivalued: true
@@ -648,13 +651,6 @@ classes:
         annotations:
           constraint: REQUIRED
           type: "edited"
-          direction: INCOMING
-      authored:
-        multivalued: true
-        range: InstanceEdit
-        annotations:
-          constraint: REQUIRED
-          type: "authored"
           direction: INCOMING
     in_subset:
       - curator_schema_only
@@ -984,8 +980,13 @@ classes:
     annotations:
       node: true
     slots:
+      - authored
       - catalystActivity
       - goBiologicalProcess
+    slot_usage:
+      authored:
+        annotations:
+          constraint: REQUIRED
     attributes:
       normalReaction:
         range: ReactionlikeEvent
@@ -1012,13 +1013,6 @@ classes:
         annotations:
           constraint: REQUIRED
           type: "edited"
-          direction: INCOMING
-      authored:
-        multivalued: true
-        range: InstanceEdit
-        annotations:
-          constraint: REQUIRED
-          type: "authored"
           direction: INCOMING
       explanation:
         annotations:
@@ -1858,6 +1852,10 @@ classes:
       node: true
     slots:
       - goBiologicalProcess
+    slot_usage:
+      authored:
+        annotations:
+          constraint: REQUIRED
     attributes:
       literatureReference:
         multivalued: true
@@ -1871,13 +1869,6 @@ classes:
         annotations:
           constraint: REQUIRED
           type: "edited"
-          direction: INCOMING
-      authored:
-        multivalued: true
-        range: InstanceEdit
-        annotations:
-          constraint: REQUIRED
-          type: "authored"
           direction: INCOMING
       explanation:
         annotations:
@@ -1988,7 +1979,12 @@ classes:
     annotations:
       node: true
     slots:
+      - authored
       - goBiologicalProcess
+    slot_usage:
+      authored:
+        annotations:
+          constraint: REQUIRED
     attributes:
       reverseReaction:
         range: Reaction
@@ -2007,13 +2003,6 @@ classes:
         annotations:
           constraint: REQUIRED
           type: "edited"
-          direction: INCOMING
-      authored:
-        multivalued: true
-        range: InstanceEdit
-        annotations:
-          constraint: REQUIRED
-          type: "authored"
           direction: INCOMING
       explanation:
         annotations:
@@ -2414,7 +2403,7 @@ classes:
           category: all
           type: "activeUnit"
           # TBC: Is the following an error in java class - given it's a relationship field?
-          addedFiled: false
+          addedField: false
       activity:
         range: GO_MolecularFunction
         annotations:
@@ -2422,7 +2411,7 @@ classes:
           category: all
           type: "activity"
           # TBC: Is the following an error in java class - given it's a relationship field?
-          addedFiled: false
+          addedField: false
       regulator:
         range: PhysicalEntity
         annotations:
