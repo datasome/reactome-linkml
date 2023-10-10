@@ -1328,11 +1328,9 @@ classes:
     is_a: TranscriptionalModification
     annotations:
       node: true
+    slots:
+      - coordinate
     attributes:
-      coordinate:
-        range: integer
-        annotations:
-          addedField: false
       modification:
         range: DatabaseObject
         annotations:
@@ -1531,6 +1529,12 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
+    slots:
+      - crossReference
+    slot_usage:
+      crossReference:
+        annotations:
+          deprecated: true
     attributes:
         firstname:
           annotations:
@@ -1552,12 +1556,6 @@ classes:
           range: Affiliation
           annotations:
             type: "affiliation"
-        crossReference:
-          multivalued: true
-          range: DatabaseIdentifier
-          annotations:
-            type: "crossReference"
-            deprecated: true
         publicationAuthorList:
           multivalued: true
           range: AuthorPublication
@@ -1575,6 +1573,7 @@ classes:
     slots:
       - authored
       - cellType
+      - crossReference
       - definition
       - edited
       - figure
@@ -1669,11 +1668,6 @@ classes:
          multivalued: true
          annotations:
            addedField: true
-      crossReference:
-        multivalued: true
-        range: DatabaseIdentifier
-        annotations:
-          type: "crossReference"
       disease:
         multivalued: true
         range: Disease
@@ -2410,17 +2404,16 @@ classes:
     annotations:
       node: true
     slots:
+      - crossReference
       - name
+    slot_usage:
+      crossReference:
+        annotations:
+          deprecated: true
     attributes:
       taxId:
         annotations:
           addedField: true
-      crossReference:
-        multivalued: true
-        range: DatabaseIdentifier
-        annotations:
-          deprecated: true
-          type: "crossReference"
       superTaxon:
         range: Taxon
         annotations:

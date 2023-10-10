@@ -1518,14 +1518,12 @@ classes:
     annotations:
       node: true
     slots:
+      - coordinate
       - modification
-    attributes:
+    slot_usage:
       coordinate:
-        range: integer
         annotations:
           constraint: MANDATORY
-          category: all
-          addedField: false
     in_subset:
       - curator_schema_only
 
@@ -1704,6 +1702,7 @@ classes:
     annotations:
       node: true
     slots:
+      - crossReference
       - figure
     attributes:
         firstname:
@@ -1737,12 +1736,6 @@ classes:
           annotations:
             constraint: OPTIONAL
             type: "affiliation"
-        crossReference:
-          multivalued: true
-          range: DatabaseIdentifier
-          annotations:
-            constraint: OPTIONAL
-            type: "crossReference"
     in_subset:
       - curator_schema_only
 
@@ -1754,6 +1747,7 @@ classes:
     slots:
       - authored
       - cellType
+      - crossReference
       - definition
       - edited
       - figure
@@ -1766,12 +1760,6 @@ classes:
         annotations:
           constraint: OPTIONAL
           addedField: false
-      crossReference:
-        multivalued: true
-        range: DatabaseIdentifier
-        annotations:
-          constraint: OPTIONAL
-          type: "crossReference"
       disease:
         multivalued: true
         range: Disease
@@ -2670,15 +2658,14 @@ classes:
     annotations:
       node: true
     slots:
+      - crossReference
       - name
-    attributes:
+    slot_usage:
       crossReference:
-        multivalued: true
-        range: DatabaseIdentifier
         annotations:
           deprecated: true
           constraint: MANDATORY
-          type: "crossReference"
+    attributes:
       superTaxon:
         range: Taxon
         annotations:
