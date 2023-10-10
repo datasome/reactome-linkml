@@ -363,7 +363,6 @@ classes:
         annotations:
           addedField: false
       identifier:
-        # TBC: Confirm - this attribute has to be different from identifier slot because of different annotations
         annotations:
           addedField: false
       url:
@@ -1985,7 +1984,6 @@ classes:
     attributes:
       databaseName:
       identifier:
-        # TBC: Confirm - this attribute has to be different from identifier slot because of different annotations
         annotations:
           addedField: false
       name:

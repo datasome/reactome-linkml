@@ -446,7 +446,6 @@ classes:
       - crossReference
     attributes:
       identifier:
-        # TBC: Confirm - this attribute has to be different from identifier slot because of different annotations
         annotations:
           constraint: MANDATORY
           category: all
@@ -2152,7 +2151,6 @@ classes:
       - crossReference
     attributes:
       identifier:
-        # TBC: Confirm - this attribute has to be different from identifier slot because of different annotations
         annotations:
           constraint: MANDATORY
           category: all
@@ -2511,7 +2509,6 @@ classes:
       node: true
     attributes:
       identifier:
-        # TBC: Confirm - this attribute has to be different from identifier slot because of different annotations
         annotations:
           constraint: MANDATORY
           category: any
