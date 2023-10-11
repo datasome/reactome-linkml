@@ -44,12 +44,10 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
+    slots:
+      - name
     attributes:
       address:
-      name:
-        multivalued: true
-        annotations:
-          addedField: false
     in_subset:
       - web_schema
 
@@ -132,8 +130,11 @@ classes:
   #### CatalystActivity ####
   CatalystActivity:
     is_a: DatabaseObject
+
     annotations:
       node: true
+    slots:
+      - literatureReference
     attributes:
       activeUnit:
         multivalued: true
@@ -155,11 +156,6 @@ classes:
         range: PhysicalEntity
         annotations:
           type: "physicalEntity"
-      literatureReference:
-        multivalued: true
-        range: Publication
-        annotations:
-          type: "literatureReference"
     in_subset:
       - web_schema
 
@@ -311,11 +307,7 @@ classes:
       node: true
     slots:
       - definition
-    attributes:
-      name:
-        multivalued: true
-        annotations:
-          addedField: false
+      - name
     in_subset:
       - web_schema
 
@@ -324,12 +316,8 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
-    attributes:
-      literatureReference:
-        multivalued: true
-        range: Publication
-        annotations:
-          type: "literatureReference"
+    slots:
+      - literatureReference
     in_subset:
       - web_schema
 
@@ -338,16 +326,17 @@ classes:
     is_a: TranslationalModification
     annotations:
       node: true
+    slots:
+      - modification
+    slot_usage:
+      modification:
+        annotations:
+            allowed: "EntitySet.class, Polymer.class, ReferenceGroup.class"
     attributes:
       secondCoordinate:
         range: integer
         annotations:
           addedField: false
-      modification:
-        range: DatabaseObject
-        annotations:
-          type: "modification"
-          allowed: "EntitySet.class, Polymer.class, ReferenceGroup.class"
     in_subset:
       - web_schema
 
@@ -358,11 +347,9 @@ classes:
       node: true
     slots:
       - crossReference
+      - identifier
     attributes:
       databaseName:
-        annotations:
-          addedField: false
-      identifier:
         annotations:
           addedField: false
       url:
@@ -525,13 +512,9 @@ classes:
       node: true
     slots:
       - definition
+      - name
     slot_usage:
       definition:
-        annotations:
-          addedField: true
-    attributes:
-      name:
-        multivalued: true
         annotations:
           addedField: true
     in_subset:
@@ -659,6 +642,7 @@ classes:
       - figure
       - goBiologicalProcess
       - literatureReference
+      - name
       - revised
     attributes:
       isInDisease:
@@ -669,10 +653,6 @@ classes:
         range: boolean
         annotations:
           addedField: true
-      name:
-        multivalued: true
-        annotations:
-          addedField: false
       releaseDate:
         annotations:
           addedField: false
@@ -770,16 +750,11 @@ classes:
       node: true
     slots:
       - definition
+      - identifier
+      - name
       - referenceDatabase
     attributes:
       databaseName:
-        annotations:
-          addedField: false
-      identifier:
-        annotations:
-          addedField: false
-      name:
-        multivalued: true
         annotations:
           addedField: false
       synonym:
@@ -1014,6 +989,10 @@ classes:
       node: true
     slots:
       - modification
+    slot_usage:
+      modification:
+        annotations:
+          allowed: "EntitySet.class, Polymer.class, ReferenceGroup.class"
     in_subset:
       - web_schema
 
@@ -1326,11 +1305,7 @@ classes:
       node: true
     slots:
       - coordinate
-    attributes:
-      modification:
-        range: DatabaseObject
-        annotations:
-          type: "modification"
+      - modification
     in_subset:
       - web_schema
 
@@ -1942,12 +1917,10 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
+    slots:
+      - name
     attributes:
       accessUrl:
-        annotations:
-          addedField: false
-      name:
-        multivalued: true
         annotations:
           addedField: false
       url:
@@ -1974,15 +1947,10 @@ classes:
       node: true
     slots:
       - crossReference
+      - identifier
+      - name
     attributes:
       databaseName:
-      identifier:
-        annotations:
-          addedField: false
-      name:
-        multivalued: true
-        annotations:
-          addedField: false
       otherIdentifier:
         multivalued: true
         annotations:
@@ -2162,6 +2130,7 @@ classes:
       - authored
       - edited
       - goBiologicalProcess
+      - literatureReference
       - summation
     attributes:
       releaseDate:
@@ -2192,11 +2161,6 @@ classes:
         annotations:
           type: "inferredTo"
           direction: INCOMING
-      literatureReference:
-        multivalued: true
-        range: Publication
-        annotations:
-          type: "literatureReference"
       regulatedEntity:
         multivalued: true
         range: ReactionLikeEvent
@@ -2245,7 +2209,7 @@ classes:
     attributes:
       name:
         annotations:
-          addedField: true
+          addedField: false
     in_subset:
       - web_schema
 
@@ -2647,9 +2611,6 @@ slots:
   identifier:
     annotations:
       addedField: false
-  identifierVersion:
-    annotations:
-      addedField: false
   int_value:
     range: integer
   isChimeric:
@@ -2665,7 +2626,6 @@ slots:
     range: DatabaseObject
     annotations:
       type: "modification"
-      allowed: "EntitySet.class, Polymer.class, ReferenceGroup.class"
   name:
     multivalued: true
     annotations:
@@ -2712,7 +2672,6 @@ slots:
     range: integer
     annotations:
       int_value: 1
-  string_value:
   summation:
     multivalued: true
     range: Summation
@@ -2722,4 +2681,5 @@ slots:
     range: Anatomy
     annotations:
       type: "tissue"
+  value:
 

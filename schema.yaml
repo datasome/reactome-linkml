@@ -46,16 +46,16 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
+    slots:
+      - name
+    slot_usage:
+      name:
+        annotations:
+          category: all
     attributes:
       address:
         annotations:
           constraint: REQUIRED
-      name:
-        multivalued: true
-        annotations:
-          constraint: MANDATORY
-          category: all
-          addedField: false
     in_subset:
       - curator_schema_only
 
@@ -77,11 +77,15 @@ classes:
       - edited
       - catalystActivity
       - goBiologicalProcess
+      - literatureReference
     slot_usage:
       authored:
         annotations:
           constraint: REQUIRED
       edited:
+        annotations:
+          constraint: REQUIRED
+      literatureReference:
         annotations:
           constraint: REQUIRED
     attributes:
@@ -90,12 +94,6 @@ classes:
         annotations:
           constraint: OPTIONAL
           type: "templateEvent"
-      literatureReference:
-        multivalued: true
-        range: Publication
-        annotations:
-          constraint: REQUIRED
-          type: "literatureReference"
       input:
         multivalued: true
         range: Input
@@ -387,12 +385,7 @@ classes:
       node: true
     slots:
       - definition
-    attributes:
-      name:
-        multivalued: true
-        annotations:
-          constraint: MANDATORY
-          addedField: false
+      - name
     in_subset:
       - curator_schema_only
 
@@ -401,14 +394,13 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
-    attributes:
+    slots:
+      - literatureReference
+    slot_usage:
       literatureReference:
-        multivalued: true
-        range: Publication
         annotations:
           constraint: MANDATORY
           category: all
-          type: "literatureReference"
     in_subset:
       - curator_schema_only
 
@@ -417,6 +409,12 @@ classes:
     is_a: TranslationalModification
     annotations:
       node: true
+    slots:
+      - modification
+    slot_usage:
+      modification:
+        annotations:
+          constraint: OPTIONAL
     attributes:
       secondCoordinate:
         range: integer
@@ -424,13 +422,6 @@ classes:
           constraint: REQUIRED
           category: all
           addedField: false
-      modification:
-        range: DatabaseObject
-        annotations:
-          constraint: OPTIONAL
-          category: all
-          type: "modification"
-          allowed: "EntitySet.class, Polymer.class, ReferenceGroup.class"
     in_subset:
       - curator_schema_only
 
@@ -441,12 +432,13 @@ classes:
       node: true
     slots:
       - crossReference
-    attributes:
+      - identifier
+    slot_usage:
       identifier:
         annotations:
           constraint: MANDATORY
           category: all
-          addedField: false
+    attributes:
       referenceDatabase:
         range: ReferenceDatabase
         annotations:
@@ -591,15 +583,17 @@ classes:
   #### _DeletedInstance ####
   _DeletedInstance:
     is_a: DatabaseObject
+    slots:
+      - name
+    slot_usage:
+      name:
+        annotations:
+          constraint: NOMANUALEDIT
+          category: all
     attributes:
       deletedInstanceDB_ID:
         multivalued: true
         range: long
-        annotations:
-          constraint: NOMANUALEDIT
-          category: all
-          addedField: false
-      name:
         annotations:
           constraint: NOMANUALEDIT
           category: all
@@ -633,6 +627,7 @@ classes:
       - authored
       - edited
       - goBiologicalProcess
+      - literatureReference
     slot_usage:
       authored:
         annotations:
@@ -640,13 +635,9 @@ classes:
       edited:
         annotations:
           constraint: REQUIRED
-    attributes:
       literatureReference:
-        multivalued: true
-        range: Publication
         annotations:
           constraint: REQUIRED
-          type: "literatureReference"
     in_subset:
       - curator_schema_only
 
@@ -769,7 +760,12 @@ classes:
     annotations:
       node: true
     slots:
+      - name
       - referenceEntity
+    slot_usage:
+      name:
+        annotations:
+          category: none
     attributes:
       endCoordinate:
         range: integer
@@ -791,12 +787,6 @@ classes:
           category: all
           type: "hasModifiedResidue"
           sorted_set: true
-      name:
-        multivalued: true
-        annotations:
-          constraint: MANDATORY
-          category: none
-          addedField: false
       species:
         range: Taxon
         annotations:
@@ -826,22 +816,20 @@ classes:
       - figure
       - goBiologicalProcess
       - literatureReference
+      - name
       - revised
     slot_usage:
       goBiologicalProcess:
         annotations:
           constraint: NOMANUALEDIT
+      name:
+        annotations:
+          category: none
     attributes:
       _doRelease:
         range: boolean
         annotations:
           constraint: OPTIONAL
-          addedField: false
-      name:
-        multivalued: true
-        annotations:
-          constraint: MANDATORY
-          category: none
           addedField: false
       releaseDate:
         annotations:
@@ -924,6 +912,10 @@ classes:
     slots:
       - definition
       - name
+    slot_usage:
+      name:
+        annotations:
+          category: any
     attributes:
       instanceOf:
         multivalued: true
@@ -941,18 +933,15 @@ classes:
       node: true
     slots:
       - definition
+      - identifier
+      - name
       - referenceDatabase
-    attributes:
+    slot_usage:
       identifier:
         annotations:
           constraint: MANDATORY
           category: all
-          addedField: false
-      name:
-        multivalued: true
-        annotations:
-          constraint: MANDATORY
-          addedField: false
+    attributes:
       synonym:
         multivalued: true
         annotations:
@@ -977,11 +966,15 @@ classes:
       - edited
       - catalystActivity
       - goBiologicalProcess
+      - literatureReference
     slot_usage:
       authored:
         annotations:
           constraint: REQUIRED
       edited:
+        annotations:
+          constraint: REQUIRED
+      literatureReference:
         annotations:
           constraint: REQUIRED
     attributes:
@@ -990,12 +983,6 @@ classes:
         annotations:
           constraint: MANDATORY
           type: "normalReaction"
-      literatureReference:
-        multivalued: true
-        range: Publication
-        annotations:
-          constraint: REQUIRED
-          type: "literatureReference"
       output:
         multivalued: true
         range: Output
@@ -1126,6 +1113,10 @@ classes:
     slots:
       - definition
       - name
+    slot_usage:
+      name:
+        annotations:
+          category: any
     in_subset:
       - curator_schema_only
 
@@ -1179,12 +1170,12 @@ classes:
     slots:
       - accession
       - definition
-    attributes:
+      - name
+    slot_usage:
       name:
-        multivalued: true
         annotations:
-          constraint: MANDATORY
-          addedField: false
+          category: any
+    attributes:
       referenceDatabase:
         range: ReferenceDatabase
         annotations:
@@ -1201,13 +1192,9 @@ classes:
     slots:
       - accession
       - definition
+      - name
       - referenceDatabase
     attributes:
-      name:
-        multivalued: true
-        annotations:
-          constraint: MANDATORY
-          addedField: false
       componentOf:
         multivalued: true
         range: GO_CellularComponent
@@ -1243,13 +1230,9 @@ classes:
     slots:
       - accession
       - definition
+      - name
       - referenceDatabase
     attributes:
-      name:
-        multivalued: true
-        annotations:
-          constraint: MANDATORY
-          addedField: false
       ecNumber:
         annotations:
           constraint: OPTIONAL
@@ -1744,6 +1727,10 @@ classes:
       - name
       - revised
       - summation
+    slot_usage:
+      name:
+        annotations:
+          category: any
     attributes:
       systematicName:
         annotations:
@@ -1829,6 +1816,7 @@ classes:
       node: true
     slots:
       - goBiologicalProcess
+      - literatureReference
     slot_usage:
       authored:
         annotations:
@@ -1836,13 +1824,10 @@ classes:
       edited:
         annotations:
           constraint: REQUIRED
-    attributes:
       literatureReference:
-        multivalued: true
-        range: Publication
         annotations:
           constraint: REQUIRED
-          type: "literatureReference"
+    attributes:
       explanation:
         annotations:
           getter_only: true
@@ -1954,11 +1939,15 @@ classes:
     slots:
       - authored
       - goBiologicalProcess
+      - literatureReference
     slot_usage:
       authored:
         annotations:
           constraint: REQUIRED
       edited:
+        annotations:
+          constraint: REQUIRED
+      literatureReference:
         annotations:
           constraint: REQUIRED
     attributes:
@@ -1967,12 +1956,6 @@ classes:
         annotations:
           constraint: OPTIONAL
           type: "reverseReaction"
-      literatureReference:
-        multivalued: true
-        range: Publication
-        annotations:
-          constraint: REQUIRED
-          type: "literatureReference"
       explanation:
         annotations:
           getter_only: true
@@ -2092,16 +2075,17 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
+    slots:
+      - name
+    slot_usage:
+      name:
+        annotations:
+          constraint: OPTIONAL
     attributes:
       accessUrl:
         annotations:
           constraint: MANDATORY
           category: any
-          addedField: false
-      name:
-        multivalued: true
-        annotations:
-          constraint: OPTIONAL
           addedField: false
       url:
         annotations:
@@ -2129,17 +2113,17 @@ classes:
       node: true
     slots:
       - crossReference
-    attributes:
+      - identifier
+      - name
+    slot_usage:
       identifier:
         annotations:
           constraint: MANDATORY
           category: all
-          addedField: false
       name:
-        multivalued: true
         annotations:
           constraint: OPTIONAL
-          addedField: false
+    attributes:
       otherIdentifier:
         multivalued: true
         annotations:
@@ -2190,12 +2174,7 @@ classes:
     slots:
       - otherIdentifier
       - formula
-    attributes:
-      name:
-        multivalued: true
-        annotations:
-          constraint: MANDATORY
-          addedField: false
+      - name
     in_subset:
       - curator_schema_only
 
@@ -2226,13 +2205,8 @@ classes:
       node: true
     slots:
       - formula
+      - name
       - otherIdentifier
-    attributes:
-      name:
-        multivalued: true
-        annotations:
-          constraint: MANDATORY
-          addedField: false
     in_subset:
       - curator_schema_only
 
@@ -2487,12 +2461,13 @@ classes:
     is_a: ExternalOntology
     annotations:
       node: true
-    attributes:
+    slots:
+      - identifier
+    slot_usage:
       identifier:
         annotations:
           constraint: MANDATORY
-          category: any
-          addedField: false
+          category: all
     in_subset:
       - curator_schema_only
 
@@ -2641,6 +2616,9 @@ classes:
         annotations:
           deprecated: true
           constraint: MANDATORY
+      name:
+        annotations:
+          category: any
     attributes:
       superTaxon:
         range: Taxon
@@ -2755,9 +2733,9 @@ classes:
         range: boolean
       sorted_set:
         range: boolean
-      string_value:
       target_node:
         range: boolean
+      value:
     in_subset:
       - schema_annotations
 
@@ -2938,7 +2916,6 @@ slots:
     multivalued: true
     annotations:
       constraint: MANDATORY
-      category: any
       addedField: false
   order:
     range: integer
