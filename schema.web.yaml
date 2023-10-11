@@ -429,12 +429,14 @@ classes:
   DBInfo:
     annotations:
       node: true
-    attributes:
+    slots:
+      - id
+    slot_usage:
       id:
-        range: long
         annotations:
-          id: true
+          generated_value: false
           json_ignore: true
+    attributes:
       name:
       version:
         range: integer
@@ -521,10 +523,13 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
-    attributes:
+    slots:
+      - definition
+    slot_usage:
       definition:
         annotations:
           addedField: true
+    attributes:
       name:
         multivalued: true
         annotations:
@@ -648,9 +653,11 @@ classes:
     slots:
       - authored
       - edited
+      - compartment
       - crossReference
       - definition
       - figure
+      - goBiologicalProcess
       - literatureReference
       - revised
     attributes:
@@ -676,12 +683,6 @@ classes:
         range: boolean
         annotations:
           addedField: true
-      compartment:
-        multivalued: true
-        range: HasCompartment
-        annotations:
-          type: "compartment"
-          sorted_set: true
       disease:
         multivalued: true
         range: Disease
@@ -712,10 +713,6 @@ classes:
           direction: INCOMING
           reactome_transient: true
           json_ignore: true
-      goBiologicalProcess:
-        range: GO_BiologicalProcess
-        annotations:
-          type: "goBiologicalProcess"
       inferredFrom:
         multivalued: true
         range: Event
@@ -1572,6 +1569,7 @@ classes:
     slots:
       - authored
       - cellType
+      - compartment
       - crossReference
       - definition
       - edited
@@ -1643,11 +1641,6 @@ classes:
           direction: INCOMING
           reactome_transient: true
           json_ignore: true
-          sorted_set: true
-      compartment:
-        multivalued: true
-        annotations:
-          type: "compartment"
           sorted_set: true
       catalystActivities:
         multivalued: true
@@ -2615,9 +2608,11 @@ slots:
     annotations:
       type: "crossReference"
   compartment:
-    range: Compartment
+    multivalued: true
+    range: HasCompartment
     annotations:
       type: "compartment"
+      sorted_set: true
   definition:
     annotations:
       addedField: False

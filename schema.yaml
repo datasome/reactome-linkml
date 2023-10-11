@@ -74,10 +74,14 @@ classes:
       node: true
     slots:
       - authored
+      - edited
       - catalystActivity
       - goBiologicalProcess
     slot_usage:
       authored:
+        annotations:
+          constraint: REQUIRED
+      edited:
         annotations:
           constraint: REQUIRED
     attributes:
@@ -108,13 +112,6 @@ classes:
           category: all
           type: "output"
           set: true
-      edited:
-        multivalued: true
-        range: InstanceEdit
-        annotations:
-          constraint: REQUIRED
-          type: "edited"
-          direction: INCOMING
       explanation:
         annotations:
           getter_only: true
@@ -519,12 +516,14 @@ classes:
   DBInfo:
     annotations:
       node: true
-    attributes:
+    slots:
+      - id
+    slot_usage:
       id:
-        range: long
         annotations:
-          id: true
+          generated_value: false
           json_ignore: true
+    attributes:
       name:
       version:
         range: integer
@@ -632,9 +631,13 @@ classes:
       node: true
     slots:
       - authored
+      - edited
       - goBiologicalProcess
     slot_usage:
       authored:
+        annotations:
+          constraint: REQUIRED
+      edited:
         annotations:
           constraint: REQUIRED
     attributes:
@@ -644,13 +647,6 @@ classes:
         annotations:
           constraint: REQUIRED
           type: "literatureReference"
-      edited:
-        multivalued: true
-        range: InstanceEdit
-        annotations:
-          constraint: REQUIRED
-          type: "edited"
-          direction: INCOMING
     in_subset:
       - curator_schema_only
 
@@ -668,15 +664,13 @@ classes:
     annotations:
       node: true
     slots:
+      - compartment
       - referenceEntity
-    attributes:
+    slot_usage:
       compartment:
-        multivalued: true
-        range: Compartment
         annotations:
-          constraint: MANDATORY
           category: all
-          type: "compartment"
+    attributes:
       disease:
         multivalued: true
         range: Disease
@@ -830,8 +824,13 @@ classes:
       - crossReference
       - definition
       - figure
+      - goBiologicalProcess
       - literatureReference
       - revised
+    slot_usage:
+      goBiologicalProcess:
+        annotations:
+          constraint: NOMANUALEDIT
     attributes:
       _doRelease:
         range: boolean
@@ -869,11 +868,6 @@ classes:
         annotations:
           constraint: OPTIONAL
           type: "precedingEvent"
-      goBiologicalProcess:
-        range: GO_BiologicalProcess
-        annotations:
-          constraint: NOMANUALEDIT
-          type: "goBiologicalProcess"
       inferredFrom:
         multivalued: true
         range: Event
@@ -980,10 +974,14 @@ classes:
       node: true
     slots:
       - authored
+      - edited
       - catalystActivity
       - goBiologicalProcess
     slot_usage:
       authored:
+        annotations:
+          constraint: REQUIRED
+      edited:
         annotations:
           constraint: REQUIRED
     attributes:
@@ -1006,13 +1004,6 @@ classes:
           category: all
           type: "output"
           set: true
-      edited:
-        multivalued: true
-        range: InstanceEdit
-        annotations:
-          constraint: REQUIRED
-          type: "edited"
-          direction: INCOMING
       explanation:
         annotations:
           getter_only: true
@@ -1151,6 +1142,12 @@ classes:
     is_a: PhysicalEntity
     annotations:
       node: true
+    slots:
+      - compartment
+    slot_usage:
+      compartment:
+        annotations:
+          category: all
     attributes:
       species:
         range: Taxon
@@ -1158,13 +1155,6 @@ classes:
           constraint: MANDATORY
           category: all
           type: "species"
-      compartment:
-        multivalued: true
-        range: Compartment
-        annotations:
-          constraint: MANDATORY
-          category: all
-          type: "compartment"
       explanation:
         annotations:
           getter_only: true
@@ -1294,6 +1284,7 @@ classes:
     annotations:
       relationship_properties: true
     slots:
+      - compartment
       - id
       - order
     attributes:
@@ -1612,14 +1603,13 @@ classes:
     is_a: PhysicalEntity
     annotations:
       node: true
-    attributes:
+    slots:
+      - compartment
+    slot_usage:
       compartment:
-        multivalued: true
-        range: Compartment
         annotations:
-          constraint: MANDATORY
           category: all
-          type: "compartment"
+    attributes:
       explanation:
         annotations:
           getter_only: true
@@ -1650,8 +1640,13 @@ classes:
       node: true
     slots:
       - authored
+      - compartment
       - edited
       - goBiologicalProcess
+    slot_usage:
+      compartment:
+        annotations:
+          constraint: REQUIRED
     attributes:
       doi:
         annotations:
@@ -1667,11 +1662,6 @@ classes:
         annotations:
           constraint: OPTIONAL
           addedField: false
-      compartment:
-        range: Compartment
-        annotations:
-          constraint: REQUIRED
-          type: "compartment"
       hasEvent:
         multivalued: true
         range: HasEvent
@@ -1843,6 +1833,9 @@ classes:
       authored:
         annotations:
           constraint: REQUIRED
+      edited:
+        annotations:
+          constraint: REQUIRED
     attributes:
       literatureReference:
         multivalued: true
@@ -1850,13 +1843,6 @@ classes:
         annotations:
           constraint: REQUIRED
           type: "literatureReference"
-      edited:
-        multivalued: true
-        range: InstanceEdit
-        annotations:
-          constraint: REQUIRED
-          type: "edited"
-          direction: INCOMING
       explanation:
         annotations:
           getter_only: true
@@ -1972,6 +1958,9 @@ classes:
       authored:
         annotations:
           constraint: REQUIRED
+      edited:
+        annotations:
+          constraint: REQUIRED
     attributes:
       reverseReaction:
         range: Reaction
@@ -1984,13 +1973,6 @@ classes:
         annotations:
           constraint: REQUIRED
           type: "literatureReference"
-      edited:
-        multivalued: true
-        range: InstanceEdit
-        annotations:
-          constraint: REQUIRED
-          type: "edited"
-          direction: INCOMING
       explanation:
         annotations:
           getter_only: true
@@ -2008,12 +1990,16 @@ classes:
       node: true
     slots:
       - catalystActivity
+      - compartment
       - isChimeric
       - entityOnOtherCell
     slot_usage:
       catalystActivity:
         annotations:
           constraint: REQUIRED
+      compartment:
+        annotations:
+          constraint: OPTIONAL
     attributes:
       systematicName:
         annotations:
@@ -2084,12 +2070,6 @@ classes:
         annotations:
           constraint: OPTIONAL
           type: "reactionType"
-      compartment:
-        multivalued: true
-        range: Compartment
-        annotations:
-          constraint: OPTIONAL
-          type: "compartment"
       className:
         annotations:
           getter_only: true
@@ -2521,6 +2501,12 @@ classes:
     is_a: PhysicalEntity
     annotations:
       node: true
+    slots:
+      - compartment
+    slot_usage:
+      compartment:
+        annotations:
+          category: all
     attributes:
       referenceEntity:
         range: ReferenceMolecule
@@ -2534,13 +2520,6 @@ classes:
           constraint: OPTIONAL
           category: all
           type: "species"
-      compartment:
-        multivalued: true
-        range: Compartment
-        annotations:
-          constraint: MANDATORY
-          category: all
-          type: "compartment"
       explanation:
         annotations:
           getter_only: true
@@ -2890,6 +2869,7 @@ slots:
       type: "crossReference"
   compartment:
     range: Compartment
+    multivalued: true
     annotations:
       constraint: MANDATORY
       type: "compartment"
