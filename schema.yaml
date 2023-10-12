@@ -239,6 +239,16 @@ classes:
       node: true
     slots:
       - cellType
+      - species
+      - tissue
+    slot_usage:
+      species:
+        range: Taxon
+        annotations:
+          constraint: MANDATORY
+      tissue:
+        annotations:
+          constraint: MANDATORY
     attributes:
       RNAMarker:
         multivalued: true
@@ -264,17 +274,6 @@ classes:
           constraint: REQUIRED
           type: "proteinMarker"
           allowed: "Complex.class, EntityWithAccessionedSequence.class"
-      species:
-        multivalued: true
-        range: Taxon
-        annotations:
-          constraint: MANDATORY
-          type: "species"
-      tissue:
-        range: Anatomy
-        annotations:
-          constraint: MANDATORY
-          type: "tissue"
       tissueLayer:
         range: Anatomy
         annotations:
@@ -433,18 +432,15 @@ classes:
     slots:
       - crossReference
       - identifier
+      - referenceDatabase
     slot_usage:
       identifier:
         annotations:
           constraint: MANDATORY
           category: all
-    attributes:
       referenceDatabase:
-        range: ReferenceDatabase
         annotations:
-          constraint: MANDATORY
           category: all
-          type: "referenceDatabase"
     in_subset:
       - curator_schema_only
 
@@ -585,8 +581,14 @@ classes:
     is_a: DatabaseObject
     slots:
       - name
+      - species
     slot_usage:
       name:
+        annotations:
+          constraint: NOMANUALEDIT
+          category: all
+      species:
+        range: Taxon
         annotations:
           constraint: NOMANUALEDIT
           category: all
@@ -608,13 +610,6 @@ classes:
           constraint: NOMANUALEDIT
           category: all
           type: "deletedStableIdentifier"
-      species:
-        multivalued: true
-        range: Taxon
-        annotations:
-          constraint: NOMANUALEDIT
-          category: all
-          type: "species"
     in_subset:
       - curator_schema_only
 
@@ -762,9 +757,15 @@ classes:
     slots:
       - name
       - referenceEntity
+      - species
     slot_usage:
       name:
         annotations:
+          category: none
+      species:
+        range: Taxon
+        annotations:
+          constraint: MANDATORY
           category: none
     attributes:
       endCoordinate:
@@ -787,12 +788,6 @@ classes:
           category: all
           type: "hasModifiedResidue"
           sorted_set: true
-      species:
-        range: Taxon
-        annotations:
-          constraint: MANDATORY
-          category: none
-          type: "species"
       explanation:
         annotations:
           getter_only: true
@@ -817,7 +812,10 @@ classes:
       - goBiologicalProcess
       - literatureReference
       - name
+      - relatedSpecies
       - revised
+      - species
+      - summation
     slot_usage:
       goBiologicalProcess:
         annotations:
@@ -825,6 +823,12 @@ classes:
       name:
         annotations:
           category: none
+      species:
+        annotations:
+          constraint: MANDATORY
+      summation:
+        annotations:
+          constraint: MANDATORY
     attributes:
       _doRelease:
         range: boolean
@@ -870,12 +874,6 @@ classes:
           constraint: OPTIONAL
           type: "orthologousEvent"
           set: true
-      relatedSpecies:
-        multivalued: true
-        range: Species
-        annotations:
-          constraint: OPTIONAL
-          type: "relatedSpecies"
       reviewed:
         multivalued: true
         range: InstanceEdit
@@ -883,18 +881,6 @@ classes:
           constraint: REQUIRED
           direction: INCOMING
           type: "reviewed"
-      species:
-        multivalued: true
-        range: Species
-        annotations:
-          constraint: MANDATORY
-          type: "species"
-      summation:
-        multivalued: true
-        range: Summation
-        annotations:
-          constraint: MANDATORY
-          type: "summation"
       negativePrecedingEvent:
         multivalued: true
         range: NegativePrecedingEvent
@@ -1135,17 +1121,17 @@ classes:
       node: true
     slots:
       - compartment
+      - species
     slot_usage:
       compartment:
         annotations:
           category: all
-    attributes:
       species:
         range: Taxon
         annotations:
           constraint: MANDATORY
           category: all
-          type: "species"
+    attributes:
       explanation:
         annotations:
           getter_only: true
@@ -1171,16 +1157,11 @@ classes:
       - accession
       - definition
       - name
+      - referenceDatabase
     slot_usage:
       name:
         annotations:
           category: any
-    attributes:
-      referenceDatabase:
-        range: ReferenceDatabase
-        annotations:
-          constraint: MANDATORY
-          type: "referenceDatabase"
     in_subset:
       - curator_schema_only
 
@@ -2115,26 +2096,22 @@ classes:
       - crossReference
       - identifier
       - name
+      - otherIdentifier
+      - referenceDatabase
     slot_usage:
       identifier:
         annotations:
           constraint: MANDATORY
           category: all
+      referenceDatabase:
+        annotations:
+          category: all
       name:
         annotations:
           constraint: OPTIONAL
-    attributes:
       otherIdentifier:
-        multivalued: true
         annotations:
           constraint: OPTIONAL
-          addedField: false
-      referenceDatabase:
-        range: ReferenceDatabase
-        annotations:
-          constraint: MANDATORY
-          category: all
-          type: "referenceDatabase"
     in_subset:
       - curator_schema_only
 
@@ -2232,6 +2209,12 @@ classes:
       node: true
     slots:
       - otherIdentifier
+      - species
+    slot_usage:
+      species:
+        annotations:
+          constraint: MANDATORY
+          category: all
     attributes:
       checksum:
         annotations:
@@ -2271,12 +2254,6 @@ classes:
         range: integer
         annotations:
           addedField: false
-      species:
-        range: Species
-        annotations:
-          constraint: MANDATORY
-          category: all
-          type: "species"
     in_subset:
       - curator_schema_only
 
@@ -2478,9 +2455,14 @@ classes:
       node: true
     slots:
       - compartment
+      - species
     slot_usage:
       compartment:
         annotations:
+          category: all
+      species:
+        annotations:
+          constraint: OPTIONAL
           category: all
     attributes:
       referenceEntity:
@@ -2489,12 +2471,6 @@ classes:
           constraint: MANDATORY
           category: all
           type: "referenceEntity"
-      species:
-        range: Species
-        annotations:
-          constraint: OPTIONAL
-          category: all
-          type: "species"
       explanation:
         annotations:
           getter_only: true
@@ -2667,10 +2643,6 @@ classes:
         annotations:
           constraint: NOMANUALEDIT
           type: "updatedInstance"
-          # TBC: allowed:
-          # - Event.class
-          # - PhysicalEntity.class
-          # did not work
           allowed: "Event.class, PhysicalEntity.class"
     in_subset:
       - curator_schema_only

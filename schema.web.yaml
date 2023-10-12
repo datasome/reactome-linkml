@@ -176,6 +176,11 @@ classes:
       node: true
     slots:
       - cellType
+      - species
+      - tissue
+    slot_usage:
+      species:
+        range: Taxon
     attributes:
       RNAMarker:
         multivalued: true
@@ -196,15 +201,6 @@ classes:
         range: PhysicalEntity
         annotations:
           type: "proteinMarker"
-      species:
-        multivalued: true
-        range: Taxon
-        annotations:
-          type: "species"
-      tissue:
-        range: Anatomy
-        annotations:
-          type: "tissue"
       tissueLayer:
         range: Anatomy
         annotations:
@@ -348,6 +344,7 @@ classes:
     slots:
       - crossReference
       - identifier
+      - referenceDatabase
     attributes:
       databaseName:
         annotations:
@@ -355,10 +352,6 @@ classes:
       url:
         annotations:
           addedField: false
-      referenceDatabase:
-        range: ReferenceDatabase
-        annotations:
-          type: "referenceDatabase"
     in_subset:
       - web_schema
 
@@ -643,7 +636,10 @@ classes:
       - goBiologicalProcess
       - literatureReference
       - name
+      - relatedSpecies
       - revised
+      - species
+      - summation
     attributes:
       isInDisease:
         range: boolean
@@ -706,27 +702,12 @@ classes:
           # TBC - Shouldn't the type be "orthologousEvent" ?
           type: "inferredTo"
           set: true
-      relatedSpecies:
-        multivalued: true
-        range: Species
-        annotations:
-          type: "relatedSpecies"
       reviewed:
         multivalued: true
         range: InstanceEdit
         annotations:
           direction: INCOMING
           type: "reviewed"
-      species:
-        multivalued: true
-        range: Species
-        annotations:
-          type: "species"
-      summation:
-        multivalued: true
-        range: Summation
-        annotations:
-          type: "summation"
       negativePrecedingEvent:
         multivalued: true
         range: NegativePrecedingEvent
@@ -889,11 +870,12 @@ classes:
     is_a: PhysicalEntity
     annotations:
       node: true
-    attributes:
+    slots:
+      - species
+    slot_usage:
       species:
         range: Taxon
-        annotations:
-          type: "species"
+    attributes:
       explanation:
         annotations:
           getter_only: true
@@ -967,6 +949,7 @@ classes:
     slots:
       - accession
       - definition
+      - referenceDatabase
     attributes:
       databaseName:
       name:
@@ -975,10 +958,6 @@ classes:
       url:
         annotations:
           addedField: true
-      referenceDatabase:
-        range: ReferenceDatabase
-        annotations:
-          type: "referenceDatabase"
     in_subset:
       - web_schema
 
@@ -1182,10 +1161,6 @@ classes:
     annotations:
       node: true
     attributes:
-      referenceDatabase:
-        range: ReferenceDatabase
-        annotations:
-          type: "referenceDatabase"
       databaseName:
         annotations:
           addedField: false
@@ -1949,19 +1924,13 @@ classes:
       - crossReference
       - identifier
       - name
+      - otherIdentifier
+      - referenceDatabase
     attributes:
       databaseName:
-      otherIdentifier:
-        multivalued: true
-        annotations:
-          addedField: false
       url:
         annotations:
           addedField: true
-      referenceDatabase:
-        range: ReferenceDatabase
-        annotations:
-          type: "referenceDatabase"
       physicalEntity:
         multivalued: true
         range: PhysicalEntity
@@ -2056,6 +2025,8 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
+    slots:
+      - species
     attributes:
       checksum:
         annotations:
@@ -2088,10 +2059,6 @@ classes:
         range: integer
         annotations:
           addedField: false
-      species:
-        range: Species
-        annotations:
-          type: "species"
     in_subset:
       - web_schema
 
@@ -2131,6 +2098,7 @@ classes:
       - edited
       - goBiologicalProcess
       - literatureReference
+      - revised
       - summation
     attributes:
       releaseDate:
@@ -2173,12 +2141,6 @@ classes:
         annotations:
           type: "regulator"
       reviewed:
-        multivalued: true
-        range: InstanceEdit
-        annotations:
-          direction: INCOMING
-          type: "reviewed"
-      revised:
         multivalued: true
         range: InstanceEdit
         annotations:
@@ -2298,6 +2260,8 @@ classes:
     is_a: PhysicalEntity
     annotations:
       node: true
+    slots:
+      - species
     attributes:
       referenceType:
         annotations:
@@ -2306,11 +2270,6 @@ classes:
         range: ReferenceMolecule
         annotations:
           type: "referenceEntity"
-      species:
-        multivalued: true
-        range: Species
-        annotations:
-          type: "species"
       explanation:
         annotations:
           getter_only: true
