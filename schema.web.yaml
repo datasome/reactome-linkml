@@ -327,7 +327,7 @@ classes:
     slot_usage:
       modification:
         annotations:
-            allowed: "EntitySet.class, Polymer.class, ReferenceGroup.class"
+            allowed: "{EntitySet.class, Polymer.class, ReferenceGroup.class}"
     attributes:
       secondCoordinate:
         range: integer
@@ -971,7 +971,7 @@ classes:
     slot_usage:
       modification:
         annotations:
-          allowed: "EntitySet.class, Polymer.class, ReferenceGroup.class"
+          allowed: "{EntitySet.class, Polymer.class, ReferenceGroup.class}"
     in_subset:
       - web_schema
 
@@ -2438,7 +2438,6 @@ classes:
   ReactomeAllowedClasses:
     attributes:
       allowed:
-        # TBC - note the {} notation in java
         multivalued: true
     in_subset:
       - schema_annotations

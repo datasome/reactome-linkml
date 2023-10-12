@@ -273,7 +273,7 @@ classes:
         annotations:
           constraint: REQUIRED
           type: "proteinMarker"
-          allowed: "Complex.class, EntityWithAccessionedSequence.class"
+          allowed: "{Complex.class, EntityWithAccessionedSequence.class}"
       tissueLayer:
         range: Anatomy
         annotations:
@@ -2643,7 +2643,7 @@ classes:
         annotations:
           constraint: NOMANUALEDIT
           type: "updatedInstance"
-          allowed: "Event.class, PhysicalEntity.class"
+          allowed: "{Event.class, PhysicalEntity.class}"
     in_subset:
       - curator_schema_only
 
@@ -2714,7 +2714,6 @@ classes:
   ReactomeAllowedClasses:
     attributes:
       allowed:
-        # TBC - note the {} notation in java
         multivalued: true
     in_subset:
       - schema_annotations
@@ -2883,7 +2882,7 @@ slots:
       constraint: MANDATORY
       category: all
       type: "modification"
-      allowed: "EntitySet.class, Polymer.class, ReferenceGroup.class"
+      allowed: "{EntitySet.class, Polymer.class, ReferenceGroup.class}"
   name:
     multivalued: true
     annotations:
