@@ -1248,7 +1248,6 @@ classes:
     annotations:
       relationship_properties: true
     slots:
-      - compartment
       - id
       - order
     attributes:
@@ -1796,6 +1795,8 @@ classes:
     annotations:
       node: true
     slots:
+      - authored
+      - edited
       - goBiologicalProcess
       - literatureReference
     slot_usage:
@@ -1919,6 +1920,7 @@ classes:
       node: true
     slots:
       - authored
+      - edited
       - goBiologicalProcess
       - literatureReference
     slot_usage:
