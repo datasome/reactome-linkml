@@ -1,0 +1,2952 @@
+id: org.reactome.server.graph.domain.model
+name: reactome-data-model
+description: Reactome Data Model
+prefixes:
+  linkml: https://w3id.org/linkml/
+  model: org.reactome.server.graph.domain.model
+default_prefix: org.reactome.server.graph.domain.model
+default_range: string
+# version: TBC
+imports:
+  - linkml:types
+
+# types:
+# TBC
+
+subsets:
+  web_schema:
+    description: >-
+      Reactome schema used for the web service
+  curator_schema_only:
+    description: >-
+      Reactome schema used for by the curator tool only
+  schema_annotations:
+    description: >-
+      Annotations used in java classes - external to the schema
+
+classes:
+
+  #### AbstractModifiedResidue ####
+  AbstractModifiedResidue:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+    attributes:
+      referenceSequence:
+        range: ReferenceSequence
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "referenceSequence"
+    in_subset:
+      - curator_schema_only
+
+  #### Affiliation ####
+  Affiliation:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+    slots:
+      - name
+    slot_usage:
+      name:
+        annotations:
+          category: all
+    attributes:
+      address:
+        annotations:
+          constraint: REQUIRED
+    in_subset:
+      - curator_schema_only
+
+  #### Anatomy ####
+  Anatomy:
+    is_a: ExternalOntology
+    annotations:
+      node: true
+    in_subset:
+      - curator_schema_only
+
+  #### BlackBoxEvent ####
+  BlackBoxEvent:
+    is_a: ReactionlikeEvent
+    annotations:
+      node: true
+    slots:
+      - authored
+      - edited
+      - catalystActivity
+      - goBiologicalProcess
+      - literatureReference
+    slot_usage:
+      authored:
+        annotations:
+          constraint: REQUIRED
+      edited:
+        annotations:
+          constraint: REQUIRED
+      literatureReference:
+        annotations:
+          constraint: REQUIRED
+    attributes:
+      templateEvent:
+        range: Event
+        annotations:
+          constraint: OPTIONAL
+          type: "templateEvent"
+      input:
+        multivalued: true
+        range: Input
+        annotations:
+          constraint: REQUIRED
+          category: all
+          type: "input"
+          set: true
+      output:
+        multivalued: true
+        range: Output
+        annotations:
+          constraint: REQUIRED
+          category: all
+          type: "output"
+          set: true
+      explanation:
+        annotations:
+          getter_only: true
+          reactome_schema_ignore: true
+          json_ignore: true
+          override: true
+          value: "Shortcut reactions that make the connection between input and output, but don't provide complete mechanistic detail. Used for reactions that do not balance, or complicated processes for which we either don't know all the details, or we choose not to represent every step. (e.g. degradation of a protein)"
+    in_subset:
+      - curator_schema_only
+
+  #### Book ####
+  Book:
+    is_a: Publication
+    annotations:
+      node: true
+    attributes:
+      ISBN:
+        annotations:
+          constraint: OPTIONAL
+          category: any
+          addedField: false
+      chapterTitle:
+        annotations:
+          constraint: OPTIONAL
+          category: any
+          addedField: false
+      pages:
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      year:
+        range: integer
+        annotations:
+          constraint: MANDATORY
+          addedField: false
+      chapterAuthors:
+        multivalued: true
+        range: Person
+        annotations:
+          constraint: OPTIONAL
+          type: "chapterAuthors"
+      publisher:
+        range: Affiliation
+        annotations:
+          constraint: OPTIONAL
+          type: "publisher"
+    in_subset:
+      - curator_schema_only
+
+  #### CandidateSet ####
+  CandidateSet:
+    is_a: EntitySet
+    annotations:
+      node: true
+    attributes:
+      hasCandidate:
+        multivalued: true
+        range: HasCandidate
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "hasCandidate"
+          sorted_set: true
+      hasMember:
+        range: HasMember
+        annotations:
+          constraint: REQUIRED
+          category: all
+          type: "hasMember"
+      explanation:
+        annotations:
+          getter_only: true
+          reactome_schema_ignore: true
+          json_ignore: true
+          override: true
+          value: "A set of entities that are interchangeable in function, with two subclasses, members that are hypothetical and members that have been demonstrated. Hypothetical members are identified as values of the hasCandidate slot. Members that have been demonstrated are identified in the hasMember slot. At least one hasCandidate value is required; hasMember values are optional"
+    in_subset:
+      - curator_schema_only
+
+  #### CatalystActivity ####
+  CatalystActivity:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+    attributes:
+      activeUnit:
+        multivalued: true
+        range: PhysicalEntity
+        annotations:
+          constraint: OPTIONAL
+          category: all
+          type: "activeUnit"
+          set: true
+      activity:
+        range: GO_MolecularFunction
+        annotations:
+          constraint: REQUIRED
+          category: all
+          type: "activity"
+      physicalEntity:
+        range: PhysicalEntity
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "physicalEntity"
+    in_subset:
+      - curator_schema_only
+
+  #### CatalystActivityReference ####
+  CatalystActivityReference:
+    is_a: ControlReference
+    annotations:
+      node: true
+    slots:
+      - catalystActivity
+    slot_usage:
+      catalystActivity:
+        annotations:
+          constraint: MANDATORY
+    in_subset:
+      - curator_schema_only
+
+  #### Cell ####
+  Cell:
+    is_a: PhysicalEntity
+    annotations:
+      node: true
+    slots:
+      - cellType
+      - species
+      - tissue
+    slot_usage:
+      species:
+        range: Taxon
+        annotations:
+          constraint: MANDATORY
+      tissue:
+        annotations:
+          constraint: MANDATORY
+    attributes:
+      RNAMarker:
+        multivalued: true
+        range: EntityWithAccessionedSequence
+        annotations:
+          constraint: REQUIRED
+          type: "rnaMarker"
+      markerReference:
+        multivalued: true
+        range: MarkerReference
+        annotations:
+          constraint: REQUIRED
+          type: "markerReference"
+      organ:
+        range: Anatomy
+        annotations:
+          constraint: OPTIONAL
+          type: "organ"
+      proteinMarker:
+        multivalued: true
+        range: PhysicalEntity
+        annotations:
+          constraint: REQUIRED
+          type: "proteinMarker"
+          allowed: "{Complex.class, EntityWithAccessionedSequence.class}"
+      tissueLayer:
+        range: Anatomy
+        annotations:
+          constraint: OPTIONAL
+          type: "tissueLayer"
+    in_subset:
+      - curator_schema_only
+
+  #### CellDevelopmentStep ####
+  CellDevelopmentStep:
+    is_a: ReactionlikeEvent
+    annotations:
+      node: true
+    slots:
+      - catalystActivity
+      - tissue
+    attributes:
+      requiredInputComponent:
+        multivalued: true
+        range: PhysicalEntity
+        annotations:
+          constraint: REQUIRED
+          type: "requiredInputComponent"
+          set: true
+    in_subset:
+      - curator_schema_only
+
+  #### CellLineagePath ####
+  CellLineagePath:
+    is_a: ReactionlikeEvent
+    annotations:
+      node: true
+    slots:
+      - tissue
+    in_subset:
+      - curator_schema_only
+
+  #### CellType ####
+  CellType:
+    is_a: ExternalOntology
+    annotations:
+      node: true
+    in_subset:
+      - curator_schema_only
+
+  #### ChemicalDrug ####
+  ChemicalDrug:
+    is_a: Drug
+    annotations:
+      node: true
+    in_subset:
+      - curator_schema_only
+
+  #### Compartment ####
+  Compartment:
+    is_a: GO_CellularComponent
+    annotations:
+      node: true
+    in_subset:
+      - curator_schema_only
+
+  #### Complex ####
+  Complex:
+    is_a: PhysicalEntity
+    annotations:
+      node: true
+    slots:
+      - compartment
+      - entityOnOtherCell
+      - isChimeric
+      - relatedSpecies
+      - species
+    attributes:
+      hasComponent:
+        multivalued: true
+        range: HasComponent
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "hasComponent"
+          sorted_set: true
+      stoichiometryKnown:
+        range: boolean
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      includedLocation:
+        multivalued: true
+        range: HasCompartment
+        annotations:
+          constraint: NOMANUALEDIT
+          type: "includedLocation"
+          sorted_set: true
+      explanation:
+        annotations:
+          getter_only: true
+          reactome_schema_ignore: true
+          json_ignore: true
+          override: true
+          value: "An entity formed by the association of two or more component entities (these components can themselves be complexes). At least one component must be specified. Complexes represent all experimentally verified components and their stoichiometry where this is known but may not include as yet unidentified components"
+    in_subset:
+      - curator_schema_only
+
+  #### ControlledVocabulary ####
+  ControlledVocabulary:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+    slots:
+      - definition
+      - name
+    in_subset:
+      - curator_schema_only
+
+  #### ControlReference ####
+  ControlReference:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+    slots:
+      - literatureReference
+    slot_usage:
+      literatureReference:
+        annotations:
+          constraint: MANDATORY
+          category: all
+    in_subset:
+      - curator_schema_only
+
+  #### CrosslinkedResidue ####
+  CrosslinkedResidue:
+    is_a: TranslationalModification
+    annotations:
+      node: true
+    slots:
+      - modification
+    slot_usage:
+      modification:
+        annotations:
+          constraint: OPTIONAL
+    attributes:
+      secondCoordinate:
+        range: integer
+        annotations:
+          constraint: REQUIRED
+          category: all
+          addedField: false
+    in_subset:
+      - curator_schema_only
+
+  #### DatabaseIdentifier ####
+  DatabaseIdentifier:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+    slots:
+      - crossReference
+      - identifier
+      - referenceDatabase
+    slot_usage:
+      identifier:
+        annotations:
+          constraint: MANDATORY
+          category: all
+      referenceDatabase:
+        annotations:
+          category: all
+    in_subset:
+      - curator_schema_only
+
+  #### DatabaseObject ####
+  DatabaseObject:
+    annotations:
+      node: true
+      generator: "ObjectIdGenerators.PropertyGenerator.class"
+      property: "DB_ID"
+      implements: "Serializable, Comparable<DatabaseObject>, DatabaseObjectLike"
+    attributes:
+      isLoaded:
+        annotations:
+          reactome_transient: true
+        range: boolean
+      preventLazyLoading:
+        range: boolean
+        annotations:
+          reactome_transient: true
+      DB_ID:
+        range: long
+        annotations:
+          constraint: NOMANUALEDIT
+          id: true
+      _displayName:
+        annotations:
+          constraint: NOMANUALEDIT
+          addedField: false
+      _timestamp:
+      created:
+        range: InstanceEdit
+        annotations:
+          constraint: NOMANUALEDIT
+          type: "created"
+          direction: INCOMING
+      modified:
+        range: InstanceEdit
+        annotations:
+          constraint: NOMANUALEDIT
+          type: "modified"
+          direction: INCOMING
+      stableIdentifier:
+          annotations:
+            constraint: NOMANUALEDIT
+            type: "stableIdentifier"
+      explanation:
+        annotations:
+          getter_only: true
+          reactome_schema_ignore: true
+          json_ignore: true
+          value: "Not available"
+      className:
+        annotations:
+          getter_only: true
+          reactome_schema_ignore: true
+          # TBC - how to encode getClass().getSimpleName()
+    in_subset:
+      - curator_schema_only
+
+  #### DBInfo ####
+  DBInfo:
+    annotations:
+      node: true
+    slots:
+      - id
+    slot_usage:
+      id:
+        annotations:
+          generated_value: false
+          json_ignore: true
+    attributes:
+      name:
+      version:
+        range: integer
+      checksum:
+        range: long
+    in_subset:
+      - curator_schema_only
+
+  #### DefinedSet ####
+  DefinedSet:
+    is_a: EntitySet
+    annotations:
+      node: true
+    attributes:
+      explanation:
+        annotations:
+          getter_only: true
+          reactome_schema_ignore: true
+          json_ignore: true
+          override: true
+          value: "Two or more entities that are interchangeable in function"
+    in_subset:
+      - curator_schema_only
+
+  #### _Deleted ####
+  _Deleted:
+    is_a: DatabaseObject
+    attributes:
+      curatorComment:
+        annotations:
+          constraint: NOMANUALEDIT
+          addedField: false
+      deletedInstanceDB_ID:
+        multivalued: true
+        range: long
+        annotations:
+          constraint: NOMANUALEDIT
+          addedField: false
+      reason:
+        range: DeletedControlledVocabulary
+        annotations:
+          constraint: NOMANUALEDIT
+          type: "reason"
+      deletedInstance:
+        multivalued: true
+        range: _DeletedInstance
+        annotations:
+          constraint: NOMANUALEDIT
+          type: "deletedInstance"
+      replacementInstances:
+        multivalued: true
+        range: DatabaseObject
+        annotations:
+          constraint: NOMANUALEDIT
+          type: "replacementInstances"
+    in_subset:
+      - curator_schema_only
+
+  #### DeletedControlledVocabulary ####
+  DeletedControlledVocabulary:
+    is_a: ControlledVocabulary
+    in_subset:
+      - curator_schema_only
+
+  #### _DeletedInstance ####
+  _DeletedInstance:
+    is_a: DatabaseObject
+    slots:
+      - name
+      - species
+    slot_usage:
+      name:
+        annotations:
+          constraint: NOMANUALEDIT
+          category: all
+      species:
+        range: Taxon
+        annotations:
+          constraint: NOMANUALEDIT
+          category: all
+    attributes:
+      deletedInstanceDB_ID:
+        multivalued: true
+        range: long
+        annotations:
+          constraint: NOMANUALEDIT
+          category: all
+          addedField: false
+      className:
+        annotations:
+          constraint: NOMANUALEDIT
+          addedField: false
+      deletedStableIdentifier:
+        range: StableIdentifier
+        annotations:
+          constraint: NOMANUALEDIT
+          category: all
+          type: "deletedStableIdentifier"
+    in_subset:
+      - curator_schema_only
+
+  #### Depolymerisation ####
+  Depolymerisation:
+    is_a: ReactionlikeEvent
+    annotations:
+      node: true
+    slots:
+      - authored
+      - edited
+      - goBiologicalProcess
+      - literatureReference
+    slot_usage:
+      authored:
+        annotations:
+          constraint: REQUIRED
+      edited:
+        annotations:
+          constraint: REQUIRED
+      literatureReference:
+        annotations:
+          constraint: REQUIRED
+    in_subset:
+      - curator_schema_only
+
+  #### Disease ####
+  Disease:
+    is_a: ExternalOntology
+    annotations:
+      node: true
+    in_subset:
+      - curator_schema_only
+
+  #### Drug ####
+  Drug:
+    is_a: PhysicalEntity
+    annotations:
+      node: true
+    slots:
+      - compartment
+      - referenceEntity
+    slot_usage:
+      compartment:
+        annotations:
+          category: all
+    attributes:
+      disease:
+        multivalued: true
+        range: Disease
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "disease"
+    in_subset:
+      - curator_schema_only
+
+  #### DrugActionType ####
+  DrugActionType:
+    is_a: ReactionType
+    annotations:
+      node: true
+    attributes:
+      instanceOf:
+        multivalued: true
+        range: DrugActionType
+        annotations:
+          constraint: OPTIONAL
+          type: "instanceOf"
+    in_subset:
+      - curator_schema_only
+
+  #### EntityFunctionalStatus ####
+  EntityFunctionalStatus:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+    attributes:
+      functionalStatus:
+        multivalued: true
+        range: FunctionalStatus
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "functionalStatus"
+      diseaseEntity:
+        range: PhysicalEntity
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "diseaseEntity"
+      normalEntity:
+        range: PhysicalEntity
+        annotations:
+          constraint: REQUIRED
+          category: all
+          type: "normalEntity"
+    in_subset:
+      - curator_schema_only
+
+  #### EntitySet ####
+  EntitySet:
+    is_a: PhysicalEntity
+    annotations:
+      node: true
+    slots:
+      - compartment
+      - relatedSpecies
+      - species
+    attributes:
+      isOrdered:
+        range: boolean
+        annotations:
+          constraint: OPTIONAL
+          addedField: true
+      hasMember:
+        multivalued: true
+        range: HasMember
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "hasMember"
+          sorted_set: true
+      explanation:
+        annotations:
+          getter_only: true
+          reactome_schema_ignore: true
+          json_ignore: true
+          override: true
+          value: "Two or more entities grouped because of a shared molecular feature. The superclass for CandidateSet and DefinedSet"
+      className:
+        annotations:
+          getter_only: true
+          reactome_schema_ignore: true
+          override: true
+          value: "Set"
+    in_subset:
+      - curator_schema_only
+
+  #### EntityWithAccessionedSequence ####
+  EntityWithAccessionedSequence:
+    is_a: GenomeEncodedEntity
+    annotations:
+      node: true
+    slots:
+      - name
+      - referenceEntity
+      - species
+    slot_usage:
+      name:
+        annotations:
+          category: none
+      species:
+        range: Taxon
+        annotations:
+          constraint: MANDATORY
+          category: none
+    attributes:
+      endCoordinate:
+        range: integer
+        annotations:
+          constraint: REQUIRED
+          category: all
+          addedField: false
+      startCoordinate:
+        range: integer
+        annotations:
+          constraint: REQUIRED
+          category: all
+          addedField: false
+      hasModifiedResidue:
+        multivalued: true
+        range: HasModifiedResidue
+        annotations:
+          constraint: REQUIRED
+          category: all
+          type: "hasModifiedResidue"
+          sorted_set: true
+      explanation:
+        annotations:
+          getter_only: true
+          reactome_schema_ignore: true
+          json_ignore: true
+          override: true
+          value: "A protein, RNA, or DNA molecule or fragment thereof in a specified cellular compartment and specific post-translational state. Must be linked to an external database reference, given as the value of referenceSequence. An EWAS typically corresponds to the entire protein or polynucleotide described in the external database. Fragments are defined by setting the first and last residue using the numbering scheme of the external database, entered as startCoordinate and endCoordinate values. Values of 1 and -1 respectively indicate that the true start and end are unconfirmed. EWAS instances are specific to a subcellular compartment; if the same molecule is found in two cellular components it will have two EWASes. EWAS instances by default define an unmodified protein sequence, any post-translational modification (PTM), such as phosphorylation, requires a new EWAS instance. The location and type of any PTM are defined in the hasModifiedResidue slot"
+    in_subset:
+      - curator_schema_only
+
+  #### Event ####
+  Event:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+    slots:
+      - authored
+      - edited
+      - crossReference
+      - definition
+      - figure
+      - goBiologicalProcess
+      - literatureReference
+      - name
+      - relatedSpecies
+      - revised
+      - species
+      - summation
+    slot_usage:
+      goBiologicalProcess:
+        annotations:
+          constraint: NOMANUALEDIT
+      name:
+        annotations:
+          category: none
+      species:
+        annotations:
+          constraint: MANDATORY
+      summation:
+        annotations:
+          constraint: MANDATORY
+    attributes:
+      _doRelease:
+        range: boolean
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      releaseDate:
+        annotations:
+          constraint: MANDATORY
+          addedField: false
+      releaseStatus:
+        annotations:
+          constraint: NOMANUALEDIT
+          addedField: false
+      disease:
+        multivalued: true
+        range: Disease
+        annotations:
+          constraint: OPTIONAL
+          type: "disease"
+      evidenceType:
+        range: EvidenceType
+        annotations:
+          constraint: OPTIONAL
+          type: "evidenceType"
+      precedingEvent:
+        multivalued: true
+        range: Event
+        annotations:
+          constraint: OPTIONAL
+          type: "precedingEvent"
+      inferredFrom:
+        multivalued: true
+        range: Event
+        annotations:
+          constraint: OPTIONAL
+          type: "inferredFrom"
+          set: true
+      orthologousEvent:
+        multivalued: true
+        range: Event
+        annotations:
+          constraint: OPTIONAL
+          type: "orthologousEvent"
+          set: true
+      reviewed:
+        multivalued: true
+        range: InstanceEdit
+        annotations:
+          constraint: REQUIRED
+          direction: INCOMING
+          type: "reviewed"
+      negativePrecedingEvent:
+        multivalued: true
+        range: NegativePrecedingEvent
+        annotations:
+          constraint: OPTIONAL
+          type: "negativePrecedingEvent"
+    in_subset:
+      - curator_schema_only
+
+  #### EvidenceType ####
+  EvidenceType:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+    slots:
+      - definition
+      - name
+    slot_usage:
+      name:
+        annotations:
+          category: any
+    attributes:
+      instanceOf:
+        multivalued: true
+        range: EvidenceType
+        annotations:
+          constraint: OPTIONAL
+          type: "instanceOf"
+    in_subset:
+      - curator_schema_only
+
+  #### ExternalOntology ####
+  ExternalOntology:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+    slots:
+      - definition
+      - identifier
+      - name
+      - referenceDatabase
+    slot_usage:
+      identifier:
+        annotations:
+          constraint: MANDATORY
+          category: all
+    attributes:
+      synonym:
+        multivalued: true
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      instanceOf:
+        multivalued: true
+        range: ExternalOntology
+        annotations:
+          constraint: OPTIONAL
+          type: "instanceOf"
+    in_subset:
+      - curator_schema_only
+
+  #### FailedReaction ####
+  FailedReaction:
+    is_a: ReactionlikeEvent
+    annotations:
+      node: true
+    slots:
+      - authored
+      - edited
+      - catalystActivity
+      - goBiologicalProcess
+      - literatureReference
+    slot_usage:
+      authored:
+        annotations:
+          constraint: REQUIRED
+      edited:
+        annotations:
+          constraint: REQUIRED
+      literatureReference:
+        annotations:
+          constraint: REQUIRED
+    attributes:
+      normalReaction:
+        range: ReactionlikeEvent
+        annotations:
+          constraint: MANDATORY
+          type: "normalReaction"
+      output:
+        multivalued: true
+        range: Output
+        annotations:
+          constraint: NOMANUALEDIT
+          category: all
+          type: "output"
+          set: true
+      explanation:
+        annotations:
+          getter_only: true
+          reactome_schema_ignore: true
+          json_ignore: true
+          override: true
+          value: "Defines an event where genetic mutations in the nucleotide sequence produces a protein with a very little or no activity. The consequence of this is that substrates are not converted to products and can therefore build up to cause pathological conditions. It could also mean entities are not moved between compartments again causing imbalances in entity concentrations which can lead to pathological conditions."
+    in_subset:
+      - curator_schema_only
+
+  #### Figure ####
+  Figure:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+    attributes:
+      url:
+        annotations:
+          constraint: MANDATORY
+          category: all
+          addedField: false
+          property: true
+    in_subset:
+      - curator_schema_only
+
+  #### FragmentDeletionModification ####
+  FragmentDeletionModification:
+    is_a: FragmentModification
+    annotations:
+      node: true
+    in_subset:
+      - curator_schema_only
+
+  #### FragmentInsertionModification ####
+  FragmentInsertionModification:
+    is_a: FragmentModification
+    annotations:
+      node: true
+    slots:
+      - coordinate
+    in_subset:
+      - curator_schema_only
+
+  #### FragmentModification ####
+  FragmentModification:
+    is_a: GeneticallyModifiedResidue
+    annotations:
+      node: true
+    attributes:
+      endPositionInReferenceSequence:
+        range: integer
+        annotations:
+          constraint: MANDATORY
+          category: all
+          addedField: false
+      startPositionInReferenceSequence:
+        range: integer
+        annotations:
+          constraint: MANDATORY
+          category: all
+          addedField: false
+    in_subset:
+      - curator_schema_only
+
+  #### FragmentReplacedModification ####
+  FragmentReplacedModification:
+    is_a: FragmentModification
+    annotations:
+      node: true
+    attributes:
+      alteredAminoAcidFragment:
+        annotations:
+          constraint: OPTIONAL
+          category: all
+          addedField: false
+    in_subset:
+      - curator_schema_only
+
+  #### FrontPage ####
+  FrontPage:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+    attributes:
+      frontPageItem:
+        multivalued: true
+        range: Event
+        annotations:
+          constraint: MANDATORY
+          type: "frontPageItem"
+    in_subset:
+      - curator_schema_only
+
+  #### FunctionalStatus ####
+  FunctionalStatus:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+    attributes:
+      functionalStatusType:
+        range: FunctionalStatusType
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "functionalStatusType"
+      structuralVariant:
+        range: SequenceOntology
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "structuralVariant"
+    in_subset:
+      - curator_schema_only
+
+  #### FunctionalStatusType ####
+  FunctionalStatusType:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+    slots:
+      - definition
+      - name
+    slot_usage:
+      name:
+        annotations:
+          category: any
+    in_subset:
+      - curator_schema_only
+
+  #### GeneticallyModifiedResidue ####
+  GeneticallyModifiedResidue:
+    is_a: AbstractModifiedResidue
+    annotations:
+      node: true
+    in_subset:
+      - curator_schema_only
+
+  #### GenomeEncodedEntity ####
+  GenomeEncodedEntity:
+    is_a: PhysicalEntity
+    annotations:
+      node: true
+    slots:
+      - compartment
+      - species
+    slot_usage:
+      compartment:
+        annotations:
+          category: all
+      species:
+        range: Taxon
+        annotations:
+          constraint: MANDATORY
+          category: all
+    attributes:
+      explanation:
+        annotations:
+          getter_only: true
+          reactome_schema_ignore: true
+          json_ignore: true
+          override: true
+          value: "A peptide or polynucleotide whose sequence is unknown and thus cannot be linked to external sequence databases or used for orthology inference"
+      className:
+        annotations:
+          getter_only: true
+          reactome_schema_ignore: true
+          override: true
+          value: "Genes and Transcripts"
+    in_subset:
+    - curator_schema_only
+
+  #### GO_BiologicalProcess ####
+  GO_BiologicalProcess:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+    slots:
+      - accession
+      - definition
+      - name
+      - referenceDatabase
+    slot_usage:
+      name:
+        annotations:
+          category: any
+    in_subset:
+      - curator_schema_only
+
+  #### GO_CellularComponent ####
+  GO_CellularComponent:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+    slots:
+      - accession
+      - definition
+      - name
+      - referenceDatabase
+    attributes:
+      componentOf:
+        multivalued: true
+        range: GO_CellularComponent
+        annotations:
+          constraint: REQUIRED
+          type: "componentOf"
+      hasPart:
+        multivalued: true
+        range: GO_CellularComponent
+        annotations:
+          constraint: OPTIONAL
+          type: "hasPart"
+      instanceOf:
+        multivalued: true
+        range: GO_CellularComponent
+        annotations:
+          constraint: REQUIRED
+          type: "instanceOf"
+      surroundedBy:
+        multivalued: true
+        range: GO_CellularComponent
+        annotations:
+          constraint: OPTIONAL
+          type: "surroundedBy"
+    in_subset:
+      - curator_schema_only
+
+  #### GO_MolecularFunction ####
+  GO_MolecularFunction:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+    slots:
+      - accession
+      - definition
+      - name
+      - referenceDatabase
+    attributes:
+      ecNumber:
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+    in_subset:
+      - curator_schema_only
+
+  #### GroupModifiedResidue ####
+  GroupModifiedResidue:
+    is_a: TranslationalModification
+    annotations:
+      node: true
+    slots:
+      - modification
+    in_subset:
+      - curator_schema_only
+
+  #### HasCandidate ####
+  HasCandidate:
+    annotations:
+      relationship_properties: true
+    slots:
+      - id
+      - order
+      - physicalEntity
+      - stoichiometry
+    in_subset:
+      - curator_schema_only
+
+  #### HasCompartment ####
+  HasCompartment:
+    annotations:
+      relationship_properties: true
+    slots:
+      - compartment
+      - id
+      - order
+    attributes:
+      compartment:
+        range: Compartment
+        annotations:
+          target_node: true
+    in_subset:
+      - curator_schema_only
+
+  #### HasComponent ####
+  HasComponent:
+    annotations:
+      relationship_properties: true
+    slots:
+      - id
+      - order
+      - physicalEntity
+      - stoichiometry
+    in_subset:
+      - curator_schema_only
+
+  #### HasEncapsulatedEvent ####
+  HasEncapsulatedEvent:
+    annotations:
+      relationship_properties: true
+      implements: "Comparable<HasEncapsulatedEvent>"
+    slots:
+      - id
+      - order
+    attributes:
+      event:
+        range: Event
+        annotations:
+          target_node: true
+    in_subset:
+      - curator_schema_only
+
+  #### HasEvent ####
+  HasEvent:
+    annotations:
+      relationship_properties: true
+      implements: "Comparable<HasEvent>"
+    slots:
+      - id
+      - order
+      - stoichiometry
+    attributes:
+      event:
+        range: Event
+        annotations:
+          target_node: true
+    in_subset:
+      - curator_schema_only
+
+  #### HasMember ####
+  HasMember:
+    annotations:
+      relationship_properties: true
+    slots:
+      - id
+      - order
+      - physicalEntity
+      - stoichiometry
+    in_subset:
+      - curator_schema_only
+
+  #### HasModifiedResidue ####
+  HasModifiedResidue:
+    annotations:
+      relationship_properties: true
+    slots:
+      - id
+      - order
+      - stoichiometry
+    attributes:
+      abstractModifiedResidue:
+        range: AbstractModifiedResidue
+        annotations:
+          target_node: true
+    in_subset:
+      - curator_schema_only
+
+  #### Input ####
+  Input:
+    annotations:
+      relationship_properties: true
+      implements: "implements Comparable<Input>"
+    slots:
+      - id
+      - order
+      - physicalEntity
+      - stoichiometry
+    in_subset:
+      - curator_schema_only
+
+  #### InstanceEdit ####
+  InstanceEdit:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+    attributes:
+      dateTime:
+        annotations:
+          addedField: false
+      note:
+        annotations:
+          addedField: false
+      _applyToAllEditedInstances:
+        annotations:
+          addedField: false
+      author:
+        multivalued: true
+        range: Person
+        annotations:
+          type: "author"
+          direction: INCOMING
+    in_subset:
+      - curator_schema_only
+
+  #### InteractionEvent ####
+  InteractionEvent:
+    is_a: Event
+    annotations:
+      node: true
+    attributes:
+      partners:
+        multivalued: true
+        range: PhysicalEntity
+        annotations:
+          constraint: MANDATORY
+          type: "partners"
+    in_subset:
+      - curator_schema_only
+
+  #### InterChainCrosslinkedResidue ####
+  InterChainCrosslinkedResidue:
+    is_a: CrosslinkedResidue
+    annotations:
+      node: true
+    attributes:
+      equivalentTo:
+        multivalued: true
+        range: InterChainCrosslinkedResidue
+        annotations:
+          constraint: MANDATORY
+          type: "equivalentTo"
+      secondReferenceSequence:
+        multivalued: true
+        range: InterChainCrosslinkedResidue
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "secondReferenceSequence"
+          set: true
+    in_subset:
+      - curator_schema_only
+
+  #### IntraChainCrosslinkedResidue ####
+  IntraChainCrosslinkedResidue:
+    is_a: CrosslinkedResidue
+    annotations:
+      node: true
+    in_subset:
+      - curator_schema_only
+
+  #### LiteratureReference ####
+  LiteratureReference:
+    is_a: Publication
+    annotations:
+      node: true
+    attributes:
+      PUBMED_URL:
+        annotations:
+          value: "http://www.ncbi.nlm.nih.gov/pubmed/"
+      journal:
+        annotations:
+          constraint: REQUIRED
+          addedField: false
+      pages:
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      pubMedIdentifier:
+        range: integer
+        annotations:
+          constraint: REQUIRED
+          category: all
+          addedField: false
+      volume:
+        range: integer
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      year:
+        range: integer
+        annotations:
+          constraint: MANDATORY
+          addedField: false
+    in_subset:
+      - curator_schema_only
+
+  #### MarkerReference ####
+  MarkerReference:
+    is_a: ControlReference
+    annotations:
+      node: true
+    attributes:
+      marker:
+        multivalued: true
+        range: EntityWithAccessionedSequence
+        annotations:
+          constraint: MANDATORY
+          type: "marker"
+    in_subset:
+      - curator_schema_only
+
+  #### ModifiedNucleotide ####
+  ModifiedNucleotide:
+    is_a: TranscriptionalModification
+    annotations:
+      node: true
+    slots:
+      - coordinate
+      - modification
+    slot_usage:
+      coordinate:
+        annotations:
+          constraint: MANDATORY
+    in_subset:
+      - curator_schema_only
+
+  #### ModifiedResidue ####
+  ModifiedResidue:
+    is_a: TranslationalModification
+    annotations:
+      node: true
+    in_subset:
+      - curator_schema_only
+
+  #### NegativeGeneExpressionRegulation ####
+  NegativeGeneExpressionRegulation:
+    is_a: NegativeRegulation
+    annotations:
+      node: true
+    attributes:
+      explanation:
+        annotations:
+          getter_only: true
+          reactome_schema_ignore: true
+          json_ignore: true
+          override: true
+          value: "A negative gene expression regulation"
+    in_subset:
+      - curator_schema_only
+
+  #### NegativePrecedingEvent ####
+  NegativePrecedingEvent:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+    attributes:
+      comment:
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      precedingEvent:
+        multivalued: true
+        range: Event
+        annotations:
+          constraint: MANDATORY
+          direction: INCOMING
+          type: "negativePrecedingEvent"
+      reason:
+        range: NegativePrecedingEventReason
+        annotations:
+          constraint: REQUIRED
+          type: "reason"
+    in_subset:
+      - curator_schema_only
+
+  #### NegativePrecedingEventReason ####
+  NegativePrecedingEventReason:
+    is_a: ControlledVocabulary
+    annotations:
+      node: true
+    in_subset:
+      - curator_schema_only
+
+  #### NegativeRegulation ####
+  NegativeRegulation:
+    is_a: Regulation
+    annotations:
+      node: true
+    attributes:
+      explanation:
+        annotations:
+          getter_only: true
+          reactome_schema_ignore: true
+          json_ignore: true
+          override: true
+          value: "This describes an Event/CatalystActivity that is negatively regulated by the Regulator (e.g., allosteric inhibition, competitive inhibition"
+    in_subset:
+      - curator_schema_only
+
+  #### NonsenseMutation ####
+  NonsenseMutation:
+    is_a: ReplacedResidue
+    annotations:
+      node: true
+    in_subset:
+      - curator_schema_only
+
+  #### OtherEntity ####
+  OtherEntity:
+    is_a: PhysicalEntity
+    annotations:
+      node: true
+    slots:
+      - compartment
+    slot_usage:
+      compartment:
+        annotations:
+          category: all
+    attributes:
+      explanation:
+        annotations:
+          getter_only: true
+          reactome_schema_ignore: true
+          json_ignore: true
+          override: true
+          value: "Entities that we are unable or unwilling to describe in chemical detail and cannot be put in any other class. Can be used to represent complex structures in the cell that take part in a reaction but which we cannot or do not want to define molecularly, e.g. cell membrane, Holliday structure"
+    in_subset:
+      - curator_schema_only
+
+  #### Output ####
+  Output:
+    annotations:
+      relationship_properties: true
+      implements: "Comparable<Output>"
+    slots:
+      - id
+      - order
+      - physicalEntity
+      - stoichiometry
+    in_subset:
+      - curator_schema_only
+
+  #### Pathway ####
+  Pathway:
+    is_a: Event
+    annotations:
+      node: true
+    slots:
+      - authored
+      - compartment
+      - edited
+      - goBiologicalProcess
+    slot_usage:
+      compartment:
+        annotations:
+          constraint: REQUIRED
+    attributes:
+      doi:
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      hasEHLD:
+        range: boolean
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      isCanonical:
+        range: boolean
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      hasEvent:
+        multivalued: true
+        range: HasEvent
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "hasEvent"
+          sorted_set: true
+      normalPathway:
+        range: Pathway
+        annotations:
+          constraint: OPTIONAL
+          type: "normalPathway"
+      explanation:
+        annotations:
+          getter_only: true
+          reactome_schema_ignore: true
+          json_ignore: true
+          override: true
+          value: "A collection of related Events. These events can be ReactionLikeEvents or Pathways"
+    in_subset:
+      - curator_schema_only
+
+  #### Person ####
+  Person:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+    slots:
+      - crossReference
+      - figure
+    attributes:
+        firstname:
+          annotations:
+            constraint: OPTIONAL
+            category: all
+            addedField: false
+        initial:
+          annotations:
+            constraint: MANDATORY
+            category: all
+            addedField: false
+        project:
+          annotations:
+            constraint: OPTIONAL
+            category: all
+            addedField: false
+        surname:
+          annotations:
+            constraint: MANDATORY
+            category: all
+            addedField: false
+        url:
+          annotations:
+            constraint: OPTIONAL
+            category: all
+            addedField: false
+        affiliation:
+          multivalued: true
+          range: Affiliation
+          annotations:
+            constraint: OPTIONAL
+            type: "affiliation"
+    in_subset:
+      - curator_schema_only
+
+  #### PhysicalEntity ####
+  PhysicalEntity:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+    slots:
+      - authored
+      - cellType
+      - crossReference
+      - definition
+      - edited
+      - figure
+      - literatureReference
+      - name
+      - revised
+      - summation
+    slot_usage:
+      name:
+        annotations:
+          category: any
+    attributes:
+      systematicName:
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      disease:
+        multivalued: true
+        range: Disease
+        annotations:
+          constraint: OPTIONAL
+          category: all
+          type: "disease"
+      goCellularComponent:
+        range: GO_CellularComponent
+        annotations:
+          constraint: OPTIONAL
+          type: "goCellularComponent"
+      inferredTo:
+        multivalued: true
+        range: PhysicalEntity
+        annotations:
+          constraint: OPTIONAL
+          type: "inferredTo"
+      inferredFrom:
+        multivalued: true
+        range: PhysicalEntity
+        annotations:
+          constraint: OPTIONAL
+          direction: INCOMING
+          type: "inferredTo"
+          reactome_transient: true
+      reviewed:
+        multivalued: true
+        range: InstanceEdit
+        annotations:
+          constraint: OPTIONAL
+          direction: INCOMING
+          type: "reviewed"
+    in_subset:
+      - curator_schema_only
+
+  #### Polymer ####
+  Polymer:
+    is_a: PhysicalEntity
+    annotations:
+      node: true
+    slots:
+      - species
+      - compartment
+    attributes:
+      maxUnitCount:
+        range: integer
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      minUnitCount:
+        range: integer
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      repeatedUnit:
+        multivalued: true
+        range: RepeatedUnit
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "repeatedUnit"
+          sorted_set: true
+      explanation:
+        annotations:
+          getter_only: true
+          reactome_schema_ignore: true
+          json_ignore: true
+          override: true
+          value: "Molecules that consist of an indeterminate number of repeated units. Includes complexes whose stoichiometry is variable or unknown. The repeated unit(s) is(are) identified in the repeatedUnit slot"
+    in_subset:
+      - curator_schema_only
+
+  #### Polymerisation ####
+  Polymerisation:
+    is_a: ReactionlikeEvent
+    annotations:
+      node: true
+    slots:
+      - goBiologicalProcess
+      - literatureReference
+    slot_usage:
+      authored:
+        annotations:
+          constraint: REQUIRED
+      edited:
+        annotations:
+          constraint: REQUIRED
+      literatureReference:
+        annotations:
+          constraint: REQUIRED
+    attributes:
+      explanation:
+        annotations:
+          getter_only: true
+          reactome_schema_ignore: true
+          json_ignore: true
+          override: true
+          value: "Reactions that follow the pattern: Polymer + Unit -> Polymer (there may be a catalyst involved). Used to describe the mechanistic detail of a polymerisation"
+    in_subset:
+      - curator_schema_only
+
+  #### PositiveGeneExpressionRegulation ####
+  PositiveGeneExpressionRegulation:
+    is_a: PositiveRegulation
+    annotations:
+      node: true
+    attributes:
+      explanation:
+        annotations:
+          getter_only: true
+          reactome_schema_ignore: true
+          json_ignore: true
+          override: true
+          value: "A positive gene expression regulation"
+    in_subset:
+      - curator_schema_only
+
+  #### PositiveRegulation ####
+  PositiveRegulation:
+    is_a: Regulation
+    annotations:
+      node: true
+    attributes:
+      explanation:
+        annotations:
+          getter_only: true
+          reactome_schema_ignore: true
+          json_ignore: true
+          override: true
+          value: "This describes an Event/CatalystActivity that is positively regulated by the Regulator (e.g., allosteric activation)"
+    in_subset:
+    - curator_schema_only
+
+  #### ProteinDrug ####
+  ProteinDrug:
+    is_a: Drug
+    annotations:
+      node: true
+    in_subset:
+      - curator_schema_only
+
+  #### PsiMod ####
+  PsiMod:
+    is_a: ExternalOntology
+    annotations:
+      node: true
+    attributes:
+      label:
+        annotations:
+          constraint: REQUIRED
+          addedField: false
+    in_subset:
+      - curator_schema_only
+
+  #### Publication ####
+  Publication:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+    attributes:
+      title:
+        annotations:
+          constraint: MANDATORY
+          category: any
+          addedField: false
+      author:
+        multivalued: true
+        range: PublicationAuthor
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "author"
+          direction: INCOMING
+          sorted_set: true
+    in_subset:
+      - curator_schema_only
+
+  #### PublicationAuthor ####
+  PublicationAuthor:
+    is_a: Event
+    annotations:
+      relationship_properties: true
+      implements: "Comparable<PublicationAuthor>"
+    slots:
+      - id
+      - order
+    attributes:
+      author:
+        range: Person
+        annotations:
+          target_node: true
+    in_subset:
+      - curator_schema_only
+
+  #### Reaction ####
+  Reaction:
+    is_a: ReactionlikeEvent
+    annotations:
+      node: true
+    slots:
+      - authored
+      - goBiologicalProcess
+      - literatureReference
+    slot_usage:
+      authored:
+        annotations:
+          constraint: REQUIRED
+      edited:
+        annotations:
+          constraint: REQUIRED
+      literatureReference:
+        annotations:
+          constraint: REQUIRED
+    attributes:
+      reverseReaction:
+        range: Reaction
+        annotations:
+          constraint: OPTIONAL
+          type: "reverseReaction"
+      explanation:
+        annotations:
+          getter_only: true
+          reactome_schema_ignore: true
+          json_ignore: true
+          override: true
+          value: "Defines a change of state for one or more molecular entities. Most reactions in Reactome involve either a) the interaction of entities to form a complex, or b) the movement of entities between compartments, or c) the chemical conversion of entities as part of a metabolic process. Reactions have a molecular balance between input and output entities"
+    in_subset:
+      - curator_schema_only
+
+  #### ReactionlikeEvent ####
+  ReactionlikeEvent:
+    is_a: Event
+    annotations:
+      node: true
+    slots:
+      - catalystActivity
+      - compartment
+      - isChimeric
+      - entityOnOtherCell
+    slot_usage:
+      catalystActivity:
+        annotations:
+          constraint: REQUIRED
+      compartment:
+        annotations:
+          constraint: OPTIONAL
+    attributes:
+      systematicName:
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      catalystActivityReference:
+        range: CatalystActivityReference
+        annotations:
+          constraint: OPTIONAL
+          type: "catalystActivityReference"
+      entityFunctionalStatus:
+        multivalued: true
+        range: EntityFunctionalStatus
+        annotations:
+          constraint: OPTIONAL
+          category: all
+          type: "entityFunctionalStatus"
+      input:
+        multivalued: true
+        range: Input
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "input"
+          set: true
+      output:
+        multivalued: true
+        range: Output
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "output"
+          set: true
+      normalReaction:
+        range: ReactionlikeEvent
+        annotations:
+          constraint: OPTIONAL
+          type: "normalReaction"
+      regulatedBy:
+        multivalued: true
+        range: Regulation
+        annotations:
+          constraint: OPTIONAL
+          type: "regulatedBy"
+      regulationReference:
+        multivalued: true
+        range: RegulationReference
+        annotations:
+          constraint: OPTIONAL
+          type: "regulationReference"
+      requiredInputComponent:
+        multivalued: true
+        range: PhysicalEntity
+        annotations:
+          constraint: OPTIONAL
+          type: "requiredInputComponent"
+          set: true
+      hasInteraction:
+        multivalued: true
+        range: InteractionEvent
+        annotations:
+          constraint: OPTIONAL
+          type: "hasInteraction"
+          set: true
+      reactionType:
+        multivalued: true
+        range: ReactionType
+        annotations:
+          constraint: OPTIONAL
+          type: "reactionType"
+      className:
+        annotations:
+          getter_only: true
+          reactome_schema_ignore: true
+          override: true
+          value: "Reaction"
+    in_subset:
+      - curator_schema_only
+
+  #### ReactionType ####
+  ReactionType:
+    is_a: ControlledVocabulary
+    annotations:
+      node: true
+    in_subset:
+      - curator_schema_only
+
+  #### ReferenceDatabase ####
+  ReferenceDatabase:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+    slots:
+      - name
+    slot_usage:
+      name:
+        annotations:
+          constraint: OPTIONAL
+    attributes:
+      accessUrl:
+        annotations:
+          constraint: MANDATORY
+          category: any
+          addedField: false
+      url:
+        annotations:
+          constraint: MANDATORY
+          addedField: false
+      resourceIdentifier:
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+    in_subset:
+      - curator_schema_only
+
+  #### ReferenceDNASequence ####
+  ReferenceDNASequence:
+    is_a: ReferenceSequence
+    annotations:
+      node: true
+    in_subset:
+      - curator_schema_only
+
+  #### ReferenceEntity ####
+  ReferenceEntity:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+    slots:
+      - crossReference
+      - identifier
+      - name
+      - otherIdentifier
+      - referenceDatabase
+    slot_usage:
+      identifier:
+        annotations:
+          constraint: MANDATORY
+          category: all
+      referenceDatabase:
+        annotations:
+          category: all
+      name:
+        annotations:
+          constraint: OPTIONAL
+      otherIdentifier:
+        annotations:
+          constraint: OPTIONAL
+    in_subset:
+      - curator_schema_only
+
+  #### ReferenceGeneProduct ####
+  ReferenceGeneProduct:
+    is_a: ReferenceSequence
+    annotations:
+      node: true
+    attributes:
+      chain:
+        multivalued: true
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      _chainChangeLog:
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      referenceGene:
+        multivalued: true
+        range: ReferenceDNASequence
+        annotations:
+          type: "referenceGene"
+      referenceTranscript:
+        multivalued: true
+        range: ReferenceRNASequence
+        annotations:
+          type: "referenceTranscript"
+    in_subset:
+      - curator_schema_only
+
+  #### ReferenceGroup ####
+  ReferenceGroup:
+    is_a: ReferenceEntity
+    annotations:
+      node: true
+    slots:
+      - otherIdentifier
+      - formula
+      - name
+    in_subset:
+      - curator_schema_only
+
+  #### ReferenceIsoform ####
+  ReferenceIsoform:
+    is_a: ReferenceGeneProduct
+    annotations:
+      node: true
+    attributes:
+      variantIdentifier:
+        annotations:
+          constraint: MANDATORY
+          category: all
+          addedField: false
+      isoformParent:
+        multivalued: true
+        range: ReferenceGeneProduct
+        annotations:
+          constraint: MANDATORY
+          type: "isoformParent"
+    in_subset:
+      - curator_schema_only
+
+  #### ReferenceMolecule ####
+  ReferenceMolecule:
+    is_a: ReferenceEntity
+    annotations:
+      node: true
+    slots:
+      - formula
+      - name
+      - otherIdentifier
+    in_subset:
+      - curator_schema_only
+
+  #### ReferenceRNASequence ####
+  ReferenceRNASequence:
+    is_a: ReferenceSequence
+    annotations:
+      node: true
+    attributes:
+      referenceGene:
+        multivalued: true
+        range: ReferenceDNASequence
+        annotations:
+          constraint: OPTIONAL
+          type: "referenceGene"
+    in_subset:
+      - curator_schema_only
+
+  #### ReferenceSequence ####
+  ReferenceSequence:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+    slots:
+      - otherIdentifier
+      - species
+    slot_usage:
+      species:
+        annotations:
+          constraint: MANDATORY
+          category: all
+    attributes:
+      checksum:
+        annotations:
+          constraint: NOMANUALEDIT
+          addedField: false
+      comment:
+        multivalued: true
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      description:
+        multivalued: true
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      geneName:
+        multivalued: true
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      isSequenceChanged:
+        range: boolean
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      keyword:
+        multivalued: true
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      secondaryIdentifier:
+        multivalued: true
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      sequenceLength:
+        range: integer
+        annotations:
+          addedField: false
+    in_subset:
+      - curator_schema_only
+
+  #### ReferenceTherapeutic ####
+  ReferenceTherapeutic:
+    is_a: ReferenceEntity
+    annotations:
+      node: true
+    attributes:
+      abbreviation:
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      approvalSource:
+        multivalued: true
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      activeDrugIds:
+        multivalued: true
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      proDrugIds:
+        multivalued: true
+        annotations:
+          addedField: false
+      approved:
+        range: boolean
+        annotations:
+          constraint: MANDATORY
+          addedField: false
+      withdrawn:
+        range: boolean
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      inn:
+        annotations:
+          constraint: REQUIRED
+          addedField: false
+      type:
+        annotations:
+          constraint: REQUIRED
+          addedField: false
+    in_subset:
+      - curator_schema_only
+
+  #### Regulation ####
+  Regulation:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+    slots:
+      - goBiologicalProcess
+      - summation
+    attributes:
+      activeUnit:
+        # TBC - Note List in Java class (compared to set in CatalystActivity)
+        multivalued: true
+        range: PhysicalEntity
+        annotations:
+          constraint: OPTIONAL
+          category: all
+          type: "activeUnit"
+          # TBC: Is the following an error in java class - given it's a relationship field?
+          addedField: false
+      activity:
+        range: GO_MolecularFunction
+        annotations:
+          constraint: OPTIONAL
+          category: all
+          type: "activity"
+          # TBC: Is the following an error in java class - given it's a relationship field?
+          addedField: false
+      regulator:
+        range: PhysicalEntity
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "regulator"
+    in_subset:
+      - curator_schema_only
+
+  #### RegulationReference ####
+  RegulationReference:
+    is_a: ControlReference
+    annotations:
+      node: true
+    attributes:
+      regulation:
+        range: Regulation
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "regulation"
+    in_subset:
+      - curator_schema_only
+
+  #### ReplacedResidue ####
+  ReplacedResidue:
+    is_a: GeneticallyModifiedResidue
+    annotations:
+      node: true
+    slots:
+      - coordinate
+      - psiMod
+    in_subset:
+      - curator_schema_only
+
+  #### _Release ####
+  _Release:
+    is_a: DatabaseObject
+    attributes:
+      releaseNumber:
+        range: integer
+        annotations:
+          constraint: MANDATORY
+          addedField: false
+      releaseDate:
+        annotations:
+          constraint: MANDATORY
+          addedField: false
+    in_subset:
+      - curator_schema_only
+
+  #### RepeatedUnit ####
+  RepeatedUnit:
+    annotations:
+      relationship_properties: true
+    slots:
+      - id
+      - order
+      - physicalEntity
+      - stoichiometry
+    in_subset:
+      - curator_schema_only
+
+  #### RepresentedPathway ####
+  RepresentedPathway:
+    annotations:
+      relationship_properties: true
+      implements: "Comparable<RepresentedPathway>"
+    slots:
+      - id
+      - order
+      - stoichiometry
+    attributes:
+      pathway:
+        range: Pathway
+        annotations:
+          target_node: true
+    in_subset:
+      - curator_schema_only
+
+  #### Requirement ####
+  Requirement:
+    is_a: PositiveRegulation
+    annotations:
+      node: true
+    attributes:
+      explanation:
+        annotations:
+          getter_only: true
+          reactome_schema_ignore: true
+          json_ignore: true
+          override: true
+          value: "A regulator that is required for an Event/CatalystActivity to happen"
+    in_subset:
+      - curator_schema_only
+
+  #### RNADrug ####
+  RNADrug:
+    is_a: Drug
+    annotations:
+      node: true
+    in_subset:
+      - curator_schema_only
+
+  #### SequenceOntology ####
+  SequenceOntology:
+    is_a: ExternalOntology
+    annotations:
+      node: true
+    slots:
+      - identifier
+    slot_usage:
+      identifier:
+        annotations:
+          constraint: MANDATORY
+          category: all
+    in_subset:
+      - curator_schema_only
+
+  #### SimpleEntity ####
+  SimpleEntity:
+    is_a: PhysicalEntity
+    annotations:
+      node: true
+    slots:
+      - compartment
+      - species
+    slot_usage:
+      compartment:
+        annotations:
+          category: all
+      species:
+        annotations:
+          constraint: OPTIONAL
+          category: all
+    attributes:
+      referenceEntity:
+        range: ReferenceMolecule
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "referenceEntity"
+      explanation:
+        annotations:
+          getter_only: true
+          reactome_schema_ignore: true
+          json_ignore: true
+          override: true
+          value: "A chemical species not encoded directly or indirectly in the genome, typically small molecules such as ATP or ethanol. The detailed structure of a simpleEntity is specified by linking it to details of the molecule in the ChEBI or KEGG databases via the referenceEntity slot. Use of KEGG is deprecated"
+      className:
+        annotations:
+          getter_only: true
+          reactome_schema_ignore: true
+          override: true
+          value: "Chemical Compound"
+    in_subset:
+    - curator_schema_only
+
+  #### Species ####
+  Species:
+    is_a: Taxon
+    annotations:
+      node: true
+    attributes:
+      abbreviation:
+        annotations:
+          constraint: MANDATORY
+          addedField: false
+    in_subset:
+      - curator_schema_only
+
+  #### StableIdentifier ####
+  StableIdentifier:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+    slots:
+      - identifier
+      - identifierVersion
+    attributes:
+      oldIdentifier:
+        annotations:
+          addedField: false
+      oldIdentifierVersion:
+        annotations:
+          addedField: false
+      released:
+        range: boolean
+        annotations:
+          addedField: false
+      history:
+        multivalued: true
+        range: StableIdentifierHistory
+        annotations:
+          type: "history"
+    in_subset:
+      - curator_schema_only
+
+  #### StableIdentifierHistory ####
+  StableIdentifierHistory:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+    slots:
+      - identifier
+      - identifierVersion
+    attributes:
+      historyStatus:
+        multivalued: true
+        range: StableIdentifierReleaseStatus
+        annotations:
+          type: "historyStatus"
+    in_subset:
+      - curator_schema_only
+
+  #### StableIdentifierReleaseStatus ####
+  StableIdentifierReleaseStatus:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+    attributes:
+      releaseNumber:
+        range: integer
+        annotations:
+          addedField: false
+          category: all
+      status:
+        range: integer
+        annotations:
+          addedField: false
+          category: all
+    in_subset:
+      - curator_schema_only
+
+  #### Summation ####
+  Summation:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+    slots:
+      - literatureReference
+    attributes:
+      text:
+        annotations:
+          constraint: MANDATORY
+          category: all
+          addedField: false
+    in_subset:
+      - curator_schema_only
+
+  #### Taxon ####
+  Taxon:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+    slots:
+      - crossReference
+      - name
+    slot_usage:
+      crossReference:
+        annotations:
+          deprecated: true
+          constraint: MANDATORY
+      name:
+        annotations:
+          category: any
+    attributes:
+      superTaxon:
+        range: Taxon
+        annotations:
+          constraint: REQUIRED
+          type: "superTaxon"
+    in_subset:
+      - curator_schema_only
+
+  #### TranscriptionalModification ####
+  TranscriptionalModification:
+    is_a: AbstractModifiedResidue
+    annotations:
+      node: true
+    in_subset:
+      - curator_schema_only
+
+  #### TranslationalModification ####
+  TranslationalModification:
+    is_a: AbstractModifiedResidue
+    annotations:
+      node: true
+    slots:
+      - coordinate
+      - psiMod
+    in_subset:
+      - curator_schema_only
+
+  #### _UpdateTracker ####
+  _UpdateTracker:
+    is_a: DatabaseObject
+    attributes:
+      action:
+        multivalued: true
+        annotations:
+          constraint: NOMANUALEDIT
+          addedField: false
+      _release:
+        range: _Release
+        annotations:
+          constraint: NOMANUALEDIT
+          type: "_release"
+      updatedInstance:
+        multivalued: true
+        range: DatabaseObject
+        annotations:
+          constraint: NOMANUALEDIT
+          type: "updatedInstance"
+          allowed: "{Event.class, PhysicalEntity.class}"
+    in_subset:
+      - curator_schema_only
+
+  #### URL ####
+  URL:
+    is_a: Publication
+    annotations:
+      node: true
+    attributes:
+      uniformResourceLocator:
+        annotations:
+          constraint: MANDATORY
+          category: any
+          addedField: false
+    in_subset:
+      - curator_schema_only
+
+  #### Annotations classes - start ####
+  Annotations:
+    attributes:
+      deprecated:
+        range: boolean
+      generated_value:
+        range: boolean
+      getter_only:
+        range: boolean
+      id:
+        range: boolean
+      int_value:
+        range: integer
+      implements:
+      json_identity_info:
+        range: JsonIdentityInfo
+      json_ignore:
+        range: boolean
+      node:
+        range: boolean
+      reactome_allowed_classes:
+        range: ReactomeAllowedClasses
+      reactome_transient:
+        range: boolean
+      reactome_constraint:
+        range: ReactomeConstraint
+      reactome_property:
+        range: ReactomeProperty
+      reactome_instance_defining_value:
+        range: ReactomeInstanceDefiningValue
+      reactome_schema_ignore:
+        range: boolean
+      override:
+        range: boolean
+      property:
+        range: boolean
+      relationship:
+        range: Relationship
+      relationship_properties:
+        range: boolean
+      set:
+        range: boolean
+      sorted_set:
+        range: boolean
+      target_node:
+        range: boolean
+      value:
+    in_subset:
+      - schema_annotations
+
+  ReactomeAllowedClasses:
+    attributes:
+      allowed:
+        multivalued: true
+    in_subset:
+      - schema_annotations
+
+  ReactomeConstraint:
+    attributes:
+      constraint:
+        range: ReactomeConstraintValues
+    in_subset:
+      - schema_annotations
+
+  ReactomeInstanceDefiningValue:
+    attributes:
+      category:
+        range: CategoryValues
+    in_subset:
+      - schema_annotations
+
+  ReactomeProperty:
+    attributes:
+      addedField:
+        range: boolean
+    in_subset:
+      - schema_annotations
+
+  Relationship:
+    attributes:
+        type:
+        direction: RelationshipDirectionValues
+    in_subset:
+      - schema_annotations
+
+  JsonIdentityInfo:
+    attributes:
+      generator:
+      property:
+  #### Annotations classes - end ####
+
+#### Enumerations ####
+enums:
+  ReactomeConstraintValues:
+    permissible_values:
+      NOMANUALEDIT:
+      MANDATORY:
+      OPTIONAL:
+      REQUIRED:
+  RelationshipDirectionValues:
+    permissible_values:
+      INCOMING:
+      OUTGOING:
+  ReleaseStatusValues:
+    permissible_values:
+      EXISTS:
+      CREATED:
+      INCREMENTED:
+      REPLACED:
+      ORTHO:
+  CategoryValues:
+     permissible_values:
+       none:
+       any:
+       all:
+
+#### Slots ####
+slots:
+  accession:
+    annotations:
+      constraint: MANDATORY
+      category: any
+      addedField: false
+  authored:
+    range: InstanceEdit
+    annotations:
+      constraint: OPTIONAL
+      type: "authored"
+      direction: INCOMING
+  catalystActivity:
+    multivalued: true
+    range: CatalystActivity
+    annotations:
+      type: "catalystActivity"
+      constraint: OPTIONAL
+      category: all
+  cellType:
+    multivalued: true
+    range: CellType
+    annotations:
+      constraint: MANDATORY
+      category: all
+      type: "cellType"
+  coordinate:
+    range: integer
+    annotations:
+      constraint: REQUIRED
+      category: all
+      addedField: false
+  crossReference:
+    multivalued: true
+    range: DatabaseIdentifier
+    annotations:
+      constraint: OPTIONAL
+      type: "crossReference"
+  compartment:
+    range: Compartment
+    multivalued: true
+    annotations:
+      constraint: MANDATORY
+      type: "compartment"
+  definition:
+    annotations:
+      constraint: OPTIONAL
+      addedField: False
+  edited:
+    multivalued: true
+    range: InstanceEdit
+    annotations:
+      constraint: OPTIONAL
+      direction: INCOMING
+      type: "edited"
+  entityOnOtherCell:
+    multivalued: true
+    range: PhysicalEntity
+    annotations:
+      constraint: OPTIONAL
+      type: "entityOnOtherCell"
+  figure:
+    multivalued: true
+    range: Figure
+    annotations:
+      constraint: OPTIONAL
+      type: "figure"
+  formula:
+    annotations:
+      constraint: OPTIONAL
+      addedField: false
+  goBiologicalProcess:
+    range: GO_BiologicalProcess
+    annotations:
+      constraint: OPTIONAL
+      type: "goBiologicalProcess"
+  id:
+    range: long
+    annotations:
+      id: true
+      generated_value: true
+  identifier:
+    annotations:
+      addedField: false
+  identifierVersion:
+    annotations:
+      addedField: false
+  isChimeric:
+    range: boolean
+    annotations:
+      constraint: OPTIONAL
+      addedField: false
+  literatureReference:
+    multivalued: true
+    range: Publication
+    annotations:
+      constraint: OPTIONAL
+      type: "literatureReference"
+  modification:
+    range: DatabaseObject
+    annotations:
+      constraint: MANDATORY
+      category: all
+      type: "modification"
+      allowed: "{EntitySet.class, Polymer.class, ReferenceGroup.class}"
+  name:
+    multivalued: true
+    annotations:
+      constraint: MANDATORY
+      addedField: false
+  order:
+    range: integer
+  otherIdentifier:
+    multivalued: true
+    annotations:
+      constraint: NOMANUALEDIT
+      addedField: false
+  physicalEntity:
+    range: PhysicalEntity
+    annotations:
+      target_node: true
+  psiMod:
+    range: PsiMod
+    annotations:
+      constraint: MANDATORY
+      category: all
+      type: "psiMod"
+  referenceDatabase:
+    range: ReferenceDatabase
+    annotations:
+      constraint: MANDATORY
+      type: "referenceDatabase"
+  referenceEntity:
+    range: ReferenceSequence
+    annotations:
+      constraint: MANDATORY
+      category: all
+      type: "referenceEntity"
+  relatedSpecies:
+    multivalued: true
+    range: Species
+    annotations:
+      constraint: OPTIONAL
+      type: "relatedSpecies"
+  revised:
+    multivalued: true
+    range: InstanceEdit
+    annotations:
+      constraint: OPTIONAL
+      direction: INCOMING
+      type: "revised"
+  species:
+    multivalued: true
+    range: Species
+    annotations:
+      constraint: REQUIRED
+      type: "species"
+  stoichiometry:
+    range: integer
+    annotations:
+      int_value: 1
+  summation:
+    multivalued: true
+    range: Summation
+    annotations:
+      constraint: OPTIONAL
+      type: "summation"
+  tissue:
+    range: Anatomy
+    annotations:
+      constraint: REQUIRED
+      type: "tissue"
