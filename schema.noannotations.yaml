@@ -32,12 +32,11 @@ classes:
       node: true
     slots:
       - annotationReferenceSequenceConstraintMandatory
+      - annotationReferenceSequenceCategoryAll
+      - annotationReferenceSequenceRelationshipType
     attributes:
       referenceSequence:
         range: ReferenceSequence
-        annotations:
-          category: all
-          type: "referenceSequence"
     in_subset:
       - curator_schema_only
 
@@ -50,10 +49,8 @@ classes:
       - name
       - annotationNameConstraintMandatory
       - annotationAddressConstraintRequired
-    slot_usage:
-      name:
-        annotations:
-          category: all
+      - annotationNameReactomeProperty
+      - annotationNameCategoryAll
     attributes:
       address:
     in_subset:
@@ -86,24 +83,31 @@ classes:
       - annotationTemplateEventConstraintOptional
       - annotationInputConstraintRequired
       - annotationOutputConstraintRequired
+      - annotationAuthoredDirectionIncoming
+      - annotationEditedDirectionIncoming
+      - annotationInputCategoryAll
+      - annotationOutputCategoryAll
+      - annotationCatalystActivityCategoryAll
+      - annotationTemplateEventRelationshipType
+      - annotationInputRelationshipType
+      - annotationOutputRelationshipType
+      - annotationAuthoredRelationshipType
+      - annotationCatalystActivityRelationshipType
+      - annotationEditedRelationshipType
+      - annotationGoBiologicalProcessRelationshipType
+      - annotationLiteratureReferenceRelationshipType
     attributes:
       templateEvent:
         range: Event
-        annotations:
-          type: "templateEvent"
       input:
         multivalued: true
         range: Input
         annotations:
-          category: all
-          type: "input"
           set: true
       output:
         multivalued: true
         range: Output
         annotations:
-          category: all
-          type: "output"
           set: true
       explanation:
         annotations:
@@ -127,31 +131,27 @@ classes:
       - annotationYearConstraintMandatory
       - annotationChapterAuthorsConstraintOptional
       - annotationPublisherConstraintOptional
+      - annotationISBNReactomeProperty
+      - annotationChapterTitleReactomeProperty
+      - annotationPagesReactomeProperty
+      - annotationYearReactomeProperty
+      - annotationISBNCategoryAny
+      - annotationChapterTitleCategoryAny
+      - annotationChapterAuthorsRelationshipType
+      - annotationPublisherRelationshipType
     attributes:
       ISBN:
-        annotations:
-          category: any
-          addedField: false
       chapterTitle:
-        annotations:
-          category: any
-          addedField: false
       pages:
         annotations:
-          addedField: false
       year:
         range: integer
         annotations:
-          addedField: false
       chapterAuthors:
         multivalued: true
         range: Person
-        annotations:
-          type: "chapterAuthors"
       publisher:
         range: Affiliation
-        annotations:
-          type: "publisher"
     in_subset:
       - curator_schema_only
 
@@ -163,19 +163,18 @@ classes:
     slots:
       - annotationHasCandidateConstraintMandatory
       - annotationHasMemberConstraintRequired
+      - annotationHasCandidateCategoryAll
+      - annotationHasMemberCategoryAll
+      - annotationHasCandidateRelationshipType
+      - annotationHasMemberRelationshipType
     attributes:
       hasCandidate:
         multivalued: true
         range: HasCandidate
         annotations:
-          category: all
-          type: "hasCandidate"
           sorted_set: true
       hasMember:
         range: HasMember
-        annotations:
-          category: all
-          type: "hasMember"
       explanation:
         annotations:
           getter_only: true
@@ -195,24 +194,22 @@ classes:
       - annotationActiveUnitConstraintOptional
       - annotationActivityConstraintRequired
       - annotationPhysicalEntityConstraintMandatory
+      - annotationActiveUnitCategoryAll
+      - annotationActivityCategoryAll
+      - annotationPhysicalEntityCategoryAll
+      - annotationActiveUnitRelationshipType
+      - annotationActivityRelationshipType
+      - annotationPhysicalEntityRelationshipType
     attributes:
       activeUnit:
         multivalued: true
         range: PhysicalEntity
         annotations:
-          category: all
-          type: "activeUnit"
           set: true
       activity:
         range: GO_MolecularFunction
-        annotations:
-          category: all
-          type: "activity"
       physicalEntity:
         range: PhysicalEntity
-        annotations:
-          category: all
-          type: "physicalEntity"
     in_subset:
       - curator_schema_only
 
@@ -224,6 +221,8 @@ classes:
     slots:
       - catalystActivity
       - annotationCatalystActivityConstraintMandatory
+      - annotationCatalystActivityCategoryAll
+      - annotationCatalystActivityRelationshipType
     in_subset:
       - curator_schema_only
 
@@ -245,6 +244,15 @@ classes:
       - annotationOrganConstraintOptional
       - annotationProteinMarkerConstraintRequired
       - annotationTissueLayerConstraintOptional
+      - annotationCellTypeCategoryAll
+      - annotationRNAMarkerRelationshipType
+      - annotationMarkerReferenceRelationshipType
+      - annotationOrganRelationshipType
+      - annotationProteinMarkerRelationshipType
+      - annotationTissueLayerRelationshipType
+      - annotationCellTypeRelationshipType
+      - annotationSpeciesRelationshipType
+      - annotationTissueRelationshipType
     slot_usage:
       species:
         range: Taxon
@@ -252,26 +260,16 @@ classes:
       RNAMarker:
         multivalued: true
         range: EntityWithAccessionedSequence
-        annotations:
-          type: "rnaMarker"
       markerReference:
         multivalued: true
         range: MarkerReference
-        annotations:
-          type: "markerReference"
       organ:
         range: Anatomy
-        annotations:
-          type: "organ"
       proteinMarker:
         multivalued: true
         range: PhysicalEntity
-        annotations:
-          type: "proteinMarker"
       tissueLayer:
         range: Anatomy
-        annotations:
-          type: "tissueLayer"
     in_subset:
       - curator_schema_only
 
@@ -286,12 +284,15 @@ classes:
       - annotationCatalystActivityConstraintOptional
       - annotationTissueConstraintRequired
       - annotationRequiredInputComponentConstraintRequired
+      - annotationCatalystActivityCategoryAll
+      - annotationRequiredInputComponentRelationshipType
+      - annotationCatalystActivityRelationshipType
+      - annotationTissueRelationshipType
     attributes:
       requiredInputComponent:
         multivalued: true
         range: PhysicalEntity
         annotations:
-          type: "requiredInputComponent"
           set: true
     in_subset:
       - curator_schema_only
@@ -304,6 +305,7 @@ classes:
     slots:
       - tissue
       - annotationTissueConstraintRequired
+      - annotationTissueRelationshipType
     in_subset:
       - curator_schema_only
 
@@ -350,23 +352,27 @@ classes:
       - annotationHasComponentConstraintMandatory
       - annotationStoichiometryKnownConstraintOptional
       - annotationIncludedLocationConstraintNomanualedit
+      - annotationStoichiometryKnownReactomeProperty
+      - annotationIsChimericReactomeProperty
+      - annotationHasComponentCategoryAll
+      - annotationHasComponentRelationshipType
+      - annotationIncludedLocationRelationshipType
+      - annotationCompartmentRelationshipType
+      - annotationEntityOnOtherCellRelationshipType
+      - annotationRelatedSpeciesRelationshipType
+      - annotationSpeciesRelationshipType
     attributes:
       hasComponent:
         multivalued: true
         range: HasComponent
         annotations:
-          category: all
-          type: "hasComponent"
           sorted_set: true
       stoichiometryKnown:
         range: boolean
-        annotations:
-          addedField: false
       includedLocation:
         multivalued: true
         range: HasCompartment
         annotations:
-          type: "includedLocation"
           sorted_set: true
       explanation:
         annotations:
@@ -388,6 +394,8 @@ classes:
       - name
       - annotationDefinitionConstraintOptional
       - annotationNameConstraintMandatory
+      - annotationDefinitionReactomeProperty
+      - annotationNameReactomeProperty
     in_subset:
       - curator_schema_only
 
@@ -399,10 +407,8 @@ classes:
     slots:
       - literatureReference
       - annotationLiteratureReferenceConstraintMandatory
-    slot_usage:
-      literatureReference:
-        annotations:
-          category: all
+      - annotationLiteratureReferenceCategoryAll
+      - annotationLiteratureReferenceRelationshipType
     in_subset:
       - curator_schema_only
 
@@ -415,13 +421,14 @@ classes:
       - modification
       - annotationModificationAllowed
       - annotationModificationConstraintOptional
-      - annotationCecondCoordinateConstraintRequired
+      - annotationSecondCoordinateConstraintRequired
+      - annotationSecondCoordinateReactomeProperty
+      - annotationSecondCoordinateCategoryAll
+      - annotationModificationCategoryAll
+      - annotationModificationRelationshipType
     attributes:
       secondCoordinate:
         range: integer
-        annotations:
-          category: all
-          addedField: false
     in_subset:
       - curator_schema_only
 
@@ -437,13 +444,11 @@ classes:
       - annotationCrossReferenceConstraintOptional
       - annotationReferenceDatabaseConstraintMandatory
       - annotationIdentifierConstraintMandatory
-    slot_usage:
-      identifier:
-        annotations:
-          category: all
-      referenceDatabase:
-        annotations:
-          category: all
+      - annotationIdentifierReactomeProperty
+      - annotationIdentifierCategoryAll
+      - annotationReferenceDatabaseCategoryAll
+      - annotationCrossReferenceRelationshipType
+      - annotationReferenceDatabaseRelationshipType
     in_subset:
       - curator_schema_only
 
@@ -460,6 +465,12 @@ classes:
       - annotationCreatedConstraintNomanualedit
       - annotationModifiedConstraintNomanualedit
       - annotationStableIdentifierNomanualedit
+      - annotation_DisplayNameReactomeProperty
+      - annotationCreatedDirectionIncoming
+      - annotationModifiedDirectionIncoming
+      - annotationCreatedRelationshipType
+      - annotationModifiedRelationshipType
+      - annotationStableIdentifierRelationshipType
     attributes:
       isLoaded:
         annotations:
@@ -474,22 +485,12 @@ classes:
         annotations:
           id: true
       _displayName:
-        annotations:
-          addedField: false
       _timestamp:
       created:
         range: InstanceEdit
-        annotations:
-          type: "created"
-          direction: INCOMING
       modified:
         range: InstanceEdit
-        annotations:
-          type: "modified"
-          direction: INCOMING
       stableIdentifier:
-          annotations:
-            type: "stableIdentifier"
       explanation:
         annotations:
           getter_only: true
@@ -513,7 +514,6 @@ classes:
     slot_usage:
       id:
         annotations:
-          generated_value: false
           json_ignore: true
     attributes:
       name:
@@ -546,32 +546,27 @@ classes:
     slots:
       - annotationCuratorCommentConstraintNomanualedit
       - annotationDeletedInstanceDB_IDConstraintNomanualedit
-      - annotationReasonNomanualedit
+      - annotationReasonConstraintNomanualedit
       - annotationDeletedInstanceConstraintNomanualedit
       - annotationReplacementInstancesConstraintNomanualedit
+      - annotationCuratorCommentReactomeProperty
+      - annotationDeletedInstanceDB_IDReactomeProperty
+      - annotationReasonRelationshipType
+      - annotationDeletedInstanceRelationshipType
+      - annotationReplacementInstancesRelationshipType
     attributes:
       curatorComment:
-        annotations:
-          addedField: false
       deletedInstanceDB_ID:
         multivalued: true
         range: AnnotationLongType
-        annotations:
-          addedField: false
       reason:
         range: DeletedControlledVocabulary
-        annotations:
-          type: "reason"
       deletedInstance:
         multivalued: true
         range: _DeletedInstance
-        annotations:
-          type: "deletedInstance"
       replacementInstances:
         multivalued: true
         range: DatabaseObject
-        annotations:
-          type: "replacementInstances"
     in_subset:
       - curator_schema_only
 
@@ -592,29 +587,25 @@ classes:
       - annotationDeletedInstanceDB_IDConstraintNomanualedit
       - annotationClassNameConstraintNomanualedit
       - annotationDeletedStableIdentifierConstraintNomanualedit
+      - annotationDeletedInstanceDB_IDReactomeProperty
+      - annotationClassNameReactomeProperty
+      - annotationNameReactomeProperty
+      - annotationNameCategoryAll
+      - annotationSpeciesCategoryAll
+      - annotationDeletedInstanceDB_IDCategoryAll
+      - annotationDeletedStableIdentifierCategoryAll
+      - annotationDeletedStableIdentifierRelationshipType
+      - annotationSpeciesRelationshipType
     slot_usage:
-      name:
-        annotations:
-          category: all
       species:
         range: Taxon
-        annotations:
-          category: all
     attributes:
       deletedInstanceDB_ID:
         multivalued: true
         range: AnnotationLongType
-        annotations:
-          category: all
-          addedField: false
       className:
-        annotations:
-          addedField: false
       deletedStableIdentifier:
         range: StableIdentifier
-        annotations:
-          category: all
-          type: "deletedStableIdentifier"
     in_subset:
       - curator_schema_only
 
@@ -632,6 +623,12 @@ classes:
       - annotationEditedConstraintRequired
       - annotationGoBiologicalProcessConstraintOptional
       - annotationLiteratureReferenceConstraintRequired
+      - annotationAuthoredDirectionIncoming
+      - annotationEditedDirectionIncoming
+      - annotationAuthoredRelationshipType
+      - annotationEditedRelationshipType
+      - annotationGoBiologicalProcessRelationshipType
+      - annotationLiteratureReferenceRelationshipType
     in_subset:
       - curator_schema_only
 
@@ -654,17 +651,16 @@ classes:
       - annotationCompartmentConstraintMandatory
       - annotationReferenceEntityConstraintMandatory
       - annotationDiseaseConstraintMandatory
-    slot_usage:
-      compartment:
-        annotations:
-          category: all
+      - annotationCompartmentCategoryAll
+      - annotationDiseaseCategoryAll
+      - annotationReferenceEntityCategoryAll
+      - annotationDiseaseRelationshipType
+      - annotationCompartmentRelationshipType
+      - annotationReferenceEntityRelationshipType
     attributes:
       disease:
         multivalued: true
         range: Disease
-        annotations:
-          category: all
-          type: "disease"
     in_subset:
       - curator_schema_only
 
@@ -675,12 +671,11 @@ classes:
       node: true
     slots:
       - annotationInstanceOfConstraintOptional
+      - annotationInstanceOfRelationshipType
     attributes:
       instanceOf:
         multivalued: true
         range: DrugActionType
-        annotations:
-          type: "instanceOf"
     in_subset:
       - curator_schema_only
 
@@ -693,23 +688,20 @@ classes:
       - annotationFunctionalStatusConstraintMandatory
       - annotationDiseaseEntityConstraintMandatory
       - annotationNormalEntityConstraintRequired
+      - annotationFunctionalStatusCategoryAll
+      - annotationDiseaseEntityCategoryAll
+      - annotationNormalEntityCategoryAll
+      - annotationFunctionalStatusRelationshipType
+      - annotationDiseaseEntityRelationshipType
+      - annotationNormalEntityRelationshipType
     attributes:
       functionalStatus:
         multivalued: true
         range: FunctionalStatus
-        annotations:
-          category: all
-          type: "functionalStatus"
       diseaseEntity:
         range: PhysicalEntity
-        annotations:
-          category: all
-          type: "diseaseEntity"
       normalEntity:
         range: PhysicalEntity
-        annotations:
-          category: all
-          type: "normalEntity"
     in_subset:
       - curator_schema_only
 
@@ -725,19 +717,21 @@ classes:
       - annotationCompartmentConstraintMandatory
       - annotationRelatedSpeciesConstraintOptional
       - annotationSpeciesConstraintNomanualedit
+      - annotationIsOrderedConstraintOptional
+      - annotationHasMemberConstraintMandatory
+      - annotationIsOrderedReactomeProperty
+      - annotationHasMemberCategoryAll
+      - annotationHasMemberRelationshipType
+      - annotationCompartmentRelationshipType
+      - annotationRelatedSpeciesRelationshipType
+      - annotationSpeciesRelationshipType
     attributes:
       isOrdered:
         range: boolean
-        annotations:
-          constraint: OPTIONAL
-          addedField: true
       hasMember:
         multivalued: true
         range: HasMember
         annotations:
-          constraint: MANDATORY
-          category: all
-          type: "hasMember"
           sorted_set: true
       explanation:
         annotations:
@@ -767,34 +761,33 @@ classes:
       - annotationNameConstraintMandatory
       - annotationReferenceEntityConstraintMandatory
       - annotationSpeciesConstraintMandatory
+      - annotationStartCoordinateConstraintRequired
+      - annotationEndCoordinateConstraintRequired
+      - annotationHasModifiedResidueConstraintRequired
+      - annotationStartCoordinateReactomeProperty
+      - annotationEndCoordinateReactomeProperty
+      - annotationNameReactomeProperty
+      - annotationNameCategoryNone
+      - annotationSpeciesCategoryNone
+      - annotationEndCoordinateCategoryAll
+      - annotationStartCoordinateCategoryAll
+      - annotationHasModifiedResidueCategoryAll
+      - annotationReferenceEntityCategoryAll
+      - annotationHasModifiedResidueRelationshipType
+      - annotationReferenceEntityRelationshipType
+      - annotationSpeciesRelationshipType
     slot_usage:
-      name:
-        annotations:
-          category: none
       species:
         range: Taxon
-        annotations:
-          category: none
     attributes:
       endCoordinate:
         range: integer
-        annotations:
-          constraint: REQUIRED
-          category: all
-          addedField: false
       startCoordinate:
         range: integer
-        annotations:
-          constraint: REQUIRED
-          category: all
-          addedField: false
       hasModifiedResidue:
         multivalued: true
         range: HasModifiedResidue
         annotations:
-          constraint: REQUIRED
-          category: all
-          type: "hasModifiedResidue"
           sorted_set: true
       explanation:
         annotations:
@@ -836,68 +829,72 @@ classes:
       - annotationRevisedConstraintOptional
       - annotationSpeciesConstraintMandatory
       - annotationSummationConstraintMandatory
-    slot_usage:
-      name:
-        annotations:
-          category: none
+      - annotation_DoReleaseConstraintOptional
+      - annotationReleaseDateConstraintMandatory
+      - annotationReleaseStatusConstraintNomanualedit
+      - annotationDiseaseConstraintOptional
+      - annotationEvidenceTypeConstraintOptional
+      - annotationPrecedingEventConstraintOptional
+      - annotationInferredFromConstraintOptional
+      - annotationOrthologousEventConstraintOptional
+      - annotationReviewedConstraintRequired
+      - annotationNegativePrecedingEventConstraintOptional
+      - annotation_DoReleaseReactomeProperty
+      - annotationReleaseDateReactomeProperty
+      - annotationReleaseStatusReactomeProperty
+      - annotationDefinitionReactomeProperty
+      - annotationNameReactomeProperty
+      - annotationReviewedDirectionIncoming
+      - annotationAuthoredDirectionIncoming
+      - annotationEditedDirectionIncoming
+      - annotationRevisedDirectionIncoming
+      - annotationNameCategoryNone
+      - annotationDiseaseRelationshipType
+      - annotationEvidenceTypeRelationshipType
+      - annotationPrecedingEventRelationshipType
+      - annotationInferredFromRelationshipType
+      - annotationOrthologousEventRelationshipType
+      - annotationReviewedRelationshipType
+      - annotationNegativePrecedingEventRelationshipType
+      - annotationAuthoredRelationshipType
+      - annotationCrossReferenceRelationshipType
+      - annotationEditedRelationshipType
+      - annotationFigureRelationshipType
+      - annotationGoBiologicalProcessRelationshipType
+      - annotationLiteratureReferenceRelationshipType
+      - annotationRelatedSpeciesRelationshipType
+      - annotationRevisedRelationshipType
+      - annotationSpeciesRelationshipType
+      - annotationSummationRelationshipType
     attributes:
       _doRelease:
         range: boolean
-        annotations:
-          constraint: OPTIONAL
-          addedField: false
       releaseDate:
-        annotations:
-          constraint: MANDATORY
-          addedField: false
       releaseStatus:
-        annotations:
-          constraint: NOMANUALEDIT
-          addedField: false
       disease:
         multivalued: true
         range: Disease
-        annotations:
-          constraint: OPTIONAL
-          type: "disease"
       evidenceType:
         range: EvidenceType
-        annotations:
-          constraint: OPTIONAL
-          type: "evidenceType"
       precedingEvent:
         multivalued: true
         range: Event
-        annotations:
-          constraint: OPTIONAL
-          type: "precedingEvent"
       inferredFrom:
         multivalued: true
         range: Event
         annotations:
-          constraint: OPTIONAL
-          type: "inferredFrom"
           set: true
       orthologousEvent:
         multivalued: true
         range: Event
         annotations:
-          constraint: OPTIONAL
-          type: "orthologousEvent"
           set: true
       reviewed:
         multivalued: true
         range: InstanceEdit
-        annotations:
-          constraint: REQUIRED
-          direction: INCOMING
-          type: "reviewed"
       negativePrecedingEvent:
         multivalued: true
         range: NegativePrecedingEvent
-        annotations:
-          constraint: OPTIONAL
-          type: "negativePrecedingEvent"
     in_subset:
       - curator_schema_only
 
@@ -911,17 +908,15 @@ classes:
       - name
       - annotationDefinitionConstraintOptional
       - annotationNameConstraintMandatory
-    slot_usage:
-      name:
-        annotations:
-          category: any
+      - annotationInstanceOfConstraintOptional
+      - annotationDefinitionReactomeProperty
+      - annotationNameReactomeProperty
+      - annotationNameCategoryAny
+      - annotationInstanceOfRelationshipType
     attributes:
       instanceOf:
         multivalued: true
         range: EvidenceType
-        annotations:
-          constraint: OPTIONAL
-          type: "instanceOf"
     in_subset:
       - curator_schema_only
 
@@ -938,23 +933,22 @@ classes:
       - annotationDefinitionConstraintOptional
       - annotationNameConstraintMandatory
       - annotationReferenceDatabaseConstraintMandatory
-    slot_usage:
-      identifier:
-        annotations:
-          constraint: MANDATORY
-          category: all
+      - annotationSynonymConstraintOptional
+      - annotationInstanceOfConstraintOptional
+      - annotationIdentifierConstraintMandatory
+      - annotationSynonymReactomeProperty
+      - annotationDefinitionReactomeProperty
+      - annotationIdentifierReactomeProperty
+      - annotationNameReactomeProperty
+      - annotationIdentifierCategoryAll
+      - annotationInstanceOfRelationshipType
+      - annotationReferenceDatabaseRelationshipType
     attributes:
       synonym:
         multivalued: true
-        annotations:
-          constraint: OPTIONAL
-          addedField: false
       instanceOf:
         multivalued: true
         range: ExternalOntology
-        annotations:
-          constraint: OPTIONAL
-          type: "instanceOf"
     in_subset:
       - curator_schema_only
 
@@ -975,19 +969,25 @@ classes:
       - annotationGoBiologicalProcessConstraintOptional
       - annotationLiteratureReferenceConstraintRequired
       - annotationOutputConstraintNomanualedit
-    slot_usage:
+      - annotationNormalReactionConstraintMandatory
+      - annotationAuthoredDirectionIncoming
+      - annotationEditedDirectionIncoming
+      - annotationOutputCategoryAll
+      - annotationCatalystActivityCategoryAll
+      - annotationNormalReactionRelationshipType
+      - annotationOutputRelationshipType
+      - annotationAuthoredRelationshipType
+      - annotationCatalystActivityRelationshipType
+      - annotationEditedRelationshipType
+      - annotationGoBiologicalProcessRelationshipType
+      - annotationLiteratureReferenceRelationshipType
     attributes:
       normalReaction:
         range: ReactionlikeEvent
-        annotations:
-          constraint: MANDATORY
-          type: "normalReaction"
       output:
         multivalued: true
         range: Output
         annotations:
-          category: all
-          type: "output"
           set: true
       explanation:
         annotations:
@@ -1004,12 +1004,13 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
+    slots:
+      - annotationUrlConstraintMandatory
+      - annotationUrlReactomeProperty
+      - annotationUrlCategoryAll
     attributes:
       url:
         annotations:
-          constraint: MANDATORY
-          category: all
-          addedField: false
           property: true
     in_subset:
       - curator_schema_only
@@ -1030,27 +1031,28 @@ classes:
     slots:
       - coordinate
       - annotationCoordinateConstraintRequired
+      - annotationCoordinateReactomeProperty
+      - annotationCoordinateCategoryAll
     in_subset:
       - curator_schema_only
 
   #### FragmentModification ####
   FragmentModification:
     is_a: GeneticallyModifiedResidue
+    slots:
+      - annotationStartPositionInReferenceSequenceConstraintMandatory
+      - annotationEndPositionInReferenceSequenceConstraintMandatory
+      - annotationEndPositionInReferenceSequenceReactomeProperty
+      - annotationStartPositionInReferenceSequenceReactomeProperty
+      - annotationEndPositionInReferenceSequenceCategoryAll
+      - annotationStartPositionInReferenceSequenceCategoryAll
     annotations:
       node: true
     attributes:
       endPositionInReferenceSequence:
         range: integer
-        annotations:
-          constraint: MANDATORY
-          category: all
-          addedField: false
       startPositionInReferenceSequence:
         range: integer
-        annotations:
-          constraint: MANDATORY
-          category: all
-          addedField: false
     in_subset:
       - curator_schema_only
 
@@ -1059,12 +1061,12 @@ classes:
     is_a: FragmentModification
     annotations:
       node: true
+    slots:
+      - annotationAlteredAminoAcidFragmentConstraintOptional
+      - annotationAlteredAminoAcidFragmentReactomeProperty
+      - annotationAlteredAminoAcidFragmentCategoryAll
     attributes:
       alteredAminoAcidFragment:
-        annotations:
-          constraint: OPTIONAL
-          category: all
-          addedField: false
     in_subset:
       - curator_schema_only
 
@@ -1073,13 +1075,13 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
+    slots:
+      - annotationFrontPageItemConstraintMandatory
+      - annotationFrontPageItemRelationshipType
     attributes:
       frontPageItem:
         multivalued: true
         range: Event
-        annotations:
-          constraint: MANDATORY
-          type: "frontPageItem"
     in_subset:
       - curator_schema_only
 
@@ -1088,19 +1090,18 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
+    slots:
+      - annotationFunctionalStatusTypeConstraintMandatory
+      - annotationStructuralVariantConstraintMandatory
+      - annotationFunctionalStatusTypeCategoryAll
+      - annotationStructuralVariantCategoryAll
+      - annotationFunctionalStatusTypeRelationshipType
+      - annotationStructuralVariantRelationshipType
     attributes:
       functionalStatusType:
         range: FunctionalStatusType
-        annotations:
-          constraint: MANDATORY
-          category: all
-          type: "functionalStatusType"
       structuralVariant:
         range: SequenceOntology
-        annotations:
-          constraint: MANDATORY
-          category: all
-          type: "structuralVariant"
     in_subset:
       - curator_schema_only
 
@@ -1114,10 +1115,9 @@ classes:
       - name
       - annotationDefinitionConstraintOptional
       - annotationNameConstraintMandatory
-    slot_usage:
-      name:
-        annotations:
-          category: any
+      - annotationDefinitionReactomeProperty
+      - annotationNameReactomeProperty
+      - annotationNameCategoryAny
     in_subset:
       - curator_schema_only
 
@@ -1139,14 +1139,10 @@ classes:
       - species
       - annotationCompartmentConstraintMandatory
       - annotationSpeciesConstraintMandatory
-    slot_usage:
-      compartment:
-        annotations:
-          category: all
-      species:
-        range: Taxon
-        annotations:
-          category: all
+      - annotationCompartmentCategoryAll
+      - annotationSpeciesCategoryAll
+      - annotationCompartmentRelationshipType
+      - annotationSpeciesRelationshipType
     attributes:
       explanation:
         annotations:
@@ -1178,10 +1174,12 @@ classes:
       - annotationDefinitionConstraintOptional
       - annotationNameConstraintMandatory
       - annotationReferenceDatabaseConstraintMandatory
-    slot_usage:
-      name:
-        annotations:
-          category: any
+      - annotationAccessionReactomeProperty
+      - annotationDefinitionReactomeProperty
+      - annotationNameReactomeProperty
+      - annotationNameCategoryAny
+      - annotationAccessionCategoryAny
+      - annotationReferenceDatabaseRelationshipType
     in_subset:
       - curator_schema_only
 
@@ -1199,31 +1197,32 @@ classes:
       - annotationDefinitionConstraintOptional
       - annotationNameConstraintMandatory
       - annotationReferenceDatabaseConstraintMandatory
+      - annotationComponentOfConstraintRequired
+      - annotationHasPartConstraintOptional
+      - annotationInstanceOfConstraintRequired
+      - annotationSurroundedByConstraintOptional
+      - annotationAccessionReactomeProperty
+      - annotationDefinitionReactomeProperty
+      - annotationNameReactomeProperty
+      - annotationAccessionCategoryAny
+      - annotationComponentOfRelationshipType
+      - annotationHasPartRelationshipType
+      - annotationInstanceOfRelationshipType
+      - annotationSurroundedByRelationshipType
+      - annotationReferenceDatabaseRelationshipType
     attributes:
       componentOf:
         multivalued: true
         range: GO_CellularComponent
-        annotations:
-          constraint: REQUIRED
-          type: "componentOf"
       hasPart:
         multivalued: true
         range: GO_CellularComponent
-        annotations:
-          constraint: OPTIONAL
-          type: "hasPart"
       instanceOf:
         multivalued: true
         range: GO_CellularComponent
-        annotations:
-          constraint: REQUIRED
-          type: "instanceOf"
       surroundedBy:
         multivalued: true
         range: GO_CellularComponent
-        annotations:
-          constraint: OPTIONAL
-          type: "surroundedBy"
     in_subset:
       - curator_schema_only
 
@@ -1241,11 +1240,15 @@ classes:
       - annotationDefinitionConstraintOptional
       - annotationNameConstraintMandatory
       - annotationReferenceDatabaseConstraintMandatory
+      - annotationEcNumberConstraintOptional
+      - annotationEcNumberReactomeProperty
+      - annotationAccessionReactomeProperty
+      - annotationDefinitionReactomeProperty
+      - annotationNameReactomeProperty
+      - annotationAccessionCategoryAny
+      - annotationReferenceDatabaseRelationshipType
     attributes:
       ecNumber:
-        annotations:
-          constraint: OPTIONAL
-          addedField: false
     in_subset:
       - curator_schema_only
 
@@ -1258,6 +1261,8 @@ classes:
       - modification
       - annotationModificationAllowed
       - annotationModificationConstraintMandatory
+      - annotationModificationCategoryAll
+      - annotationModificationRelationshipType
     in_subset:
       - curator_schema_only
 
@@ -1270,6 +1275,7 @@ classes:
       - order
       - physicalEntity
       - stoichiometry
+      - annotationIdGeneratedValue
     in_subset:
       - curator_schema_only
 
@@ -1280,6 +1286,7 @@ classes:
     slots:
       - id
       - order
+      - annotationIdGeneratedValue
     attributes:
       compartment:
         range: Compartment
@@ -1297,6 +1304,7 @@ classes:
       - order
       - physicalEntity
       - stoichiometry
+      - annotationIdGeneratedValue
     in_subset:
       - curator_schema_only
 
@@ -1308,6 +1316,7 @@ classes:
     slots:
       - id
       - order
+      - annotationIdGeneratedValue
     attributes:
       event:
         range: Event
@@ -1325,6 +1334,7 @@ classes:
       - id
       - order
       - stoichiometry
+      - annotationIdGeneratedValue
     attributes:
       event:
         range: Event
@@ -1342,6 +1352,7 @@ classes:
       - order
       - physicalEntity
       - stoichiometry
+      - annotationIdGeneratedValue
     in_subset:
       - curator_schema_only
 
@@ -1353,6 +1364,7 @@ classes:
       - id
       - order
       - stoichiometry
+      - annotationIdGeneratedValue
     attributes:
       abstractModifiedResidue:
         range: AbstractModifiedResidue
@@ -1371,6 +1383,7 @@ classes:
       - order
       - physicalEntity
       - stoichiometry
+      - annotationIdGeneratedValue
     in_subset:
       - curator_schema_only
 
@@ -1379,22 +1392,19 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
+    slots:
+      - annotationDateTimeReactomeProperty
+      - annotationNoteReactomeProperty
+      - annotation_ApplyToAllEditedInstancesReactomeProperty
+      - annotationAuthorDirectionIncoming
+      - annotationAuthorRelationshipType
     attributes:
       dateTime:
-        annotations:
-          addedField: false
       note:
-        annotations:
-          addedField: false
       _applyToAllEditedInstances:
-        annotations:
-          addedField: false
       author:
         multivalued: true
         range: Person
-        annotations:
-          type: "author"
-          direction: INCOMING
     in_subset:
       - curator_schema_only
 
@@ -1403,13 +1413,13 @@ classes:
     is_a: Event
     annotations:
       node: true
+    slots:
+      - annotationPartnersConstraintMandatory
+      - annotationPartnersRelationshipType
     attributes:
       partners:
         multivalued: true
         range: PhysicalEntity
-        annotations:
-          constraint: MANDATORY
-          type: "partners"
     in_subset:
       - curator_schema_only
 
@@ -1418,20 +1428,20 @@ classes:
     is_a: CrosslinkedResidue
     annotations:
       node: true
+    slots:
+      - annotationEquivalentToConstraintMandatory
+      - annotationSecondReferenceSequenceConstraintMandatory
+      - annotationSecondReferenceSequenceCategoryAll
+      - annotationEquivalentToRelationshipType
+      - annotationSecondReferenceSequenceRelationshipType
     attributes:
       equivalentTo:
         multivalued: true
         range: InterChainCrosslinkedResidue
-        annotations:
-          constraint: MANDATORY
-          type: "equivalentTo"
       secondReferenceSequence:
         multivalued: true
         range: InterChainCrosslinkedResidue
         annotations:
-          constraint: MANDATORY
-          category: all
-          type: "secondReferenceSequence"
           set: true
     in_subset:
       - curator_schema_only
@@ -1449,6 +1459,16 @@ classes:
     is_a: Publication
     slots:
       - annotationYearConstraintMandatory
+      - annotationJournalConstraintRequired
+      - annotationPagesConstraintOptional
+      - annotationPubMedIdentifierConstraintRequired
+      - annotationVolumeConstraintOptional
+      - annotationJournalReactomeProperty
+      - annotationPagesReactomeProperty
+      - annotationPubMedIdentifierReactomeProperty
+      - annotationVolumeReactomeProperty
+      - annotationYearReactomeProperty
+      - annotationPubMedIdentifierCategoryAll
     annotations:
       node: true
     attributes:
@@ -1456,28 +1476,13 @@ classes:
         annotations:
           value: "http://www.ncbi.nlm.nih.gov/pubmed/"
       journal:
-        annotations:
-          constraint: REQUIRED
-          addedField: false
       pages:
-        annotations:
-          constraint: OPTIONAL
-          addedField: false
       pubMedIdentifier:
         range: integer
-        annotations:
-          constraint: REQUIRED
-          category: all
-          addedField: false
       volume:
         range: integer
-        annotations:
-          constraint: OPTIONAL
-          addedField: false
       year:
         range: integer
-        annotations:
-          addedField: false
     in_subset:
       - curator_schema_only
 
@@ -1486,13 +1491,13 @@ classes:
     is_a: ControlReference
     annotations:
       node: true
+    slots:
+      - annotationMarkerConstraintMandatory
+      - annotationMarkerRelationshipType
     attributes:
       marker:
         multivalued: true
         range: EntityWithAccessionedSequence
-        annotations:
-          constraint: MANDATORY
-          type: "marker"
     in_subset:
       - curator_schema_only
 
@@ -1507,6 +1512,10 @@ classes:
       - annotationModificationAllowed
       - annotationCoordinateConstraintMandatory
       - annotationModificationConstraintMandatory
+      - annotationCoordinateReactomeProperty
+      - annotationCoordinateCategoryAll
+      - annotationModificationCategoryAll
+      - annotationModificationRelationshipType
     in_subset:
       - curator_schema_only
 
@@ -1539,23 +1548,21 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
+    slots:
+      - annotationCommentConstraintOptional
+      - annotationPrecedingEventConstraintMandatory
+      - annotationReasonConstraintRequired
+      - annotationCommentReactomeProperty
+      - annotationPrecedingEventDirectionIncoming
+      - annotationPrecedingEventRelationshipType
+      - annotationReasonRelationshipType
     attributes:
       comment:
-        annotations:
-          constraint: OPTIONAL
-          addedField: false
       precedingEvent:
         multivalued: true
         range: Event
-        annotations:
-          constraint: MANDATORY
-          direction: INCOMING
-          type: "negativePrecedingEvent"
       reason:
         range: NegativePrecedingEventReason
-        annotations:
-          constraint: REQUIRED
-          type: "reason"
     in_subset:
       - curator_schema_only
 
@@ -1599,10 +1606,8 @@ classes:
     slots:
       - compartment
       - annotationCompartmentConstraintMandatory
-    slot_usage:
-      compartment:
-        annotations:
-          category: all
+      - annotationCompartmentCategoryAll
+      - annotationCompartmentRelationshipType
     attributes:
       explanation:
         annotations:
@@ -1624,6 +1629,7 @@ classes:
       - order
       - physicalEntity
       - stoichiometry
+      - annotationIdGeneratedValue
     in_subset:
       - curator_schema_only
 
@@ -1641,34 +1647,36 @@ classes:
       - annotationCompartmentConstraintRequired
       - annotationEditedConstraintOptional
       - annotationGoBiologicalProcessConstraintOptional
+      - annotationDoiConstraintOptional
+      - annotationHasEHLDConstraintOptional
+      - annotationIsCanonicalConstraintOptional
+      - annotationHasEventConstraintMandatory
+      - annotationNormalPathwayConstraintMandatory
+      - annotationDoiReactomeProperty
+      - annotationHasEHLDReactomeProperty
+      - annotationIsCanonicalReactomeProperty
+      - annotationAuthoredDirectionIncoming
+      - annotationEditedDirectionIncoming
+      - annotationHasEventCategoryAll
+      - annotationHasEventRelationshipType
+      - annotationNormalPathwayRelationshipType
+      - annotationAuthoredRelationshipType
+      - annotationCompartmentRelationshipType
+      - annotationEditedRelationshipType
+      - annotationGoBiologicalProcessRelationshipType
     attributes:
       doi:
-        annotations:
-          constraint: OPTIONAL
-          addedField: false
       hasEHLD:
         range: boolean
-        annotations:
-          constraint: OPTIONAL
-          addedField: false
       isCanonical:
         range: boolean
-        annotations:
-          constraint: OPTIONAL
-          addedField: false
       hasEvent:
         multivalued: true
         range: HasEvent
         annotations:
-          constraint: MANDATORY
-          category: all
-          type: "hasEvent"
           sorted_set: true
       normalPathway:
         range: Pathway
-        annotations:
-          constraint: OPTIONAL
-          type: "normalPathway"
       explanation:
         annotations:
           getter_only: true
@@ -1689,38 +1697,34 @@ classes:
       - figure
       - annotationCrossReferenceConstraintOptional
       - annotationFigureConstraintOptional
+      - annotationFirstnameConstraintOptional
+      - annotationInitialConstraintMandatory
+      - annotationProjectConstraintOptional
+      - annotationSurnameConstraintMandatory
+      - annotationUrlConstraintOptional
+      - annotationAffiliationConstraintOptional
+      - annotationFirstnameReactomeProperty
+      - annotationInitialReactomeProperty
+      - annotationProjectReactomeProperty
+      - annotationSurnameReactomeProperty
+      - annotationUrlReactomeProperty
+      - annotationFirstnameCategoryAll
+      - annotationInitialCategoryAll
+      - annotationProjectCategoryAll
+      - annotationSurnameCategoryAll
+      - annotationUrlCategoryAll
+      - annotationAffiliationRelationshipType
+      - annotationCrossReferenceRelationshipType
+      - annotationFigureRelationshipType
     attributes:
         firstname:
-          annotations:
-            constraint: OPTIONAL
-            category: all
-            addedField: false
         initial:
-          annotations:
-            constraint: MANDATORY
-            category: all
-            addedField: false
         project:
-          annotations:
-            constraint: OPTIONAL
-            category: all
-            addedField: false
         surname:
-          annotations:
-            constraint: MANDATORY
-            category: all
-            addedField: false
         url:
-          annotations:
-            constraint: OPTIONAL
-            category: all
-            addedField: false
         affiliation:
           multivalued: true
           range: Affiliation
-          annotations:
-            constraint: OPTIONAL
-            type: "affiliation"
     in_subset:
       - curator_schema_only
 
@@ -1750,48 +1754,55 @@ classes:
       - annotationNameConstraintMandatory
       - annotationRevisedConstraintOptional
       - annotationSummationConstraintOptional
-    slot_usage:
-      name:
-        annotations:
-          category: any
+      - annotationSystematicNameConstraintOptional
+      - annotationDiseaseConstraintOptional
+      - annotationGoCellularComponentConstraintOptional
+      - annotationInferredToConstraintOptional
+      - annotationInferredFromConstraintOptional
+      - annotationReviewedConstraintOptional
+      - annotationSystematicNameReactomeProperty
+      - annotationDefinitionReactomeProperty
+      - annotationNameReactomeProperty
+      - annotationInferredFromDirectionIncoming
+      - annotationReviewedDirectionIncoming
+      - annotationAuthoredDirectionIncoming
+      - annotationEditedDirectionIncoming
+      - annotationRevisedDirectionIncoming
+      - annotationNameCategoryAny
+      - annotationDiseaseCategoryAll
+      - annotationCellTypeCategoryAll
+      - annotationDiseaseRelationshipType
+      - annotationGoCellularComponentRelationshipType
+      - annotationInferredToRelationshipType
+        # TBC - Note inferredTo in both graph-core and graph-core-curator - an error?
+      - annotationInferredFromRelationshipType
+      - annotationReviewedRelationshipType
+      - annotationAuthoredRelationshipType
+      - annotationCellTypeRelationshipType
+      - annotationCrossReferenceRelationshipType
+      - annotationEditedRelationshipType
+      - annotationFigureRelationshipType
+      - annotationLiteratureReferenceRelationshipType
+      - annotationRevisedRelationshipType
+      - annotationSummationRelationshipType
     attributes:
       systematicName:
-        annotations:
-          constraint: OPTIONAL
-          addedField: false
       disease:
         multivalued: true
         range: Disease
-        annotations:
-          constraint: OPTIONAL
-          category: all
-          type: "disease"
       goCellularComponent:
         range: GO_CellularComponent
-        annotations:
-          constraint: OPTIONAL
-          type: "goCellularComponent"
       inferredTo:
         multivalued: true
         range: PhysicalEntity
-        annotations:
-          constraint: OPTIONAL
-          type: "inferredTo"
       inferredFrom:
         multivalued: true
         range: PhysicalEntity
         annotations:
-          constraint: OPTIONAL
-          direction: INCOMING
-          type: "inferredTo"
           reactome_transient: true
       reviewed:
         multivalued: true
         range: InstanceEdit
-        annotations:
-          constraint: OPTIONAL
-          direction: INCOMING
-          type: "reviewed"
     in_subset:
       - curator_schema_only
 
@@ -1805,24 +1816,24 @@ classes:
       - compartment
       - annotationCompartmentConstraintMandatory
       - annotationSpeciesConstraintRequired
+      - annotationMaxUnitCountConstraintOptional
+      - annotationMinUnitCountConstraintOptional
+      - annotationRepeatedUnitConstraintMandatory
+      - annotationMaxUnitCountReactomeProperty
+      - annotationMinUnitCountReactomeProperty
+      - annotationRepeatedUnitCategoryAll
+      - annotationRepeatedUnitRelationshipType
+      - annotationCompartmentRelationshipType
+      - annotationSpeciesRelationshipType
     attributes:
       maxUnitCount:
         range: integer
-        annotations:
-          constraint: OPTIONAL
-          addedField: false
       minUnitCount:
         range: integer
-        annotations:
-          constraint: OPTIONAL
-          addedField: false
       repeatedUnit:
         multivalued: true
         range: RepeatedUnit
         annotations:
-          constraint: MANDATORY
-          category: all
-          type: "repeatedUnit"
           sorted_set: true
       explanation:
         annotations:
@@ -1848,6 +1859,12 @@ classes:
       - annotationEditedConstraintRequired
       - annotationGoBiologicalProcessConstraintOptional
       - annotationLiteratureReferenceConstraintRequired
+      - annotationAuthoredDirectionIncoming
+      - annotationEditedDirectionIncoming
+      - annotationAuthoredRelationshipType
+      - annotationEditedRelationshipType
+      - annotationGoBiologicalProcessRelationshipType
+      - annotationLiteratureReferenceRelationshipType
     attributes:
       explanation:
         annotations:
@@ -1904,11 +1921,11 @@ classes:
     is_a: ExternalOntology
     annotations:
       node: true
+    slots:
+      - annotationLabelConstraintRequired
+      - annotationLabelReactomeProperty
     attributes:
       label:
-        annotations:
-          constraint: REQUIRED
-          addedField: false
     in_subset:
       - curator_schema_only
 
@@ -1917,20 +1934,20 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
+    slots:
+      - annotationTitleConstraintMandatory
+      - annotationAuthorConstraintMandatory
+      - annotationTitleReactomeProperty
+      - annotationAuthorDirectionIncoming
+      - annotationTitleCategoryAny
+      - annotationAuthorCategoryAll
+      - annotationAuthorRelationshipType
     attributes:
       title:
-        annotations:
-          constraint: MANDATORY
-          category: any
-          addedField: false
       author:
         multivalued: true
         range: PublicationAuthor
         annotations:
-          constraint: MANDATORY
-          category: all
-          type: "author"
-          direction: INCOMING
           sorted_set: true
     in_subset:
       - curator_schema_only
@@ -1944,6 +1961,7 @@ classes:
     slots:
       - id
       - order
+      - annotationIdGeneratedValue
     attributes:
       author:
         range: Person
@@ -1966,12 +1984,17 @@ classes:
       - annotationEditedConstraintRequired
       - annotationGoBiologicalProcessConstraintOptional
       - annotationLiteratureReferenceConstraintRequired
+      - annotationReverseReactionConstraintOptional
+      - annotationAuthoredDirectionIncoming
+      - annotationEditedDirectionIncoming
+      - annotationReverseReactionRelationshipType
+      - annotationAuthoredRelationshipType
+      - annotationEditedRelationshipType
+      - annotationGoBiologicalProcessRelationshipType
+      - annotationLiteratureReferenceRelationshipType
     attributes:
       reverseReaction:
         range: Reaction
-        annotations:
-          constraint: OPTIONAL
-          type: "reverseReaction"
       explanation:
         annotations:
           getter_only: true
@@ -1998,74 +2021,72 @@ classes:
       - annotationIsChimericConstraintOptional
       - annotationInputConstraintMandatory
       - annotationOutputConstraintMandatory
+      - annotationSystematicNameConstraintOptional
+      - annotationCatalystActivityReferenceConstraintOptional
+      - annotationEntityFunctionalStatusReferenceConstraintOptional
+      - annotationNormalReactionConstraintOptional
+      - annotationRegulatedByConstraintOptional
+      - annotationRegulationReferenceConstraintOptional
+      - annotationRequiredInputComponentConstraintOptional
+      - annotationHasInteractionConstraintOptional
+      - annotationReactionTypeConstraintOptional
+      - annotationSystematicNameReactomeProperty
+      - annotationIsChimericReactomeProperty
+      - annotationEntityFunctionalStatusCategoryAll
+      - annotationInputCategoryAll
+      - annotationOutputCategoryAll
+      - annotationCatalystActivityCategoryAll
+      - annotationCatalystActivityReferenceRelationshipType
+      - annotationEntityFunctionalStatusReferenceRelationshipType
+      - annotationInputRelationshipType
+      - annotationOutputRelationshipType
+      - annotationNormalReactionRelationshipType
+      - annotationRegulatedByRelationshipType
+      - annotationRegulationReferenceRelationshipType
+      - annotationRequiredInputComponentRelationshipType
+      - annotationHasInteractionRelationshipType
+      - annotationReactionTypeRelationshipType
+      - annotationCatalystActivityRelationshipType
+      - annotationCompartmentRelationshipType
+      - annotationEntityOnOtherCellRelationshipType
     attributes:
       systematicName:
-        annotations:
-          constraint: OPTIONAL
-          addedField: false
       catalystActivityReference:
         range: CatalystActivityReference
-        annotations:
-          constraint: OPTIONAL
-          type: "catalystActivityReference"
       entityFunctionalStatus:
         multivalued: true
         range: EntityFunctionalStatus
-        annotations:
-          constraint: OPTIONAL
-          category: all
-          type: "entityFunctionalStatus"
       input:
         multivalued: true
         range: Input
         annotations:
-          category: all
-          type: "input"
           set: true
       output:
         multivalued: true
         range: Output
         annotations:
-          category: all
-          type: "output"
           set: true
       normalReaction:
         range: ReactionlikeEvent
-        annotations:
-          constraint: OPTIONAL
-          type: "normalReaction"
       regulatedBy:
         multivalued: true
         range: Regulation
-        annotations:
-          constraint: OPTIONAL
-          type: "regulatedBy"
       regulationReference:
         multivalued: true
         range: RegulationReference
-        annotations:
-          constraint: OPTIONAL
-          type: "regulationReference"
       requiredInputComponent:
         multivalued: true
         range: PhysicalEntity
         annotations:
-          constraint: OPTIONAL
-          type: "requiredInputComponent"
           set: true
       hasInteraction:
         multivalued: true
         range: InteractionEvent
         annotations:
-          constraint: OPTIONAL
-          type: "hasInteraction"
           set: true
       reactionType:
         multivalued: true
         range: ReactionType
-        annotations:
-          constraint: OPTIONAL
-          type: "reactionType"
       className:
         annotations:
           getter_only: true
@@ -2091,24 +2112,18 @@ classes:
     slots:
       - name
       - annotationNameConstraintOptional
-    slot_usage:
-      name:
-        annotations:
-          constraint: OPTIONAL
+      - annotationAccessUrlConstraintMandatory
+      - annotationUrlConstraintMandatory
+      - annotationResourceIdentifierConstraintOptional
+      - annotationAccessUrlReactomeProperty
+      - annotationUrlReactomeProperty
+      - annotationResourceIdentifierReactomeProperty
+      - annotationNameReactomeProperty
+      - annotationAccessUrlCategoryAny
     attributes:
       accessUrl:
-        annotations:
-          constraint: MANDATORY
-          category: any
-          addedField: false
       url:
-        annotations:
-          constraint: MANDATORY
-          addedField: false
       resourceIdentifier:
-        annotations:
-          constraint: OPTIONAL
-          addedField: false
     in_subset:
       - curator_schema_only
 
@@ -2135,14 +2150,14 @@ classes:
       - annotationNameConstraintOptional
       - annotationOtherIdentifierConstraintOptional
       - annotationReferenceDatabaseConstraintMandatory
-    slot_usage:
-      identifier:
-        annotations:
-          constraint: MANDATORY
-          category: all
-      referenceDatabase:
-        annotations:
-          category: all
+      - annotationIdentifierConstraintMandatory
+      - annotationIdentifierReactomeProperty
+      - annotationNameReactomeProperty
+      - annotationOtherIdentifierReactomeProperty
+      - annotationIdentifierCategoryAll
+      - annotationReferenceDatabaseCategoryAll
+      - annotationCrossReferenceRelationshipType
+      - annotationReferenceDatabaseRelationshipType
     in_subset:
       - curator_schema_only
 
@@ -2151,26 +2166,23 @@ classes:
     is_a: ReferenceSequence
     annotations:
       node: true
+    slots:
+      - annotationChainConstraintOptional
+      - annotation_ChainChangeLogConstraintOptional
+      - annotationChainReactomeProperty
+      - annotation_ChainChangeLogReactomeProperty
+      - annotationReferenceGeneRelationshipType
+      - annotationReferenceTranscriptRelationshipType
     attributes:
       chain:
         multivalued: true
-        annotations:
-          constraint: OPTIONAL
-          addedField: false
       _chainChangeLog:
-        annotations:
-          constraint: OPTIONAL
-          addedField: false
       referenceGene:
         multivalued: true
         range: ReferenceDNASequence
-        annotations:
-          type: "referenceGene"
       referenceTranscript:
         multivalued: true
         range: ReferenceRNASequence
-        annotations:
-          type: "referenceTranscript"
     in_subset:
       - curator_schema_only
 
@@ -2186,6 +2198,9 @@ classes:
       - annotationFormulaConstraintOptional
       - annotationNameConstraintMandatory
       - annotationOtherIdentifierConstraintNomanualedit
+      - annotationFormulaReactomeProperty
+      - annotationNameReactomeProperty
+      - annotationOtherIdentifierReactomeProperty
     in_subset:
       - curator_schema_only
 
@@ -2194,18 +2209,17 @@ classes:
     is_a: ReferenceGeneProduct
     annotations:
       node: true
+    slots:
+      - annotationVariantIdentifierConstraintMandatory
+      - annotationIsoformParentConstraintMandatory
+      - annotationVariantIdentifierReactomeProperty
+      - annotationVariantIdentifierCategoryAll
+      - annotationIsoformParentRelationshipType
     attributes:
       variantIdentifier:
-        annotations:
-          constraint: MANDATORY
-          category: all
-          addedField: false
       isoformParent:
         multivalued: true
         range: ReferenceGeneProduct
-        annotations:
-          constraint: MANDATORY
-          type: "isoformParent"
     in_subset:
       - curator_schema_only
 
@@ -2221,6 +2235,9 @@ classes:
       - annotationFormulaConstraintOptional
       - annotationNameConstraintMandatory
       - annotationOtherIdentifierConstraintNomanualedit
+      - annotationFormulaReactomeProperty
+      - annotationNameReactomeProperty
+      - annotationOtherIdentifierReactomeProperty
     in_subset:
       - curator_schema_only
 
@@ -2229,13 +2246,13 @@ classes:
     is_a: ReferenceSequence
     annotations:
       node: true
+    slots:
+      - annotationReferenceGeneConstraintOptional
+      - annotationReferenceGeneRelationshipType
     attributes:
       referenceGene:
         multivalued: true
         range: ReferenceDNASequence
-        annotations:
-          constraint: OPTIONAL
-          type: "referenceGene"
     in_subset:
       - curator_schema_only
 
@@ -2249,49 +2266,40 @@ classes:
       - species
       - annotationOtherIdentifierConstraintNomanualedit
       - annotationSpeciesConstraintMandatory
-    slot_usage:
-      species:
-        annotations:
-          category: all
+      - annotationChecksumConstraintNomanualedit
+      - annotationCommentConstraintOptional
+      - annotationDescriptionConstraintOptional
+      - annotationGeneNameConstraintOptional
+      - annotationIsSequenceChangedConstraintOptional
+      - annotationKeywordConstraintOptional
+      - annotationSecondaryIdentifierConstraintOptional
+      - annotationChecksumReactomeProperty
+      - annotationCommentReactomeProperty
+      - annotationDescriptionReactomeProperty
+      - annotationGeneNameReactomeProperty
+      - annotationIsSequenceChangedReactomeProperty
+      - annotationKeywordReactomeProperty
+      - annotationSecondaryIdentifierReactomeProperty
+      - annotationSequenceLengthReactomeProperty
+      - annotationOtherIdentifierReactomeProperty
+      - annotationSpeciesCategoryAll
+      - annotationSpeciesRelationshipType
     attributes:
       checksum:
-        annotations:
-          constraint: NOMANUALEDIT
-          addedField: false
       comment:
         multivalued: true
-        annotations:
-          constraint: OPTIONAL
-          addedField: false
       description:
         multivalued: true
-        annotations:
-          constraint: OPTIONAL
-          addedField: false
       geneName:
         multivalued: true
-        annotations:
-          constraint: OPTIONAL
-          addedField: false
       isSequenceChanged:
         range: boolean
-        annotations:
-          constraint: OPTIONAL
-          addedField: false
       keyword:
         multivalued: true
-        annotations:
-          constraint: OPTIONAL
-          addedField: false
       secondaryIdentifier:
         multivalued: true
-        annotations:
-          constraint: OPTIONAL
-          addedField: false
       sequenceLength:
         range: integer
-        annotations:
-          addedField: false
     in_subset:
       - curator_schema_only
 
@@ -2300,43 +2308,36 @@ classes:
     is_a: ReferenceEntity
     annotations:
       node: true
+    slots:
+      - annotationAbbreviationConstraintOptional
+      - annotationApprovalSourceConstraintOptional
+      - annotationActiveDrugIdsConstraintOptional
+      - annotationApprovedIdsConstraintMandatory
+      - annotationWithdrawnConstraintOptional
+      - annotationInnConstraintRequired
+      - annotationTypeConstraintRequired
+      - annotationAbbreviationReactomeProperty
+      - annotationApprovalSourceReactomeProperty
+      - annotationActiveDrugIdsReactomeProperty
+      - annotationProDrugIdsReactomeProperty
+      - annotationApprovedReactomeProperty
+      - annotationWithdrawnReactomeProperty
+      - annotationInnReactomeProperty
+      - annotationTypeReactomeProperty
     attributes:
       abbreviation:
-        annotations:
-          constraint: OPTIONAL
-          addedField: false
       approvalSource:
         multivalued: true
-        annotations:
-          constraint: OPTIONAL
-          addedField: false
       activeDrugIds:
         multivalued: true
-        annotations:
-          constraint: OPTIONAL
-          addedField: false
       proDrugIds:
         multivalued: true
-        annotations:
-          addedField: false
       approved:
         range: boolean
-        annotations:
-          constraint: MANDATORY
-          addedField: false
       withdrawn:
         range: boolean
-        annotations:
-          constraint: OPTIONAL
-          addedField: false
       inn:
-        annotations:
-          constraint: REQUIRED
-          addedField: false
       type:
-        annotations:
-          constraint: REQUIRED
-          addedField: false
     in_subset:
       - curator_schema_only
 
@@ -2350,31 +2351,30 @@ classes:
       - summation
       - annotationGoBiologicalProcessConstraintOptional
       - annotationSummationConstraintOptional
+      - annotationActiveUnitConstraintOptional
+      - annotationActivityConstraintOptional
+      - annotationRegulatorConstraintMandatory
+        # TBC: Is the following an error in java class - given it's a relationship field?
+      - annotationActiveUnitReactomeProperty
+        # TBC: Is the following an error in java class - given it's a relationship field?
+      - annotationActivityReactomeProperty
+      - annotationActiveUnitCategoryAll
+      - annotationActivityCategoryAll
+      - annotationRegulatorCategoryAll
+      - annotationActiveUnitRelationshipType
+      - annotationActivityRelationshipType
+      - annotationRegulatorRelationshipType
+      - annotationGoBiologicalProcessRelationshipType
+      - annotationSummationRelationshipType
     attributes:
       activeUnit:
         # TBC - Note List in Java class (compared to set in CatalystActivity)
         multivalued: true
         range: PhysicalEntity
-        annotations:
-          constraint: OPTIONAL
-          category: all
-          type: "activeUnit"
-          # TBC: Is the following an error in java class - given it's a relationship field?
-          addedField: false
       activity:
         range: GO_MolecularFunction
-        annotations:
-          constraint: OPTIONAL
-          category: all
-          type: "activity"
-          # TBC: Is the following an error in java class - given it's a relationship field?
-          addedField: false
       regulator:
         range: PhysicalEntity
-        annotations:
-          constraint: MANDATORY
-          category: all
-          type: "regulator"
     in_subset:
       - curator_schema_only
 
@@ -2383,13 +2383,13 @@ classes:
     is_a: ControlReference
     annotations:
       node: true
+    slots:
+      - annotationRegulationConstraintMandatory
+      - annotationRegulationCategoryAll
+      - annotationRegulationRelationshipType
     attributes:
       regulation:
         range: Regulation
-        annotations:
-          constraint: MANDATORY
-          category: all
-          type: "regulation"
     in_subset:
       - curator_schema_only
 
@@ -2403,22 +2403,27 @@ classes:
       - psiMod
       - annotationCoordinateConstraintRequired
       - annotationPsiModConstraintMandatory
+      - annotationCoordinateReactomeProperty
+      - annotationCoordinateCategoryAll
+      - annotationPsiModCategoryAll
+      - annotationPsiModRelationshipType
     in_subset:
       - curator_schema_only
 
   #### _Release ####
   _Release:
     is_a: DatabaseObject
+    slots:
+      - annotationReleaseNumberConstraintMandatory
+      - annotationReleaseDateConstraintMandatory
+      - annotationReleaseNumberReactomeProperty
+      - annotationReleaseDateReactomeProperty
     attributes:
       releaseNumber:
         range: integer
         annotations:
-          constraint: MANDATORY
-          addedField: false
       releaseDate:
         annotations:
-          constraint: MANDATORY
-          addedField: false
     in_subset:
       - curator_schema_only
 
@@ -2431,6 +2436,7 @@ classes:
       - order
       - physicalEntity
       - stoichiometry
+      - annotationIdGeneratedValue
     in_subset:
       - curator_schema_only
 
@@ -2443,6 +2449,7 @@ classes:
       - id
       - order
       - stoichiometry
+      - annotationIdGeneratedValue
     attributes:
       pathway:
         range: Pathway
@@ -2482,11 +2489,9 @@ classes:
       node: true
     slots:
       - identifier
-    slot_usage:
-      identifier:
-        annotations:
-          constraint: MANDATORY
-          category: all
+      - annotationIdentifierConstraintMandatory
+      - annotationIdentifierReactomeProperty
+      - annotationIdentifierCategoryAll
     in_subset:
       - curator_schema_only
 
@@ -2500,20 +2505,19 @@ classes:
       - species
       - annotationCompartmentConstraintMandatory
       - annotationSpeciesConstraintOptional
-    slot_usage:
-      compartment:
-        annotations:
-          category: all
-      species:
-        annotations:
-          category: all
+      - annotationReferenceEntityConstraintMandatory
+      - annotationCompartmentCategoryAll
+      - annotationSpeciesCategoryAll
+      - annotationReferenceEntityCategoryAll
+      - annotationCompartmentCategoryAll
+      - annotationSpeciesCategoryAll
+      - annotationReferenceEntityCategoryAll
+      - annotationReferenceEntityRelationshipType
+      - annotationCompartmentRelationshipType
+      - annotationSpeciesRelationshipType
     attributes:
       referenceEntity:
         range: ReferenceMolecule
-        annotations:
-          constraint: MANDATORY
-          category: all
-          type: "referenceEntity"
       explanation:
         annotations:
           getter_only: true
@@ -2535,11 +2539,11 @@ classes:
     is_a: Taxon
     annotations:
       node: true
+    slots:
+      - annotationAbbreviationConstraintMandatory
+      - annotationAbbreviationReactomeProperty
     attributes:
       abbreviation:
-        annotations:
-          constraint: MANDATORY
-          addedField: false
     in_subset:
       - curator_schema_only
 
@@ -2551,22 +2555,20 @@ classes:
     slots:
       - identifier
       - identifierVersion
+      - annotationOldIdentifierReactomeProperty
+      - annotationOldIdentifierVersionReactomeProperty
+      - annotationReleasedVersionReactomeProperty
+      - annotationIdentifierReactomeProperty
+      - annotationIdentifierVersionReactomeProperty
+      - annotationHistoryRelationshipType
     attributes:
       oldIdentifier:
-        annotations:
-          addedField: false
       oldIdentifierVersion:
-        annotations:
-          addedField: false
       released:
         range: boolean
-        annotations:
-          addedField: false
       history:
         multivalued: true
         range: StableIdentifierHistory
-        annotations:
-          type: "history"
     in_subset:
       - curator_schema_only
 
@@ -2578,12 +2580,13 @@ classes:
     slots:
       - identifier
       - identifierVersion
+      - annotationIdentifierReactomeProperty
+      - annotationIdentifierVersionReactomeProperty
+      - annotationHistoryStatusRelationshipType
     attributes:
       historyStatus:
         multivalued: true
         range: StableIdentifierReleaseStatus
-        annotations:
-          type: "historyStatus"
     in_subset:
       - curator_schema_only
 
@@ -2592,17 +2595,16 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
+    slots:
+      - annotationReleaseNumberReactomeProperty
+      - annotationStatusReactomeProperty
+      - annotationReleaseNumberCategoryAll
+      - annotationStatusCategoryAll
     attributes:
       releaseNumber:
         range: integer
-        annotations:
-          addedField: false
-          category: all
       status:
         range: integer
-        annotations:
-          addedField: false
-          category: all
     in_subset:
       - curator_schema_only
 
@@ -2614,12 +2616,12 @@ classes:
     slots:
       - literatureReference
       - annotationLiteratureReferenceConstraintOptional
+      - annotationTextConstraintMandatory
+      - annotationTextReactomeProperty
+      - annotationTextCategoryAll
+      - annotationLiteratureReferenceRelationshipType
     attributes:
       text:
-        annotations:
-          constraint: MANDATORY
-          category: all
-          addedField: false
     in_subset:
       - curator_schema_only
 
@@ -2633,19 +2635,15 @@ classes:
       - name
       - annotationCrossReferenceConstraintMandatory
       - annotationNameConstraintMandatory
-    slot_usage:
-      crossReference:
-        annotations:
-          deprecated: true
-      name:
-        annotations:
-          category: any
+      - annotationSuperTaxonConstraintRequired
+      - annotationNameReactomeProperty
+      - annotationNameCategoryAny
+      - annotationSuperTaxonRelationshipType
+      - annotationCrossReferenceDeprecated
+      - annotationCrossReferenceRelationshipType
     attributes:
       superTaxon:
         range: Taxon
-        annotations:
-          constraint: REQUIRED
-          type: "superTaxon"
     in_subset:
       - curator_schema_only
 
@@ -2667,6 +2665,10 @@ classes:
       - psiMod
       - annotationCoordinateConstraintRequired
       - annotationPsiModConstraintMandatory
+      - annotationCoordinateReactomeProperty
+      - annotationCoordinateCategoryAll
+      - annotationPsiModCategoryAll
+      - annotationPsiModRelationshipType
     in_subset:
       - curator_schema_only
 
@@ -2675,23 +2677,20 @@ classes:
     is_a: DatabaseObject
     slots:
       - annotationUpdatedInstanceAllowed
+      - annotationActionConstraintNomanualedit
+      - annotation_ReleaseConstraintNomanualedit
+      - annotationUpdatedInstanceConstraintNomanualedit
+      - annotationActionReactomeProperty
+      - annotation_ReleaseRelationshipType
+      - annotationUpdatedInstanceRelationshipType
     attributes:
       action:
         multivalued: true
-        annotations:
-          constraint: NOMANUALEDIT
-          addedField: false
       _release:
         range: _Release
-        annotations:
-          constraint: NOMANUALEDIT
-          type: "_release"
       updatedInstance:
         multivalued: true
         range: DatabaseObject
-        annotations:
-          constraint: NOMANUALEDIT
-          type: "updatedInstance"
     in_subset:
       - curator_schema_only
 
@@ -2700,12 +2699,12 @@ classes:
     is_a: Publication
     annotations:
       node: true
+    slots:
+      - annotationUniformResourceLocatorConstraintMandatory
+      - annotationUniformResourceLocatorReactomeProperty
+      - annotationUniformResourceLocatorCategoryAny
     attributes:
       uniformResourceLocator:
-        annotations:
-          constraint: MANDATORY
-          category: any
-          addedField: false
     in_subset:
       - curator_schema_only
 
@@ -2724,10 +2723,6 @@ classes:
   #### Annotations classes - start ####
   Annotations:
     attributes:
-      deprecated:
-        range: boolean
-      generated_value:
-        range: boolean
       getter_only:
         range: boolean
       id:
@@ -2743,20 +2738,12 @@ classes:
         range: boolean
       reactome_transient:
         range: boolean
-      reactome_constraint:
-        range: ReactomeConstraint
-      reactome_property:
-        range: ReactomeProperty
-      reactome_instance_defining_value:
-        range: ReactomeInstanceDefiningValue
       reactome_schema_ignore:
         range: boolean
       override:
         range: boolean
       property:
         range: boolean
-      relationship:
-        range: Relationship
       relationship_properties:
         range: boolean
       set:
@@ -2769,200 +2756,83 @@ classes:
     in_subset:
       - schema_annotations
 
-  ReactomeConstraint:
-    attributes:
-      constraint:
-        range: ReactomeConstraintValues
-    in_subset:
-      - schema_annotations
-
-  ReactomeInstanceDefiningValue:
-    attributes:
-      category:
-        range: CategoryValues
-    in_subset:
-      - schema_annotations
-
-  ReactomeProperty:
-    attributes:
-      addedField:
-        range: boolean
-    in_subset:
-      - schema_annotations
-
-  Relationship:
-    attributes:
-        type:
-        direction: RelationshipDirectionValues
-    in_subset:
-      - schema_annotations
-
   JsonIdentityInfo:
     attributes:
       generator:
       property:
   #### Annotations classes - end ####
 
-#### Enumerations ####
-enums:
-  ReactomeConstraintValues:
-    permissible_values:
-      NOMANUALEDIT:
-      MANDATORY:
-      OPTIONAL:
-      REQUIRED:
-  RelationshipDirectionValues:
-    permissible_values:
-      INCOMING:
-      OUTGOING:
-  ReleaseStatusValues:
-    permissible_values:
-      EXISTS:
-      CREATED:
-      INCREMENTED:
-      REPLACED:
-      ORTHO:
-  CategoryValues:
-     permissible_values:
-       none:
-       any:
-       all:
-
 #### Slots ####
 slots:
   #### Attribute slots ####
   accession:
-    annotations:
-      category: any
-      addedField: false
   authored:
     range: InstanceEdit
-    annotations:
-      type: "authored"
-      direction: INCOMING
   catalystActivity:
     multivalued: true
     range: CatalystActivity
-    annotations:
-      type: "catalystActivity"
-      category: all
   cellType:
     multivalued: true
     range: CellType
-    annotations:
-      category: all
-      type: "cellType"
   coordinate:
     range: integer
-    annotations:
-      category: all
-      addedField: false
   crossReference:
     multivalued: true
     range: DatabaseIdentifier
-    annotations:
-      type: "crossReference"
   compartment:
     range: Compartment
     multivalued: true
-    annotations:
-      type: "compartment"
   definition:
-    annotations:
-      addedField: False
   edited:
     multivalued: true
     range: InstanceEdit
-    annotations:
-      direction: INCOMING
-      type: "edited"
   entityOnOtherCell:
     multivalued: true
     range: PhysicalEntity
-    annotations:
-      type: "entityOnOtherCell"
   figure:
     multivalued: true
     range: Figure
-    annotations:
-      type: "figure"
   formula:
-    annotations:
-      addedField: false
   goBiologicalProcess:
     range: GO_BiologicalProcess
-    annotations:
-      type: "goBiologicalProcess"
   id:
     range: AnnotationLongType
     annotations:
       id: true
-      generated_value: true
   identifier:
-    annotations:
-      addedField: false
   identifierVersion:
-    annotations:
-      addedField: false
   isChimeric:
     range: boolean
-    annotations:
-      addedField: false
   literatureReference:
     multivalued: true
     range: Publication
-    annotations:
-      type: "literatureReference"
   modification:
     range: DatabaseObject
-    annotations:
-      category: all
-      type: "modification"
   name:
     multivalued: true
-    annotations:
-      addedField: false
   order:
     range: integer
   otherIdentifier:
     multivalued: true
-    annotations:
-      addedField: false
   physicalEntity:
     range: PhysicalEntity
     annotations:
       target_node: true
   psiMod:
     range: PsiMod
-    annotations:
-      category: all
-      type: "psiMod"
   referenceDatabase:
     range: ReferenceDatabase
-    annotations:
-      type: "referenceDatabase"
   referenceEntity:
     range: ReferenceSequence
-    annotations:
-      category: all
-      type: "referenceEntity"
   relatedSpecies:
     multivalued: true
     range: Species
-    annotations:
-      constraint: OPTIONAL
-      type: "relatedSpecies"
   revised:
     multivalued: true
     range: InstanceEdit
-    annotations:
-      direction: INCOMING
-      type: "revised"
   species:
     multivalued: true
     range: Species
-    annotations:
-      type: "species"
   stoichiometry:
     range: integer
     annotations:
@@ -2970,110 +2840,467 @@ slots:
   summation:
     multivalued: true
     range: Summation
-    annotations:
-      type: "summation"
   tissue:
     range: Anatomy
-    annotations:
-      type: "tissue"
 
   #### Annotation slots ####
+
+  #### Allowed classes annotation slots ####
   annotationModificationAllowed:
     range: AnnotationModificationAllowed
   annotationProteinMarkerAllowed:
     range: AnnotationProteinMarkerAllowed
   annotationUpdatedInstanceAllowed:
     range: AnnotationUpdatedInstanceAllowed
+
+  #### Constraint annotation slots ####
+  annotationAbbreviationConstraintMandatory:
+  annotationAbbreviationConstraintOptional:
   annotationAccessionConstraintMandatory:
+  annotationAccessUrlConstraintMandatory:
+  annotationActionConstraintNomanualedit:
+  annotationActiveDrugIdsConstraintOptional:
   annotationActiveUnitConstraintOptional:
+  annotationActivityConstraintOptional:
   annotationActivityConstraintRequired:
   annotationAddressConstraintRequired:
+  annotationAffiliationConstraintOptional:
+  annotationAlteredAminoAcidFragmentConstraintOptional:
+  annotationApprovalSourceConstraintOptional:
+  annotationApprovedIdsConstraintMandatory:
+  annotationAuthorConstraintMandatory:
   annotationAuthoredConstraintOptional:
   annotationAuthoredConstraintRequired:
   annotationCatalystActivityConstraintOptional:
   annotationCatalystActivityConstraintRequired:
   annotationCatalystActivityConstraintMandatory:
+  annotationCatalystActivityReferenceConstraintOptional:
   annotationCellTypeConstraintMandatory:
+  annotationChainConstraintOptional:
+  annotation_ChainChangeLogConstraintOptional:
   annotationChapterTitleConstraintOptional:
   annotationChapterAuthorsConstraintOptional:
+  annotationChecksumConstraintNomanualedit:
   annotationClassNameConstraintNomanualedit:
   annotationCoordinateConstraintRequired:
   annotationCoordinateConstraintMandatory:
+  annotationCommentConstraintOptional:
   annotationCreatedConstraintNomanualedit:
   annotationCrossReferenceConstraintOptional:
   annotationCrossReferenceConstraintMandatory:
   annotationCompartmentConstraintMandatory:
   annotationCompartmentConstraintRequired:
   annotationCompartmentConstraintOptional:
+  annotationComponentOfConstraintRequired:
   annotationCuratorCommentConstraintNomanualedit:
+  annotationDescriptionConstraintOptional:
+  annotationDoiConstraintOptional:
   annotationDB_IDConstraintNomanualedit:
   annotationDefinitionConstraintOptional:
   annotationDeletedInstanceConstraintNomanualedit:
   annotationDeletedInstanceDB_IDConstraintNomanualedit:
   annotationDeletedStableIdentifierConstraintNomanualedit:
   annotationDiseaseConstraintMandatory:
+  annotationDiseaseConstraintOptional:
   annotationDiseaseEntityConstraintMandatory:
   annotation_DisplayNameConstraintNomanualedit:
+  annotation_DoReleaseConstraintOptional:
+  annotationEcNumberConstraintOptional:
   annotationEditedConstraintOptional:
   annotationEditedConstraintRequired:
+  annotationEndCoordinateConstraintRequired:
+  annotationEndPositionInReferenceSequenceConstraintMandatory:
+  annotationEntityFunctionalStatusReferenceConstraintOptional:
   annotationEntityOnOtherCellConstraintOptional:
+  annotationEquivalentToConstraintMandatory:
+  annotationEvidenceTypeConstraintOptional:
   annotationFigureConstraintOptional:
+  annotationFirstnameConstraintOptional:
   annotationFunctionalStatusConstraintMandatory:
+  annotationFunctionalStatusTypeConstraintMandatory:
   annotationFormulaConstraintOptional:
+  annotationFrontPageItemConstraintMandatory:
+  annotationGeneNameConstraintOptional:
   annotationGoBiologicalProcessConstraintOptional:
   annotationGoBiologicalProcessConstraintNomanualedit:
+  annotationGoCellularComponentConstraintOptional:
   annotationHasCandidateConstraintMandatory:
   annotationHasComponentConstraintMandatory:
+  annotationHasEHLDConstraintOptional:
+  annotationHasEventConstraintMandatory:
+  annotationHasInteractionConstraintOptional:
   annotationHasMemberConstraintRequired:
+  annotationHasMemberConstraintMandatory:
+  annotationHasModifiedResidueConstraintRequired:
+  annotationHasPartConstraintOptional:
   annotationIdentifierConstraintMandatory:
   annotationIncludedLocationConstraintNomanualedit:
+  annotationInferredFromConstraintOptional:
+  annotationInferredToConstraintOptional:
+  annotationInitialConstraintMandatory:
+  annotationInnConstraintRequired:
   annotationInputConstraintRequired:
   annotationInputConstraintMandatory:
   annotationInstanceOfConstraintOptional:
+  annotationInstanceOfConstraintRequired:
   annotationISBNConstraintOptional:
+  annotationIsCanonicalConstraintOptional:
   annotationIsChimericConstraintOptional:
+  annotationIsoformParentConstraintMandatory:
+  annotationIsOrderedConstraintOptional:
+  annotationIsSequenceChangedConstraintOptional:
+  annotationJournalConstraintRequired:
+  annotationKeywordConstraintOptional:
+  annotationLabelConstraintRequired:
   annotationLiteratureReferenceConstraintOptional:
   annotationLiteratureReferenceConstraintRequired:
   annotationLiteratureReferenceConstraintMandatory:
+  annotationMarkerConstraintMandatory:
   annotationMarkerReferenceConstraintRequired:
+  annotationMaxUnitCountConstraintOptional:
+  annotationMinUnitCountConstraintOptional:
   annotationModificationConstraintMandatory:
   annotationModificationConstraintOptional:
   annotationModifiedConstraintNomanualedit:
   annotationNameConstraintMandatory:
   annotationNameConstraintNomanualedit:
   annotationNameConstraintOptional:
+  annotationNegativePrecedingEventConstraintOptional:
   annotationNormalEntityConstraintRequired:
+  annotationNormalPathwayConstraintMandatory:
+  annotationNormalReactionConstraintMandatory:
+  annotationNormalReactionConstraintOptional:
   annotationOrganConstraintOptional:
+  annotationOrthologousEventConstraintOptional:
   annotationOtherIdentifierConstraintNomanualedit:
   annotationOtherIdentifierConstraintOptional:
   annotationOutputConstraintRequired:
   annotationOutputConstraintNomanualedit:
   annotationOutputConstraintMandatory:
   annotationPagesConstraintOptional:
+  annotationPartnersConstraintMandatory:
   annotationPhysicalEntityConstraintMandatory:
+  annotationPrecedingEventConstraintOptional:
+  annotationPrecedingEventConstraintMandatory:
+  annotationProjectConstraintOptional:
   annotationProteinMarkerConstraintRequired:
   annotationPsiModConstraintMandatory:
   annotationPublisherConstraintOptional:
-  annotationReasonNomanualedit:
+  annotationPubMedIdentifierConstraintRequired:
+  annotationReactionTypeConstraintOptional:
+  annotationReasonConstraintNomanualedit:
+  annotationReasonConstraintRequired:
   annotationReferenceDatabaseConstraintMandatory:
   annotationReferenceEntityConstraintMandatory:
+  annotationReferenceGeneConstraintOptional:
   annotationReferenceSequenceConstraintMandatory:
+  annotationRegulatedByConstraintOptional:
+  annotationRegulationConstraintMandatory:
+  annotationRegulationReferenceConstraintOptional:
+  annotationRegulatorConstraintMandatory:
   annotationRelatedSpeciesConstraintOptional:
+  annotation_ReleaseConstraintNomanualedit:
+  annotationReleaseDateConstraintMandatory:
+  annotationReleaseNumberConstraintMandatory:
+  annotationReleaseStatusConstraintNomanualedit:
+  annotationRepeatedUnitConstraintMandatory:
   annotationReplacementInstancesConstraintNomanualedit:
+  annotationResourceIdentifierConstraintOptional:
+  annotationRequiredInputComponentConstraintOptional:
   annotationRequiredInputComponentConstraintRequired:
+  annotationReverseReactionConstraintOptional:
+  annotationReviewedConstraintRequired:
+  annotationReviewedConstraintOptional:
   annotationRevisedConstraintOptional:
   annotationRNAMarkerConstraintRequired:
-  annotationCecondCoordinateConstraintRequired:
+  annotationSecondCoordinateConstraintRequired:
+  annotationSecondaryIdentifierConstraintOptional:
+  annotationSecondReferenceSequenceConstraintMandatory:
   annotationSpeciesConstraintRequired:
   annotationSpeciesConstraintMandatory:
   annotationSpeciesConstraintNomanualedit:
   annotationSpeciesConstraintOptional:
   annotationStableIdentifierNomanualedit:
+  annotationStartCoordinateConstraintRequired:
+  annotationStartPositionInReferenceSequenceConstraintMandatory:
   annotationStoichiometryKnownConstraintOptional:
+  annotationStructuralVariantConstraintMandatory:
   annotationSummationConstraintOptional:
   annotationSummationConstraintMandatory:
+  annotationSuperTaxonConstraintRequired:
+  annotationSurnameConstraintMandatory:
+  annotationSurroundedByConstraintOptional:
+  annotationSynonymConstraintOptional:
+  annotationSystematicNameConstraintOptional:
   annotationTemplateEventConstraintOptional:
+  annotationTextConstraintMandatory:
   annotationTissueConstraintRequired:
   annotationTissueConstraintMandatory:
   annotationTissueLayerConstraintOptional:
+  annotationTitleConstraintMandatory:
+  annotationTypeConstraintRequired:
+  annotationUpdatedInstanceConstraintNomanualedit:
+  annotationUrlConstraintMandatory:
+  annotationUrlConstraintOptional:
+  annotationVariantIdentifierConstraintMandatory:
+  annotationVolumeConstraintOptional:
+  annotationUniformResourceLocatorConstraintMandatory:
+  annotationWithdrawnConstraintOptional:
   annotationYearConstraintMandatory:
+
+  #### ReactomeProperty annotation slots ####
+  annotationAbbreviationReactomeProperty:
+  annotationAccessionReactomeProperty:
+  annotationAccessUrlReactomeProperty:
+  annotationActionReactomeProperty:
+  annotationActiveUnitReactomeProperty:
+  annotationActivityReactomeProperty:
+  annotationAlteredAminoAcidFragmentReactomeProperty:
+  annotation_ApplyToAllEditedInstancesReactomeProperty:
+  annotationApprovalSourceReactomeProperty:
+  annotationApprovedReactomeProperty:
+  annotationChainReactomeProperty:
+  annotation_ChainChangeLogReactomeProperty:
+  annotationChapterTitleReactomeProperty:
+  annotationChecksumReactomeProperty:
+  annotationClassNameReactomeProperty:
+  annotationCoordinateReactomeProperty:
+  annotationCommentReactomeProperty:
+  annotationCuratorCommentReactomeProperty:
+  annotationDateTimeReactomeProperty:
+  annotationDefinitionReactomeProperty:
+  annotationDeletedInstanceDB_IDReactomeProperty:
+  annotationDescriptionReactomeProperty:
+  annotation_DisplayNameReactomeProperty:
+  annotationDoiReactomeProperty:
+  annotation_DoReleaseReactomeProperty:
+  annotationActiveDrugIdsReactomeProperty:
+  annotationEcNumberReactomeProperty:
+  annotationEndCoordinateReactomeProperty:
+  annotationEndPositionInReferenceSequenceReactomeProperty:
+  annotationFirstnameReactomeProperty:
+  annotationFormulaReactomeProperty:
+  annotationGeneNameReactomeProperty:
+  annotationHasEHLDReactomeProperty:
+  annotationIdentifierReactomeProperty:
+  annotationIdentifierVersionReactomeProperty:
+  annotationInitialReactomeProperty:
+  annotationInnReactomeProperty:
+  annotationISBNReactomeProperty:
+  annotationIsCanonicalReactomeProperty:
+  annotationIsChimericReactomeProperty:
+  annotationIsOrderedReactomeProperty:
+  annotationIsSequenceChangedReactomeProperty:
+  annotationJournalReactomeProperty:
+  annotationKeywordReactomeProperty:
+  annotationLabelReactomeProperty:
+  annotationMaxUnitCountReactomeProperty:
+  annotationMinUnitCountReactomeProperty:
+  annotationNameReactomeProperty:
+  annotationNoteReactomeProperty:
+  annotationOldIdentifierReactomeProperty:
+  annotationOldIdentifierVersionReactomeProperty:
+  annotationOtherIdentifierReactomeProperty:
+  annotationPagesReactomeProperty:
+  annotationProDrugIdsReactomeProperty:
+  annotationProjectReactomeProperty:
+  annotationPubMedIdentifierReactomeProperty:
+  annotationReleaseDateReactomeProperty:
+  annotationReleasedVersionReactomeProperty:
+  annotationReleaseNumberReactomeProperty:
+  annotationReleaseStatusReactomeProperty:
+  annotationResourceIdentifierReactomeProperty:
+  annotationSecondCoordinateReactomeProperty:
+  annotationSecondaryIdentifierReactomeProperty:
+  annotationSequenceLengthReactomeProperty:
+  annotationStartCoordinateReactomeProperty:
+  annotationStartPositionInReferenceSequenceReactomeProperty:
+  annotationStatusReactomeProperty:
+  annotationStoichiometryKnownReactomeProperty:
+  annotationSurnameReactomeProperty:
+  annotationSynonymReactomeProperty:
+  annotationSystematicNameReactomeProperty:
+  annotationTextReactomeProperty:
+  annotationTitleReactomeProperty:
+  annotationTypeReactomeProperty:
+  annotationUniformResourceLocatorReactomeProperty:
+  annotationUrlReactomeProperty:
+  annotationVariantIdentifierReactomeProperty:
+  annotationVolumeReactomeProperty:
+  annotationWithdrawnReactomeProperty:
+  annotationYearReactomeProperty:
+
+  #### Relationship direction annotation slots ####
+  annotationAuthorDirectionIncoming:
+  annotationAuthoredDirectionIncoming:
+  annotationCreatedDirectionIncoming:
+  annotationEditedDirectionIncoming:
+  annotationInferredFromDirectionIncoming:
+  annotationModifiedDirectionIncoming:
+  annotationPrecedingEventDirectionIncoming:
+  annotationReviewedDirectionIncoming:
+  annotationRevisedDirectionIncoming:
+
+  #### ReactomeInstanceDefiningValue category annotation slots ####
+  annotationAccessionCategoryAny:
+  annotationAccessUrlCategoryAny:
+  annotationActiveUnitCategoryAll:
+  annotationActivityCategoryAll:
+  annotationAlteredAminoAcidFragmentCategoryAll:
+  annotationAuthorCategoryAll:
+  annotationCatalystActivityCategoryAll:
+  annotationCellTypeCategoryAll:
+  annotationChapterTitleCategoryAny:
+  annotationCoordinateCategoryAll:
+  annotationCompartmentCategoryAll:
+  annotationDeletedInstanceDB_IDCategoryAll:
+  annotationDeletedStableIdentifierCategoryAll:
+  annotationDiseaseCategoryAll:
+  annotationDiseaseEntityCategoryAll:
+  annotationEndCoordinateCategoryAll:
+  annotationEndPositionInReferenceSequenceCategoryAll:
+  annotationEntityFunctionalStatusCategoryAll:
+  annotationFirstnameCategoryAll:
+  annotationFunctionalStatusCategoryAll:
+  annotationFunctionalStatusTypeCategoryAll:
+  annotationHasCandidateCategoryAll:
+  annotationHasComponentCategoryAll:
+  annotationHasEventCategoryAll:
+  annotationHasMemberCategoryAll:
+  annotationHasModifiedResidueCategoryAll:
+  annotationIdentifierCategoryAll:
+  annotationInitialCategoryAll:
+  annotationInputCategoryAll:
+  annotationISBNCategoryAny:
+  annotationLiteratureReferenceCategoryAll:
+  annotationModificationCategoryAll:
+  annotationNameCategoryAll:
+  annotationNameCategoryAny:
+  annotationNameCategoryNone:
+  annotationNormalEntityCategoryAll:
+  annotationOutputCategoryAll:
+  annotationPhysicalEntityCategoryAll:
+  annotationProjectCategoryAll:
+  annotationPsiModCategoryAll:
+  annotationPubMedIdentifierCategoryAll:
+  annotationReferenceDatabaseCategoryAll:
+  annotationReferenceEntityCategoryAll:
+  annotationReferenceSequenceCategoryAll:
+  annotationRegulatorCategoryAll:
+  annotationRegulationCategoryAll:
+  annotationReleaseNumberCategoryAll:
+  annotationRepeatedUnitCategoryAll:
+  annotationSecondCoordinateCategoryAll:
+  annotationSecondReferenceSequenceCategoryAll:
+  annotationSpeciesCategoryAll:
+  annotationSpeciesCategoryNone:
+  annotationStartCoordinateCategoryAll:
+  annotationStartPositionInReferenceSequenceCategoryAll:
+  annotationStatusCategoryAll:
+  annotationStructuralVariantCategoryAll:
+  annotationSurnameCategoryAll:
+  annotationTextCategoryAll:
+  annotationTitleCategoryAny:
+  annotationUniformResourceLocatorCategoryAny:
+  annotationUrlCategoryAll:
+  annotationVariantIdentifierCategoryAll:
+
+  #### Relationship type annotation slots ####
+  # TBC - the logic to validate is to camel-case attribute name - see: RNAMArker vs type: rnaMarker
+  # &&&&
+  annotationActiveUnitRelationshipType:
+  annotationActivityRelationshipType:
+  annotationAffiliationRelationshipType:
+  annotationAuthoredRelationshipType:
+  annotationSecondReferenceSequenceRelationshipType:
+  annotationAuthorRelationshipType:
+  annotationCatalystActivityRelationshipType:
+  annotationCatalystActivityReferenceRelationshipType:
+  annotationCellTypeRelationshipType:
+  annotationChapterAuthorsRelationshipType:
+  annotationCompartmentRelationshipType:
+  annotationComponentOfRelationshipType:
+  annotationCreatedRelationshipType:
+  annotationCrossReferenceRelationshipType:
+  annotationDeletedInstanceRelationshipType:
+  annotationDeletedStableIdentifierRelationshipType:
+  annotationDiseaseRelationshipType:
+  annotationDiseaseEntityRelationshipType:
+  annotationEditedRelationshipType:
+  annotationEntityOnOtherCellRelationshipType:
+  annotationEquivalentToRelationshipType:
+  annotationEntityFunctionalStatusReferenceRelationshipType:
+  annotationEvidenceTypeRelationshipType:
+  annotationFigureRelationshipType:
+  annotationFrontPageItemRelationshipType:
+  annotationFunctionalStatusRelationshipType:
+  annotationFunctionalStatusTypeRelationshipType:
+  annotationGoBiologicalProcessRelationshipType:
+  annotationGoCellularComponentRelationshipType:
+  annotationHasCandidateRelationshipType:
+  annotationHasComponentRelationshipType:
+  annotationHasEventRelationshipType:
+  annotationHasInteractionRelationshipType:
+  annotationHasModifiedResidueRelationshipType:
+  annotationHasPartRelationshipType:
+  annotationHistoryRelationshipType:
+  annotationHistoryStatusRelationshipType:
+  annotationIncludedLocationRelationshipType:
+  annotationHasMemberRelationshipType:
+  annotationInferredFromRelationshipType:
+  annotationInferredToRelationshipType:
+  annotationInputRelationshipType:
+  annotationInstanceOfRelationshipType:
+  annotationIsoformParentRelationshipType:
+  annotationLiteratureReferenceRelationshipType:
+  annotationMarkerRelationshipType:
+  annotationMarkerReferenceRelationshipType:
+  annotationModificationRelationshipType:
+  annotationModifiedRelationshipType:
+  annotationNegativePrecedingEventRelationshipType:
+  annotationNormalEntityRelationshipType:
+  annotationNormalPathwayRelationshipType:
+  annotationNormalReactionRelationshipType:
+  annotationOrganRelationshipType:
+  annotationOrthologousEventRelationshipType:
+  annotationOutputRelationshipType:
+  annotationPartnersRelationshipType:
+  annotationPhysicalEntityRelationshipType:
+  annotationPrecedingEventRelationshipType:
+  annotationProteinMarkerRelationshipType:
+  annotationPsiModRelationshipType:
+  annotationPublisherRelationshipType:
+  annotationReactionTypeRelationshipType:
+  annotationReasonRelationshipType:
+  annotationRelatedSpeciesRelationshipType:
+  annotationRepeatedUnitRelationshipType:
+  annotationReferenceDatabaseRelationshipType:
+  annotationReferenceEntityRelationshipType:
+  annotationReferenceGeneRelationshipType:
+  annotationReferenceSequenceRelationshipType:
+  annotationReferenceTranscriptRelationshipType:
+  annotationRegulatedByRelationshipType:
+  annotationRegulationRelationshipType:
+  annotationRegulationReferenceRelationshipType:
+  annotationRegulatorRelationshipType:
+  annotation_ReleaseRelationshipType:
+  annotationReplacementInstancesRelationshipType:
+  annotationRequiredInputComponentRelationshipType:
+  annotationReverseReactionRelationshipType:
+  annotationReviewedRelationshipType:
+  annotationRevisedRelationshipType:
+  annotationRNAMarkerRelationshipType:
+  annotationSpeciesRelationshipType:
+  annotationStableIdentifierRelationshipType:
+  annotationStructuralVariantRelationshipType:
+  annotationSummationRelationshipType:
+  annotationSuperTaxonRelationshipType:
+  annotationSurroundedByRelationshipType:
+  annotationTemplateEventRelationshipType:
+  annotationTissueRelationshipType:
+  annotationTissueLayerRelationshipType:
+  annotationUpdatedInstanceRelationshipType:
+
+  #### Misc other annotation slots ####
+  annotationCrossReferenceDeprecated:
+  annotationIdGeneratedValue:
