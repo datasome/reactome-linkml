@@ -96,19 +96,17 @@ classes:
       - annotationEditedRelationshipType
       - annotationGoBiologicalProcessRelationshipType
       - annotationLiteratureReferenceRelationshipType
+      - annotationInputSet
+      - annotationOutputSet
     attributes:
       templateEvent:
         range: Event
       input:
         multivalued: true
         range: Input
-        annotations:
-          set: true
       output:
         multivalued: true
         range: Output
-        annotations:
-          set: true
       explanation:
         annotations:
           getter_only: true
@@ -167,12 +165,11 @@ classes:
       - annotationHasMemberCategoryAll
       - annotationHasCandidateRelationshipType
       - annotationHasMemberRelationshipType
+      - annotationHasCandidateSortedSet
     attributes:
       hasCandidate:
         multivalued: true
         range: HasCandidate
-        annotations:
-          sorted_set: true
       hasMember:
         range: HasMember
       explanation:
@@ -200,12 +197,11 @@ classes:
       - annotationActiveUnitRelationshipType
       - annotationActivityRelationshipType
       - annotationPhysicalEntityRelationshipType
+      - annotationActiveUnitSet
     attributes:
       activeUnit:
         multivalued: true
         range: PhysicalEntity
-        annotations:
-          set: true
       activity:
         range: GO_MolecularFunction
       physicalEntity:
@@ -288,12 +284,11 @@ classes:
       - annotationRequiredInputComponentRelationshipType
       - annotationCatalystActivityRelationshipType
       - annotationTissueRelationshipType
+      - annotationRequiredInputComponentSet
     attributes:
       requiredInputComponent:
         multivalued: true
         range: PhysicalEntity
-        annotations:
-          set: true
     in_subset:
       - curator_schema_only
 
@@ -361,19 +356,17 @@ classes:
       - annotationEntityOnOtherCellRelationshipType
       - annotationRelatedSpeciesRelationshipType
       - annotationSpeciesRelationshipType
+      - annotationHasComponentSortedSet
+      - annotationIncludedLocationSortedSet
     attributes:
       hasComponent:
         multivalued: true
         range: HasComponent
-        annotations:
-          sorted_set: true
       stoichiometryKnown:
         range: boolean
       includedLocation:
         multivalued: true
         range: HasCompartment
-        annotations:
-          sorted_set: true
       explanation:
         annotations:
           getter_only: true
@@ -725,14 +718,13 @@ classes:
       - annotationCompartmentRelationshipType
       - annotationRelatedSpeciesRelationshipType
       - annotationSpeciesRelationshipType
+      - annotationHasMemberSortedSet
     attributes:
       isOrdered:
         range: boolean
       hasMember:
         multivalued: true
         range: HasMember
-        annotations:
-          sorted_set: true
       explanation:
         annotations:
           getter_only: true
@@ -776,6 +768,7 @@ classes:
       - annotationHasModifiedResidueRelationshipType
       - annotationReferenceEntityRelationshipType
       - annotationSpeciesRelationshipType
+      - annotationHasModifiedResidueSortedSet
     slot_usage:
       species:
         range: Taxon
@@ -787,8 +780,6 @@ classes:
       hasModifiedResidue:
         multivalued: true
         range: HasModifiedResidue
-        annotations:
-          sorted_set: true
       explanation:
         annotations:
           getter_only: true
@@ -866,6 +857,8 @@ classes:
       - annotationRevisedRelationshipType
       - annotationSpeciesRelationshipType
       - annotationSummationRelationshipType
+      - annotationInferredFromSet
+      - annotationOrthologousEventSet
     attributes:
       _doRelease:
         range: boolean
@@ -882,13 +875,9 @@ classes:
       inferredFrom:
         multivalued: true
         range: Event
-        annotations:
-          set: true
       orthologousEvent:
         multivalued: true
         range: Event
-        annotations:
-          set: true
       reviewed:
         multivalued: true
         range: InstanceEdit
@@ -981,14 +970,13 @@ classes:
       - annotationEditedRelationshipType
       - annotationGoBiologicalProcessRelationshipType
       - annotationLiteratureReferenceRelationshipType
+      - annotationOutputSet
     attributes:
       normalReaction:
         range: ReactionlikeEvent
       output:
         multivalued: true
         range: Output
-        annotations:
-          set: true
       explanation:
         annotations:
           getter_only: true
@@ -1276,6 +1264,7 @@ classes:
       - physicalEntity
       - stoichiometry
       - annotationIdGeneratedValue
+      - annotationPhysicalEntityTargetNode
     in_subset:
       - curator_schema_only
 
@@ -1287,11 +1276,10 @@ classes:
       - id
       - order
       - annotationIdGeneratedValue
+      - annotationCompartmentTargetNode
     attributes:
       compartment:
         range: Compartment
-        annotations:
-          target_node: true
     in_subset:
       - curator_schema_only
 
@@ -1305,6 +1293,7 @@ classes:
       - physicalEntity
       - stoichiometry
       - annotationIdGeneratedValue
+      - annotationPhysicalEntityTargetNode
     in_subset:
       - curator_schema_only
 
@@ -1317,11 +1306,10 @@ classes:
       - id
       - order
       - annotationIdGeneratedValue
+      - annotationEventTargetNode
     attributes:
       event:
         range: Event
-        annotations:
-          target_node: true
     in_subset:
       - curator_schema_only
 
@@ -1335,11 +1323,10 @@ classes:
       - order
       - stoichiometry
       - annotationIdGeneratedValue
+      - annotationEventTargetNode
     attributes:
       event:
         range: Event
-        annotations:
-          target_node: true
     in_subset:
       - curator_schema_only
 
@@ -1353,6 +1340,7 @@ classes:
       - physicalEntity
       - stoichiometry
       - annotationIdGeneratedValue
+      - annotationPhysicalEntityTargetNode
     in_subset:
       - curator_schema_only
 
@@ -1365,11 +1353,10 @@ classes:
       - order
       - stoichiometry
       - annotationIdGeneratedValue
+      - annotationAbstractModifiedResidueTargetNode
     attributes:
       abstractModifiedResidue:
         range: AbstractModifiedResidue
-        annotations:
-          target_node: true
     in_subset:
       - curator_schema_only
 
@@ -1384,6 +1371,7 @@ classes:
       - physicalEntity
       - stoichiometry
       - annotationIdGeneratedValue
+      - annotationPhysicalEntityTargetNode
     in_subset:
       - curator_schema_only
 
@@ -1434,6 +1422,7 @@ classes:
       - annotationSecondReferenceSequenceCategoryAll
       - annotationEquivalentToRelationshipType
       - annotationSecondReferenceSequenceRelationshipType
+      - annotationSecondReferenceSequenceSet
     attributes:
       equivalentTo:
         multivalued: true
@@ -1441,8 +1430,6 @@ classes:
       secondReferenceSequence:
         multivalued: true
         range: InterChainCrosslinkedResidue
-        annotations:
-          set: true
     in_subset:
       - curator_schema_only
 
@@ -1630,6 +1617,7 @@ classes:
       - physicalEntity
       - stoichiometry
       - annotationIdGeneratedValue
+      - annotationPhysicalEntityTargetNode
     in_subset:
       - curator_schema_only
 
@@ -1664,6 +1652,7 @@ classes:
       - annotationCompartmentRelationshipType
       - annotationEditedRelationshipType
       - annotationGoBiologicalProcessRelationshipType
+      - annotationHasEventSortedSet
     attributes:
       doi:
       hasEHLD:
@@ -1673,8 +1662,6 @@ classes:
       hasEvent:
         multivalued: true
         range: HasEvent
-        annotations:
-          sorted_set: true
       normalPathway:
         range: Pathway
       explanation:
@@ -1825,6 +1812,7 @@ classes:
       - annotationRepeatedUnitRelationshipType
       - annotationCompartmentRelationshipType
       - annotationSpeciesRelationshipType
+      - annotationRepeatedUnitSortedSet
     attributes:
       maxUnitCount:
         range: integer
@@ -1833,8 +1821,6 @@ classes:
       repeatedUnit:
         multivalued: true
         range: RepeatedUnit
-        annotations:
-          sorted_set: true
       explanation:
         annotations:
           getter_only: true
@@ -1942,13 +1928,12 @@ classes:
       - annotationTitleCategoryAny
       - annotationAuthorCategoryAll
       - annotationAuthorRelationshipType
+      - annotationAuthorSortedSet
     attributes:
       title:
       author:
         multivalued: true
         range: PublicationAuthor
-        annotations:
-          sorted_set: true
     in_subset:
       - curator_schema_only
 
@@ -1962,11 +1947,10 @@ classes:
       - id
       - order
       - annotationIdGeneratedValue
+      - annotationAuthorTargetNode
     attributes:
       author:
         range: Person
-        annotations:
-          target_node: true
     in_subset:
       - curator_schema_only
 
@@ -2049,6 +2033,10 @@ classes:
       - annotationCatalystActivityRelationshipType
       - annotationCompartmentRelationshipType
       - annotationEntityOnOtherCellRelationshipType
+      - annotationInputSet
+      - annotationOutputSet
+      - annotationRequiredInputComponentSet
+      - annotationHasInteractionSet
     attributes:
       systematicName:
       catalystActivityReference:
@@ -2059,13 +2047,9 @@ classes:
       input:
         multivalued: true
         range: Input
-        annotations:
-          set: true
       output:
         multivalued: true
         range: Output
-        annotations:
-          set: true
       normalReaction:
         range: ReactionlikeEvent
       regulatedBy:
@@ -2077,13 +2061,9 @@ classes:
       requiredInputComponent:
         multivalued: true
         range: PhysicalEntity
-        annotations:
-          set: true
       hasInteraction:
         multivalued: true
         range: InteractionEvent
-        annotations:
-          set: true
       reactionType:
         multivalued: true
         range: ReactionType
@@ -2437,6 +2417,7 @@ classes:
       - physicalEntity
       - stoichiometry
       - annotationIdGeneratedValue
+      - annotationPhysicalEntityTargetNode
     in_subset:
       - curator_schema_only
 
@@ -2450,11 +2431,10 @@ classes:
       - order
       - stoichiometry
       - annotationIdGeneratedValue
+      - annotationPathwayTargetNode
     attributes:
       pathway:
         range: Pathway
-        annotations:
-          target_node: true
     in_subset:
       - curator_schema_only
 
@@ -2746,12 +2726,6 @@ classes:
         range: boolean
       relationship_properties:
         range: boolean
-      set:
-        range: boolean
-      sorted_set:
-        range: boolean
-      target_node:
-        range: boolean
       value:
     in_subset:
       - schema_annotations
@@ -2816,8 +2790,6 @@ slots:
     multivalued: true
   physicalEntity:
     range: PhysicalEntity
-    annotations:
-      target_node: true
   psiMod:
     range: PsiMod
   referenceDatabase:
@@ -3207,7 +3179,6 @@ slots:
 
   #### Relationship type annotation slots ####
   # TBC - the logic to validate is to camel-case attribute name - see: RNAMArker vs type: rnaMarker
-  # &&&&
   annotationActiveUnitRelationshipType:
   annotationActivityRelationshipType:
   annotationAffiliationRelationshipType:
@@ -3304,3 +3275,28 @@ slots:
   #### Misc other annotation slots ####
   annotationCrossReferenceDeprecated:
   annotationIdGeneratedValue:
+  annotationAbstractModifiedResidueTargetNode:
+  annotationAuthorTargetNode:
+  annotationCompartmentTargetNode:
+  annotationEventTargetNode:
+  annotationPathwayTargetNode:
+  annotationPhysicalEntityTargetNode:
+  # &&&& annotation???Set:
+  # annotation???SortedSet:
+  annotationActiveUnitSet:
+  annotationInferredFromSet:
+  annotationInputSet:
+  annotationOrthologousEventSet:
+  annotationOutputSet:
+  annotationRequiredInputComponentSet:
+  annotationSecondReferenceSequenceSet:
+  annotationAuthorSortedSet:
+  annotationHasCandidateSortedSet:
+  annotationHasComponentSortedSet:
+  annotationHasEventSortedSet:
+  annotationHasInteractionSet:
+  annotationHasMemberSortedSet:
+  annotationHasModifiedResidueSortedSet:
+  annotationIncludedLocationSortedSet:
+  annotationRepeatedUnitSortedSet:
+
