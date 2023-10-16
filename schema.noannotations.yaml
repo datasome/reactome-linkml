@@ -28,12 +28,11 @@ classes:
   #### AbstractModifiedResidue ####
   AbstractModifiedResidue:
     is_a: DatabaseObject
-    annotations:
-      node: true
     slots:
       - annotationReferenceSequenceConstraintMandatory
       - annotationReferenceSequenceCategoryAll
       - annotationReferenceSequenceRelationshipType
+      - annotationNode
     attributes:
       referenceSequence:
         range: ReferenceSequence
@@ -43,14 +42,13 @@ classes:
   #### Affiliation ####
   Affiliation:
     is_a: DatabaseObject
-    annotations:
-      node: true
     slots:
       - name
       - annotationNameConstraintMandatory
       - annotationAddressConstraintRequired
       - annotationNameReactomeProperty
       - annotationNameCategoryAll
+      - annotationNode
     attributes:
       address:
     in_subset:
@@ -59,16 +57,14 @@ classes:
   #### Anatomy ####
   Anatomy:
     is_a: ExternalOntology
-    annotations:
-      node: true
+    slots:
+      - annotationNode
     in_subset:
       - curator_schema_only
 
   #### BlackBoxEvent ####
   BlackBoxEvent:
     is_a: ReactionlikeEvent
-    annotations:
-      node: true
     slots:
       - authored
       - edited
@@ -98,6 +94,7 @@ classes:
       - annotationLiteratureReferenceRelationshipType
       - annotationInputSet
       - annotationOutputSet
+      - annotationNode
     attributes:
       templateEvent:
         range: Event
@@ -120,8 +117,6 @@ classes:
   #### Book ####
   Book:
     is_a: Publication
-    annotations:
-      node: true
     slots:
       - annotationISBNConstraintOptional
       - annotationChapterTitleConstraintOptional
@@ -137,6 +132,7 @@ classes:
       - annotationChapterTitleCategoryAny
       - annotationChapterAuthorsRelationshipType
       - annotationPublisherRelationshipType
+      - annotationNode
     attributes:
       ISBN:
       chapterTitle:
@@ -156,8 +152,6 @@ classes:
   #### CandidateSet ####
   CandidateSet:
     is_a: EntitySet
-    annotations:
-      node: true
     slots:
       - annotationHasCandidateConstraintMandatory
       - annotationHasMemberConstraintRequired
@@ -166,6 +160,7 @@ classes:
       - annotationHasCandidateRelationshipType
       - annotationHasMemberRelationshipType
       - annotationHasCandidateSortedSet
+      - annotationNode
     attributes:
       hasCandidate:
         multivalued: true
@@ -185,8 +180,6 @@ classes:
   #### CatalystActivity ####
   CatalystActivity:
     is_a: DatabaseObject
-    annotations:
-      node: true
     slots:
       - annotationActiveUnitConstraintOptional
       - annotationActivityConstraintRequired
@@ -198,6 +191,7 @@ classes:
       - annotationActivityRelationshipType
       - annotationPhysicalEntityRelationshipType
       - annotationActiveUnitSet
+      - annotationNode
     attributes:
       activeUnit:
         multivalued: true
@@ -212,21 +206,18 @@ classes:
   #### CatalystActivityReference ####
   CatalystActivityReference:
     is_a: ControlReference
-    annotations:
-      node: true
     slots:
       - catalystActivity
       - annotationCatalystActivityConstraintMandatory
       - annotationCatalystActivityCategoryAll
       - annotationCatalystActivityRelationshipType
+      - annotationNode
     in_subset:
       - curator_schema_only
 
   #### Cell ####
   Cell:
     is_a: PhysicalEntity
-    annotations:
-      node: true
     slots:
       - cellType
       - species
@@ -249,6 +240,7 @@ classes:
       - annotationCellTypeRelationshipType
       - annotationSpeciesRelationshipType
       - annotationTissueRelationshipType
+      - annotationNode
     slot_usage:
       species:
         range: Taxon
@@ -272,8 +264,6 @@ classes:
   #### CellDevelopmentStep ####
   CellDevelopmentStep:
     is_a: ReactionlikeEvent
-    annotations:
-      node: true
     slots:
       - catalystActivity
       - tissue
@@ -285,6 +275,7 @@ classes:
       - annotationCatalystActivityRelationshipType
       - annotationTissueRelationshipType
       - annotationRequiredInputComponentSet
+      - annotationNode
     attributes:
       requiredInputComponent:
         multivalued: true
@@ -295,44 +286,41 @@ classes:
   #### CellLineagePath ####
   CellLineagePath:
     is_a: ReactionlikeEvent
-    annotations:
-      node: true
     slots:
       - tissue
       - annotationTissueConstraintRequired
       - annotationTissueRelationshipType
+      - annotationNode
     in_subset:
       - curator_schema_only
 
   #### CellType ####
   CellType:
     is_a: ExternalOntology
-    annotations:
-      node: true
+    slots:
+      - annotationNode
     in_subset:
       - curator_schema_only
 
   #### ChemicalDrug ####
   ChemicalDrug:
     is_a: Drug
-    annotations:
-      node: true
+    slots:
+      - annotationNode
     in_subset:
       - curator_schema_only
 
   #### Compartment ####
   Compartment:
     is_a: GO_CellularComponent
-    annotations:
-      node: true
+    slots:
+      - annotationNode
     in_subset:
       - curator_schema_only
 
   #### Complex ####
   Complex:
     is_a: PhysicalEntity
-    annotations:
-      node: true
     slots:
       - compartment
       - entityOnOtherCell
@@ -358,6 +346,7 @@ classes:
       - annotationSpeciesRelationshipType
       - annotationHasComponentSortedSet
       - annotationIncludedLocationSortedSet
+      - annotationNode
     attributes:
       hasComponent:
         multivalued: true
@@ -380,8 +369,6 @@ classes:
   #### ControlledVocabulary ####
   ControlledVocabulary:
     is_a: DatabaseObject
-    annotations:
-      node: true
     slots:
       - definition
       - name
@@ -389,27 +376,25 @@ classes:
       - annotationNameConstraintMandatory
       - annotationDefinitionReactomeProperty
       - annotationNameReactomeProperty
+      - annotationNode
     in_subset:
       - curator_schema_only
 
   #### ControlReference ####
   ControlReference:
     is_a: DatabaseObject
-    annotations:
-      node: true
     slots:
       - literatureReference
       - annotationLiteratureReferenceConstraintMandatory
       - annotationLiteratureReferenceCategoryAll
       - annotationLiteratureReferenceRelationshipType
+      - annotationNode
     in_subset:
       - curator_schema_only
 
   #### CrosslinkedResidue ####
   CrosslinkedResidue:
     is_a: TranslationalModification
-    annotations:
-      node: true
     slots:
       - modification
       - annotationModificationAllowed
@@ -419,6 +404,7 @@ classes:
       - annotationSecondCoordinateCategoryAll
       - annotationModificationCategoryAll
       - annotationModificationRelationshipType
+      - annotationNode
     attributes:
       secondCoordinate:
         range: integer
@@ -428,8 +414,6 @@ classes:
   #### DatabaseIdentifier ####
   DatabaseIdentifier:
     is_a: DatabaseObject
-    annotations:
-      node: true
     slots:
       - crossReference
       - identifier
@@ -442,13 +426,13 @@ classes:
       - annotationReferenceDatabaseCategoryAll
       - annotationCrossReferenceRelationshipType
       - annotationReferenceDatabaseRelationshipType
+      - annotationNode
     in_subset:
       - curator_schema_only
 
   #### DatabaseObject ####
   DatabaseObject:
     annotations:
-      node: true
       generator: "ObjectIdGenerators.PropertyGenerator.class"
       property: "DB_ID"
       implements: "Serializable, Comparable<DatabaseObject>, DatabaseObjectLike"
@@ -464,6 +448,7 @@ classes:
       - annotationCreatedRelationshipType
       - annotationModifiedRelationshipType
       - annotationStableIdentifierRelationshipType
+      - annotationNode
     attributes:
       isLoaded:
         annotations:
@@ -500,10 +485,9 @@ classes:
 
   #### DBInfo ####
   DBInfo:
-    annotations:
-      node: true
     slots:
       - id
+      - annotationNode
     slot_usage:
       id:
         annotations:
@@ -520,8 +504,8 @@ classes:
   #### DefinedSet ####
   DefinedSet:
     is_a: EntitySet
-    annotations:
-      node: true
+    slots:
+      - annotationNode
     attributes:
       explanation:
         annotations:
@@ -605,9 +589,8 @@ classes:
   #### Depolymerisation ####
   Depolymerisation:
     is_a: ReactionlikeEvent
-    annotations:
-      node: true
     slots:
+      - annotationNode
       - authored
       - edited
       - goBiologicalProcess
@@ -628,16 +611,14 @@ classes:
   #### Disease ####
   Disease:
     is_a: ExternalOntology
-    annotations:
-      node: true
+    slots:
+      - annotationNode
     in_subset:
       - curator_schema_only
 
   #### Drug ####
   Drug:
     is_a: PhysicalEntity
-    annotations:
-      node: true
     slots:
       - compartment
       - referenceEntity
@@ -650,6 +631,7 @@ classes:
       - annotationDiseaseRelationshipType
       - annotationCompartmentRelationshipType
       - annotationReferenceEntityRelationshipType
+      - annotationNode
     attributes:
       disease:
         multivalued: true
@@ -660,11 +642,10 @@ classes:
   #### DrugActionType ####
   DrugActionType:
     is_a: ReactionType
-    annotations:
-      node: true
     slots:
       - annotationInstanceOfConstraintOptional
       - annotationInstanceOfRelationshipType
+      - annotationNode
     attributes:
       instanceOf:
         multivalued: true
@@ -675,8 +656,6 @@ classes:
   #### EntityFunctionalStatus ####
   EntityFunctionalStatus:
     is_a: DatabaseObject
-    annotations:
-      node: true
     slots:
       - annotationFunctionalStatusConstraintMandatory
       - annotationDiseaseEntityConstraintMandatory
@@ -687,6 +666,7 @@ classes:
       - annotationFunctionalStatusRelationshipType
       - annotationDiseaseEntityRelationshipType
       - annotationNormalEntityRelationshipType
+      - annotationNode
     attributes:
       functionalStatus:
         multivalued: true
@@ -701,8 +681,6 @@ classes:
   #### EntitySet ####
   EntitySet:
     is_a: PhysicalEntity
-    annotations:
-      node: true
     slots:
       - compartment
       - relatedSpecies
@@ -719,6 +697,7 @@ classes:
       - annotationRelatedSpeciesRelationshipType
       - annotationSpeciesRelationshipType
       - annotationHasMemberSortedSet
+      - annotationNode
     attributes:
       isOrdered:
         range: boolean
@@ -744,8 +723,6 @@ classes:
   #### EntityWithAccessionedSequence ####
   EntityWithAccessionedSequence:
     is_a: GenomeEncodedEntity
-    annotations:
-      node: true
     slots:
       - name
       - referenceEntity
@@ -769,6 +746,7 @@ classes:
       - annotationReferenceEntityRelationshipType
       - annotationSpeciesRelationshipType
       - annotationHasModifiedResidueSortedSet
+      - annotationNode
     slot_usage:
       species:
         range: Taxon
@@ -793,8 +771,6 @@ classes:
   #### Event ####
   Event:
     is_a: DatabaseObject
-    annotations:
-      node: true
     slots:
       - authored
       - edited
@@ -859,6 +835,7 @@ classes:
       - annotationSummationRelationshipType
       - annotationInferredFromSet
       - annotationOrthologousEventSet
+      - annotationNode
     attributes:
       _doRelease:
         range: boolean
@@ -890,8 +867,6 @@ classes:
   #### EvidenceType ####
   EvidenceType:
     is_a: DatabaseObject
-    annotations:
-      node: true
     slots:
       - definition
       - name
@@ -902,6 +877,7 @@ classes:
       - annotationNameReactomeProperty
       - annotationNameCategoryAny
       - annotationInstanceOfRelationshipType
+      - annotationNode
     attributes:
       instanceOf:
         multivalued: true
@@ -912,8 +888,6 @@ classes:
   #### ExternalOntology ####
   ExternalOntology:
     is_a: DatabaseObject
-    annotations:
-      node: true
     slots:
       - definition
       - identifier
@@ -932,6 +906,7 @@ classes:
       - annotationIdentifierCategoryAll
       - annotationInstanceOfRelationshipType
       - annotationReferenceDatabaseRelationshipType
+      - annotationNode
     attributes:
       synonym:
         multivalued: true
@@ -944,8 +919,6 @@ classes:
   #### FailedReaction ####
   FailedReaction:
     is_a: ReactionlikeEvent
-    annotations:
-      node: true
     slots:
       - authored
       - edited
@@ -971,6 +944,7 @@ classes:
       - annotationGoBiologicalProcessRelationshipType
       - annotationLiteratureReferenceRelationshipType
       - annotationOutputSet
+      - annotationNode
     attributes:
       normalReaction:
         range: ReactionlikeEvent
@@ -990,12 +964,11 @@ classes:
   #### Figure ####
   Figure:
     is_a: DatabaseObject
-    annotations:
-      node: true
     slots:
       - annotationUrlConstraintMandatory
       - annotationUrlReactomeProperty
       - annotationUrlCategoryAll
+      - annotationNode
     attributes:
       url:
         annotations:
@@ -1006,21 +979,21 @@ classes:
   #### FragmentDeletionModification ####
   FragmentDeletionModification:
     is_a: FragmentModification
-    annotations:
-      node: true
+    slots:
+      - annotationNode
     in_subset:
       - curator_schema_only
 
   #### FragmentInsertionModification ####
   FragmentInsertionModification:
     is_a: FragmentModification
-    annotations:
-      node: true
+
     slots:
       - coordinate
       - annotationCoordinateConstraintRequired
       - annotationCoordinateReactomeProperty
       - annotationCoordinateCategoryAll
+      - annotationNode
     in_subset:
       - curator_schema_only
 
@@ -1034,8 +1007,7 @@ classes:
       - annotationStartPositionInReferenceSequenceReactomeProperty
       - annotationEndPositionInReferenceSequenceCategoryAll
       - annotationStartPositionInReferenceSequenceCategoryAll
-    annotations:
-      node: true
+      - annotationNode
     attributes:
       endPositionInReferenceSequence:
         range: integer
@@ -1047,12 +1019,11 @@ classes:
   #### FragmentReplacedModification ####
   FragmentReplacedModification:
     is_a: FragmentModification
-    annotations:
-      node: true
     slots:
       - annotationAlteredAminoAcidFragmentConstraintOptional
       - annotationAlteredAminoAcidFragmentReactomeProperty
       - annotationAlteredAminoAcidFragmentCategoryAll
+      - annotationNode
     attributes:
       alteredAminoAcidFragment:
     in_subset:
@@ -1061,11 +1032,10 @@ classes:
   #### FrontPage ####
   FrontPage:
     is_a: DatabaseObject
-    annotations:
-      node: true
     slots:
       - annotationFrontPageItemConstraintMandatory
       - annotationFrontPageItemRelationshipType
+      - annotationNode
     attributes:
       frontPageItem:
         multivalued: true
@@ -1076,8 +1046,6 @@ classes:
   #### FunctionalStatus ####
   FunctionalStatus:
     is_a: DatabaseObject
-    annotations:
-      node: true
     slots:
       - annotationFunctionalStatusTypeConstraintMandatory
       - annotationStructuralVariantConstraintMandatory
@@ -1085,6 +1053,7 @@ classes:
       - annotationStructuralVariantCategoryAll
       - annotationFunctionalStatusTypeRelationshipType
       - annotationStructuralVariantRelationshipType
+      - annotationNode
     attributes:
       functionalStatusType:
         range: FunctionalStatusType
@@ -1096,8 +1065,6 @@ classes:
   #### FunctionalStatusType ####
   FunctionalStatusType:
     is_a: DatabaseObject
-    annotations:
-      node: true
     slots:
       - definition
       - name
@@ -1106,22 +1073,21 @@ classes:
       - annotationDefinitionReactomeProperty
       - annotationNameReactomeProperty
       - annotationNameCategoryAny
+      - annotationNode
     in_subset:
       - curator_schema_only
 
   #### GeneticallyModifiedResidue ####
   GeneticallyModifiedResidue:
     is_a: AbstractModifiedResidue
-    annotations:
-      node: true
+    slots:
+      - annotationNode
     in_subset:
       - curator_schema_only
 
   #### GenomeEncodedEntity ####
   GenomeEncodedEntity:
     is_a: PhysicalEntity
-    annotations:
-      node: true
     slots:
       - compartment
       - species
@@ -1131,6 +1097,7 @@ classes:
       - annotationSpeciesCategoryAll
       - annotationCompartmentRelationshipType
       - annotationSpeciesRelationshipType
+      - annotationNode
     attributes:
       explanation:
         annotations:
@@ -1151,8 +1118,6 @@ classes:
   #### GO_BiologicalProcess ####
   GO_BiologicalProcess:
     is_a: DatabaseObject
-    annotations:
-      node: true
     slots:
       - accession
       - definition
@@ -1168,14 +1133,13 @@ classes:
       - annotationNameCategoryAny
       - annotationAccessionCategoryAny
       - annotationReferenceDatabaseRelationshipType
+      - annotationNode
     in_subset:
       - curator_schema_only
 
   #### GO_CellularComponent ####
   GO_CellularComponent:
     is_a: DatabaseObject
-    annotations:
-      node: true
     slots:
       - accession
       - definition
@@ -1198,6 +1162,7 @@ classes:
       - annotationInstanceOfRelationshipType
       - annotationSurroundedByRelationshipType
       - annotationReferenceDatabaseRelationshipType
+      - annotationNode
     attributes:
       componentOf:
         multivalued: true
@@ -1217,8 +1182,6 @@ classes:
   #### GO_MolecularFunction ####
   GO_MolecularFunction:
     is_a: DatabaseObject
-    annotations:
-      node: true
     slots:
       - accession
       - definition
@@ -1235,6 +1198,7 @@ classes:
       - annotationNameReactomeProperty
       - annotationAccessionCategoryAny
       - annotationReferenceDatabaseRelationshipType
+      - annotationNode
     attributes:
       ecNumber:
     in_subset:
@@ -1243,14 +1207,13 @@ classes:
   #### GroupModifiedResidue ####
   GroupModifiedResidue:
     is_a: TranslationalModification
-    annotations:
-      node: true
     slots:
       - modification
       - annotationModificationAllowed
       - annotationModificationConstraintMandatory
       - annotationModificationCategoryAll
       - annotationModificationRelationshipType
+      - annotationNode
     in_subset:
       - curator_schema_only
 
@@ -1378,14 +1341,13 @@ classes:
   #### InstanceEdit ####
   InstanceEdit:
     is_a: DatabaseObject
-    annotations:
-      node: true
     slots:
       - annotationDateTimeReactomeProperty
       - annotationNoteReactomeProperty
       - annotation_ApplyToAllEditedInstancesReactomeProperty
       - annotationAuthorDirectionIncoming
       - annotationAuthorRelationshipType
+      - annotationNode
     attributes:
       dateTime:
       note:
@@ -1399,11 +1361,10 @@ classes:
   #### InteractionEvent ####
   InteractionEvent:
     is_a: Event
-    annotations:
-      node: true
     slots:
       - annotationPartnersConstraintMandatory
       - annotationPartnersRelationshipType
+      - annotationNode
     attributes:
       partners:
         multivalued: true
@@ -1414,8 +1375,6 @@ classes:
   #### InterChainCrosslinkedResidue ####
   InterChainCrosslinkedResidue:
     is_a: CrosslinkedResidue
-    annotations:
-      node: true
     slots:
       - annotationEquivalentToConstraintMandatory
       - annotationSecondReferenceSequenceConstraintMandatory
@@ -1423,6 +1382,7 @@ classes:
       - annotationEquivalentToRelationshipType
       - annotationSecondReferenceSequenceRelationshipType
       - annotationSecondReferenceSequenceSet
+      - annotationNode
     attributes:
       equivalentTo:
         multivalued: true
@@ -1436,8 +1396,8 @@ classes:
   #### IntraChainCrosslinkedResidue ####
   IntraChainCrosslinkedResidue:
     is_a: CrosslinkedResidue
-    annotations:
-      node: true
+    slots:
+      - annotationNode
     in_subset:
       - curator_schema_only
 
@@ -1456,8 +1416,7 @@ classes:
       - annotationVolumeReactomeProperty
       - annotationYearReactomeProperty
       - annotationPubMedIdentifierCategoryAll
-    annotations:
-      node: true
+      - annotationNode
     attributes:
       PUBMED_URL:
         annotations:
@@ -1476,11 +1435,10 @@ classes:
   #### MarkerReference ####
   MarkerReference:
     is_a: ControlReference
-    annotations:
-      node: true
     slots:
       - annotationMarkerConstraintMandatory
       - annotationMarkerRelationshipType
+      - annotationNode
     attributes:
       marker:
         multivalued: true
@@ -1491,8 +1449,6 @@ classes:
   #### ModifiedNucleotide ####
   ModifiedNucleotide:
     is_a: TranscriptionalModification
-    annotations:
-      node: true
     slots:
       - coordinate
       - modification
@@ -1503,22 +1459,23 @@ classes:
       - annotationCoordinateCategoryAll
       - annotationModificationCategoryAll
       - annotationModificationRelationshipType
+      - annotationNode
     in_subset:
       - curator_schema_only
 
   #### ModifiedResidue ####
   ModifiedResidue:
     is_a: TranslationalModification
-    annotations:
-      node: true
+    slots:
+      - annotationNode
     in_subset:
       - curator_schema_only
 
   #### NegativeGeneExpressionRegulation ####
   NegativeGeneExpressionRegulation:
     is_a: NegativeRegulation
-    annotations:
-      node: true
+    slots:
+      - annotationNode
     attributes:
       explanation:
         annotations:
@@ -1533,8 +1490,6 @@ classes:
   #### NegativePrecedingEvent ####
   NegativePrecedingEvent:
     is_a: DatabaseObject
-    annotations:
-      node: true
     slots:
       - annotationCommentConstraintOptional
       - annotationPrecedingEventConstraintMandatory
@@ -1543,6 +1498,7 @@ classes:
       - annotationPrecedingEventDirectionIncoming
       - annotationPrecedingEventRelationshipType
       - annotationReasonRelationshipType
+      - annotationNode
     attributes:
       comment:
       precedingEvent:
@@ -1556,16 +1512,16 @@ classes:
   #### NegativePrecedingEventReason ####
   NegativePrecedingEventReason:
     is_a: ControlledVocabulary
-    annotations:
-      node: true
+    slots:
+      - annotationNode
     in_subset:
       - curator_schema_only
 
   #### NegativeRegulation ####
   NegativeRegulation:
     is_a: Regulation
-    annotations:
-      node: true
+    slots:
+      - annotationNode
     attributes:
       explanation:
         annotations:
@@ -1580,21 +1536,20 @@ classes:
   #### NonsenseMutation ####
   NonsenseMutation:
     is_a: ReplacedResidue
-    annotations:
-      node: true
+    slots:
+      - annotationNode
     in_subset:
       - curator_schema_only
 
   #### OtherEntity ####
   OtherEntity:
     is_a: PhysicalEntity
-    annotations:
-      node: true
     slots:
       - compartment
       - annotationCompartmentConstraintMandatory
       - annotationCompartmentCategoryAll
       - annotationCompartmentRelationshipType
+      - annotationNode
     attributes:
       explanation:
         annotations:
@@ -1624,8 +1579,6 @@ classes:
   #### Pathway ####
   Pathway:
     is_a: Event
-    annotations:
-      node: true
     slots:
       - authored
       - compartment
@@ -1653,6 +1606,7 @@ classes:
       - annotationEditedRelationshipType
       - annotationGoBiologicalProcessRelationshipType
       - annotationHasEventSortedSet
+      - annotationNode
     attributes:
       doi:
       hasEHLD:
@@ -1677,8 +1631,6 @@ classes:
   #### Person ####
   Person:
     is_a: DatabaseObject
-    annotations:
-      node: true
     slots:
       - crossReference
       - figure
@@ -1703,6 +1655,7 @@ classes:
       - annotationAffiliationRelationshipType
       - annotationCrossReferenceRelationshipType
       - annotationFigureRelationshipType
+      - annotationNode
     attributes:
         firstname:
         initial:
@@ -1718,8 +1671,6 @@ classes:
   #### PhysicalEntity ####
   PhysicalEntity:
     is_a: DatabaseObject
-    annotations:
-      node: true
     slots:
       - authored
       - cellType
@@ -1772,6 +1723,7 @@ classes:
       - annotationLiteratureReferenceRelationshipType
       - annotationRevisedRelationshipType
       - annotationSummationRelationshipType
+      - annotationNode
     attributes:
       systematicName:
       disease:
@@ -1796,8 +1748,6 @@ classes:
   #### Polymer ####
   Polymer:
     is_a: PhysicalEntity
-    annotations:
-      node: true
     slots:
       - species
       - compartment
@@ -1813,6 +1763,7 @@ classes:
       - annotationCompartmentRelationshipType
       - annotationSpeciesRelationshipType
       - annotationRepeatedUnitSortedSet
+      - annotationNode
     attributes:
       maxUnitCount:
         range: integer
@@ -1834,8 +1785,6 @@ classes:
   #### Polymerisation ####
   Polymerisation:
     is_a: ReactionlikeEvent
-    annotations:
-      node: true
     slots:
       - authored
       - edited
@@ -1851,6 +1800,7 @@ classes:
       - annotationEditedRelationshipType
       - annotationGoBiologicalProcessRelationshipType
       - annotationLiteratureReferenceRelationshipType
+      - annotationNode
     attributes:
       explanation:
         annotations:
@@ -1865,8 +1815,8 @@ classes:
   #### PositiveGeneExpressionRegulation ####
   PositiveGeneExpressionRegulation:
     is_a: PositiveRegulation
-    annotations:
-      node: true
+    slots:
+      - annotationNode
     attributes:
       explanation:
         annotations:
@@ -1881,8 +1831,8 @@ classes:
   #### PositiveRegulation ####
   PositiveRegulation:
     is_a: Regulation
-    annotations:
-      node: true
+    slots:
+      - annotationNode
     attributes:
       explanation:
         annotations:
@@ -1897,19 +1847,18 @@ classes:
   #### ProteinDrug ####
   ProteinDrug:
     is_a: Drug
-    annotations:
-      node: true
+    slots:
+      - annotationNode
     in_subset:
       - curator_schema_only
 
   #### PsiMod ####
   PsiMod:
     is_a: ExternalOntology
-    annotations:
-      node: true
     slots:
       - annotationLabelConstraintRequired
       - annotationLabelReactomeProperty
+      - annotationNode
     attributes:
       label:
     in_subset:
@@ -1918,8 +1867,6 @@ classes:
   #### Publication ####
   Publication:
     is_a: DatabaseObject
-    annotations:
-      node: true
     slots:
       - annotationTitleConstraintMandatory
       - annotationAuthorConstraintMandatory
@@ -1929,6 +1876,7 @@ classes:
       - annotationAuthorCategoryAll
       - annotationAuthorRelationshipType
       - annotationAuthorSortedSet
+      - annotationNode
     attributes:
       title:
       author:
@@ -1957,8 +1905,6 @@ classes:
   #### Reaction ####
   Reaction:
     is_a: ReactionlikeEvent
-    annotations:
-      node: true
     slots:
       - authored
       - edited
@@ -1976,6 +1922,7 @@ classes:
       - annotationEditedRelationshipType
       - annotationGoBiologicalProcessRelationshipType
       - annotationLiteratureReferenceRelationshipType
+      - annotationNode
     attributes:
       reverseReaction:
         range: Reaction
@@ -1992,8 +1939,6 @@ classes:
   #### ReactionlikeEvent ####
   ReactionlikeEvent:
     is_a: Event
-    annotations:
-      node: true
     slots:
       - catalystActivity
       - compartment
@@ -2037,6 +1982,7 @@ classes:
       - annotationOutputSet
       - annotationRequiredInputComponentSet
       - annotationHasInteractionSet
+      - annotationNode
     attributes:
       systematicName:
       catalystActivityReference:
@@ -2079,16 +2025,14 @@ classes:
   #### ReactionType ####
   ReactionType:
     is_a: ControlledVocabulary
-    annotations:
-      node: true
+    slots:
+      - annotationNode
     in_subset:
       - curator_schema_only
 
   #### ReferenceDatabase ####
   ReferenceDatabase:
     is_a: DatabaseObject
-    annotations:
-      node: true
     slots:
       - name
       - annotationNameConstraintOptional
@@ -2100,6 +2044,7 @@ classes:
       - annotationResourceIdentifierReactomeProperty
       - annotationNameReactomeProperty
       - annotationAccessUrlCategoryAny
+      - annotationNode
     attributes:
       accessUrl:
       url:
@@ -2110,16 +2055,14 @@ classes:
   #### ReferenceDNASequence ####
   ReferenceDNASequence:
     is_a: ReferenceSequence
-    annotations:
-      node: true
+    slots:
+      - annotationNode
     in_subset:
       - curator_schema_only
 
   #### ReferenceEntity ####
   ReferenceEntity:
     is_a: DatabaseObject
-    annotations:
-      node: true
     slots:
       - crossReference
       - identifier
@@ -2138,14 +2081,13 @@ classes:
       - annotationReferenceDatabaseCategoryAll
       - annotationCrossReferenceRelationshipType
       - annotationReferenceDatabaseRelationshipType
+      - annotationNode
     in_subset:
       - curator_schema_only
 
   #### ReferenceGeneProduct ####
   ReferenceGeneProduct:
     is_a: ReferenceSequence
-    annotations:
-      node: true
     slots:
       - annotationChainConstraintOptional
       - annotation_ChainChangeLogConstraintOptional
@@ -2153,6 +2095,7 @@ classes:
       - annotation_ChainChangeLogReactomeProperty
       - annotationReferenceGeneRelationshipType
       - annotationReferenceTranscriptRelationshipType
+      - annotationNode
     attributes:
       chain:
         multivalued: true
@@ -2169,8 +2112,6 @@ classes:
   #### ReferenceGroup ####
   ReferenceGroup:
     is_a: ReferenceEntity
-    annotations:
-      node: true
     slots:
       - otherIdentifier
       - formula
@@ -2181,20 +2122,20 @@ classes:
       - annotationFormulaReactomeProperty
       - annotationNameReactomeProperty
       - annotationOtherIdentifierReactomeProperty
+      - annotationNode
     in_subset:
       - curator_schema_only
 
   #### ReferenceIsoform ####
   ReferenceIsoform:
     is_a: ReferenceGeneProduct
-    annotations:
-      node: true
     slots:
       - annotationVariantIdentifierConstraintMandatory
       - annotationIsoformParentConstraintMandatory
       - annotationVariantIdentifierReactomeProperty
       - annotationVariantIdentifierCategoryAll
       - annotationIsoformParentRelationshipType
+      - annotationNode
     attributes:
       variantIdentifier:
       isoformParent:
@@ -2206,8 +2147,6 @@ classes:
   #### ReferenceMolecule ####
   ReferenceMolecule:
     is_a: ReferenceEntity
-    annotations:
-      node: true
     slots:
       - formula
       - name
@@ -2218,17 +2157,17 @@ classes:
       - annotationFormulaReactomeProperty
       - annotationNameReactomeProperty
       - annotationOtherIdentifierReactomeProperty
+      - annotationNode
     in_subset:
       - curator_schema_only
 
   #### ReferenceRNASequence ####
   ReferenceRNASequence:
     is_a: ReferenceSequence
-    annotations:
-      node: true
     slots:
       - annotationReferenceGeneConstraintOptional
       - annotationReferenceGeneRelationshipType
+      - annotationNode
     attributes:
       referenceGene:
         multivalued: true
@@ -2239,8 +2178,6 @@ classes:
   #### ReferenceSequence ####
   ReferenceSequence:
     is_a: DatabaseObject
-    annotations:
-      node: true
     slots:
       - otherIdentifier
       - species
@@ -2264,6 +2201,7 @@ classes:
       - annotationOtherIdentifierReactomeProperty
       - annotationSpeciesCategoryAll
       - annotationSpeciesRelationshipType
+      - annotationNode
     attributes:
       checksum:
       comment:
@@ -2286,8 +2224,6 @@ classes:
   #### ReferenceTherapeutic ####
   ReferenceTherapeutic:
     is_a: ReferenceEntity
-    annotations:
-      node: true
     slots:
       - annotationAbbreviationConstraintOptional
       - annotationApprovalSourceConstraintOptional
@@ -2304,6 +2240,7 @@ classes:
       - annotationWithdrawnReactomeProperty
       - annotationInnReactomeProperty
       - annotationTypeReactomeProperty
+      - annotationNode
     attributes:
       abbreviation:
       approvalSource:
@@ -2324,8 +2261,6 @@ classes:
   #### Regulation ####
   Regulation:
     is_a: DatabaseObject
-    annotations:
-      node: true
     slots:
       - goBiologicalProcess
       - summation
@@ -2346,6 +2281,7 @@ classes:
       - annotationRegulatorRelationshipType
       - annotationGoBiologicalProcessRelationshipType
       - annotationSummationRelationshipType
+      - annotationNode
     attributes:
       activeUnit:
         # TBC - Note List in Java class (compared to set in CatalystActivity)
@@ -2361,12 +2297,11 @@ classes:
   #### RegulationReference ####
   RegulationReference:
     is_a: ControlReference
-    annotations:
-      node: true
     slots:
       - annotationRegulationConstraintMandatory
       - annotationRegulationCategoryAll
       - annotationRegulationRelationshipType
+      - annotationNode
     attributes:
       regulation:
         range: Regulation
@@ -2376,8 +2311,6 @@ classes:
   #### ReplacedResidue ####
   ReplacedResidue:
     is_a: GeneticallyModifiedResidue
-    annotations:
-      node: true
     slots:
       - coordinate
       - psiMod
@@ -2387,6 +2320,7 @@ classes:
       - annotationCoordinateCategoryAll
       - annotationPsiModCategoryAll
       - annotationPsiModRelationshipType
+      - annotationNode
     in_subset:
       - curator_schema_only
 
@@ -2401,9 +2335,7 @@ classes:
     attributes:
       releaseNumber:
         range: integer
-        annotations:
       releaseDate:
-        annotations:
     in_subset:
       - curator_schema_only
 
@@ -2441,8 +2373,8 @@ classes:
   #### Requirement ####
   Requirement:
     is_a: PositiveRegulation
-    annotations:
-      node: true
+    slots:
+      - annotationNode
     attributes:
       explanation:
         annotations:
@@ -2457,29 +2389,26 @@ classes:
   #### RNADrug ####
   RNADrug:
     is_a: Drug
-    annotations:
-      node: true
+    slots:
+      - annotationNode
     in_subset:
       - curator_schema_only
 
   #### SequenceOntology ####
   SequenceOntology:
     is_a: ExternalOntology
-    annotations:
-      node: true
     slots:
       - identifier
       - annotationIdentifierConstraintMandatory
       - annotationIdentifierReactomeProperty
       - annotationIdentifierCategoryAll
+      - annotationNode
     in_subset:
       - curator_schema_only
 
   #### SimpleEntity ####
   SimpleEntity:
     is_a: PhysicalEntity
-    annotations:
-      node: true
     slots:
       - compartment
       - species
@@ -2495,6 +2424,7 @@ classes:
       - annotationReferenceEntityRelationshipType
       - annotationCompartmentRelationshipType
       - annotationSpeciesRelationshipType
+      - annotationNode
     attributes:
       referenceEntity:
         range: ReferenceMolecule
@@ -2517,11 +2447,10 @@ classes:
   #### Species ####
   Species:
     is_a: Taxon
-    annotations:
-      node: true
     slots:
       - annotationAbbreviationConstraintMandatory
       - annotationAbbreviationReactomeProperty
+      - annotationNode
     attributes:
       abbreviation:
     in_subset:
@@ -2530,8 +2459,6 @@ classes:
   #### StableIdentifier ####
   StableIdentifier:
     is_a: DatabaseObject
-    annotations:
-      node: true
     slots:
       - identifier
       - identifierVersion
@@ -2541,6 +2468,7 @@ classes:
       - annotationIdentifierReactomeProperty
       - annotationIdentifierVersionReactomeProperty
       - annotationHistoryRelationshipType
+      - annotationNode
     attributes:
       oldIdentifier:
       oldIdentifierVersion:
@@ -2555,14 +2483,13 @@ classes:
   #### StableIdentifierHistory ####
   StableIdentifierHistory:
     is_a: DatabaseObject
-    annotations:
-      node: true
     slots:
       - identifier
       - identifierVersion
       - annotationIdentifierReactomeProperty
       - annotationIdentifierVersionReactomeProperty
       - annotationHistoryStatusRelationshipType
+      - annotationNode
     attributes:
       historyStatus:
         multivalued: true
@@ -2573,13 +2500,12 @@ classes:
   #### StableIdentifierReleaseStatus ####
   StableIdentifierReleaseStatus:
     is_a: DatabaseObject
-    annotations:
-      node: true
     slots:
       - annotationReleaseNumberReactomeProperty
       - annotationStatusReactomeProperty
       - annotationReleaseNumberCategoryAll
       - annotationStatusCategoryAll
+      - annotationNode
     attributes:
       releaseNumber:
         range: integer
@@ -2591,8 +2517,6 @@ classes:
   #### Summation ####
   Summation:
     is_a: DatabaseObject
-    annotations:
-      node: true
     slots:
       - literatureReference
       - annotationLiteratureReferenceConstraintOptional
@@ -2600,6 +2524,7 @@ classes:
       - annotationTextReactomeProperty
       - annotationTextCategoryAll
       - annotationLiteratureReferenceRelationshipType
+      - annotationNode
     attributes:
       text:
     in_subset:
@@ -2608,8 +2533,6 @@ classes:
   #### Taxon ####
   Taxon:
     is_a: DatabaseObject
-    annotations:
-      node: true
     slots:
       - crossReference
       - name
@@ -2621,6 +2544,7 @@ classes:
       - annotationSuperTaxonRelationshipType
       - annotationCrossReferenceDeprecated
       - annotationCrossReferenceRelationshipType
+      - annotationNode
     attributes:
       superTaxon:
         range: Taxon
@@ -2630,16 +2554,14 @@ classes:
   #### TranscriptionalModification ####
   TranscriptionalModification:
     is_a: AbstractModifiedResidue
-    annotations:
-      node: true
+    slots:
+      - annotationNode
     in_subset:
       - curator_schema_only
 
   #### TranslationalModification ####
   TranslationalModification:
     is_a: AbstractModifiedResidue
-    annotations:
-      node: true
     slots:
       - coordinate
       - psiMod
@@ -2649,6 +2571,7 @@ classes:
       - annotationCoordinateCategoryAll
       - annotationPsiModCategoryAll
       - annotationPsiModRelationshipType
+      - annotationNode
     in_subset:
       - curator_schema_only
 
@@ -2677,12 +2600,11 @@ classes:
   #### URL ####
   URL:
     is_a: Publication
-    annotations:
-      node: true
     slots:
       - annotationUniformResourceLocatorConstraintMandatory
       - annotationUniformResourceLocatorReactomeProperty
       - annotationUniformResourceLocatorCategoryAny
+      - annotationNode
     attributes:
       uniformResourceLocator:
     in_subset:
@@ -2713,8 +2635,6 @@ classes:
       json_identity_info:
         range: JsonIdentityInfo
       json_ignore:
-        range: boolean
-      node:
         range: boolean
       reactome_transient:
         range: boolean
@@ -3281,8 +3201,6 @@ slots:
   annotationEventTargetNode:
   annotationPathwayTargetNode:
   annotationPhysicalEntityTargetNode:
-  # &&&& annotation???Set:
-  # annotation???SortedSet:
   annotationActiveUnitSet:
   annotationInferredFromSet:
   annotationInputSet:
@@ -3299,4 +3217,5 @@ slots:
   annotationHasModifiedResidueSortedSet:
   annotationIncludedLocationSortedSet:
   annotationRepeatedUnitSortedSet:
+  annotationNode
 
