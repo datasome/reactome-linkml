@@ -724,7 +724,6 @@ classes:
         range: boolean
         annotations:
           constraint: OPTIONAL
-          addedField: true
       hasMember:
         multivalued: true
         range: HasMember
