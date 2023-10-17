@@ -3,8 +3,7 @@ name: reactome-data-model
 description: Reactome Data Model
 prefixes:
   linkml: https://w3id.org/linkml/
-  model: org.reactome.server.graph.domain.model
-default_prefix: org.reactome.server.graph.domain.model
+default_prefix: https://w3id.org/linkml/
 default_range: string
 # version: TBC
 imports:
@@ -372,7 +371,7 @@ classes:
         annotations:
           reactome_transient: true
       dbId:
-        range: long
+        range: AnnotationLongType
         annotations:
           id: true
       displayName:
@@ -421,7 +420,7 @@ classes:
       version:
         range: integer
       checksum:
-        range: long
+        range: AnnotationLongType
     in_subset:
       - web_schema
 
@@ -2393,6 +2392,7 @@ classes:
       - web_schema
 
   #### Annotations classes - start ####
+  AnnotationLongType:
   Annotations:
     attributes:
       deprecated:
@@ -2562,7 +2562,7 @@ slots:
     annotations:
       type: "goBiologicalProcess"
   id:
-    range: long
+    range: AnnotationLongType
     annotations:
       id: true
       generated_value: true
