@@ -30,6 +30,7 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
+      abstract: true
     attributes:
       referenceSequence:
         range: ReferenceSequence
@@ -300,6 +301,7 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
+      abstract: true
     slots:
       - definition
       - name
@@ -311,6 +313,7 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
+      abstract: true
     slots:
       - literatureReference
     in_subset:
@@ -321,6 +324,7 @@ classes:
     is_a: TranslationalModification
     annotations:
       node: true
+      abstract: true
     slots:
       - modification
     slot_usage:
@@ -358,6 +362,7 @@ classes:
   DatabaseObject:
     annotations:
       node: true
+      abstract: true
       generator: "ObjectIdGenerators.PropertyGenerator.class"
       property: "dbId"
       implements: "Serializable, Comparable<DatabaseObject>, DatabaseObjectLike"
@@ -478,6 +483,7 @@ classes:
     is_a: PhysicalEntity
     annotations:
       node: true
+      abstract: true
     slots:
       - referenceEntity
     in_subset:
@@ -539,6 +545,7 @@ classes:
     is_a: PhysicalEntity
     annotations:
       node: true
+      abstract: true
     slots:
       - relatedSpecies
       - species
@@ -625,6 +632,7 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
+      abstract: true
     slots:
       - authored
       - edited
@@ -728,6 +736,7 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
+      abstract: true
     slots:
       - definition
       - identifier
@@ -804,6 +813,7 @@ classes:
     is_a: GeneticallyModifiedResidue
     annotations:
       node: true
+      abstract: true
     attributes:
       endPositionInReferenceSequence:
         range: integer
@@ -861,6 +871,7 @@ classes:
     is_a: AbstractModifiedResidue
     annotations:
       node: true
+      abstract: true
     in_subset:
       - web_schema
 
@@ -945,6 +956,7 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
+      abstract: true
     slots:
       - accession
       - definition
@@ -1159,6 +1171,7 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
+      abstract: true
     attributes:
       databaseName:
         annotations:
@@ -1515,6 +1528,7 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
+      abstract: true
     slots:
       - authored
       - cellType
@@ -1750,6 +1764,7 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
+      abstract: true
     attributes:
       title:
         annotations:
@@ -1806,6 +1821,7 @@ classes:
     is_a: Event
     annotations:
       node: true
+      abstract: true
     slots:
       - catalystActivity
       - isChimeric
@@ -1883,6 +1899,7 @@ classes:
     is_a: ControlledVocabulary
     annotations:
       node: true
+      abstract: true
     in_subset:
       - web_schema
 
@@ -1919,6 +1936,7 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
+      abstract: true
     slots:
       - crossReference
       - identifier
@@ -2024,6 +2042,7 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
+      abstract: true
     slots:
       - species
     attributes:
@@ -2092,6 +2111,7 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
+      abstract: true
     slots:
       - authored
       - edited
@@ -2345,6 +2365,7 @@ classes:
     is_a: AbstractModifiedResidue
     annotations:
       node: true
+      abstract: true
     in_subset:
       - web_schema
 
@@ -2353,6 +2374,7 @@ classes:
     is_a: AbstractModifiedResidue
     annotations:
       node: true
+      abstract: true
     slots:
       - coordinate
       - psiMod
@@ -2395,6 +2417,8 @@ classes:
   AnnotationLongType:
   Annotations:
     attributes:
+      abstract:
+        range: boolean  
       deprecated:
         range: boolean
       generated_value:
