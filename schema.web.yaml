@@ -1044,7 +1044,7 @@ classes:
   HasComponentForComplex:
     annotations:
       relationship_properties: true
-      implements: "implements Comparable<HasComponentForComplex>"
+      implements: "Comparable<HasComponentForComplex>"
     slots:
       - id
       - order

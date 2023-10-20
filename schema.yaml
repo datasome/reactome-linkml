@@ -1345,7 +1345,7 @@ classes:
   Input:
     annotations:
       relationship_properties: true
-      implements: "implements Comparable<Input>"
+      implements: "Comparable<Input>"
     slots:
       - id
       - order
