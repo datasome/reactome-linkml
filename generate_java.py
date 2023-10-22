@@ -8,9 +8,13 @@ import copy
 OUTPUT_DIR = "graph-core-classes"
 JAVA_PACKAGE = "package org.reactome.server.graph.domain.model;"
 
-ANNOTATION_CLASS_TO_PACKAGE_NAME = {
+CLASS_TO_PACKAGE_NAME = {
+    "DatabaseObjectLike": "org.reactome.server.graph.domain.result",
+    "Id": "org.springframework.data.neo4j.core.schema",
     "JsonIdentityInfo": "com.fasterxml.jackson.annotation",
     "JsonIgnore": "com.fasterxml.jackson.annotation",
+    "ObjectIdGenerators": "com.fasterxml.jackson.annotation",
+    "Node": "org.springframework.data.neo4j.core.schema",
     "ReactomeAllowedClasses": "org.reactome.server.graph.domain.annotations",
     "ReactomeConstraint": "org.reactome.server.graph.domain.annotations",
     "ReactomeInstanceDefiningValue": "org.reactome.server.graph.domain.annotations",
@@ -18,9 +22,8 @@ ANNOTATION_CLASS_TO_PACKAGE_NAME = {
     "ReactomeRelationship": "org.reactome.server.graph.domain.annotations",
     "ReactomeSchemaIgnore": "org.reactome.server.graph.domain.annotations",
     "ReactomeTransient": "org.reactome.server.graph.domain.annotations",
-    "Id": "org.springframework.data.neo4j.core.schema",
-    "Node": "org.springframework.data.neo4j.core.schema",
-    "Relationship": "org.springframework.data.neo4j.core.schema"
+    "Relationship": "org.springframework.data.neo4j.core.schema",
+    "StoichiometryObject": "org.reactome.server.graph.service.helper"
 }
 
 VALUE_TO_JAVA_ENUM = {
@@ -37,6 +40,21 @@ OTHER_ANNOTATIONS = ['abstract', 'implements', 'set', 'sorted_set', 'getter_only
 INDENT_0 = ""
 INDENT_1 = "    "
 INDENT_2 = "        "
+
+def is_class_relationship(class_entry):
+    if 'annotations' in class_entry:
+        class_annotations = class_entry['annotations']
+        if 'relationship_properties' in class_annotations and class_annotations['relationship_properties']:
+            return True
+    return False
+
+def get_package(class_entry):
+    pkg_root = "org.reactome.server.graph.domain"
+    if is_class_relationship(class_entry):
+        pkg_suffix = "relationship"
+    else:
+        pkg_suffix = "model"
+    return "{}.{}".format(pkg_root, pkg_suffix)
 
 def get_keywords(class_annotations, keywords):
     ret = " "
@@ -100,13 +118,13 @@ def get_annotation_imports(annotations, annot_attr2class):
     for annot_attr in annotations:
         if annot_attr in annot_attr2class:
             annot_class = annot_attr2class[annot_attr]
-            annotations_imports.add('import {}.{};'.format(ANNOTATION_CLASS_TO_PACKAGE_NAME[annot_class], annot_class))
+            annotations_imports.add('import {}.{};'.format(CLASS_TO_PACKAGE_NAME[annot_class], annot_class))
         else:
             if annot_attr not in OTHER_ANNOTATIONS:
                 annot_class = capitalize(annot_attr)
-                if annot_class in ANNOTATION_CLASS_TO_PACKAGE_NAME:
+                if annot_class in CLASS_TO_PACKAGE_NAME:
                     annotations_imports.add(
-                        'import {}.{};'.format(ANNOTATION_CLASS_TO_PACKAGE_NAME[annot_class], annot_class))
+                        'import {}.{};'.format(CLASS_TO_PACKAGE_NAME[annot_class], annot_class))
     return annotations_imports
 
 
@@ -176,6 +194,12 @@ def get_class_attributes_slots(clazz, class_entry, schema_slots, annot_attr2clas
                     java_type = "Long"
                 else:
                     java_type = capitalize(attr_entry['range'])
+                    if java_type in classes:
+                        java_type_package = get_package(classes[java_type])
+                        clazz_package = get_package(class_entry)
+                        if clazz_package != java_type_package:
+                            annotations_imports.add(
+                                'import {}.{};'.format(java_type_package, java_type))
             else:
                 java_type = "String"
             if 'annotations' in attr_entry:
@@ -227,7 +251,7 @@ def get_empty_constructor(clazz):
 
 
 def is_annotation(clazz):
-    return clazz.startswith("Annotation") or clazz in ANNOTATION_CLASS_TO_PACKAGE_NAME
+    return clazz.startswith("Annotation") or clazz in CLASS_TO_PACKAGE_NAME
 
 
 with open("schema.web.yaml", "r") as stream:
@@ -242,6 +266,7 @@ with open("schema.web.yaml", "r") as stream:
                 continue
             annotations_imports = set([])
             class_entry = classes[clazz]
+            package = get_package(class_entry)
             annot_lines, other_annotations = get_annotations(class_entry['annotations'], annot_attr2class, INDENT_0)
             annotations_imports.update(get_annotation_imports(class_entry['annotations'], annot_attr2class))
             class_declaration = "public{}class {}".format(get_keywords(other_annotations, ["abstract"]), clazz)
@@ -252,7 +277,7 @@ with open("schema.web.yaml", "r") as stream:
 
             # Assemble class content
             lines = []
-            lines += [JAVA_PACKAGE, ""]
+            lines += ['package {};'.format(package), ""]
             if annotations_imports:
                 lines += annotations_imports + [""]
             lines += annot_lines
