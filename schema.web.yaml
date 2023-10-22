@@ -1241,6 +1241,9 @@ classes:
       PUBMED_URL:
         annotations:
           value: "http://www.ncbi.nlm.nih.gov/pubmed/"
+          static: true
+          final: true
+          transient: true
       journal:
         annotations:
           addedField: false

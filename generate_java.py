@@ -32,18 +32,19 @@ VALUE_TO_JAVA_ENUM = {
     "REQUIRED": "ReactomeConstraint.Constraint"
 }
 
-OTHER_ANNOTATIONS = ['abstract', 'implements', 'set', 'sorted_set', 'getter_only', 'value']
+OTHER_ANNOTATIONS = ['abstract', 'implements', 'set', 'sorted_set', 'getter_only', 'value',
+                     'static', 'final', 'transient'
+                    ]
 INDENT_0 = ""
 INDENT_1 = "    "
 INDENT_2 = "        "
 
-
-def get_abstract(class_annotations):
+def get_keywords(class_annotations, keywords):
     ret = " "
-    if 'abstract' in class_annotations and other_annotations['abstract']:
-        ret = ' abstract '
+    for keyword in keywords:
+        if keyword in class_annotations and class_annotations[keyword]:
+            ret += '{} '.format(keyword)
     return ret
-
 
 def get_extends(class_entry):
     ret = ""
@@ -202,7 +203,11 @@ def get_class_attributes_slots(clazz, class_entry, schema_slots, annot_attr2clas
                     value = " = \"{}\"".format(value)
                 else:
                     value = " = {}".format(value)
-        attr_slot_to_lines[attr] += [INDENT_1 + "private {} {}{};".format(java_type, attr, value), ""]
+        attr_slot_to_lines[attr] += [INDENT_1 +
+                                     "private{}{} {}{};".format(
+                                         get_keywords(other_annotations, ["static", "final", "transient"]),
+                                         java_type, attr, value),
+                                     ""]
 
     for attr_slot in sorted(list(attr_slot_to_lines.keys())):
         lines += attr_slot_to_lines[attr_slot]
@@ -239,7 +244,7 @@ with open("schema.web.yaml", "r") as stream:
             class_entry = classes[clazz]
             annot_lines, other_annotations = get_annotations(class_entry['annotations'], annot_attr2class, INDENT_0)
             annotations_imports.update(get_annotation_imports(class_entry['annotations'], annot_attr2class))
-            class_declaration = "public{}class {}".format(get_abstract(other_annotations), clazz)
+            class_declaration = "public{}class {}".format(get_keywords(other_annotations, ["abstract"]), clazz)
             class_declaration += get_extends(class_entry)
             class_declaration += get_implements(other_annotations)
             class_attributes_slots, annotations_imports = get_class_attributes_slots(
