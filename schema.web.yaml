@@ -1150,6 +1150,8 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
+    slots:
+      - author
     attributes:
       dateTime:
         annotations:
@@ -1157,12 +1159,6 @@ classes:
       note:
         annotations:
           addedField: false
-      author:
-        multivalued: true
-        range: Person
-        annotations:
-          type: "author"
-          direction: INCOMING
     in_subset:
       - web_schema
 
@@ -1429,9 +1425,7 @@ classes:
     annotations:
       node: true
     slots:
-      - authored
-      - edited
-      - goBiologicalProcess
+      - author
     attributes:
       doi:
         annotations:
@@ -1765,17 +1759,17 @@ classes:
     annotations:
       node: true
       abstract: true
+    slots:
+      - author
+    slot_usage:
+      author:
+        range: PublicationAuthor
+        annotations:
+          sorted_set: true
     attributes:
       title:
         annotations:
           addedField: false
-      author:
-        multivalued: true
-        range: PublicationAuthor
-        annotations:
-          type: "author"
-          direction: INCOMING
-          sorted_set: true
     in_subset:
       - web_schema
 
@@ -2357,6 +2351,8 @@ classes:
   #### TopLevelPathway ####
   TopLevelPathway:
     is_a: Pathway
+    annotations:
+      node: true
     in_subset:
       - web_schema
 
@@ -2447,7 +2443,7 @@ classes:
       property:
         range: boolean
       relationship:
-        range: ReactomeRelationship
+        range: Relationship
       relationship_properties:
         range: boolean
       target_node:
@@ -2486,7 +2482,7 @@ classes:
     in_subset:
       - schema_annotations
 
-  ReactomeRelationship:
+  Relationship:
     attributes:
         type:
         direction: RelationshipDirectionValues
@@ -2529,6 +2525,12 @@ slots:
   accession:
     annotations:
       addedField: false
+  author:
+    multivalued: true
+    range: Person
+    annotations:
+      type: "author"
+      direction: INCOMING
   authored:
     range: InstanceEdit
     annotations:
