@@ -33,8 +33,7 @@ VALUE_TO_JAVA_ENUM = {
 }
 
 OTHER_ANNOTATIONS = ['abstract', 'implements', 'set', 'sorted_set', 'getter_only', 'value',
-                     'static', 'final', 'transient'
-                    ]
+                     'static', 'final', 'transient']
 INDENT_0 = ""
 INDENT_1 = "    "
 INDENT_2 = "        "
@@ -60,9 +59,10 @@ def get_implements(class_annotations):
     return ret
 
 
-def add_collection_if_applicable(clazz, java_type, attr_entry, attr_annotations):
+def add_collection_if_applicable(java_type, attr_entry, attr_annotations, annotations_imports):
     ret = java_type
     if 'multivalued' in attr_entry:
+        annotations_imports.add('java.util.*;')
         for collection_type in ['set', 'sorted_set']:
             if collection_type in attr_annotations and attr_annotations[collection_type]:
                 ret = "{}<{}>".format(capitalize(collection_type), java_type)
@@ -182,7 +182,7 @@ def get_class_attributes_slots(clazz, class_entry, schema_slots, annot_attr2clas
                 annot_lines, other_annotations = get_annotations(attr_entry['annotations'], annot_attr2class, INDENT_1)
                 attr_slot_to_lines[attr] = annot_lines
                 annotations_imports.update(get_annotation_imports(attr_entry['annotations'], annot_attr2class))
-                java_type = add_collection_if_applicable(clazz, java_type, attr_entry, other_annotations)
+                java_type = add_collection_if_applicable(java_type, attr_entry, other_annotations, annotations_imports)
         else:
             java_type = "String"
 
