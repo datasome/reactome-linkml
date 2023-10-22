@@ -36,11 +36,13 @@ INDENT_0 = ""
 INDENT_1 = "    "
 INDENT_2 = "        "
 
+
 def get_abstract(class_annotations):
     ret = " "
     if 'abstract' in class_annotations and other_annotations['abstract']:
         ret = ' abstract '
     return ret
+
 
 def get_extends(class_entry):
     ret = ""
@@ -48,15 +50,16 @@ def get_extends(class_entry):
         ret = ' extends {}'.format(class_entry['is_a'])
     return ret
 
+
 def get_implements(class_annotations):
     ret = ""
     if 'implements' in class_annotations:
         ret = ' implements {}'.format(class_annotations['implements'])
     return ret
 
+
 def add_collection_if_applicable(clazz, java_type, attr_entry, attr_annotations):
     ret = java_type
-    print("**", clazz, java_type, attr_entry, attr_annotations)
     if 'multivalued' in attr_entry:
         for collection_type in ['set', 'sorted_set']:
             if collection_type in attr_annotations and attr_annotations[collection_type]:
@@ -65,16 +68,18 @@ def add_collection_if_applicable(clazz, java_type, attr_entry, attr_annotations)
         if ret == java_type:
             # No set/sorted_set annotation was found => we default to collection type: List
             ret = "{}<{}>".format("List", java_type)
-    print("***", ret)
     return ret
+
 
 def isClassName(label):
     return label[0].isupper()
+
 
 def capitalize(attr):
     if not attr[0].isupper():
         return  sub(r"_+", " ", attr).title().replace(" ", "")
     return attr
+
 
 def map_annotation_attributes_to_classes(annotations, classes):
     annot_attr2class = {}
@@ -86,6 +91,7 @@ def map_annotation_attributes_to_classes(annotations, classes):
                     for annot_attr in classes[range]['attributes']:
                         annot_attr2class[annot_attr] = range
     return annot_attr2class
+
 
 def get_annotation_imports(annotations, annot_attr2class):
     annotations_imports = set([])
@@ -100,6 +106,7 @@ def get_annotation_imports(annotations, annot_attr2class):
                     annotations_imports.add(
                         'import {}.{};'.format(ANNOTATION_CLASS_TO_PACKAGE_NAME[annot_class], annot_class))
     return annotations_imports
+
 
 def get_annotations(annotations, annot_attr2class, indent):
     class_to_annotation_clauses = {}
@@ -135,6 +142,7 @@ def get_annotations(annotations, annot_attr2class, indent):
         lines.append("{}@{}{}".format(indent, annot_class, annot_clauses))
     return lines, other_annotations
 
+
 def get_class_attributes_slots(clazz, class_entry, schema_slots, annot_attr2class, annotations_imports):
     attr_slot_to_lines = {}
     lines = []
@@ -166,36 +174,46 @@ def get_class_attributes_slots(clazz, class_entry, schema_slots, annot_attr2clas
         else:
             java_type = "String"
 
-        # TODO &&&& value e.g. stoichiometry
-        # TODO &&&& process slot_usage for slots - explicitly override slot fields with those in slot_usage
+
+        value = ""
         if attr not in attr_slot_to_lines:
             attr_slot_to_lines[attr] = []
         if 'getter_only' in other_annotations and other_annotations['getter_only']:
             attr_slot_to_lines[attr] += [
                 INDENT_1 + "public {} get{}() {{".format(java_type, capitalize(attr)),
-                INDENT_2 + "return \"{}\";".format(getValue(clazz, attr, attr_entry['annotations'])),
+                INDENT_2 + "return \"{}\";".format(get_value(clazz, attr, attr_entry['annotations'])),
                 INDENT_1 + "}",
                 ""]
         else:
-            attr_slot_to_lines[attr] += [INDENT_1 + "private {} {};".format(java_type, attr), ""]
+            if 'value' in other_annotations:
+                value = other_annotations['value']
+                if java_type == "String":
+                    value = " = \"{}\"".format(value)
+                else:
+                    value = " = {}".format(value)
+        attr_slot_to_lines[attr] += [INDENT_1 + "private {} {}{};".format(java_type, attr, value), ""]
 
     for attr_slot in sorted(list(attr_slot_to_lines.keys())):
         lines += attr_slot_to_lines[attr_slot]
     return lines, sorted(list(annotations_imports))
 
-def getValue(clazz, attr, annotations):
-    if attr == "className":
+
+def get_value(clazz, attr, annotations):
+    if attr == "className" and 'value' not in annotations:
         # TODO: More complex logic required for certain classes; this also doesn't implement inheritance in java classes
         return clazz
     else:
         return annotations['value']
 
+
 def get_empty_constructor(clazz):
     return INDENT_1 + "public {}() {{}}".format(clazz)
 
+
 def is_annotation(clazz):
     return clazz.startswith("Annotation") or clazz in ANNOTATION_CLASS_TO_PACKAGE_NAME
-        
+
+
 with open("schema.web.yaml", "r") as stream:
     try:
         data = yaml.safe_load(stream)
@@ -227,7 +245,7 @@ with open("schema.web.yaml", "r") as stream:
             lines += [get_empty_constructor(clazz), ""]
 
             # TODO: The rest of the class goes here
-            lines += ["}",""]
+            lines += ["}", ""]
 
             # Write class content into the file
             fp = open(os.path.join(OUTPUT_DIR, "{}.java".format(clazz)), 'w')

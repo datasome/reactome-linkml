@@ -2695,8 +2695,6 @@ classes:
         range: boolean
       id:
         range: boolean
-      int_value:
-        range: integer
       implements:
       json_identity_info:
         range: JsonIdentityInfo
@@ -2961,7 +2959,7 @@ slots:
   stoichiometry:
     range: integer
     annotations:
-      int_value: 1
+      value: 1
   summation:
     multivalued: true
     range: Summation

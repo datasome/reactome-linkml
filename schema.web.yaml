@@ -2595,8 +2595,6 @@ slots:
   identifier:
     annotations:
       addedField: false
-  int_value:
-    range: integer
   isChimeric:
     range: boolean
     annotations:
@@ -2655,7 +2653,7 @@ slots:
   stoichiometry:
     range: integer
     annotations:
-      int_value: 1
+      value: 1
   summation:
     multivalued: true
     range: Summation
