@@ -3,6 +3,7 @@
 import yaml
 import os
 from re import sub
+import copy
 
 OUTPUT_DIR = "graph-core-classes"
 JAVA_PACKAGE = "package org.reactome.server.graph.domain.model;"
@@ -153,7 +154,17 @@ def get_class_attributes_slots(clazz, class_entry, schema_slots, annot_attr2clas
     slots = {}
     if 'slots' in class_entry:
         for slot_name in class_entry['slots']:
-            slots[slot_name] = schema_slots[slot_name]
+            slots[slot_name] = copy.deepcopy(schema_slots[slot_name])
+    if 'slot_usage' in class_entry:
+        slot_usage = class_entry['slot_usage']
+        for slot_name in slot_usage:
+            # Override any attr's value from slots[slot_name] with the corresponding value in slot_usage
+            for attr in slot_usage[slot_name]:
+                if attr != "annotations":
+                    slots[slot_name][attr] = slot_usage[slot_name][attr]
+                else:
+                    for annot_attr in slot_usage[slot_name]['annotations']:
+                        slots[slot_name]['annotations'][annot_attr] = slot_usage[slot_name]['annotations'][annot_attr]
     attributes = attrs | slots
     for attr in attributes:
         other_annotations = {}
