@@ -2,7 +2,7 @@
 
 import yaml
 import os
-from re import sub
+from re import sub, findall
 import copy
 
 OUTPUT_DIR = "graph-core-classes"
@@ -10,6 +10,7 @@ JAVA_PACKAGE = "package org.reactome.server.graph.domain.model;"
 
 CLASS_TO_PACKAGE_NAME = {
     "DatabaseObjectLike": "org.reactome.server.graph.domain.result",
+    "GeneratedValue": "org.springframework.data.neo4j.core.schema",
     "Id": "org.springframework.data.neo4j.core.schema",
     "JsonIdentityInfo": "com.fasterxml.jackson.annotation",
     "JsonIgnore": "com.fasterxml.jackson.annotation",
@@ -23,6 +24,8 @@ CLASS_TO_PACKAGE_NAME = {
     "ReactomeSchemaIgnore": "org.reactome.server.graph.domain.annotations",
     "ReactomeTransient": "org.reactome.server.graph.domain.annotations",
     "Relationship": "org.springframework.data.neo4j.core.schema",
+    "RelationshipProperties" : "org.springframework.data.neo4j.core.schema",
+    "Serializable": "java.io",
     "StoichiometryObject": "org.reactome.server.graph.service.helper"
 }
 
@@ -70,10 +73,28 @@ def get_extends(class_entry):
     return ret
 
 
-def get_implements(class_annotations):
+def get_implements(clazz, classes, class_annotations, annotations_imports):
     ret = ""
     if 'implements' in class_annotations:
-        ret = ' implements {}'.format(class_annotations['implements'])
+        implements_clause = class_annotations['implements']
+        ret = ' implements {}'.format(implements_clause)
+
+        # Add import statements for classes inside implements clause
+        for entry in implements_clause.replace(" ", "").split(","):
+            clazzes = findall(r'\<(.*)\>', entry)
+            if clazzes:
+                implementing_clazz = clazzes[0]
+            else:
+                implementing_clazz = entry
+            if implementing_clazz in CLASS_TO_PACKAGE_NAME:
+                annotations_imports.add('import {}.{};'
+                                        .format(CLASS_TO_PACKAGE_NAME[implementing_clazz], implementing_clazz))
+            else:
+                clazz_package = get_package(classes[clazz])
+                implementing_clazz_entry = get_package(classes[implementing_clazz])
+                if clazz_package != implementing_clazz_entry:
+                    annotations_imports.add(
+                        'import {}.{};'.format(clazz_package, clazz))
     return ret
 
 
@@ -271,7 +292,7 @@ with open("schema.web.yaml", "r") as stream:
             annotations_imports.update(get_annotation_imports(class_entry['annotations'], annot_attr2class))
             class_declaration = "public{}class {}".format(get_keywords(other_annotations, ["abstract"]), clazz)
             class_declaration += get_extends(class_entry)
-            class_declaration += get_implements(other_annotations)
+            class_declaration += get_implements(clazz, classes, other_annotations, annotations_imports)
             class_attributes_slots, annotations_imports = get_class_attributes_slots(
                 clazz, class_entry, slots, annot_attr2class, annotations_imports)
 
