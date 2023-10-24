@@ -31,6 +31,7 @@ classes:
     annotations:
       node: true
       abstract: true
+      suppress_warnings: "unused"
     attributes:
       referenceSequence:
         range: ReferenceSequence
@@ -44,6 +45,7 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
+      suppress_warnings: "unused"
     slots:
       - name
     attributes:
@@ -64,6 +66,7 @@ classes:
     is_a: ReactionLikeEvent
     annotations:
       node: true
+      suppress_warnings: "unused"
     attributes:
       templateEvent:
         range: Event
@@ -83,6 +86,7 @@ classes:
     is_a: Publication
     annotations:
       node: true
+      suppress_warnings: "unused"
     attributes:
       ISBN:
         annotations:
@@ -109,6 +113,7 @@ classes:
     is_a: EntitySet
     annotations:
       node: true
+      suppress_warnings: "unused"
     attributes:
       hasCandidate:
         multivalued: true
@@ -129,9 +134,9 @@ classes:
   #### CatalystActivity ####
   CatalystActivity:
     is_a: DatabaseObject
-
     annotations:
       node: true
+      suppress_warnings: "unused"
     slots:
       - literatureReference
     attributes:
@@ -239,6 +244,7 @@ classes:
     is_a: ExternalOntology
     annotations:
       node: true
+      suppress_warnings: "unused"
     in_subset:
       - web_schema
 
@@ -247,6 +253,7 @@ classes:
     is_a: Drug
     annotations:
       node: true
+      suppress_warnings: "{\"unused\", \"WeakerAccess\"}"
     in_subset:
       - web_schema
 
@@ -255,6 +262,7 @@ classes:
     is_a: GO_CellularComponent
     annotations:
       node: true
+      suppress_warnings: "unused"
     in_subset:
       - web_schema
 
@@ -263,6 +271,7 @@ classes:
     is_a: PhysicalEntity
     annotations:
       node: true
+      suppress_warnings: "unused"
     slots:
       - entityOnOtherCell
       - isChimeric
@@ -311,8 +320,9 @@ classes:
   ControlReference:
     is_a: DatabaseObject
     annotations:
-      node: true
       abstract: true
+      node: true
+      suppress_warnings: "{\"unused\", \"WeakerAccess\"}"
     slots:
       - literatureReference
     in_subset:
@@ -322,8 +332,9 @@ classes:
   CrosslinkedResidue:
     is_a: TranslationalModification
     annotations:
-      node: true
       abstract: true
+      node: true
+      suppress_warnings: "unused"
     slots:
       - modification
     slot_usage:
@@ -343,6 +354,7 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
+      suppress_warnings: "unused"
     slots:
       - crossReference
       - identifier
@@ -360,11 +372,12 @@ classes:
   #### DatabaseObject ####
   DatabaseObject:
     annotations:
-      node: true
       abstract: true
       generator: "ObjectIdGenerators.PropertyGenerator.class"
-      property: "dbId"
       implements: "Serializable, Comparable<DatabaseObject>, DatabaseObjectLike"
+      node: true
+      property: "dbId"
+      suppress_warnings: "unused"
     attributes:
       isLoaded:
         annotations:
@@ -435,6 +448,7 @@ classes:
     is_a: EntitySet
     annotations:
       node: true
+      suppress_warnings: "unused"
     attributes:
       explanation:
         annotations:
@@ -451,6 +465,7 @@ classes:
     is_a: ReactionLikeEvent
     annotations:
       node: true
+      suppress_warnings: "unused"
     in_subset:
       - web_schema
 
@@ -459,6 +474,7 @@ classes:
     is_a: Interaction
     annotations:
       node: true
+      suppress_warnings: "unused"
     attributes:
       source:
         range: ReferenceEntity
@@ -476,6 +492,7 @@ classes:
     is_a: ExternalOntology
     annotations:
       node: true
+      suppress_warnings: "unused"
     in_subset:
       - web_schema
 
@@ -483,8 +500,9 @@ classes:
   Drug:
     is_a: PhysicalEntity
     annotations:
-      node: true
       abstract: true
+      node: true
+      suppress_warnings: "unused"
     slots:
       - referenceEntity
     in_subset:
@@ -509,6 +527,7 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
+      suppress_warnings: "unused"
     slots:
       - definition
       - name
@@ -524,6 +543,7 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
+      suppress_warnings: "unused"
     attributes:
       functionalStatus:
         multivalued: true
@@ -545,8 +565,9 @@ classes:
   EntitySet:
     is_a: PhysicalEntity
     annotations:
-      node: true
       abstract: true
+      node: true
+      suppress_warnings: "unused"
     slots:
       - relatedSpecies
       - species
@@ -582,6 +603,7 @@ classes:
     is_a: GenomeEncodedEntity
     annotations:
       node: true
+      suppress_warnings: "unused"
     slots:
       - referenceEntity
     attributes:
@@ -632,8 +654,9 @@ classes:
   Event:
     is_a: DatabaseObject
     annotations:
-      node: true
       abstract: true
+      node: true
+      suppress_warnings: "unused"
     slots:
       - authored
       - edited
@@ -729,6 +752,7 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
+      suppress_warnings: "unused"
     in_subset:
       - web_schema
 
@@ -736,8 +760,9 @@ classes:
   ExternalOntology:
     is_a: DatabaseObject
     annotations:
-      node: true
       abstract: true
+      node: true
+      suppress_warnings: "unused"
     slots:
       - definition
       - identifier
@@ -767,6 +792,7 @@ classes:
     is_a: ReactionLikeEvent
     annotations:
       node: true
+      suppress_warnings: "unused"
     attributes:
       explanation:
         annotations:
@@ -783,6 +809,7 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
+      suppress_warnings: "unused"
     attributes:
       url:
         annotations:
@@ -796,6 +823,7 @@ classes:
     is_a: FragmentModification
     annotations:
       node: true
+      suppress_warnings: "unused"
     in_subset:
       - web_schema
 
@@ -804,6 +832,7 @@ classes:
     is_a: FragmentModification
     annotations:
       node: true
+      suppress_warnings: "unused"
     slots:
       - coordinate
     in_subset:
@@ -813,8 +842,9 @@ classes:
   FragmentModification:
     is_a: GeneticallyModifiedResidue
     annotations:
-      node: true
       abstract: true
+      node: true
+      suppress_warnings: "unused"
     attributes:
       endPositionInReferenceSequence:
         range: integer
@@ -832,6 +862,7 @@ classes:
     is_a: FragmentModification
     annotations:
       node: true
+      suppress_warnings: "unused"
     attributes:
       alteredAminoAcidFragment:
         annotations:
@@ -844,6 +875,7 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
+      suppress_warnings: "unused"
     attributes:
       functionalStatusType:
         range: FunctionalStatusType
@@ -861,6 +893,7 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
+      suppress_warnings: "unused"
     slots:
       - definition
       - name
@@ -871,8 +904,9 @@ classes:
   GeneticallyModifiedResidue:
     is_a: AbstractModifiedResidue
     annotations:
-      node: true
       abstract: true
+      node: true
+      suppress_warnings: "unused"
     in_subset:
       - web_schema
 
@@ -881,6 +915,7 @@ classes:
     is_a: PhysicalEntity
     annotations:
       node: true
+      suppress_warnings: "unused"
     slots:
       - species
     slot_usage:
@@ -908,6 +943,7 @@ classes:
     is_a: GO_Term
     annotations:
       node: true
+      suppress_warnings: "unused"
     in_subset:
       - web_schema
 
@@ -916,6 +952,7 @@ classes:
     is_a: GO_Term
     annotations:
       node: true
+      suppress_warnings: "unused"
     attributes:
       componentOf:
         multivalued: true
@@ -945,6 +982,7 @@ classes:
     is_a: GO_Term
     annotations:
       node: true
+      suppress_warnings: "unused"
     attributes:
       ecNumber:
         annotations:
@@ -956,8 +994,9 @@ classes:
   GO_Term:
     is_a: DatabaseObject
     annotations:
-      node: true
       abstract: true
+      node: true
+      suppress_warnings: "unused"
     slots:
       - accession
       - definition
@@ -978,6 +1017,7 @@ classes:
     is_a: TranslationalModification
     annotations:
       node: true
+      suppress_warnings: "unused"
     slots:
       - modification
     slot_usage:
@@ -1151,6 +1191,7 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
+      suppress_warnings: "unused"
     slots:
       - author
     attributes:
@@ -1167,8 +1208,9 @@ classes:
   Interaction:
     is_a: DatabaseObject
     annotations:
-      node: true
       abstract: true
+      node: true
+      suppress_warnings: "{\"unused\", \"WeakerAccess\"}"
     attributes:
       databaseName:
         annotations:
@@ -1210,6 +1252,7 @@ classes:
     is_a: CrosslinkedResidue
     annotations:
       node: true
+      suppress_warnings: "unused"
     attributes:
       equivalentTo:
         multivalued: true
@@ -1230,6 +1273,7 @@ classes:
     is_a: CrosslinkedResidue
     annotations:
       node: true
+      suppress_warnings: "unused"
     in_subset:
       - web_schema
 
@@ -1238,6 +1282,7 @@ classes:
     is_a: Publication
     annotations:
       node: true
+      suppress_warnings: "unused"
     attributes:
       PUBMED_URL:
         annotations:
@@ -1301,6 +1346,7 @@ classes:
     is_a: TranslationalModification
     annotations:
       node: true
+      suppress_warnings: "unused"
     in_subset:
       - web_schema
 
@@ -1309,6 +1355,7 @@ classes:
     is_a: NegativeRegulation
     annotations:
       node: true
+      suppress_warnings: "unused"
     attributes:
       explanation:
         annotations:
@@ -1355,6 +1402,7 @@ classes:
     is_a: Regulation
     annotations:
       node: true
+      suppress_warnings: "unused"
     attributes:
       explanation:
         annotations:
@@ -1382,6 +1430,7 @@ classes:
     is_a: PhysicalEntity
     annotations:
       node: true
+      suppress_warnings: "unused"
     attributes:
       explanation:
         annotations:
@@ -1428,6 +1477,7 @@ classes:
     is_a: Event
     annotations:
       node: true
+      suppress_warnings: "unused"
     slots:
       - author
     attributes:
@@ -1485,6 +1535,7 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
+      suppress_warnings: "unused"
     slots:
       - crossReference
     slot_usage:
@@ -1525,8 +1576,9 @@ classes:
   PhysicalEntity:
     is_a: DatabaseObject
     annotations:
-      node: true
       abstract: true
+      node: true
+      suppress_warnings: "unused"
     slots:
       - authored
       - cellType
@@ -1662,6 +1714,7 @@ classes:
     is_a: PhysicalEntity
     annotations:
       node: true
+      suppress_warnings: "unused"
     slots:
       - species
     attributes:
@@ -1694,6 +1747,7 @@ classes:
     is_a: ReactionLikeEvent
     annotations:
       node: true
+      suppress_warnings: "unused"
     attributes:
       explanation:
         annotations:
@@ -1710,6 +1764,7 @@ classes:
     is_a: PositiveRegulation
     annotations:
       node: true
+      suppress_warnings: "unused"
     attributes:
       explanation:
         annotations:
@@ -1726,6 +1781,7 @@ classes:
     is_a: Regulation
     annotations:
       node: true
+      suppress_warnings: "unused"
     attributes:
       explanation:
         annotations:
@@ -1742,6 +1798,7 @@ classes:
     is_a: Drug
     annotations:
       node: true
+      suppress_warnings: "{\"unused\", \"WeakerAccess\"}"
     in_subset:
       - web_schema
 
@@ -1750,6 +1807,7 @@ classes:
     is_a: ExternalOntology
     annotations:
       node: true
+      suppress_warnings: "unused"
     attributes:
       label:
         annotations:
@@ -1761,8 +1819,9 @@ classes:
   Publication:
     is_a: DatabaseObject
     annotations:
-      node: true
       abstract: true
+      node: true
+      suppress_warnings: "unused"
     slots:
       - author
     slot_usage:
@@ -1799,6 +1858,7 @@ classes:
     is_a: ReactionLikeEvent
     annotations:
       node: true
+      suppress_warnings: "unused"
     attributes:
       reverseReaction:
         range: Reaction
@@ -1818,8 +1878,9 @@ classes:
   ReactionLikeEvent:
     is_a: Event
     annotations:
-      node: true
       abstract: true
+      node: true
+      suppress_warnings: "unused"
     slots:
       - catalystActivity
       - isChimeric
@@ -1906,6 +1967,7 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
+      suppress_warnings: "{\"unused\", \"WeakerAccess\"}"
     slots:
       - name
     attributes:
@@ -1926,6 +1988,7 @@ classes:
     is_a: ReferenceSequence
     annotations:
       node: true
+      suppress_warnings: "unused"
     in_subset:
       - web_schema
 
@@ -1933,8 +1996,9 @@ classes:
   ReferenceEntity:
     is_a: DatabaseObject
     annotations:
-      node: true
       abstract: true
+      node: true
+      suppress_warnings: "unused"
     slots:
       - crossReference
       - identifier
@@ -1960,6 +2024,7 @@ classes:
     is_a: ReferenceSequence
     annotations:
       node: true
+      suppress_warnings: "unused"
     attributes:
       chain:
         multivalued: true
@@ -1983,6 +2048,7 @@ classes:
     is_a: ReferenceEntity
     annotations:
       node: true
+      suppress_warnings: "unused"
     slots:
       - formula
     in_subset:
@@ -1993,6 +2059,7 @@ classes:
     is_a: ReferenceGeneProduct
     annotations:
       node: true
+      suppress_warnings: "unused"
     attributes:
       variantIdentifier:
         annotations:
@@ -2010,6 +2077,7 @@ classes:
     is_a: ReferenceEntity
     annotations:
       node: true
+      suppress_warnings: "unused"
     slots:
       - formula
     attributes:
@@ -2026,6 +2094,7 @@ classes:
     is_a: ReferenceSequence
     annotations:
       node: true
+      suppress_warnings: "unused"
     attributes:
       referenceGene:
         multivalued: true
@@ -2039,8 +2108,9 @@ classes:
   ReferenceSequence:
     is_a: DatabaseObject
     annotations:
-      node: true
       abstract: true
+      node: true
+      suppress_warnings: "unused"
     slots:
       - species
     attributes:
@@ -2108,8 +2178,9 @@ classes:
   Regulation:
     is_a: DatabaseObject
     annotations:
-      node: true
       abstract: true
+      node: true
+      suppress_warnings: "unused"
     slots:
       - authored
       - edited
@@ -2183,8 +2254,9 @@ classes:
   RegulationType:
     is_a: DatabaseObject
     annotations:
-      node: true
       deprecated: true
+      node: true
+      suppress_warnings: "unused"
     attributes:
       name:
         annotations:
@@ -2197,6 +2269,7 @@ classes:
     is_a: GeneticallyModifiedResidue
     annotations:
       node: true
+      suppress_warnings: "unused"
     slots:
       - coordinate
       - psiMod
@@ -2237,6 +2310,7 @@ classes:
     is_a: PositiveRegulation
     annotations:
       node: true
+      suppress_warnings: "unused"
     attributes:
       explanation:
         annotations:
@@ -2261,6 +2335,7 @@ classes:
     is_a: Drug
     annotations:
       node: true
+      suppress_warnings: "{\"unused\", \"WeakerAccess\"}"
     in_subset:
       - web_schema
 
@@ -2269,6 +2344,7 @@ classes:
     is_a: ExternalOntology
     annotations:
       node: true
+      suppress_warnings: "unused"
     in_subset:
       - web_schema
 
@@ -2277,6 +2353,7 @@ classes:
     is_a: PhysicalEntity
     annotations:
       node: true
+      suppress_warnings: "unused"
     slots:
       - species
     attributes:
@@ -2308,6 +2385,7 @@ classes:
     is_a: Taxon
     annotations:
       node: true
+      suppress_warnings: "unused"
     attributes:
       abbreviation:
         annotations:
@@ -2320,6 +2398,7 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
+      suppress_warnings: "unused"
     slots:
       - literatureReference
     attributes:
@@ -2334,6 +2413,7 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
+      suppress_warnings: "unused"
     slots:
       - crossReference
       - name
@@ -2357,6 +2437,7 @@ classes:
     is_a: Pathway
     annotations:
       node: true
+      suppress_warnings: "unused"
     in_subset:
       - web_schema
 
@@ -2364,8 +2445,9 @@ classes:
   TranscriptionalModification:
     is_a: AbstractModifiedResidue
     annotations:
-      node: true
       abstract: true
+      node: true
+      suppress_warnings: "unused"
     in_subset:
       - web_schema
 
@@ -2373,8 +2455,9 @@ classes:
   TranslationalModification:
     is_a: AbstractModifiedResidue
     annotations:
-      node: true
       abstract: true
+      node: true
+      suppress_warnings: "unused"
     slots:
       - coordinate
       - psiMod
@@ -2406,6 +2489,7 @@ classes:
     is_a: Publication
     annotations:
       node: true
+      suppress_warnings: "unused"
     attributes:
       uniformResourceLocator:
         annotations:
@@ -2456,8 +2540,14 @@ classes:
         range: boolean
       sorted_set:
         range: boolean
+      suppress_warnings:
     in_subset:
       - schema_annotations
+
+  JsonIdentityInfo:
+    attributes:
+      generator:
+      property:
 
   ReactomeAllowedClasses:
     attributes:
@@ -2492,11 +2582,6 @@ classes:
         direction: RelationshipDirectionValues
     in_subset:
       - schema_annotations
-
-  JsonIdentityInfo:
-    attributes:
-      generator:
-      property:
   #### Annotations classes - end ####
 
 #### Enumerations ####

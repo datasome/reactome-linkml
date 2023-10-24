@@ -2725,11 +2725,17 @@ classes:
         range: boolean
       sorted_set:
         range: boolean
+      suppress_warnings:
       target_node:
         range: boolean
       value:
     in_subset:
       - schema_annotations
+
+  JsonIdentityInfo:
+    attributes:
+      generator:
+      property:
 
   ReactomeAllowedClasses:
     attributes:
@@ -2765,11 +2771,6 @@ classes:
         direction: RelationshipDirectionValues
     in_subset:
       - schema_annotations
-
-  JsonIdentityInfo:
-    attributes:
-      generator:
-      property:
   #### Annotations classes - end ####
 
 #### Enumerations ####
