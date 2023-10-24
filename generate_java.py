@@ -159,11 +159,16 @@ def get_annotations(annotations, annot_attr2class, indent):
             if annot_class not in class_to_annotation_clauses:
                 class_to_annotation_clauses[annot_class] = []
             value = annotations[annot_attr]
-            if type(value) != bool or value:
+            if value:
                 if type(value) == bool:
                     value = str(value).lower()
                 elif value in VALUE_TO_JAVA_ENUM:
                     value = "{}.{}".format(VALUE_TO_JAVA_ENUM[value], value)
+                elif value.endswith(".class"):
+                    # e.g. "ObjectIdGenerators.PropertyGenerator.class"
+                    value = value.split(".")[0]
+                    annotations_imports.add(
+                        'import {}.{};'.format(CLASS_TO_PACKAGE_NAME[value], value))
                 else:
                     value = "\"{}\"".format(value)
                 class_to_annotation_clauses[annot_class].append("{} = {}".format(annot_attr, value))
