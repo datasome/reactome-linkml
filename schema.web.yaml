@@ -2552,7 +2552,6 @@ classes:
   ReactomeAllowedClasses:
     attributes:
       allowed:
-        multivalued: true
     in_subset:
       - schema_annotations
 
