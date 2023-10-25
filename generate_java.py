@@ -118,7 +118,10 @@ def isClassName(label):
 
 def capitalize(attr):
     if not attr[0].isupper():
-        return  sub(r"_+", " ", attr).title().replace(" ", "")
+        if "_" in attr:
+            return sub(r"_+", " ", attr).title().replace(" ", "")
+        else:
+            attr = attr[0].upper() + attr[1:]
     return attr
 
 
@@ -200,7 +203,10 @@ def get_annotations(annotations, annot_attr2class, indent):
 
 def get_class_attributes_slots(clazz, class_entry, schema_slots, annot_attr2class, annotations_imports):
     attr_slot_to_lines = {}
-    lines = []
+    attr_slot_to_getter = {}
+    attr_slot_to_setter = {}
+    attr_slot_lines = []
+    getter_setter_lines = []
 
     attrs = {}
     if 'attributes' in class_entry:
@@ -249,12 +255,17 @@ def get_class_attributes_slots(clazz, class_entry, schema_slots, annot_attr2clas
         value = ""
         if attr not in attr_slot_to_lines:
             attr_slot_to_lines[attr] = []
+        attr_slot_to_getter[attr] = []
+        attr_slot_to_setter[attr] = []
+
         if 'getter_only' in other_annotations and other_annotations['getter_only']:
+            # 'getter_only' means no variable - just a getter method returning a value (e.g. getExplanation())
             attr_slot_to_lines[attr] += [
                 INDENT_1 + "public {} get{}() {{".format(java_type, capitalize(attr)),
                 INDENT_2 + "return \"{}\";".format(get_value(clazz, attr, attr_entry['annotations'])),
                 INDENT_1 + "}",
                 ""]
+            continue
         else:
             if 'value' in other_annotations:
                 value = other_annotations['value']
@@ -262,15 +273,28 @@ def get_class_attributes_slots(clazz, class_entry, schema_slots, annot_attr2clas
                     value = " = \"{}\"".format(value)
                 else:
                     value = " = {}".format(value)
-        attr_slot_to_lines[attr] += [INDENT_1 +
+        if 'transient' not in other_annotations:
+            attr_slot_to_getter[attr] += [
+                INDENT_1 + "public {} get{}() {{ return {}; }}".format(java_type, capitalize(attr), attr),
+                ""]
+            attr_slot_to_setter[attr] += [
+                INDENT_1 + "public void set{}({} {}) {{".format(capitalize(attr), java_type, attr),
+                INDENT_2 + "this.{} = {};".format(attr, attr),
+                INDENT_1 + "}",
+                ""]
+        attr_slot_to_lines[attr] += [INDENT_1 + \
                                      "private{}{} {}{};".format(
                                          get_keywords(other_annotations, ["static", "final", "transient"]),
                                          java_type, attr, value),
                                      ""]
 
     for attr_slot in sorted(list(attr_slot_to_lines.keys())):
-        lines += attr_slot_to_lines[attr_slot]
-    return lines, sorted(list(annotations_imports))
+        attr_slot_lines += attr_slot_to_lines[attr_slot]
+    for attr_slot in sorted(list(attr_slot_to_lines.keys())):
+        getter_setter_lines += attr_slot_to_getter[attr_slot]
+        getter_setter_lines += attr_slot_to_setter[attr_slot]
+
+    return attr_slot_lines, getter_setter_lines, sorted(list(annotations_imports))
 
 
 def get_value(clazz, attr, annotations):
@@ -307,8 +331,8 @@ with open("schema.web.yaml", "r") as stream:
             class_declaration = "public{}class {}".format(get_keywords(other_annotations, ["abstract"]), clazz)
             class_declaration += get_extends(class_entry)
             class_declaration += get_implements(clazz, classes, other_annotations, annotations_imports)
-            class_attributes_slots, annotations_imports = get_class_attributes_slots(
-                clazz, class_entry, slots, annot_attr2class, annotations_imports)
+            attr_slot_lines, getter_setter_lines, annotations_imports = \
+                get_class_attributes_slots(clazz, class_entry, slots, annot_attr2class, annotations_imports)
 
             # Assemble class content
             lines = []
@@ -317,8 +341,9 @@ with open("schema.web.yaml", "r") as stream:
                 lines += annotations_imports + [""]
             lines += annot_lines
             lines += ["{} {{".format(class_declaration), ""]
-            lines += class_attributes_slots
+            lines += attr_slot_lines
             lines += [get_empty_constructor(clazz), ""]
+            lines += getter_setter_lines
 
             # TODO: The rest of the class goes here
             lines += ["}", ""]
