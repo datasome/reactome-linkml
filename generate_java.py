@@ -2,7 +2,7 @@
 
 import yaml
 import os
-from re import sub, findall
+from re import sub, findall, search
 import copy
 
 OUTPUT_DIR = "graph-core-classes"
@@ -148,6 +148,10 @@ def get_annotation_imports(annotations, annot_attr2class):
                         'import {}.{};'.format(CLASS_TO_PACKAGE_NAME[annot_class], annot_class))
     return annotations_imports
 
+def quote_value(value):
+    if not search(r"{.*}", value):
+        return "\"{}\"".format(value)
+    return value
 
 def get_annotations(annotations, annot_attr2class, indent):
     class_to_annotation_clauses = {}
@@ -170,13 +174,18 @@ def get_annotations(annotations, annot_attr2class, indent):
                     annotations_imports.add(
                         'import {}.{};'.format(CLASS_TO_PACKAGE_NAME[value], value))
                 else:
-                    value = "\"{}\"".format(value)
+                    value = quote_value(value)
                 class_to_annotation_clauses[annot_class].append("{} = {}".format(annot_attr, value))
         else:
             if annotations[annot_attr]:
                 if annot_attr not in OTHER_ANNOTATIONS:
                     annot_class = capitalize(annot_attr)
-                    lines.append("{}@{}".format(indent, annot_class))
+                    value = annotations[annot_attr]
+                    if value and not type(value) == bool:
+                        value = quote_value(value)
+                        lines.append("{}@{}({})".format(indent, annot_class, value))
+                    else:
+                        lines.append("{}@{}".format(indent, annot_class))
                 else:
                     other_annotations[annot_attr] = annotations[annot_attr]
 
