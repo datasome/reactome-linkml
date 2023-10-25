@@ -473,11 +473,13 @@ classes:
       isLoaded:
         annotations:
           reactome_transient: true
+          transient: true
         range: boolean
       preventLazyLoading:
         range: boolean
         annotations:
           reactome_transient: true
+          transient: true
       DB_ID:
         range: AnnotationLongType
         annotations:

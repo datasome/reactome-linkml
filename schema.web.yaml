@@ -382,11 +382,13 @@ classes:
       isLoaded:
         annotations:
           reactome_transient: true
+          transient: true
         range: boolean
       preventLazyLoading:
         range: boolean
         annotations:
           reactome_transient: true
+          transient: true
       dbId:
         range: AnnotationLongType
         annotations:
@@ -399,6 +401,7 @@ classes:
       oldStId:
         annotations:
           json_ignore: true
+          transient: true
       created:
         range: InstanceEdit
         annotations:
