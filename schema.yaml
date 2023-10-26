@@ -30,6 +30,7 @@ classes:
     is_a: DatabaseObject
     annotations:
       abstract: true
+      constructor_parameter: "dbId"
       node: true
       suppress_warnings: "unused"
     attributes:
@@ -198,6 +199,7 @@ classes:
   CatalystActivity:
     is_a: DatabaseObject
     annotations:
+      constructor_parameter: "dbId"
       node: true
       suppress_warnings: "unused"
     attributes:
@@ -340,6 +342,7 @@ classes:
   Compartment:
     is_a: GO_CellularComponent
     annotations:
+      constructor_parameter: "dbId"
       node: true
       suppress_warnings: "unused"
     in_subset:
@@ -349,6 +352,7 @@ classes:
   Complex:
     is_a: PhysicalEntity
     annotations:
+      constructor_parameter: "dbId"
       node: true
       suppress_warnings: "unused"
     slots:
@@ -464,6 +468,7 @@ classes:
   DatabaseObject:
     annotations:
       abstract: true
+      constructor_parameter: "dbId"
       implements: "Serializable, Comparable<DatabaseObject>, DatabaseObjectLike"
       node: true
       generator: "ObjectIdGenerators.PropertyGenerator.class"
@@ -777,6 +782,7 @@ classes:
   EntityWithAccessionedSequence:
     is_a: GenomeEncodedEntity
     annotations:
+      constructor_parameter: "dbId"
       node: true
       suppress_warnings: "unused"
     slots:
@@ -828,6 +834,7 @@ classes:
     is_a: DatabaseObject
     annotations:
       abstract: true
+      constructor_parameter: "dbId"
       node: true
       suppress_warnings: "unused"
     slots:
@@ -1159,6 +1166,7 @@ classes:
   GenomeEncodedEntity:
     is_a: PhysicalEntity
     annotations:
+      constructor_parameter: "dbId"
       node: true
       suppress_warnings: "unused"
     slots:
@@ -1212,6 +1220,7 @@ classes:
   GO_CellularComponent:
     is_a: DatabaseObject
     annotations:
+      constructor_parameter: "dbId"
       node: true
       suppress_warnings: "unused"
     slots:
@@ -1394,6 +1403,7 @@ classes:
   InstanceEdit:
     is_a: DatabaseObject
     annotations:
+      constructor_parameter: "dbId"
       node: true
       suppress_warnings: "unused"
     attributes:
@@ -1467,6 +1477,7 @@ classes:
   LiteratureReference:
     is_a: Publication
     annotations:
+      constructor_parameter: "dbId"
       node: true
       suppress_warnings: "unused"
     attributes:
@@ -1534,6 +1545,7 @@ classes:
   ModifiedResidue:
     is_a: TranslationalModification
     annotations:
+      constructor_parameter: "dbId"
       node: true
       suppress_warnings: "unused"
     in_subset:
@@ -1654,6 +1666,7 @@ classes:
   Pathway:
     is_a: Event
     annotations:
+      constructor_parameter: "dbId"
       node: true
       suppress_warnings: "unused"
     slots:
@@ -1752,6 +1765,7 @@ classes:
     is_a: DatabaseObject
     annotations:
       abstract: true
+      constructor_parameter: "dbId"
       node: true
       suppress_warnings: "unused"
     slots:
@@ -1814,6 +1828,7 @@ classes:
   Polymer:
     is_a: PhysicalEntity
     annotations:
+      constructor_parameter: "dbId"
       node: true
       suppress_warnings: "unused"
     slots:
@@ -1942,6 +1957,7 @@ classes:
     is_a: DatabaseObject
     annotations:
       abstract: true
+      constructor_parameter: "dbId"
       node: true
       suppress_warnings: "unused"
     attributes:
@@ -1983,6 +1999,7 @@ classes:
   Reaction:
     is_a: ReactionlikeEvent
     annotations:
+      constructor_parameter: "dbId"
       node: true
       suppress_warnings: "unused"
     slots:
@@ -2020,6 +2037,7 @@ classes:
   ReactionlikeEvent:
     is_a: Event
     annotations:
+      constructor_parameter: "dbId"
       node: true
       suppress_warnings: "unused"
     slots:
@@ -2711,6 +2729,7 @@ classes:
     is_a: AbstractModifiedResidue
     annotations:
       abstract: true
+      constructor_parameter: "dbId"
       node: true
       suppress_warnings: "unused"
     slots:
