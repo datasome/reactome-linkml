@@ -39,7 +39,7 @@ VALUE_TO_JAVA_ENUM = {
 }
 
 OTHER_ANNOTATIONS = ['abstract', 'implements', 'set', 'sorted_set', 'getter_only', 'value',
-                     'static', 'final', 'transient']
+                     'static', 'final', 'transient', 'constructor_parameter']
 INDENT_0 = ""
 INDENT_1 = "    "
 INDENT_2 = "        "
@@ -309,6 +309,27 @@ def get_empty_constructor(clazz):
     return INDENT_1 + "public {}() {{}}".format(clazz)
 
 
+def get_parameterized_constructor(clazz, slots, class_entry, other_annotations):
+    ret = None
+    if 'constructor_parameter' in other_annotations:
+        parameter_name = other_annotations['constructor_parameter']
+        # N.B. Assumption that any constructor_parameter must be a slot
+        slot = slots[parameter_name]
+        if 'range' in slot:
+            range = slot['range']
+            if range == "AnnotationLongType":
+                java_type = "Long"
+            else:
+                java_type = capitalize(range)
+        if 'slots' in class_entry and parameter_name in class_entry['slots']:
+            ret = INDENT_1 + "public {}({} {}) {{ this.{} = {}; }}"\
+                .format(clazz, java_type, parameter_name, parameter_name, parameter_name)
+        else:
+            ret = INDENT_1 + "public {}({} {}) {{ super({}); }}" \
+                .format(clazz, java_type, parameter_name, parameter_name)
+    return ret
+
+
 def is_annotation(clazz):
     return clazz.startswith("Annotation") or clazz in CLASS_TO_PACKAGE_NAME
 
@@ -333,7 +354,7 @@ with open("schema.web.yaml", "r") as stream:
             class_declaration += get_implements(clazz, classes, other_annotations, annotations_imports)
             attr_slot_lines, getter_setter_lines, annotations_imports = \
                 get_class_attributes_slots(clazz, class_entry, slots, annot_attr2class, annotations_imports)
-
+            parameterized_constructor = get_parameterized_constructor(clazz, data['slots'], class_entry, other_annotations)
             # Assemble class content
             lines = []
             lines += ['package {};'.format(package), ""]
@@ -343,6 +364,8 @@ with open("schema.web.yaml", "r") as stream:
             lines += ["{} {{".format(class_declaration), ""]
             lines += attr_slot_lines
             lines += [get_empty_constructor(clazz), ""]
+            if parameterized_constructor:
+                lines += [parameterized_constructor, ""]
             lines += getter_setter_lines
 
             # TODO: The rest of the class goes here
