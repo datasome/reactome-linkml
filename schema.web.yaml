@@ -378,6 +378,8 @@ classes:
       node: true
       property: "dbId"
       suppress_warnings: "unused"
+    slots:
+      - dbId
     attributes:
       isLoaded:
         annotations:
@@ -389,10 +391,6 @@ classes:
         annotations:
           reactome_transient: true
           transient: true
-      dbId:
-        range: AnnotationLongType
-        annotations:
-          id: true
       displayName:
       stId:
         annotations:
@@ -2652,6 +2650,10 @@ slots:
     annotations:
       type: "compartment"
       sorted_set: true
+  dbId:
+    range: AnnotationLongType
+    annotations:
+      id: true
   definition:
     annotations:
       addedField: False

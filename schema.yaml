@@ -469,6 +469,8 @@ classes:
       generator: "ObjectIdGenerators.PropertyGenerator.class"
       property: "DB_ID"
       suppress_warnings: "unused"
+    slots:
+      - DB_ID
     attributes:
       isLoaded:
         annotations:
@@ -480,11 +482,6 @@ classes:
         annotations:
           reactome_transient: true
           transient: true
-      DB_ID:
-        range: AnnotationLongType
-        annotations:
-          constraint: NOMANUALEDIT
-          id: true
       _displayName:
         annotations:
           constraint: NOMANUALEDIT
@@ -2923,6 +2920,11 @@ slots:
     annotations:
       constraint: MANDATORY
       type: "compartment"
+  DB_ID:
+    range: AnnotationLongType
+    annotations:
+      constraint: NOMANUALEDIT
+      id: true
   definition:
     annotations:
       constraint: OPTIONAL
