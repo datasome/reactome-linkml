@@ -38,7 +38,7 @@ VALUE_TO_JAVA_ENUM = {
     "REQUIRED": "ReactomeConstraint.Constraint"
 }
 
-OTHER_ANNOTATIONS = ['abstract', 'implements', 'set', 'sorted_set', 'getter_only', 'value',
+OTHER_ANNOTATIONS = ['abstract', 'implements', 'set', 'sorted_set', 'getter_only',
                      'static', 'final', 'transient', 'constructor_parameter']
 INDENT_0 = ""
 INDENT_1 = "    "
@@ -251,28 +251,26 @@ def get_class_attributes_slots(clazz, class_entry, schema_slots, annot_attr2clas
         else:
             java_type = "String"
 
-
         value = ""
         if attr not in attr_slot_to_lines:
             attr_slot_to_lines[attr] = []
         attr_slot_to_getter[attr] = []
         attr_slot_to_setter[attr] = []
 
+
+        if attr_entry:
+            value = get_value(class_entry, attr, attr_entry)
         if 'getter_only' in other_annotations and other_annotations['getter_only']:
             # 'getter_only' means no variable - just a getter method returning a value (e.g. getExplanation())
-            attr_slot_to_lines[attr] += [
-                INDENT_1 + "public {} get{}() {{".format(java_type, capitalize(attr)),
-                INDENT_2 + "return \"{}\";".format(get_value(clazz, attr, attr_entry['annotations'])),
-                INDENT_1 + "}",
-                ""]
+            attr_slot_to_lines[attr].append(INDENT_1 + "public {} get{}() {{".format(java_type, capitalize(attr)))
+            if not search("return", value):
+                value = "return {};".format(value)
+            attr_slot_to_lines[attr].append(INDENT_2 + value)
+            attr_slot_to_lines[attr] += [INDENT_1 + "}", ""]
             continue
         else:
-            if 'value' in other_annotations:
-                value = other_annotations['value']
-                if java_type == "String":
-                    value = " = \"{}\"".format(value)
-                else:
-                    value = " = {}".format(value)
+            value = " = {}".format(value)
+
         if 'transient' not in other_annotations:
             attr_slot_to_getter[attr] += [
                 INDENT_1 + "public {} get{}() {{ return {}; }}".format(java_type, capitalize(attr), attr),
@@ -297,12 +295,27 @@ def get_class_attributes_slots(clazz, class_entry, schema_slots, annot_attr2clas
     return attr_slot_lines, getter_setter_lines, sorted(list(annotations_imports))
 
 
-def get_value(clazz, attr, annotations):
-    if attr == "className" and 'value' not in annotations:
-        # TODO: More complex logic required for certain classes; this also doesn't implement inheritance in java classes
-        return clazz
+def get_value(class_entry, attr, attr_entry):
+    ret = None
+    if attr == "explanation":
+        if 'description' in class_entry:
+            ret = "\"{}\"".format(class_entry['description'])
     else:
-        return annotations['value']
+        value = None
+        if 'ifabsent' in attr_entry:
+            value = attr_entry['ifabsent']
+        elif 'slot_usage' in class_entry \
+            and attr in class_entry['slot_usage'] \
+            and 'ifabsent' in class_entry['slot_usage'][attr]:
+                value = class_entry['slot_usage'][attr]['ifabsent']
+        if value:
+            if search("^(string|int)", value):
+                ret = findall(r'.*\((.*)\)', value)[0]
+                if value.startswith("string"):
+                    ret = "\"{}\"".format(ret)
+            else:
+                ret = value
+    return ret
 
 
 def get_empty_constructor(clazz):

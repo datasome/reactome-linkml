@@ -72,6 +72,7 @@ classes:
 
   #### BlackBoxEvent ####
   BlackBoxEvent:
+    description: "Shortcut reactions that make the connection between input and output, but don't provide complete mechanistic detail. Used for reactions that do not balance, or complicated processes for which we either don't know all the details, or we choose not to represent every step. (e.g. degradation of a protein)"
     is_a: ReactionlikeEvent
     annotations:
       abstract: true
@@ -80,6 +81,7 @@ classes:
     slots:
       - authored
       - edited
+      - explanation
       - catalystActivity
       - goBiologicalProcess
       - literatureReference
@@ -90,6 +92,9 @@ classes:
       edited:
         annotations:
           constraint: REQUIRED
+      explanation:
+        annotations:
+          json_ignore: false
       literatureReference:
         annotations:
           constraint: REQUIRED
@@ -115,12 +120,6 @@ classes:
           category: all
           type: "output"
           set: true
-      explanation:
-        annotations:
-          getter_only: true
-          reactome_schema_ignore: true
-          override: true
-          value: "Shortcut reactions that make the connection between input and output, but don't provide complete mechanistic detail. Used for reactions that do not balance, or complicated processes for which we either don't know all the details, or we choose not to represent every step. (e.g. degradation of a protein)"
     in_subset:
       - curator_schema_only
 
@@ -166,10 +165,13 @@ classes:
 
   #### CandidateSet ####
   CandidateSet:
+    description: "A set of entities that are interchangeable in function, with two subclasses, members that are hypothetical and members that have been demonstrated. Hypothetical members are identified as values of the hasCandidate slot. Members that have been demonstrated are identified in the hasMember slot. At least one hasCandidate value is required; hasMember values are optional"
     is_a: EntitySet
     annotations:
       node: true
       suppress_warnings: "unused"
+    slots:
+      - explanation
     attributes:
       hasCandidate:
         multivalued: true
@@ -185,13 +187,6 @@ classes:
           constraint: REQUIRED
           category: all
           type: "hasMember"
-      explanation:
-        annotations:
-          getter_only: true
-          reactome_schema_ignore: true
-          json_ignore: true
-          override: true
-          value: "A set of entities that are interchangeable in function, with two subclasses, members that are hypothetical and members that have been demonstrated. Hypothetical members are identified as values of the hasCandidate slot. Members that have been demonstrated are identified in the hasMember slot. At least one hasCandidate value is required; hasMember values are optional"
     in_subset:
       - curator_schema_only
 
@@ -350,6 +345,7 @@ classes:
 
   #### Complex ####
   Complex:
+    description: "An entity formed by the association of two or more component entities (these components can themselves be complexes). At least one component must be specified. Complexes represent all experimentally verified components and their stoichiometry where this is known but may not include as yet unidentified components"
     is_a: PhysicalEntity
     annotations:
       constructor_parameter: "dbId"
@@ -358,6 +354,7 @@ classes:
     slots:
       - compartment
       - entityOnOtherCell
+      - explanation
       - isChimeric
       - relatedSpecies
       - species
@@ -382,13 +379,6 @@ classes:
           constraint: NOMANUALEDIT
           type: "includedLocation"
           sorted_set: true
-      explanation:
-        annotations:
-          getter_only: true
-          reactome_schema_ignore: true
-          json_ignore: true
-          override: true
-          value: "An entity formed by the association of two or more component entities (these components can themselves be complexes). At least one component must be specified. Complexes represent all experimentally verified components and their stoichiometry where this is known but may not include as yet unidentified components"
     in_subset:
       - curator_schema_only
 
@@ -466,6 +456,7 @@ classes:
 
   #### DatabaseObject ####
   DatabaseObject:
+    description: "Not available"
     annotations:
       abstract: true
       constructor_parameter: "dbId"
@@ -475,7 +466,17 @@ classes:
       property: "DB_ID"
       suppress_warnings: "unused"
     slots:
+      - className
       - DB_ID
+      - explanation
+    slot_usage:
+      explanation:
+        annotations:
+          override: false
+      className:
+        ifabsent: "getClass().getSimpleName()"
+        annotations:
+          override: false
     attributes:
       isLoaded:
         annotations:
@@ -508,17 +509,6 @@ classes:
           annotations:
             constraint: NOMANUALEDIT
             type: "stableIdentifier"
-      explanation:
-        annotations:
-          getter_only: true
-          reactome_schema_ignore: true
-          json_ignore: true
-          value: "Not available"
-      className:
-        annotations:
-          getter_only: true
-          reactome_schema_ignore: true
-          # TBC - how to encode getClass().getSimpleName()
     in_subset:
       - curator_schema_only
 
@@ -544,18 +534,13 @@ classes:
 
   #### DefinedSet ####
   DefinedSet:
+    description: "Two or more entities that are interchangeable in function"
     is_a: EntitySet
     annotations:
       node: true
       suppress_warnings: "unused"
-    attributes:
-      explanation:
-        annotations:
-          getter_only: true
-          reactome_schema_ignore: true
-          json_ignore: true
-          override: true
-          value: "Two or more entities that are interchangeable in function"
+    slots:
+      - explanation
     in_subset:
       - curator_schema_only
 
@@ -603,9 +588,17 @@ classes:
   _DeletedInstance:
     is_a: DatabaseObject
     slots:
+      - className
       - name
       - species
     slot_usage:
+      className:
+        annotations:
+          constraint: NOMANUALEDIT
+          addedField: false
+          getter_only: false
+          reactome_schema_ignore: false
+          override: false
       name:
         annotations:
           constraint: NOMANUALEDIT
@@ -622,10 +615,6 @@ classes:
         annotations:
           constraint: NOMANUALEDIT
           category: all
-          addedField: false
-      className:
-        annotations:
-          constraint: NOMANUALEDIT
           addedField: false
       deletedStableIdentifier:
         range: StableIdentifier
@@ -740,15 +729,21 @@ classes:
 
   #### EntitySet ####
   EntitySet:
+    description: "Two or more entities grouped because of a shared molecular feature. The superclass for CandidateSet and DefinedSet"
     is_a: PhysicalEntity
     annotations:
       abstract: true
       node: true
       suppress_warnings: "unused"
     slots:
+      - className
       - compartment
+      - explanation
       - relatedSpecies
       - species
+    slot_usage:
+      className:
+        ifabsent: string(Set)
     attributes:
       isOrdered:
         range: boolean
@@ -762,30 +757,19 @@ classes:
           category: all
           type: "hasMember"
           sorted_set: true
-      explanation:
-        annotations:
-          getter_only: true
-          reactome_schema_ignore: true
-          json_ignore: true
-          override: true
-          value: "Two or more entities grouped because of a shared molecular feature. The superclass for CandidateSet and DefinedSet"
-      className:
-        annotations:
-          getter_only: true
-          reactome_schema_ignore: true
-          override: true
-          value: "Set"
     in_subset:
       - curator_schema_only
 
   #### EntityWithAccessionedSequence ####
   EntityWithAccessionedSequence:
+    description: "A protein, RNA, or DNA molecule or fragment thereof in a specified cellular compartment and specific post-translational state. Must be linked to an external database reference, given as the value of referenceSequence. An EWAS typically corresponds to the entire protein or polynucleotide described in the external database. Fragments are defined by setting the first and last residue using the numbering scheme of the external database, entered as startCoordinate and endCoordinate values. Values of 1 and -1 respectively indicate that the true start and end are unconfirmed. EWAS instances are specific to a subcellular compartment; if the same molecule is found in two cellular components it will have two EWASes. EWAS instances by default define an unmodified protein sequence, any post-translational modification (PTM), such as phosphorylation, requires a new EWAS instance. The location and type of any PTM are defined in the hasModifiedResidue slot"
     is_a: GenomeEncodedEntity
     annotations:
       constructor_parameter: "dbId"
       node: true
       suppress_warnings: "unused"
     slots:
+      - explanation
       - name
       - referenceEntity
       - species
@@ -819,13 +803,6 @@ classes:
           category: all
           type: "hasModifiedResidue"
           sorted_set: true
-      explanation:
-        annotations:
-          getter_only: true
-          reactome_schema_ignore: true
-          json_ignore: true
-          override: true
-          value: "A protein, RNA, or DNA molecule or fragment thereof in a specified cellular compartment and specific post-translational state. Must be linked to an external database reference, given as the value of referenceSequence. An EWAS typically corresponds to the entire protein or polynucleotide described in the external database. Fragments are defined by setting the first and last residue using the numbering scheme of the external database, entered as startCoordinate and endCoordinate values. Values of 1 and -1 respectively indicate that the true start and end are unconfirmed. EWAS instances are specific to a subcellular compartment; if the same molecule is found in two cellular components it will have two EWASes. EWAS instances by default define an unmodified protein sequence, any post-translational modification (PTM), such as phosphorylation, requires a new EWAS instance. The location and type of any PTM are defined in the hasModifiedResidue slot"
     in_subset:
       - curator_schema_only
 
@@ -981,6 +958,7 @@ classes:
 
   #### FailedReaction ####
   FailedReaction:
+    description: "Defines an event where genetic mutations in the nucleotide sequence produces a protein with a very little or no activity. The consequence of this is that substrates are not converted to products and can therefore build up to cause pathological conditions. It could also mean entities are not moved between compartments again causing imbalances in entity concentrations which can lead to pathological conditions."
     is_a: ReactionlikeEvent
     annotations:
       node: true
@@ -988,6 +966,7 @@ classes:
     slots:
       - authored
       - edited
+      - explanation
       - catalystActivity
       - goBiologicalProcess
       - literatureReference
@@ -1015,13 +994,6 @@ classes:
           category: all
           type: "output"
           set: true
-      explanation:
-        annotations:
-          getter_only: true
-          reactome_schema_ignore: true
-          json_ignore: true
-          override: true
-          value: "Defines an event where genetic mutations in the nucleotide sequence produces a protein with a very little or no activity. The consequence of this is that substrates are not converted to products and can therefore build up to cause pathological conditions. It could also mean entities are not moved between compartments again causing imbalances in entity concentrations which can lead to pathological conditions."
     in_subset:
       - curator_schema_only
 
@@ -1164,15 +1136,20 @@ classes:
 
   #### GenomeEncodedEntity ####
   GenomeEncodedEntity:
+    description: "A peptide or polynucleotide whose sequence is unknown and thus cannot be linked to external sequence databases or used for orthology inference"
     is_a: PhysicalEntity
     annotations:
       constructor_parameter: "dbId"
       node: true
       suppress_warnings: "unused"
     slots:
+      - className
       - compartment
+      - explanation
       - species
     slot_usage:
+      className:
+        ifabsent: string(Genes and Transcripts)
       compartment:
         annotations:
           category: all
@@ -1181,20 +1158,6 @@ classes:
         annotations:
           constraint: MANDATORY
           category: all
-    attributes:
-      explanation:
-        annotations:
-          getter_only: true
-          reactome_schema_ignore: true
-          json_ignore: true
-          override: true
-          value: "A peptide or polynucleotide whose sequence is unknown and thus cannot be linked to external sequence databases or used for orthology inference"
-      className:
-        annotations:
-          getter_only: true
-          reactome_schema_ignore: true
-          override: true
-          value: "Genes and Transcripts"
     in_subset:
     - curator_schema_only
 
@@ -1482,8 +1445,11 @@ classes:
       suppress_warnings: "unused"
     attributes:
       PUBMED_URL:
+        ifabsent: string(http://www.ncbi.nlm.nih.gov/pubmed/)
         annotations:
-          value: "http://www.ncbi.nlm.nih.gov/pubmed/"
+          static: true
+          final: true
+          transient: true
       journal:
         annotations:
           constraint: REQUIRED
@@ -1553,18 +1519,13 @@ classes:
 
   #### NegativeGeneExpressionRegulation ####
   NegativeGeneExpressionRegulation:
+    description: "A negative gene expression regulation"
     is_a: NegativeRegulation
     annotations:
       node: true
       suppress_warnings: "unused"
-    attributes:
-      explanation:
-        annotations:
-          getter_only: true
-          reactome_schema_ignore: true
-          json_ignore: true
-          override: true
-          value: "A negative gene expression regulation"
+    slots:
+      - explanation
     in_subset:
       - curator_schema_only
 
@@ -1603,18 +1564,13 @@ classes:
 
   #### NegativeRegulation ####
   NegativeRegulation:
+    description: "This describes an Event/CatalystActivity that is negatively regulated by the Regulator (e.g., allosteric inhibition, competitive inhibition"
     is_a: Regulation
     annotations:
       node: true
       suppress_warnings: "unused"
-    attributes:
-      explanation:
-        annotations:
-          getter_only: true
-          reactome_schema_ignore: true
-          json_ignore: true
-          override: true
-          value: "This describes an Event/CatalystActivity that is negatively regulated by the Regulator (e.g., allosteric inhibition, competitive inhibition"
+    slots:
+      - explanation
     in_subset:
       - curator_schema_only
 
@@ -1628,24 +1584,18 @@ classes:
 
   #### OtherEntity ####
   OtherEntity:
+    description: "Entities that we are unable or unwilling to describe in chemical detail and cannot be put in any other class. Can be used to represent complex structures in the cell that take part in a reaction but which we cannot or do not want to define molecularly, e.g. cell membrane, Holliday structure"
     is_a: PhysicalEntity
     annotations:
       node: true
       suppress_warnings: "unused"
     slots:
       - compartment
+      - explanation
     slot_usage:
       compartment:
         annotations:
           category: all
-    attributes:
-      explanation:
-        annotations:
-          getter_only: true
-          reactome_schema_ignore: true
-          json_ignore: true
-          override: true
-          value: "Entities that we are unable or unwilling to describe in chemical detail and cannot be put in any other class. Can be used to represent complex structures in the cell that take part in a reaction but which we cannot or do not want to define molecularly, e.g. cell membrane, Holliday structure"
     in_subset:
       - curator_schema_only
 
@@ -1664,6 +1614,7 @@ classes:
 
   #### Pathway ####
   Pathway:
+    description: "A collection of related Events. These events can be ReactionLikeEvents or Pathways"
     is_a: Event
     annotations:
       constructor_parameter: "dbId"
@@ -1673,6 +1624,7 @@ classes:
       - authored
       - compartment
       - edited
+      - explanation
       - goBiologicalProcess
     slot_usage:
       compartment:
@@ -1706,13 +1658,6 @@ classes:
         annotations:
           constraint: OPTIONAL
           type: "normalPathway"
-      explanation:
-        annotations:
-          getter_only: true
-          reactome_schema_ignore: true
-          json_ignore: true
-          override: true
-          value: "A collection of related Events. These events can be ReactionLikeEvents or Pathways"
     in_subset:
       - curator_schema_only
 
@@ -1826,14 +1771,16 @@ classes:
 
   #### Polymer ####
   Polymer:
+    description: "Molecules that consist of an indeterminate number of repeated units. Includes complexes whose stoichiometry is variable or unknown. The repeated unit(s) is(are) identified in the repeatedUnit slot"
     is_a: PhysicalEntity
     annotations:
       constructor_parameter: "dbId"
       node: true
       suppress_warnings: "unused"
     slots:
-      - species
       - compartment
+      - explanation
+      - species
     attributes:
       maxUnitCount:
         range: integer
@@ -1853,18 +1800,12 @@ classes:
           category: all
           type: "repeatedUnit"
           sorted_set: true
-      explanation:
-        annotations:
-          getter_only: true
-          reactome_schema_ignore: true
-          json_ignore: true
-          override: true
-          value: "Molecules that consist of an indeterminate number of repeated units. Includes complexes whose stoichiometry is variable or unknown. The repeated unit(s) is(are) identified in the repeatedUnit slot"
     in_subset:
       - curator_schema_only
 
   #### Polymerisation ####
   Polymerisation:
+    description: "Reactions that follow the pattern: Polymer + Unit -> Polymer (there may be a catalyst involved). Used to describe the mechanistic detail of a polymerisation"
     is_a: ReactionlikeEvent
     annotations:
       node: true
@@ -1872,6 +1813,7 @@ classes:
     slots:
       - authored
       - edited
+      - explanation
       - goBiologicalProcess
       - literatureReference
     slot_usage:
@@ -1884,48 +1826,30 @@ classes:
       literatureReference:
         annotations:
           constraint: REQUIRED
-    attributes:
-      explanation:
-        annotations:
-          getter_only: true
-          reactome_schema_ignore: true
-          json_ignore: true
-          override: true
-          value: "Reactions that follow the pattern: Polymer + Unit -> Polymer (there may be a catalyst involved). Used to describe the mechanistic detail of a polymerisation"
     in_subset:
       - curator_schema_only
 
   #### PositiveGeneExpressionRegulation ####
   PositiveGeneExpressionRegulation:
+    description: "A positive gene expression regulation"
     is_a: PositiveRegulation
     annotations:
       node: true
       suppress_warnings: "unused"
-    attributes:
-      explanation:
-        annotations:
-          getter_only: true
-          reactome_schema_ignore: true
-          json_ignore: true
-          override: true
-          value: "A positive gene expression regulation"
+    slots:
+      - explanation
     in_subset:
       - curator_schema_only
 
   #### PositiveRegulation ####
   PositiveRegulation:
+    description: "This describes an Event/CatalystActivity that is positively regulated by the Regulator (e.g., allosteric activation)"
     is_a: Regulation
     annotations:
       node: true
       suppress_warnings: "unused"
-    attributes:
-      explanation:
-        annotations:
-          getter_only: true
-          reactome_schema_ignore: true
-          json_ignore: true
-          override: true
-          value: "This describes an Event/CatalystActivity that is positively regulated by the Regulator (e.g., allosteric activation)"
+    slots:
+      - explanation
     in_subset:
     - curator_schema_only
 
@@ -1997,6 +1921,7 @@ classes:
 
   #### Reaction ####
   Reaction:
+    description: "Defines a change of state for one or more molecular entities. Most reactions in Reactome involve either a) the interaction of entities to form a complex, or b) the movement of entities between compartments, or c) the chemical conversion of entities as part of a metabolic process. Reactions have a molecular balance between input and output entities"
     is_a: ReactionlikeEvent
     annotations:
       constructor_parameter: "dbId"
@@ -2005,6 +1930,7 @@ classes:
     slots:
       - authored
       - edited
+      - explanation
       - goBiologicalProcess
       - literatureReference
     slot_usage:
@@ -2023,13 +1949,6 @@ classes:
         annotations:
           constraint: OPTIONAL
           type: "reverseReaction"
-      explanation:
-        annotations:
-          getter_only: true
-          reactome_schema_ignore: true
-          json_ignore: true
-          override: true
-          value: "Defines a change of state for one or more molecular entities. Most reactions in Reactome involve either a) the interaction of entities to form a complex, or b) the movement of entities between compartments, or c) the chemical conversion of entities as part of a metabolic process. Reactions have a molecular balance between input and output entities"
     in_subset:
       - curator_schema_only
 
@@ -2042,10 +1961,13 @@ classes:
       suppress_warnings: "unused"
     slots:
       - catalystActivity
+      - className
       - compartment
       - isChimeric
       - entityOnOtherCell
     slot_usage:
+      className:
+        ifabsent: string(Reaction)
       catalystActivity:
         annotations:
           constraint: REQUIRED
@@ -2122,12 +2044,6 @@ classes:
         annotations:
           constraint: OPTIONAL
           type: "reactionType"
-      className:
-        annotations:
-          getter_only: true
-          reactome_schema_ignore: true
-          override: true
-          value: "Reaction"
     in_subset:
       - curator_schema_only
 
@@ -2514,18 +2430,13 @@ classes:
 
   #### Requirement ####
   Requirement:
+    description: "A regulator that is required for an Event/CatalystActivity to happen"
     is_a: PositiveRegulation
     annotations:
       node: true
       suppress_warnings: "unused"
-    attributes:
-      explanation:
-        annotations:
-          getter_only: true
-          reactome_schema_ignore: true
-          json_ignore: true
-          override: true
-          value: "A regulator that is required for an Event/CatalystActivity to happen"
+    slots:
+      - explanation
     in_subset:
       - curator_schema_only
 
@@ -2556,14 +2467,19 @@ classes:
 
   #### SimpleEntity ####
   SimpleEntity:
+    description: "A chemical species not encoded directly or indirectly in the genome, typically small molecules such as ATP or ethanol. The detailed structure of a simpleEntity is specified by linking it to details of the molecule in the ChEBI or KEGG databases via the referenceEntity slot. Use of KEGG is deprecated"
     is_a: PhysicalEntity
     annotations:
       node: true
       suppress_warnings: "unused"
     slots:
+      - classname
       - compartment
+      - explanation
       - species
     slot_usage:
+      className:
+        ifabsent: string(Chemical Compound)
       compartment:
         annotations:
           category: all
@@ -2578,19 +2494,6 @@ classes:
           constraint: MANDATORY
           category: all
           type: "referenceEntity"
-      explanation:
-        annotations:
-          getter_only: true
-          reactome_schema_ignore: true
-          json_ignore: true
-          override: true
-          value: "A chemical species not encoded directly or indirectly in the genome, typically small molecules such as ATP or ethanol. The detailed structure of a simpleEntity is specified by linking it to details of the molecule in the ChEBI or KEGG databases via the referenceEntity slot. Use of KEGG is deprecated"
-      className:
-        annotations:
-          getter_only: true
-          reactome_schema_ignore: true
-          override: true
-          value: "Chemical Compound"
     in_subset:
     - curator_schema_only
 
@@ -2825,7 +2728,6 @@ classes:
       suppress_warnings:
       target_node:
         range: boolean
-      value:
     in_subset:
       - schema_annotations
 
@@ -2921,6 +2823,11 @@ slots:
       constraint: MANDATORY
       category: all
       type: "cellType"
+  className:
+    annotations:
+      getter_only: true
+      reactome_schema_ignore: true
+      override: true
   coordinate:
     range: integer
     annotations:
@@ -2961,6 +2868,12 @@ slots:
     annotations:
       constraint: OPTIONAL
       type: "entityOnOtherCell"
+  explanation:
+    annotations:
+      getter_only: true
+      reactome_schema_ignore: true
+      json_ignore: true
+      override: true
   figure:
     multivalued: true
     range: Figure
@@ -3059,8 +2972,7 @@ slots:
       type: "species"
   stoichiometry:
     range: integer
-    annotations:
-      value: 1
+    ifabsent: int(1)
   summation:
     multivalued: true
     range: Summation
