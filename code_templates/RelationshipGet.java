@@ -1,4 +1,4 @@
-    public List<PhysicalEntity> get@RelationshipClass@(){
+    public List<PhysicalEntity> get@Attribute@(){
         List<PhysicalEntity> rtn = null;
         if (this.@attribute@ != null) {
             rtn = new ArrayList<>();

@@ -1,4 +1,4 @@
-    public void set@RelationshipClass@(List<PhysicalEntity> hasComponent) {
+    public void set@Attribute@(List<PhysicalEntity> hasComponent) {
         if (@attribute@ == null) return;
         Map<Long, @RelationshipClass@> map = new LinkedHashMap<>();
         int order = 0;

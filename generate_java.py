@@ -39,7 +39,8 @@ VALUE_TO_JAVA_ENUM = {
 }
 
 OTHER_ANNOTATIONS = ['abstract', 'implements', 'set', 'sorted_set', 'getter_only',
-                     'static', 'final', 'transient', 'constructor_parameter']
+                     'static', 'final', 'transient', 'constructor_parameter',
+                     'include_fetch', 'include_setter', 'no_getter_setter']
 INDENT_0 = ""
 INDENT_1 = "    "
 INDENT_2 = "        "
@@ -201,7 +202,7 @@ def get_annotations(annotations, annot_attr2class, indent):
     return lines, other_annotations
 
 
-def get_class_attributes_slots(clazz, class_entry, schema_slots, annot_attr2class, annotations_imports):
+def get_class_attributes_slots(clazz, class_entry, schema_slots, annot_attr2class, annotations_imports, classes):
     attr_slot_to_lines = {}
     attr_slot_to_getter = {}
     attr_slot_to_setter = {}
@@ -271,15 +272,34 @@ def get_class_attributes_slots(clazz, class_entry, schema_slots, annot_attr2clas
         else:
             value = " = {}".format(value)
 
-        if 'transient' not in other_annotations:
-            attr_slot_to_getter[attr] += [
-                INDENT_1 + "public {} get{}() {{ return {}; }}".format(java_type, capitalize(attr), attr),
-                ""]
-            attr_slot_to_setter[attr] += [
-                INDENT_1 + "public void set{}({} {}) {{".format(capitalize(attr), java_type, attr),
-                INDENT_2 + "this.{} = {};".format(attr, attr),
-                INDENT_1 + "}",
-                ""]
+        # TODO: Wrap in method
+        attr_is_relationship_class = False
+        if attr_entry is not None and 'range' in attr_entry:
+            attr_range = attr_entry['range']
+            if attr_range in classes and \
+                classes[attr_range] is not None and \
+                'annotations' in classes[attr_range] and \
+                'relationship_properties' in classes[attr_range]['annotations']:
+                attr_is_relationship_class = True
+        # TODO: Wrap in method - end
+
+        if 'transient' not in other_annotations and 'no_getter_setter' not in other_annotations:
+            if not attr_is_relationship_class:
+                attr_slot_to_getter[attr] += [
+                    INDENT_1 + "public {} get{}() {{ return {}; }}".format(java_type, capitalize(attr), attr),
+                    ""]
+            if not attr_is_relationship_class or 'include_setter' in other_annotations:
+                attr_slot_to_setter[attr] += [
+                    INDENT_1 + "public void set{}({} {}) {{".format(capitalize(attr), java_type, attr),
+                    INDENT_2 + "this.{} = {};".format(attr, attr),
+                    INDENT_1 + "}",
+                    ""]
+        if attr_is_relationship_class:
+            if 'include_fetch' in other_annotations:
+                attr_slot_to_lines[attr] += [get_filled_code_template(attr_range, attr, "RelationshipFetch.java"), ""]
+            for template_file in ["RelationshipGet.java", "RelationshipSet.java"]:
+                attr_slot_to_setter[attr] += [get_filled_code_template(attr_range, attr, template_file), ""]
+
         attr_slot_to_lines[attr] += [INDENT_1 + \
                                      "private{}{} {}{};".format(
                                          get_keywords(other_annotations, ["static", "final", "transient"]),
@@ -358,8 +378,25 @@ def get_additional_class_content(clazz):
     fh = find("{}.java".format(clazz), "additional_class_content")
     if fh:
         with open(fh, 'r') as additional_content_file:
-            # Note - eval unescapes the double-quotes
             ret = additional_content_file.read()
+    return ret
+
+def get_comparable_methods_for_relationship_class(clazz, class_entry):
+    ret = None
+    if is_class_relationship(class_entry):
+        fh = os.path.join("code_templates","RelationshipComparable.java")
+        with open(fh, 'r') as additional_content_file:
+            ret = additional_content_file.read()
+        ret = ret.replace("@RelationshipClass@", clazz)
+        return ret
+
+def get_filled_code_template(clazz, attr, template_file_name):
+    fh = os.path.join("code_templates", template_file_name)
+    with open(fh, 'r') as additional_content_file:
+        ret = additional_content_file.read()
+    ret = ret.replace("@RelationshipClass@", clazz)
+    ret = ret.replace("@attribute@", attr)
+    ret = ret.replace("@Attribute@", capitalize(attr))
     return ret
 
 
@@ -382,9 +419,10 @@ with open("schema.web.yaml", "r") as stream:
             class_declaration += get_extends(class_entry)
             class_declaration += get_implements(clazz, classes, other_annotations, annotations_imports)
             attr_slot_lines, getter_setter_lines, annotations_imports = \
-                get_class_attributes_slots(clazz, class_entry, slots, annot_attr2class, annotations_imports)
+                get_class_attributes_slots(clazz, class_entry, slots, annot_attr2class, annotations_imports, classes)
             parameterized_constructor = get_parameterized_constructor(clazz, data['slots'], class_entry, other_annotations)
             additional_class_content = get_additional_class_content(clazz)
+            comparable_methods = get_comparable_methods_for_relationship_class(clazz, class_entry)
             # Assemble class content
             lines = []
             lines += ['package {};'.format(package), ""]
@@ -399,6 +437,8 @@ with open("schema.web.yaml", "r") as stream:
             lines += getter_setter_lines
             if additional_class_content:
                 lines += [additional_class_content, ""]
+            if comparable_methods:
+                lines += [comparable_methods, ""]
             # TODO: The rest of the class goes here
             lines += ["}", ""]
 

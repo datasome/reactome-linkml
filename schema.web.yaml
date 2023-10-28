@@ -285,6 +285,7 @@ classes:
         annotations:
           type: "hasComponent"
           sorted_set: true
+          include_fetch: true
       stoichiometryKnown:
         range: boolean
         annotations:
@@ -295,6 +296,7 @@ classes:
         annotations:
           type: "includedLocation"
           sorted_set: true
+          include_setter: true
     in_subset:
       - web_schema
 
@@ -1534,6 +1536,10 @@ classes:
       - name
       - revised
       - summation
+    slot_usage:
+      compartment:
+        annotations:
+          include_setter: true
     attributes:
       negativelyRegulates:
         multivalued: true
@@ -1598,6 +1604,7 @@ classes:
           reactome_transient: true
           json_ignore: true
           sorted_set: true
+          include_setter: true
       catalystActivities:
         multivalued: true
         range: CatalystActivity
@@ -1678,6 +1685,7 @@ classes:
         annotations:
           type: "repeatedUnit"
           sorted_set: true
+          include_fetch: true
     in_subset:
       - web_schema
 
@@ -1834,12 +1842,14 @@ classes:
         annotations:
           type: "input"
           set: true
+          include_fetch: true
       output:
         multivalued: true
         range: Output
         annotations:
           type: "output"
           set: true
+          include_fetch: true
       normalReaction:
         range: ReactionLikeEvent
         annotations:
@@ -2414,6 +2424,19 @@ classes:
         range: boolean
       constructor_parameter:
       deprecated:
+        range: boolean
+      # For relationship fields that are Sets, include in class a fetch method returning the field without converting
+      # it to List first
+      include_fetch:
+        range: boolean
+      # For relationship fields that are Sets, include in class a setter method taking Set as a parameter
+      # (instead of a List)
+      include_setter:
+        range: boolean
+      # For non-relationship fields, do not output any getter or setter
+      # A non-standard getter and/or setter methods may have been provided in additional_class_content directory
+      # (e.g. getPublications() for publicationAuthorList in Person class)
+      no_getter_setter:
         range: boolean
       generated_value:
         range: boolean
