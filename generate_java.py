@@ -347,6 +347,22 @@ def is_annotation(clazz):
     return clazz.startswith("Annotation") or clazz in CLASS_TO_PACKAGE_NAME
 
 
+def find(name, path):
+    for root, dirs, files in os.walk(path):
+        if name in files:
+            return os.path.join(root, name)
+
+
+def get_additional_class_content(clazz):
+    ret = None
+    fh = find("{}.java".format(clazz), "additional_class_content")
+    if fh:
+        with open(fh, 'r') as additional_content_file:
+            # Note - eval unescapes the double-quotes
+            ret = additional_content_file.read()
+    return ret
+
+
 with open("schema.web.yaml", "r") as stream:
     try:
         data = yaml.safe_load(stream)
@@ -368,6 +384,7 @@ with open("schema.web.yaml", "r") as stream:
             attr_slot_lines, getter_setter_lines, annotations_imports = \
                 get_class_attributes_slots(clazz, class_entry, slots, annot_attr2class, annotations_imports)
             parameterized_constructor = get_parameterized_constructor(clazz, data['slots'], class_entry, other_annotations)
+            additional_class_content = get_additional_class_content(clazz)
             # Assemble class content
             lines = []
             lines += ['package {};'.format(package), ""]
@@ -380,7 +397,8 @@ with open("schema.web.yaml", "r") as stream:
             if parameterized_constructor:
                 lines += [parameterized_constructor, ""]
             lines += getter_setter_lines
-
+            if additional_class_content:
+                lines += [additional_class_content, ""]
             # TODO: The rest of the class goes here
             lines += ["}", ""]
 
