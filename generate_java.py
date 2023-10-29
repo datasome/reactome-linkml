@@ -40,7 +40,8 @@ VALUE_TO_JAVA_ENUM = {
 
 OTHER_ANNOTATIONS = ['abstract', 'implements', 'set', 'sorted_set', 'getter_only',
                      'static', 'final', 'transient', 'constructor_parameter',
-                     'include_fetch', 'include_setter', 'no_getter_setter']
+                     'include_fetch', 'include_default_setter', 'no_default_getter_setter',
+                     'no_list_setter', 'include_stoichiometry']
 INDENT_0 = ""
 INDENT_1 = "    "
 INDENT_2 = "        "
@@ -125,6 +126,9 @@ def capitalize(attr):
             attr = attr[0].upper() + attr[1:]
     return attr
 
+def lower_case(attr):
+    return attr[0].lower() + attr[1:]
+
 
 def map_annotation_attributes_to_classes(annotations, classes):
     annot_attr2class = {}
@@ -201,6 +205,27 @@ def get_annotations(annotations, annot_attr2class, indent):
         lines.append("{}@{}{}".format(indent, annot_class, annot_clauses))
     return lines, other_annotations
 
+def get_relationship_and_target_node_classs(attr_entry, schema_slots, classes):
+    if attr_entry and 'range' in attr_entry:
+        attr_range = attr_entry['range']
+        if attr_range in classes and classes[attr_range] and \
+            'annotations' in classes[attr_range] and \
+            'relationship_properties' in classes[attr_range]['annotations']:
+            relationship_class_entry = classes[attr_range]
+
+            attributes = {}
+            if 'attributes' in relationship_class_entry:
+                attributes |= relationship_class_entry['attributes']
+            if 'slots' in relationship_class_entry:
+                for attr in relationship_class_entry['slots']:
+                    attributes[attr] = schema_slots[attr]
+            for attr in attributes:
+                attr_entry = attributes[attr]
+                if 'annotations' in attr_entry and \
+                        'target_node' in attr_entry['annotations'] and \
+                        attr_entry['annotations']['target_node']:
+                    return attr_range, attr_entry['range']
+    return None, None
 
 def get_class_attributes_slots(clazz, class_entry, schema_slots, annot_attr2class, annotations_imports, classes):
     attr_slot_to_lines = {}
@@ -258,7 +283,6 @@ def get_class_attributes_slots(clazz, class_entry, schema_slots, annot_attr2clas
         attr_slot_to_getter[attr] = []
         attr_slot_to_setter[attr] = []
 
-
         if attr_entry:
             value = get_value(class_entry, attr, attr_entry)
         if 'getter_only' in other_annotations and other_annotations['getter_only']:
@@ -271,34 +295,33 @@ def get_class_attributes_slots(clazz, class_entry, schema_slots, annot_attr2clas
             continue
         else:
             value = " = {}".format(value)
-
-        # TODO: Wrap in method
-        attr_is_relationship_class = False
-        if attr_entry is not None and 'range' in attr_entry:
-            attr_range = attr_entry['range']
-            if attr_range in classes and \
-                classes[attr_range] is not None and \
-                'annotations' in classes[attr_range] and \
-                'relationship_properties' in classes[attr_range]['annotations']:
-                attr_is_relationship_class = True
-        # TODO: Wrap in method - end
-
-        if 'transient' not in other_annotations and 'no_getter_setter' not in other_annotations:
-            if not attr_is_relationship_class:
+        relationship_clazz, target_node_clazz = get_relationship_and_target_node_classs(attr_entry, schema_slots, classes)
+        if 'transient' not in other_annotations and 'no_default_getter_setter' not in other_annotations:
+            if not target_node_clazz:
                 attr_slot_to_getter[attr] += [
                     INDENT_1 + "public {} get{}() {{ return {}; }}".format(java_type, capitalize(attr), attr),
                     ""]
-            if not attr_is_relationship_class or 'include_setter' in other_annotations:
+            if not target_node_clazz or 'include_default_setter' in other_annotations:
                 attr_slot_to_setter[attr] += [
                     INDENT_1 + "public void set{}({} {}) {{".format(capitalize(attr), java_type, attr),
                     INDENT_2 + "this.{} = {};".format(attr, attr),
                     INDENT_1 + "}",
                     ""]
-        if attr_is_relationship_class:
+        if target_node_clazz:
             if 'include_fetch' in other_annotations:
-                attr_slot_to_lines[attr] += [get_filled_code_template(attr_range, attr, "RelationshipFetch.java"), ""]
-            for template_file in ["RelationshipGet.java", "RelationshipSet.java"]:
-                attr_slot_to_setter[attr] += [get_filled_code_template(attr_range, attr, template_file), ""]
+                attr_slot_to_getter[attr] += \
+                    [get_filled_code_template(relationship_clazz, target_node_clazz, attr, "RelationshipFetch.java"), ""]
+            if 'include_stoichiometry' in other_annotations:
+                getter_template_file = "RelationshipGet.java"
+                setter_template_file = "RelationshipSet.java"
+            else:
+                getter_template_file = "RelationshipGetNoStoichiometry.java"
+                setter_template_file = "RelationshipSetNoStoichiometry.java"
+            attr_slot_to_getter[attr] += \
+                [get_filled_code_template(relationship_clazz, target_node_clazz, attr, getter_template_file), ""]
+            if 'no_list_setter' not in other_annotations:
+                attr_slot_to_setter[attr] += \
+                    [get_filled_code_template(relationship_clazz, target_node_clazz, attr, setter_template_file), ""]
 
         attr_slot_to_lines[attr] += [INDENT_1 + \
                                      "private{}{} {}{};".format(
@@ -390,11 +413,13 @@ def get_comparable_methods_for_relationship_class(clazz, class_entry):
         ret = ret.replace("@RelationshipClass@", clazz)
         return ret
 
-def get_filled_code_template(clazz, attr, template_file_name):
+def get_filled_code_template(relationship_clazz, target_node_clazz, attr, template_file_name):
     fh = os.path.join("code_templates", template_file_name)
     with open(fh, 'r') as additional_content_file:
         ret = additional_content_file.read()
-    ret = ret.replace("@RelationshipClass@", clazz)
+    ret = ret.replace("@RelationshipClass@", relationship_clazz)
+    ret = ret.replace("@TargetNodeClass@", target_node_clazz)
+    ret = ret.replace("@targetNodeClass@", lower_case(target_node_clazz))
     ret = ret.replace("@attribute@", attr)
     ret = ret.replace("@Attribute@", capitalize(attr))
     return ret

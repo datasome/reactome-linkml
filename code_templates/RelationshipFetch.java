@@ -1,5 +1,5 @@
     @JsonIgnore
-    public List<StoichiometryObject> fetch@@Attribute@() {
+    public List<StoichiometryObject> fetch@Attribute@() {
         List<StoichiometryObject> objects = new ArrayList<>();
         if(@attribute@!=null) {
             for (@RelationshipClass@ aux : @attribute@) {
