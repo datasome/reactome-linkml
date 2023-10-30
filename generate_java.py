@@ -43,8 +43,8 @@ OTHER_ANNOTATIONS = ['abstract', 'implements', 'set', 'sorted_set', 'getter_only
                      'include_fetch', 'include_default_setter', 'no_default_getter_setter',
                      'no_default_getter', 'no_list_setter', 'include_stoichiometry']
 INDENT_0 = ""
-INDENT_1 = "    "
-INDENT_2 = "        "
+INDENT_1 = INDENT_0 + "    "
+INDENT_2 = INDENT_1 + "    "
 
 def is_class_relationship(class_entry):
     if 'annotations' in class_entry:
@@ -301,26 +301,36 @@ def get_class_attributes_slots(clazz, class_entry, schema_slots, annot_attr2clas
         if 'transient' not in other_annotations and 'no_default_getter_setter' not in other_annotations:
             if not target_node_clazz and 'no_default_getter' not in other_annotations:
                 if attr_entry is not None and \
-                        'annotations' in attr_entry and \
-                        'deprecated' in attr_entry['annotations']:
-                    attr_slot_to_getter[attr].append(INDENT_1 + "@Deprecated")
+                        'annotations' in attr_entry:
+                    if 'deprecated' in attr_entry['annotations']:
+                        attr_slot_to_getter[attr].append(INDENT_1 + "@Deprecated")
+                    elif 'allowed' in attr_entry['annotations']:
+                        for java_annot in annot_lines:
+                            if 'ReactomeAllowedClasses' in java_annot:
+                                break
+                        attr_slot_to_getter[attr].append(java_annot)
                 attr_slot_to_getter[attr] += [
                     "{}public {} get{}() {{ return {}; }}".format(INDENT_1, java_type, capitalize(attr), attr),
                     ""]
             if not target_node_clazz or 'include_default_setter' in other_annotations:
-                if attr_entry is not None and \
-                        'annotations' in attr_entry and \
-                        'deprecated' in attr_entry['annotations']:
-                    attr_slot_to_getter[attr].append(INDENT_1 + "@Deprecated")
-                attr_slot_to_setter[attr] += [
-                    "{}public void set{}({} {}) {{".format(INDENT_1, capitalize(attr), java_type, attr),
-                    "{}this.{} = {};".format(INDENT_2, attr, attr),
-                    INDENT_1 + "}",
-                    ""]
+                setter_code = None
+                if attr_entry is not None and 'annotations' in attr_entry:
+                    if 'deprecated' in attr_entry['annotations']:
+                        attr_slot_to_getter[attr].append(INDENT_1 + "@Deprecated")
+                    if 'allowed' in attr_entry['annotations']:
+                        setter_code = \
+                            [get_filled_allowed_code_template(
+                                attr, attr_entry['annotations']['allowed'], "SetWithAllowedClasses.java"), ""]
+                if not setter_code:
+                    setter_code = \
+                        ["{}public void set{}({} {}) {{".format(INDENT_1, capitalize(attr), java_type, attr),
+                        "{}this.{} = {};".format(INDENT_2, attr, attr),
+                        INDENT_1 + "}", ""]
+                attr_slot_to_setter[attr] += setter_code
         if target_node_clazz:
             if 'include_fetch' in other_annotations:
                 attr_slot_to_getter[attr] += \
-                    [get_filled_code_template(relationship_clazz, target_node_clazz, attr, "RelationshipFetch.java"), ""]
+                    [get_filled_relationship_code_template(relationship_clazz, target_node_clazz, attr, "RelationshipFetch.java"), ""]
             if 'include_stoichiometry' in other_annotations:
                 getter_template_file = "RelationshipGet.java"
                 setter_template_file = "RelationshipSet.java"
@@ -328,14 +338,14 @@ def get_class_attributes_slots(clazz, class_entry, schema_slots, annot_attr2clas
                 getter_template_file = "RelationshipGetNoStoichiometry.java"
                 setter_template_file = "RelationshipSetNoStoichiometry.java"
             attr_slot_to_getter[attr] += \
-                [get_filled_code_template(relationship_clazz, target_node_clazz, attr, getter_template_file), ""]
+                [get_filled_relationship_code_template(relationship_clazz, target_node_clazz, attr, getter_template_file), ""]
             if 'no_list_setter' not in other_annotations:
                 attr_slot_to_setter[attr] += \
-                    [get_filled_code_template(relationship_clazz, target_node_clazz, attr, setter_template_file), ""]
+                    [get_filled_relationship_code_template(relationship_clazz, target_node_clazz, attr, setter_template_file), ""]
 
-        attr_slot_to_lines[attr] += ["{}private{}{} {}{};".format(
+        attr_slot_to_lines[attr] += ["{}private{}{} {}{};".format(INDENT_1,
                                          get_keywords(other_annotations, ["static", "final", "transient"]),
-                                         INDENT_1, java_type, attr, value),
+                                         java_type, attr, value),
                                      ""]
 
     for attr_slot in sorted(list(attr_slot_to_lines.keys())):
@@ -424,15 +434,34 @@ def get_comparable_methods_for_relationship_class(clazz, class_entry):
         ret = ret.replace("@RelationshipClass@", clazz)
     return ret
 
-def get_filled_code_template(relationship_clazz, target_node_clazz, attr, template_file_name):
+def get_filled_relationship_code_template(relationship_clazz, target_node_clazz, attr, template_file_name):
     fh = os.path.join("code_templates", template_file_name)
     with open(fh, 'r') as additional_content_file:
         ret = additional_content_file.read()
-    ret = ret.replace("@RelationshipClass@", relationship_clazz)
-    ret = ret.replace("@TargetNodeClass@", target_node_clazz)
-    ret = ret.replace("@targetNodeClass@", lower_case(target_node_clazz))
-    ret = ret.replace("@attribute@", attr)
-    ret = ret.replace("@Attribute@", capitalize(attr))
+        ret = ret.replace("@RelationshipClass@", relationship_clazz)
+        ret = ret.replace("@TargetNodeClass@", target_node_clazz)
+        ret = ret.replace("@targetNodeClass@", lower_case(target_node_clazz))
+        ret = ret.replace("@attribute@", attr)
+        ret = ret.replace("@Attribute@", capitalize(attr))
+    return ret
+
+def get_filled_allowed_code_template(attr, allowed_annot, template_file_name):
+    allowed_classes_str = findall(r'^\{(.*)\}$', allowed_annot)[0]
+    allowed_classes = sub(r'\.class|\s', '', allowed_classes_str).split(",")
+    allowed_test_clauses = ""
+    for clazz in allowed_classes:
+        if allowed_test_clauses:
+            allowed_test_clauses += " || "
+        allowed_test_clauses += "{} instanceof {}".format(attr, clazz)
+    error_msg = "\" is none of: {}\"".format(", ".join(allowed_classes))
+
+    fh = os.path.join("code_templates", template_file_name)
+    with open(fh, 'r') as additional_content_file:
+        ret = additional_content_file.read()
+        ret = ret.replace("@attribute@", attr)
+        ret = ret.replace("@Attribute@", capitalize(attr))
+        ret = ret.replace("@allowed_test_clauses@", allowed_test_clauses)
+        ret = ret.replace("@error_msg@", error_msg)
     return ret
 
 
