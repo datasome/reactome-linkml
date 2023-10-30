@@ -289,7 +289,7 @@ def get_class_attributes_slots(clazz, class_entry, schema_slots, annot_attr2clas
             value = get_value(class_entry, attr, attr_entry)
         if 'getter_only' in other_annotations and other_annotations['getter_only']:
             # 'getter_only' means no variable - just a getter method returning a value (e.g. getExplanation())
-            attr_slot_to_lines[attr].append(INDENT_1 + "public {} get{}() {{".format(java_type, capitalize(attr)))
+            attr_slot_to_lines[attr].append("{}public {} get{}() {{".format(INDENT_1, java_type, capitalize(attr)))
             if not search("return", value):
                 value = "return {};".format(value)
             attr_slot_to_lines[attr].append(INDENT_2 + value)
@@ -300,13 +300,21 @@ def get_class_attributes_slots(clazz, class_entry, schema_slots, annot_attr2clas
         relationship_clazz, target_node_clazz = get_relationship_and_target_node_classs(attr_entry, schema_slots, classes)
         if 'transient' not in other_annotations and 'no_default_getter_setter' not in other_annotations:
             if not target_node_clazz and 'no_default_getter' not in other_annotations:
+                if attr_entry is not None and \
+                        'annotations' in attr_entry and \
+                        'deprecated' in attr_entry['annotations']:
+                    attr_slot_to_getter[attr].append(INDENT_1 + "@Deprecated")
                 attr_slot_to_getter[attr] += [
-                    INDENT_1 + "public {} get{}() {{ return {}; }}".format(java_type, capitalize(attr), attr),
+                    "{}public {} get{}() {{ return {}; }}".format(INDENT_1, java_type, capitalize(attr), attr),
                     ""]
             if not target_node_clazz or 'include_default_setter' in other_annotations:
+                if attr_entry is not None and \
+                        'annotations' in attr_entry and \
+                        'deprecated' in attr_entry['annotations']:
+                    attr_slot_to_getter[attr].append(INDENT_1 + "@Deprecated")
                 attr_slot_to_setter[attr] += [
-                    INDENT_1 + "public void set{}({} {}) {{".format(capitalize(attr), java_type, attr),
-                    INDENT_2 + "this.{} = {};".format(attr, attr),
+                    "{}public void set{}({} {}) {{".format(INDENT_1, capitalize(attr), java_type, attr),
+                    "{}this.{} = {};".format(INDENT_2, attr, attr),
                     INDENT_1 + "}",
                     ""]
         if target_node_clazz:
@@ -325,10 +333,9 @@ def get_class_attributes_slots(clazz, class_entry, schema_slots, annot_attr2clas
                 attr_slot_to_setter[attr] += \
                     [get_filled_code_template(relationship_clazz, target_node_clazz, attr, setter_template_file), ""]
 
-        attr_slot_to_lines[attr] += [INDENT_1 + \
-                                     "private{}{} {}{};".format(
+        attr_slot_to_lines[attr] += ["{}private{}{} {}{};".format(
                                          get_keywords(other_annotations, ["static", "final", "transient"]),
-                                         java_type, attr, value),
+                                         INDENT_1, java_type, attr, value),
                                      ""]
 
     for attr_slot in sorted(list(attr_slot_to_lines.keys())):
@@ -364,7 +371,7 @@ def get_value(class_entry, attr, attr_entry):
 
 
 def get_empty_constructor(clazz):
-    return INDENT_1 + "public {}() {{}}".format(clazz)
+    return "{}public {}() {{}}".format(INDENT_1, clazz)
 
 
 def get_parameterized_constructor(clazz, slots, class_entry, other_annotations):
@@ -382,11 +389,11 @@ def get_parameterized_constructor(clazz, slots, class_entry, other_annotations):
             else:
                 java_type = capitalize(range)
         if 'slots' in class_entry and parameter_name in class_entry['slots']:
-            ret = INDENT_1 + "public {}({} {}) {{ this.{} = {}; }}"\
-                .format(clazz, java_type, parameter_name, parameter_name, parameter_name)
+            ret = "{}public {}({} {}) {{ this.{} = {}; }}"\
+                .format(INDENT_1, clazz, java_type, parameter_name, parameter_name, parameter_name)
         else:
-            ret = INDENT_1 + "public {}({} {}) {{ super({}); }}" \
-                .format(clazz, java_type, parameter_name, parameter_name)
+            ret = "{}public {}({} {}) {{ super({}); }}" \
+                .format(INDENT_1, clazz, java_type, parameter_name, parameter_name)
     return ret
 
 
