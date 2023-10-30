@@ -1381,7 +1381,17 @@ classes:
       - web_schema
 
   #### Ontology ####
-  # TBC - deprecated/unused
+  Ontology:
+    is_a: DatabaseObject
+    annotations:
+      deprecated: true
+      node: true
+      suppress_warnings: "unused"
+      constructor_parameter: "ontology"
+    slots:
+      - ontology
+    in_subset:
+      - web_schema
 
   #### OtherEntity ####
   OtherEntity:
@@ -1851,6 +1861,7 @@ classes:
           type: "input"
           set: true
           include_fetch: true
+          include_stoichiometry: true
       output:
         multivalued: true
         range: Output
@@ -1858,6 +1869,8 @@ classes:
           type: "output"
           set: true
           include_fetch: true
+          include_stoichiometry: true
+          include_default_setter: true
       normalReaction:
         range: ReactionLikeEvent
         annotations:
@@ -2425,6 +2438,7 @@ classes:
       - web_schema
 
   #### Annotations classes - start ####
+  AnnotationBytesType:
   AnnotationLongType:
   Annotations:
     attributes:
@@ -2658,6 +2672,10 @@ slots:
       type: "modification"
   name:
     multivalued: true
+    annotations:
+      addedField: false
+  ontology:
+    range: AnnotationBytesType
     annotations:
       addedField: false
   order:

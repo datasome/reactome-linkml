@@ -41,7 +41,7 @@ VALUE_TO_JAVA_ENUM = {
 OTHER_ANNOTATIONS = ['abstract', 'implements', 'set', 'sorted_set', 'getter_only',
                      'static', 'final', 'transient', 'constructor_parameter',
                      'include_fetch', 'include_default_setter', 'no_default_getter_setter',
-                     'no_list_setter', 'include_stoichiometry']
+                     'no_default_getter', 'no_list_setter', 'include_stoichiometry']
 INDENT_0 = ""
 INDENT_1 = "    "
 INDENT_2 = "        "
@@ -259,6 +259,8 @@ def get_class_attributes_slots(clazz, class_entry, schema_slots, annot_attr2clas
             if 'range' in attr_entry:
                 if attr_entry['range'] == "AnnotationLongType":
                     java_type = "Long"
+                elif attr_entry['range'] == "AnnotationBytesType":
+                    java_type = "bytes[]"
                 else:
                     java_type = capitalize(attr_entry['range'])
                     if java_type in classes:
@@ -297,7 +299,7 @@ def get_class_attributes_slots(clazz, class_entry, schema_slots, annot_attr2clas
             value = " = {}".format(value)
         relationship_clazz, target_node_clazz = get_relationship_and_target_node_classs(attr_entry, schema_slots, classes)
         if 'transient' not in other_annotations and 'no_default_getter_setter' not in other_annotations:
-            if not target_node_clazz:
+            if not target_node_clazz and 'no_default_getter' not in other_annotations:
                 attr_slot_to_getter[attr] += [
                     INDENT_1 + "public {} get{}() {{ return {}; }}".format(java_type, capitalize(attr), attr),
                     ""]
@@ -375,6 +377,8 @@ def get_parameterized_constructor(clazz, slots, class_entry, other_annotations):
             range = slot['range']
             if range == "AnnotationLongType":
                 java_type = "Long"
+            elif range == "AnnotationBytesType":
+                java_type = "bytes[]"
             else:
                 java_type = capitalize(range)
         if 'slots' in class_entry and parameter_name in class_entry['slots']:
@@ -411,7 +415,7 @@ def get_comparable_methods_for_relationship_class(clazz, class_entry):
         with open(fh, 'r') as additional_content_file:
             ret = additional_content_file.read()
         ret = ret.replace("@RelationshipClass@", clazz)
-        return ret
+    return ret
 
 def get_filled_code_template(relationship_clazz, target_node_clazz, attr, template_file_name):
     fh = os.path.join("code_templates", template_file_name)
