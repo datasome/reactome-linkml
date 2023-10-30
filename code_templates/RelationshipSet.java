@@ -1,4 +1,4 @@
-    public void set@Attribute@(List<@TargetNodeClass@> hasComponent) {
+    public void set@Attribute@(List<@TargetNodeClass@> @attribute@) {
         if (@attribute@ == null) return;
         Map<Long, @RelationshipClass@> map = new LinkedHashMap<>();
         int order = 0;
