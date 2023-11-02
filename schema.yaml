@@ -367,6 +367,7 @@ classes:
           category: all
           type: "hasComponent"
           sorted_set: true
+          include_stoichiometry: true
       stoichiometryKnown:
         range: boolean
         annotations:
@@ -379,6 +380,8 @@ classes:
           constraint: NOMANUALEDIT
           type: "includedLocation"
           sorted_set: true
+          include_default_setter: true
+          no_list_setter: true
     in_subset:
       - curator_schema_only
 
@@ -459,7 +462,7 @@ classes:
     description: "Not available"
     annotations:
       abstract: true
-      constructor_parameter: "dbId"
+      constructor_parameter: "DB_ID"
       implements: "Serializable, Comparable<DatabaseObject>, DatabaseObjectLike"
       node: true
       generator: "ObjectIdGenerators.PropertyGenerator.class"
@@ -479,12 +482,14 @@ classes:
           override: false
     attributes:
       isLoaded:
+        range: boolean
+        ifabsent: false
         annotations:
           reactome_transient: true
           transient: true
-        range: boolean
       preventLazyLoading:
         range: boolean
+        ifabsent: false
         annotations:
           reactome_transient: true
           transient: true
@@ -2473,7 +2478,7 @@ classes:
       node: true
       suppress_warnings: "unused"
     slots:
-      - classname
+      - className
       - compartment
       - explanation
       - species
@@ -2695,6 +2700,19 @@ classes:
       id:
         range: boolean
       implements:
+      # For relationship fields that are Sets, include in class a setter method taking Set as a parameter
+      # (instead of a List)
+      include_default_setter:
+          range: boolean
+      # For non-relationship fields, do not output any getter or setter
+      # A non-standard getter and/or setter methods may have been provided in additional_class_content directory
+      # (e.g. getPublications() for publicationAuthorList in Person class)
+      no_default_getter_setter:
+          range: boolean
+      no_list_setter:
+          range: boolean
+      include_stoichiometry:
+          range: boolean
       json_identity_info:
         range: JsonIdentityInfo
       json_ignore:
@@ -2849,8 +2867,12 @@ slots:
   DB_ID:
     range: AnnotationLongType
     annotations:
-      constraint: NOMANUALEDIT
       id: true
+  dbId:
+    # dbId slot is needed only because in graph-core-curator parameterized constructors
+    # in various subclasses of DatabaseObject use dbId (instead of DB_ID) as a parameter
+    # name
+    range: AnnotationLongType
   definition:
     annotations:
       constraint: OPTIONAL

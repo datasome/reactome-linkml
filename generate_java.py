@@ -5,8 +5,11 @@ import os
 from re import sub, findall, search
 import copy
 
-OUTPUT_DIR = "graph-core-classes"
-JAVA_PACKAGE = "package org.reactome.server.graph.domain.model;"
+# OUTPUT_DIR = "graph-core-classes"
+# JAVA_PACKAGE = "package org.reactome.server.graph.domain.model;"
+OUTPUT_DIR = "curator-graph-core-classes"
+JAVA_PACKAGE = "package org.reactome.server.graph.curator.domain.model;"
+
 
 CLASS_TO_PACKAGE_NAME = {
     "DatabaseObjectLike": "org.reactome.server.graph.domain.result",
@@ -295,7 +298,7 @@ def get_class_attributes_slots(clazz, class_entry, schema_slots, annot_attr2clas
             attr_slot_to_lines[attr].append(INDENT_2 + value)
             attr_slot_to_lines[attr] += [INDENT_1 + "}", ""]
             continue
-        else:
+        elif value is not None and value != "":
             value = " = {}".format(value)
         relationship_clazz, target_node_clazz = get_relationship_and_target_node_classs(attr_entry, schema_slots, classes)
         if 'transient' not in other_annotations and 'no_default_getter_setter' not in other_annotations:
@@ -358,7 +361,7 @@ def get_class_attributes_slots(clazz, class_entry, schema_slots, annot_attr2clas
 
 
 def get_value(class_entry, attr, attr_entry):
-    ret = None
+    ret = ""
     if attr == "explanation":
         if 'description' in class_entry:
             ret = "\"{}\"".format(class_entry['description'])
@@ -366,12 +369,14 @@ def get_value(class_entry, attr, attr_entry):
         value = None
         if 'ifabsent' in attr_entry:
             value = attr_entry['ifabsent']
+            if type(value) == bool:
+                value = str(value).lower()
         elif 'slot_usage' in class_entry \
             and attr in class_entry['slot_usage'] \
             and 'ifabsent' in class_entry['slot_usage'][attr]:
                 value = class_entry['slot_usage'][attr]['ifabsent']
-        if value:
-            if search("^(string|int)", value):
+        if value is not None:
+            if search("^(string|int)", str(value)):
                 ret = findall(r'.*\((.*)\)', value)[0]
                 if value.startswith("string"):
                     ret = "\"{}\"".format(ret)
@@ -419,7 +424,7 @@ def find(name, path):
 
 def get_additional_class_content(clazz):
     ret = None
-    fh = find("{}.java".format(clazz), "additional_class_content")
+    fh = find("{}.java".format(clazz), os.path.join("additional_class_content", OUTPUT_DIR))
     if fh:
         with open(fh, 'r') as additional_content_file:
             ret = additional_content_file.read()
@@ -465,7 +470,8 @@ def get_filled_allowed_code_template(attr, allowed_annot, template_file_name):
     return ret
 
 
-with open("schema.web.yaml", "r") as stream:
+# with open("schema.web.yaml", "r") as stream:
+with open("schema.yaml", "r") as stream:
     try:
         data = yaml.safe_load(stream)
         classes = data['classes']
@@ -478,8 +484,11 @@ with open("schema.web.yaml", "r") as stream:
             annotations_imports = set([])
             class_entry = classes[clazz]
             package = get_package(class_entry)
-            annot_lines, other_annotations = get_annotations(class_entry['annotations'], annot_attr2class, INDENT_0)
-            annotations_imports.update(get_annotation_imports(class_entry['annotations'], annot_attr2class))
+            annot_lines = []
+            other_annotations = []
+            if 'annotations' in class_entry:
+                annot_lines, other_annotations = get_annotations(class_entry['annotations'], annot_attr2class, INDENT_0)
+                annotations_imports.update(get_annotation_imports(class_entry['annotations'], annot_attr2class))
             class_declaration = "public{}class {}".format(get_keywords(other_annotations, ["abstract"]), clazz)
             class_declaration += get_extends(class_entry)
             class_declaration += get_implements(clazz, classes, other_annotations, annotations_imports)

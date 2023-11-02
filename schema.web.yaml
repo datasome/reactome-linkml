@@ -390,13 +390,15 @@ classes:
         annotations:
           override: false
     attributes:
+      range: boolean
+      ifabsent: false
       isLoaded:
         annotations:
           reactome_transient: true
           transient: true
-        range: boolean
       preventLazyLoading:
         range: boolean
+        ifabsent: false
         annotations:
           reactome_transient: true
           transient: true
