@@ -11,6 +11,7 @@ if len(sys.argv) < 2:
     sys.exit()
 schema_file_name = sys.argv[1]
 
+GETTER_ONLY_ANNOT_SUFFIX = "_getter"
 if schema_file_name == "schema.web.yaml":
     OUTPUT_DIR = "graph-core-classes"
     JAVA_PACKAGE = "package org.reactome.server.graph.domain.model;"
@@ -151,7 +152,6 @@ def map_annotation_attributes_to_classes(annotations, classes):
                         annot_attr2class[annot_attr] = range
     return annot_attr2class
 
-
 def get_annotation_imports(annotations, annot_attr2class):
     annotations_imports = set([])
     for annot_attr in annotations:
@@ -160,6 +160,8 @@ def get_annotation_imports(annotations, annot_attr2class):
             annotations_imports.add('import {}.{};'.format(CLASS_TO_PACKAGE_NAME[annot_class], annot_class))
         else:
             if annot_attr not in OTHER_ANNOTATIONS:
+                if annot_attr.endswith(GETTER_ONLY_ANNOT_SUFFIX):
+                    annot_attr = annot_attr.replace(GETTER_ONLY_ANNOT_SUFFIX,"")
                 annot_class = capitalize(annot_attr)
                 if annot_class in CLASS_TO_PACKAGE_NAME:
                     annotations_imports.add(
@@ -196,16 +198,17 @@ def get_annotations(annotations, annot_attr2class, indent):
                 class_to_annotation_clauses[annot_class].append("{} = {}".format(annot_attr, value))
         else:
             if annotations[annot_attr]:
-                if annot_attr not in OTHER_ANNOTATIONS:
-                    annot_class = capitalize(annot_attr)
-                    value = annotations[annot_attr]
-                    if value and not type(value) == bool:
-                        value = quote_value(value)
-                        lines.append("{}@{}({})".format(indent, annot_class, value))
+                if not annot_attr.endswith(GETTER_ONLY_ANNOT_SUFFIX):
+                    if annot_attr not in OTHER_ANNOTATIONS:
+                        annot_class = capitalize(annot_attr)
+                        value = annotations[annot_attr]
+                        if value and not type(value) == bool:
+                            value = quote_value(value)
+                            lines.append("{}@{}({})".format(indent, annot_class, value))
+                        else:
+                            lines.append("{}@{}".format(indent, annot_class))
                     else:
-                        lines.append("{}@{}".format(indent, annot_class))
-                else:
-                    other_annotations[annot_attr] = annotations[annot_attr]
+                        other_annotations[annot_attr] = annotations[annot_attr]
 
     for annot_class in class_to_annotation_clauses:
         if class_to_annotation_clauses[annot_class]:
@@ -319,6 +322,16 @@ def get_class_attributes_slots(clazz, class_entry, schema_slots, annot_attr2clas
                             if 'ReactomeAllowedClasses' in java_annot:
                                 break
                         attr_slot_to_getter[attr].append(java_annot)
+                    else:
+                        # Process any getter-only annotations
+                        for annot in attr_entry['annotations']:
+                            if annot.endswith(GETTER_ONLY_ANNOT_SUFFIX):
+                                annot_attr = annot.replace(GETTER_ONLY_ANNOT_SUFFIX, "")
+                                annot_class = capitalize(annot_attr)
+                                for java_annot in annot_lines:
+                                    if annot_class in java_annot:
+                                        break
+                                attr_slot_to_getter[attr].append(INDENT_1 + "@" + annot_class)
                 attr_slot_to_getter[attr] += [
                     "{}public {} get{}() {{ return {}; }}".format(INDENT_1, java_type, capitalize(attr), attr),
                     ""]
@@ -350,6 +363,13 @@ def get_class_attributes_slots(clazz, class_entry, schema_slots, annot_attr2clas
             else:
                 getter_template_file = "RelationshipGetNoStoichiometry.java"
                 setter_template_file = "RelationshipSetNoStoichiometry.java"
+            # Process any getter-only annotations
+            for annot in attr_entry['annotations']:
+                if annot.endswith(GETTER_ONLY_ANNOT_SUFFIX):
+                    annot_attr = annot.replace(GETTER_ONLY_ANNOT_SUFFIX, "")
+                    annot_class = capitalize(annot_attr)
+                    attr_slot_to_getter[attr].append(INDENT_1 + "@" + annot_class)
+
             attr_slot_to_getter[attr] += \
                 [get_filled_relationship_code_template(
                     relationship_clazz, target_node_clazz, attr, getter_template_file, dbid_variable_name),

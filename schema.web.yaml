@@ -1470,10 +1470,14 @@ classes:
         range: integer
         annotations:
           reactome_transient: true
+          reactome_schema_ignore_getter: true
+          json_ignore_getter: true
       diagramHeight:
         range: integer
         annotations:
           reactome_transient: true
+          reactome_schema_ignore_getter: true
+          json_ignore_getter: true
       isCanonical:
         annotations:
           addedField: false
@@ -1490,6 +1494,8 @@ classes:
           type: "hasEncapsulatedEvent"
           reactome_relationship: true
           sorted_set: true
+          reactome_schema_ignore_getter: true
+          json_ignore_getter: true
       normalPathway:
         range: Pathway
         annotations:
@@ -2042,10 +2048,11 @@ classes:
       - formula
     attributes:
       trivial:
-        multivalued: true
         range: boolean
         annotations:
           addedField: true
+          reactome_schema_ignore_getter: true
+          json_ignore_getter: true
     in_subset:
       - web_schema
 
