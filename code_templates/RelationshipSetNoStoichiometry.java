@@ -6,7 +6,7 @@
             relInst = new @RelationshipClass@();
             relInst.set@TargetNodeClass@(@targetNodeClass@);
             relInst.setOrder(order++);
-            map.put(@targetNodeClass@.getDbId(), relInst);
+            map.put(@targetNodeClass@.get@DbId@(), relInst);
         }
         this.@attribute@ = new TreeSet<>(map.values());
     }

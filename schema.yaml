@@ -808,6 +808,7 @@ classes:
           category: all
           type: "hasModifiedResidue"
           sorted_set: true
+          include_stoichiometry: true
     in_subset:
       - curator_schema_only
 
@@ -999,6 +1000,8 @@ classes:
           category: all
           type: "output"
           set: true
+          no_list_setter: true
+          include_default_setter: true
     in_subset:
       - curator_schema_only
 
@@ -1258,6 +1261,7 @@ classes:
   HasCandidate:
     annotations:
       relationship_properties: true
+      implements: "Comparable<HasCandidate>"
     slots:
       - id
       - order
@@ -1270,6 +1274,7 @@ classes:
   HasCompartment:
     annotations:
       relationship_properties: true
+      implements: "Comparable<HasCompartment>"
     slots:
       - id
       - order
@@ -1285,6 +1290,7 @@ classes:
   HasComponent:
     annotations:
       relationship_properties: true
+      implements: "Comparable<HasComponent>"
     slots:
       - id
       - order
@@ -1330,6 +1336,7 @@ classes:
   HasMember:
     annotations:
       relationship_properties: true
+      implements: "Comparable<HasMember>"
     slots:
       - id
       - order
@@ -1342,6 +1349,7 @@ classes:
   HasModifiedResidue:
     annotations:
       relationship_properties: true
+      implements: "Comparable<HasModifiedResidue>"
     slots:
       - id
       - order
@@ -1666,6 +1674,34 @@ classes:
     in_subset:
       - curator_schema_only
 
+  #### PathwayDiagram ####
+  PathwayDiagram:
+    is_a: DatabaseObject
+    attributes:
+      width:
+        range: integer
+        annotations:
+          constraint: REQUIRED
+          addedField: false
+      height:
+        range: integer
+        annotations:
+          constraint: REQUIRED
+          addedField: false
+      storedATXML:
+        annotations:
+          constraint: REQUIRED
+          addedField: false
+      representedPathway:
+        range: RepresentedPathway
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "representedPathway"
+          sorted_set: true
+    in_subset:
+      - curator_schema_only
+
   #### Person ####
   Person:
     is_a: DatabaseObject
@@ -1805,6 +1841,7 @@ classes:
           category: all
           type: "repeatedUnit"
           sorted_set: true
+          include_stoichiometry: true
     in_subset:
       - curator_schema_only
 
@@ -2004,6 +2041,7 @@ classes:
           category: all
           type: "input"
           set: true
+          include_stoichiometry: true
       output:
         multivalued: true
         range: Output
@@ -2012,6 +2050,7 @@ classes:
           category: all
           type: "output"
           set: true
+          include_stoichiometry: true
       normalReaction:
         range: ReactionlikeEvent
         annotations:
@@ -2042,7 +2081,6 @@ classes:
         annotations:
           constraint: OPTIONAL
           type: "hasInteraction"
-          set: true
       reactionType:
         multivalued: true
         range: ReactionType
@@ -2335,7 +2373,6 @@ classes:
       - summation
     attributes:
       activeUnit:
-        # TBC - Note List in Java class (compared to set in CatalystActivity)
         multivalued: true
         range: PhysicalEntity
         annotations:
@@ -2408,6 +2445,7 @@ classes:
   RepeatedUnit:
     annotations:
       relationship_properties: true
+      implements: "Comparable<RepeatedUnit>"
     slots:
       - id
       - order

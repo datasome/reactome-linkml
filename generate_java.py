@@ -4,12 +4,19 @@ import yaml
 import os
 from re import sub, findall, search
 import copy
+import sys
 
-# OUTPUT_DIR = "graph-core-classes"
-# JAVA_PACKAGE = "package org.reactome.server.graph.domain.model;"
-OUTPUT_DIR = "curator-graph-core-classes"
-JAVA_PACKAGE = "package org.reactome.server.graph.curator.domain.model;"
+if len(sys.argv) < 2:
+    print('Specify schema file: schema.yaml or schema.web.yaml')
+    sys.exit()
+schema_file_name = sys.argv[1]
 
+if schema_file_name == "schema.web.yaml":
+    OUTPUT_DIR = "graph-core-classes"
+    JAVA_PACKAGE = "package org.reactome.server.graph.domain.model;"
+else:
+    OUTPUT_DIR = "curator-graph-core-classes"
+    JAVA_PACKAGE = "package org.reactome.server.graph.curator.domain.model;"
 
 CLASS_TO_PACKAGE_NAME = {
     "DatabaseObjectLike": "org.reactome.server.graph.domain.result",
@@ -330,10 +337,13 @@ def get_class_attributes_slots(clazz, class_entry, schema_slots, annot_attr2clas
                         "{}this.{} = {};".format(INDENT_2, attr, attr),
                         INDENT_1 + "}", ""]
                 attr_slot_to_setter[attr] += setter_code
+        dbid_variable_name = get_dbid_variable_name(schema_slots)
         if target_node_clazz:
             if 'include_fetch' in other_annotations:
                 attr_slot_to_getter[attr] += \
-                    [get_filled_relationship_code_template(relationship_clazz, target_node_clazz, attr, "RelationshipFetch.java"), ""]
+                    [get_filled_relationship_code_template(
+                        relationship_clazz, target_node_clazz, attr, "RelationshipFetch.java", dbid_variable_name),
+                        ""]
             if 'include_stoichiometry' in other_annotations:
                 getter_template_file = "RelationshipGet.java"
                 setter_template_file = "RelationshipSet.java"
@@ -341,10 +351,14 @@ def get_class_attributes_slots(clazz, class_entry, schema_slots, annot_attr2clas
                 getter_template_file = "RelationshipGetNoStoichiometry.java"
                 setter_template_file = "RelationshipSetNoStoichiometry.java"
             attr_slot_to_getter[attr] += \
-                [get_filled_relationship_code_template(relationship_clazz, target_node_clazz, attr, getter_template_file), ""]
+                [get_filled_relationship_code_template(
+                    relationship_clazz, target_node_clazz, attr, getter_template_file, dbid_variable_name),
+                    ""]
             if 'no_list_setter' not in other_annotations:
                 attr_slot_to_setter[attr] += \
-                    [get_filled_relationship_code_template(relationship_clazz, target_node_clazz, attr, setter_template_file), ""]
+                    [get_filled_relationship_code_template(
+                        relationship_clazz, target_node_clazz, attr, setter_template_file, dbid_variable_name),
+                        ""]
 
         attr_slot_to_lines[attr] += ["{}private{}{} {}{};".format(INDENT_1,
                                          get_keywords(other_annotations, ["static", "final", "transient"]),
@@ -439,7 +453,8 @@ def get_comparable_methods_for_relationship_class(clazz, class_entry):
         ret = ret.replace("@RelationshipClass@", clazz)
     return ret
 
-def get_filled_relationship_code_template(relationship_clazz, target_node_clazz, attr, template_file_name):
+def get_filled_relationship_code_template(
+        relationship_clazz, target_node_clazz, attr, template_file_name, dbid_variable_name):
     fh = os.path.join("code_templates", template_file_name)
     with open(fh, 'r') as additional_content_file:
         ret = additional_content_file.read()
@@ -448,6 +463,7 @@ def get_filled_relationship_code_template(relationship_clazz, target_node_clazz,
         ret = ret.replace("@targetNodeClass@", lower_case(target_node_clazz))
         ret = ret.replace("@attribute@", attr)
         ret = ret.replace("@Attribute@", capitalize(attr))
+        ret = ret.replace("@DbId@", capitalize(dbid_variable_name))
     return ret
 
 def get_filled_allowed_code_template(attr, allowed_annot, template_file_name):
@@ -469,9 +485,13 @@ def get_filled_allowed_code_template(attr, allowed_annot, template_file_name):
         ret = ret.replace("@error_msg@", error_msg)
     return ret
 
+def get_dbid_variable_name(slots):
+    if "DB_ID" in slots:
+        return "DB_ID"
+    else:
+        return "dbId"
 
-# with open("schema.web.yaml", "r") as stream:
-with open("schema.yaml", "r") as stream:
+with open(schema_file_name, "r") as stream:
     try:
         data = yaml.safe_load(stream)
         classes = data['classes']
