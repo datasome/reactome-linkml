@@ -1,3 +1,13 @@
+    public List<Person> getAuthor() {
+        if (author == null) return null;
+        List<Person> rtn = new ArrayList<>();
+        for (PublicationAuthor author : author) {
+            rtn.add(author.getAuthor());
+        }
+        return rtn;
+    }
+
+
     public void setAuthor(List<Person> author) {
         this.author = new TreeSet<>();
         int order = 0;

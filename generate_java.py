@@ -370,11 +370,11 @@ def get_class_attributes_slots(clazz, class_entry, schema_slots, annot_attr2clas
                     annot_class = capitalize(annot_attr)
                     attr_slot_to_getter[attr].append(INDENT_1 + "@" + annot_class)
 
-            attr_slot_to_getter[attr] += \
-                [get_filled_relationship_code_template(
-                    relationship_clazz, target_node_clazz, attr, getter_template_file, dbid_variable_name),
-                    ""]
-            if 'no_list_setter' not in other_annotations:
+            if 'no_list_getter_setter' not in other_annotations:
+                attr_slot_to_getter[attr] += \
+                    [get_filled_relationship_code_template(
+                        relationship_clazz, target_node_clazz, attr, getter_template_file, dbid_variable_name),
+                        ""]
                 attr_slot_to_setter[attr] += \
                     [get_filled_relationship_code_template(
                         relationship_clazz, target_node_clazz, attr, setter_template_file, dbid_variable_name),

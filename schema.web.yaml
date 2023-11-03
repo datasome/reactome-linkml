@@ -1793,7 +1793,7 @@ classes:
         range: PublicationAuthor
         annotations:
           sorted_set: true
-          no_list_setter: true
+          no_list_getter_setter: true
     attributes:
       title:
         annotations:
@@ -2476,7 +2476,10 @@ classes:
       # (e.g. getPublications() for publicationAuthorList in Person class)
       no_default_getter_setter:
         range: boolean
-      no_list_setter:
+      # This is needed because getter method for attribute person in PublicationAuthor is non-standard: getAuthor()
+      # instead of getPerson(). This means that we need to pull the getter/setter methods for Publication class
+      # verbatim from additional_class_content instead of generating them using standard templates.
+      no_list_getter_setter:
         range: boolean
       include_stoichiometry:
         range: boolean
