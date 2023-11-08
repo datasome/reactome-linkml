@@ -53,18 +53,24 @@ OTHER_ANNOTATIONS = ['abstract', 'implements', 'set', 'sorted_set', 'getter_only
                      'static', 'final', 'transient', 'constructor_parameter',
                      'include_fetch', 'include_default_setter', 'no_default_getter_setter',
                      'no_default_getter', 'no_list_setter', 'include_stoichiometry']
+
+# Indentation used in generated java classes
 INDENT_0 = ""
 INDENT_1 = INDENT_0 + "    "
 INDENT_2 = INDENT_1 + "    "
 
-def is_class_relationship(class_entry):
+
+def is_class_relationship(class_entry: dict) -> bool:
+    """ Return true if class_entry represents a relationship properties class """
     if 'annotations' in class_entry:
         class_annotations = class_entry['annotations']
-        if 'relationship_properties' in class_annotations and class_annotations['relationship_properties']:
+        if 'relationship_properties' in class_annotations and class_annotations['relationship_properties'] is True:
             return True
     return False
 
-def get_package(class_entry):
+
+def get_package(class_entry: dict) -> str:
+    """ Return java package for class represented by class_entry """
     pkg_root = "org.reactome.server.graph.domain"
     if is_class_relationship(class_entry):
         pkg_suffix = "relationship"
@@ -72,21 +78,27 @@ def get_package(class_entry):
         pkg_suffix = "model"
     return "{}.{}".format(pkg_root, pkg_suffix)
 
-def get_keywords(class_annotations, keywords):
+
+def get_keywords(class_annotations: dict, keywords: list) -> str:
+    """ Return a string of keywords in the order they appear in keywords list, provided they appear in class_annotations """
     ret = " "
     for keyword in keywords:
-        if keyword in class_annotations and class_annotations[keyword]:
+        if keyword in class_annotations and class_annotations[keyword] is True:
             ret += '{} '.format(keyword)
     return ret
 
-def get_extends(class_entry):
+
+def get_extends(class_entry: dict) -> str:
+    """ Get java extends clause for class_entry"""
     ret = ""
     if 'is_a' in class_entry:
         ret = ' extends {}'.format(class_entry['is_a'])
     return ret
 
 
-def get_implements(clazz, classes, class_annotations, annotations_imports):
+def get_implements(clazz: str, classes: dict, class_annotations: dict, annotations_imports: set) -> (str, set):
+    """Return implements clause for class clazz and annotations_imports, with any new import statements added
+        for classes inside the implements clause """
     ret = ""
     if 'implements' in class_annotations:
         implements_clause = class_annotations['implements']
@@ -94,42 +106,49 @@ def get_implements(clazz, classes, class_annotations, annotations_imports):
 
         # Add import statements for classes inside implements clause
         for entry in implements_clause.replace(" ", "").split(","):
+
+            # First remove any java generics in order to find out the implemented class
             clazzes = findall(r'\<(.*)\>', entry)
             if clazzes:
-                implementing_clazz = clazzes[0]
+                implemented_clazz = clazzes[0]
             else:
-                implementing_clazz = entry
-            if implementing_clazz in CLASS_TO_PACKAGE_NAME:
+                implemented_clazz = entry
+
+            if implemented_clazz in CLASS_TO_PACKAGE_NAME:
                 annotations_imports.add('import {}.{};'
-                                        .format(CLASS_TO_PACKAGE_NAME[implementing_clazz], implementing_clazz))
+                                        .format(CLASS_TO_PACKAGE_NAME[implemented_clazz], implemented_clazz))
             else:
                 clazz_package = get_package(classes[clazz])
-                implementing_clazz_entry = get_package(classes[implementing_clazz])
-                if clazz_package != implementing_clazz_entry:
+                implemented_clazz_package = get_package(classes[implemented_clazz])
+                if clazz_package != implemented_clazz_package:
+                    # If the package of the class within Implements clause is not the same as that of clazz,
+                    # add an import statement for the implemented clazz
                     annotations_imports.add(
-                        'import {}.{};'.format(clazz_package, clazz))
-    return ret
+                        'import {}.{};'.format(implemented_clazz_package, implemented_clazz))
+    return ret, annotations_imports
 
 
-def add_collection_if_applicable(java_type, attr_entry, attr_annotations, annotations_imports):
-    ret = java_type
+def add_collection_if_applicable(java_type: str, attr_entry: dict,
+                                     attr_annotations: dict, annotations_imports: set) -> (str, set):
+    """ Add import java.util.* import to annotations_imports; wrap java_type in Java collection generics if
+        add entry multivalued """
+    ret_java_type = java_type
     if 'multivalued' in attr_entry:
         annotations_imports.add('java.util.*;')
         for collection_type in ['set', 'sorted_set']:
             if collection_type in attr_annotations and attr_annotations[collection_type]:
-                ret = "{}<{}>".format(capitalize(collection_type), java_type)
+                ret_java_type = "{}<{}>".format(capitalize(collection_type), java_type)
                 break
-        if ret == java_type:
+        if ret_java_type == java_type:
             # No set/sorted_set annotation was found => we default to collection type: List
             ret = "{}<{}>".format("List", java_type)
-    return ret
+    return ret_java_type, annotations_imports
 
 
-def isClassName(label):
-    return label[0].isupper()
-
-
-def capitalize(attr):
+def capitalize(attr: str) -> str:
+    """ Capitalize linkml annotation or attr, removing any underscores, e.g.
+        reactome_schema_ignore => ReactomeSchemaIgnore and dbId => DbId
+        """
     if not attr[0].isupper():
         if "_" in attr:
             return sub(r"_+", " ", attr).title().replace(" ", "")
@@ -137,22 +156,29 @@ def capitalize(attr):
             attr = attr[0].upper() + attr[1:]
     return attr
 
-def lower_case(attr):
+def lower_case(attr: str) -> str:
+    """ Lower-case attr """
     return attr[0].lower() + attr[1:]
 
 
-def map_annotation_attributes_to_classes(annotations, classes):
+def map_annotation_attributes_to_classes(annotations: dict, classes: dict) -> dict:
+    """ Return map of attributes in annotations to their corresponding classes """
     annot_attr2class = {}
     for annotation in annotations:
         if annotations[annotation] is not None:
             # N.B. annotations[annotation] is None means its range is str (hence doesn't go into annot_attr2class)
             range = annotations[annotation]['range']
-            if isClassName(range):
-                    for annot_attr in classes[range]['attributes']:
-                        annot_attr2class[annot_attr] = range
+            if range[0].isupper():
+                # The first letter is upper case - it must be a class name
+                for annot_attr in classes[range]['attributes']:
+                    # e.g. for annotation = json_identity_info and range = JsonIdentityInfo:
+                    # classes[range]['attributes'] = ['generator','property']
+                    annot_attr2class[annot_attr] = range
     return annot_attr2class
 
-def get_annotation_imports(annotations, annot_attr2class):
+
+def get_annotation_imports(annotations: dict, annot_attr2class: dict) -> set:
+    """ Return annotation import statements for each annotation in annotations """
     annotations_imports = set([])
     for annot_attr in annotations:
         if annot_attr in annot_attr2class:
@@ -160,7 +186,10 @@ def get_annotation_imports(annotations, annot_attr2class):
             annotations_imports.add('import {}.{};'.format(CLASS_TO_PACKAGE_NAME[annot_class], annot_class))
         else:
             if annot_attr not in OTHER_ANNOTATIONS:
+                # annotations in OTHER_ANNOTATIONS are java code-specific instructions and don't need a class import
                 if annot_attr.endswith(GETTER_ONLY_ANNOT_SUFFIX):
+                    # Some annotations are tagged for getters only via GETTER_ONLY_ANNOT_SUFFIX -
+                    # we need to remove the suffix befor we can look up the associated class in  CLASS_TO_PACKAGE_NAME
                     annot_attr = annot_attr.replace(GETTER_ONLY_ANNOT_SUFFIX,"")
                 annot_class = capitalize(annot_attr)
                 if annot_class in CLASS_TO_PACKAGE_NAME:
@@ -169,14 +198,30 @@ def get_annotation_imports(annotations, annot_attr2class):
     return annotations_imports
 
 def quote_value(value):
+    """ Return quoted value if it doesn't start with "{" (e.g. the value for suppress_warnings in ChemicalDrug);
+        otherwise return value as is.
+    """
     if not search(r"{.*}", value):
         return "\"{}\"".format(value)
     return value
 
-def get_annotations(annotations, annot_attr2class, indent):
+def get_annotations(annotations: dict, annot_attr2class: dict, indent: str) -> (list, dict):
+    """ Based on (class/attr) annotations, return in the first element of return tuple:
+        a list of java annotation statements.
+        Any annotations you come across that exists in OTHER_ANNOTATIONS, return in the
+        second element of return tuple: dict
+    """
+
+    """
+    Some annotation classes (e.g. @Relationship) have multiple attributes that each are assigned a value
+    within Java annotation (e.g. Regulation.java, authored attr:
+    @Relationship(type = "authored", direction = Relationship.Direction.INCOMING)
+    We need to store each such assignment clause for an annotation class within class_to_annotation_clauses[annot_class]
+    """
     class_to_annotation_clauses = {}
-    lines = []
+    ret_java_annotations = []
     other_annotations = {}
+
     for annot_attr in annotations:
         if annot_attr in annot_attr2class:
             annot_class = annot_attr2class[annot_attr]
@@ -185,8 +230,10 @@ def get_annotations(annotations, annot_attr2class, indent):
             value = annotations[annot_attr]
             if value:
                 if type(value) == bool:
+                    # Convert Python boolean to Java boolean
                     value = str(value).lower()
                 elif value in VALUE_TO_JAVA_ENUM:
+                    # Append value to Java enum if applicable
                     value = "{}.{}".format(VALUE_TO_JAVA_ENUM[value], value)
                 elif value.endswith(".class"):
                     # e.g. "ObjectIdGenerators.PropertyGenerator.class"
@@ -195,29 +242,39 @@ def get_annotations(annotations, annot_attr2class, indent):
                         'import {}.{};'.format(CLASS_TO_PACKAGE_NAME[value], value))
                 else:
                     value = quote_value(value)
+                # Store value assignment clause for annot_class
                 class_to_annotation_clauses[annot_class].append("{} = {}".format(annot_attr, value))
         else:
             if annotations[annot_attr]:
+                # annot_attr not in annot_attr2class
                 if not annot_attr.endswith(GETTER_ONLY_ANNOT_SUFFIX):
+                    # Ignore getter-only annotations here - they are processed within get_class_attributes_slots() method
                     if annot_attr not in OTHER_ANNOTATIONS:
+                        # For all non-OTHER_ANNOTATIONS, add java annotation statement to ret_java_annotations
                         annot_class = capitalize(annot_attr)
                         value = annotations[annot_attr]
                         if value and not type(value) == bool:
                             value = quote_value(value)
-                            lines.append("{}@{}({})".format(indent, annot_class, value))
+                            # E.g. @SuppressWarnings("unused")
+                            ret_java_annotations.append("{}@{}({})".format(indent, annot_class, value))
                         else:
-                            lines.append("{}@{}".format(indent, annot_class))
+                            # E.g. @Node
+                            ret_java_annotations.append("{}@{}".format(indent, annot_class))
                     else:
                         other_annotations[annot_attr] = annotations[annot_attr]
 
+    # Output java annotations involving annotation classes
     for annot_class in class_to_annotation_clauses:
         if class_to_annotation_clauses[annot_class]:
             annot_clauses = "({})".format(", ".join(class_to_annotation_clauses[annot_class]))
         else:
             annot_clauses = ""
-        lines.append("{}@{}{}".format(indent, annot_class, annot_clauses))
-    return lines, other_annotations
+        # E.g. @Relationship(type = "edited", direction = Relationship.Direction.INCOMING)
+        ret_java_annotations.append("{}@{}{}".format(indent, annot_class, annot_clauses))
+    return ret_java_annotations, other_annotations
 
+
+# TODO: Documentation TBC...
 def get_relationship_and_target_node_classs(attr_entry, schema_slots, classes):
     if attr_entry and 'range' in attr_entry:
         attr_range = attr_entry['range']
@@ -288,7 +345,8 @@ def get_class_attributes_slots(clazz, class_entry, schema_slots, annot_attr2clas
                 annot_lines, other_annotations = get_annotations(attr_entry['annotations'], annot_attr2class, INDENT_1)
                 attr_slot_to_lines[attr] = annot_lines
                 annotations_imports.update(get_annotation_imports(attr_entry['annotations'], annot_attr2class))
-                java_type = add_collection_if_applicable(java_type, attr_entry, other_annotations, annotations_imports)
+                java_type, annotations_imports = \
+                    add_collection_if_applicable(java_type, attr_entry, other_annotations, annotations_imports)
         else:
             java_type = "String"
 
@@ -531,7 +589,8 @@ with open(schema_file_name, "r") as stream:
                 annotations_imports.update(get_annotation_imports(class_entry['annotations'], annot_attr2class))
             class_declaration = "public{}class {}".format(get_keywords(other_annotations, ["abstract"]), clazz)
             class_declaration += get_extends(class_entry)
-            class_declaration += get_implements(clazz, classes, other_annotations, annotations_imports)
+            implement_clause, annotations_imports = get_implements(clazz, classes, other_annotations, annotations_imports)
+            class_declaration += implement_clause
             attr_slot_lines, getter_setter_lines, annotations_imports = \
                 get_class_attributes_slots(clazz, class_entry, slots, annot_attr2class, annotations_imports, classes)
             parameterized_constructor = get_parameterized_constructor(clazz, data['slots'], class_entry, other_annotations)
