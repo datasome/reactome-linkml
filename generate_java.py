@@ -205,11 +205,36 @@ def quote_value(value):
         return "\"{}\"".format(value)
     return value
 
-def get_annotations(annotations: dict, annot_attr2class: dict, indent: str) -> (list, dict):
+
+def format_value_for_java_annotation(value, annotations_imports: set) -> (str, set):
+    """ Return a tuple:
+        - value formatted for inclusion in java annotation;
+        - annotations_imports, with any new class imports added
+    """
+    if value:
+        if type(value) == bool:
+            # Convert Python boolean to Java boolean
+            value = str(value).lower()
+        elif value in VALUE_TO_JAVA_ENUM:
+            # Append value to Java enum if applicable
+            value = "{}.{}".format(VALUE_TO_JAVA_ENUM[value], value)
+        elif value.endswith(".class"):
+            # e.g. "ObjectIdGenerators.PropertyGenerator.class"
+            value = value.split(".")[0]
+            annotations_imports.add(
+                'import {}.{};'.format(CLASS_TO_PACKAGE_NAME[value], value))
+        else:
+            value = quote_value(value)
+    return value, annotations_imports
+
+
+def get_annotations(annotations: dict, annot_attr2class: dict,
+                    annotations_imports: set, indent: str) -> (list, dict, set):
     """ Based on (class/attr) annotations, return in the first element of return tuple:
         a list of java annotation statements.
         Any annotations you come across that exists in OTHER_ANNOTATIONS, return in the
         second element of return tuple: dict
+        Return in the third element of return tuple, annotations_imports with any new imports added
     """
 
     """
@@ -227,21 +252,9 @@ def get_annotations(annotations: dict, annot_attr2class: dict, indent: str) -> (
             annot_class = annot_attr2class[annot_attr]
             if annot_class not in class_to_annotation_clauses:
                 class_to_annotation_clauses[annot_class] = []
-            value = annotations[annot_attr]
+            value, annotations_imports = \
+                format_value_for_java_annotation(annotations[annot_attr], annotations_imports)
             if value:
-                if type(value) == bool:
-                    # Convert Python boolean to Java boolean
-                    value = str(value).lower()
-                elif value in VALUE_TO_JAVA_ENUM:
-                    # Append value to Java enum if applicable
-                    value = "{}.{}".format(VALUE_TO_JAVA_ENUM[value], value)
-                elif value.endswith(".class"):
-                    # e.g. "ObjectIdGenerators.PropertyGenerator.class"
-                    value = value.split(".")[0]
-                    annotations_imports.add(
-                        'import {}.{};'.format(CLASS_TO_PACKAGE_NAME[value], value))
-                else:
-                    value = quote_value(value)
                 # Store value assignment clause for annot_class
                 class_to_annotation_clauses[annot_class].append("{} = {}".format(annot_attr, value))
         else:
@@ -271,7 +284,7 @@ def get_annotations(annotations: dict, annot_attr2class: dict, indent: str) -> (
             annot_clauses = ""
         # E.g. @Relationship(type = "edited", direction = Relationship.Direction.INCOMING)
         ret_java_annotations.append("{}@{}{}".format(indent, annot_class, annot_clauses))
-    return ret_java_annotations, other_annotations
+    return ret_java_annotations, other_annotations, annotations_imports
 
 
 # TODO: Documentation TBC...
@@ -342,7 +355,8 @@ def get_class_attributes_slots(clazz, class_entry, schema_slots, annot_attr2clas
             else:
                 java_type = "String"
             if 'annotations' in attr_entry:
-                annot_lines, other_annotations = get_annotations(attr_entry['annotations'], annot_attr2class, INDENT_1)
+                annot_lines, other_annotations, annotations_imports = \
+                    get_annotations(attr_entry['annotations'], annot_attr2class, annotations_imports, INDENT_1)
                 attr_slot_to_lines[attr] = annot_lines
                 annotations_imports.update(get_annotation_imports(attr_entry['annotations'], annot_attr2class))
                 java_type, annotations_imports = \
@@ -585,7 +599,8 @@ with open(schema_file_name, "r") as stream:
             annot_lines = []
             other_annotations = []
             if 'annotations' in class_entry:
-                annot_lines, other_annotations = get_annotations(class_entry['annotations'], annot_attr2class, INDENT_0)
+                annot_lines, other_annotations, annotations_imports = \
+                    get_annotations(class_entry['annotations'], annot_attr2class, annotations_imports, INDENT_0)
                 annotations_imports.update(get_annotation_imports(class_entry['annotations'], annot_attr2class))
             class_declaration = "public{}class {}".format(get_keywords(other_annotations, ["abstract"]), clazz)
             class_declaration += get_extends(class_entry)
