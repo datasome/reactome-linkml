@@ -287,36 +287,42 @@ def get_annotations(annotations: dict, annot_attr2class: dict,
     return ret_java_annotations, other_annotations, annotations_imports
 
 
-# TODO: Documentation TBC...
-def get_relationship_and_target_node_classs(attr_entry, schema_slots, classes):
+def get_relationship_and_target_node_class(attr_entry: dict, schema_slots: dict, classes: dict) -> (str, str):
+    """ If attr_entry corresponds represents a relationship class (RC) attribute, return a tuple containing RC
+        and the class of the attribute annotated within RC as @TargetNode. For example, if attr_entry represents
+        SortedSet<PublicationAuthor> author in Publication.java and in PublicationAuthor.java we have:
+        @TargetNode private Person author;
+        this function would return tuple: ('PublicationAuthor','Person')
+        If no @TargetNode attribute is found within RC, return (None, None)
+    """
     if attr_entry and 'range' in attr_entry:
         attr_range = attr_entry['range']
-        if attr_range in classes and classes[attr_range] and \
-            'annotations' in classes[attr_range] and \
-            'relationship_properties' in classes[attr_range]['annotations']:
+        if attr_range in classes and classes[attr_range]:
             relationship_class_entry = classes[attr_range]
+            if 'annotations' in relationship_class_entry and \
+                    'relationship_properties' in relationship_class_entry['annotations']:
+                # If attr_entry corresponds has a range that is a relationship class
 
-            attributes = {}
-            if 'attributes' in relationship_class_entry:
-                attributes |= relationship_class_entry['attributes']
-            if 'slots' in relationship_class_entry:
-                for attr in relationship_class_entry['slots']:
-                    attributes[attr] = schema_slots[attr]
-            for attr in attributes:
-                attr_entry = attributes[attr]
-                if 'annotations' in attr_entry and \
-                        'target_node' in attr_entry['annotations'] and \
-                        attr_entry['annotations']['target_node']:
-                    return attr_range, attr_entry['range']
+                # Accumulate attributes and slots of relationship_class_entry into attributes dict
+                attributes = {}
+                if 'attributes' in relationship_class_entry:
+                    attributes |= relationship_class_entry['attributes']
+                if 'slots' in relationship_class_entry:
+                    for attr in relationship_class_entry['slots']:
+                        attributes[attr] = schema_slots[attr]
+
+                # Iterate through attributes and if 'target_node' annotation is found, return
+                for attr in attributes:
+                    relationship_class_attr_entry = attributes[attr]
+                    if 'annotations' in relationship_class_attr_entry and \
+                            'target_node' in relationship_class_attr_entry['annotations'] and \
+                            relationship_class_attr_entry['annotations']['target_node']:
+                        return attr_range, relationship_class_attr_entry['range']
     return None, None
 
-def get_class_attributes_slots(clazz, class_entry, schema_slots, annot_attr2class, annotations_imports, classes):
-    attr_slot_to_lines = {}
-    attr_slot_to_getter = {}
-    attr_slot_to_setter = {}
-    attr_slot_lines = []
-    getter_setter_lines = []
-
+def get_attr_slot_entries(class_entry: dict, schema_slots: dict) -> dict:
+    """ Return all slots and attributes in class_entry as a single dict, with any slot_usage overrides applied
+    """
     attrs = {}
     if 'attributes' in class_entry:
         attrs = class_entry['attributes']
@@ -335,26 +341,55 @@ def get_class_attributes_slots(clazz, class_entry, schema_slots, annot_attr2clas
                     for annot_attr in slot_usage[slot_name]['annotations']:
                         slots[slot_name]['annotations'][annot_attr] = slot_usage[slot_name]['annotations'][annot_attr]
     attributes = attrs | slots
+    return attributes
+
+def get_java_type(attr_entry: dict, annotations_imports: set) -> (str, set):
+    """ Return a tuple containing a Java type for attr_entry, and annotations_imports with any
+        relevant import statements added
+    """
+    if 'range' in attr_entry:
+        if attr_entry['range'] == "AnnotationLongType":
+            java_type = "Long"
+        elif attr_entry['range'] == "AnnotationBytesType":
+            java_type = "bytes[]"
+        else:
+            java_type = capitalize(attr_entry['range'])
+            if java_type in classes:
+                java_type_package = get_package(classes[java_type])
+                clazz_package = get_package(class_entry)
+                if clazz_package != java_type_package:
+                    annotations_imports.add(
+                        'import {}.{};'.format(java_type_package, java_type))
+    else:
+        java_type = "String"
+    return java_type, annotations_imports
+
+
+def get_class_attributes_slots(class_entry: dict, schema_slots: dict, annot_attr2class: dict,
+                               annotations_imports: set, classes: dict) -> (list, list, list):
+    """ Return Java code chunks for all attributes/slots in class_entry, including all relevant
+    getters/setters/fetch methods
+    """
+
+    # Auxiliary dicts
+    attr_slot_to_lines = {}
+    attr_slot_to_getter = {}
+    attr_slot_to_setter = {}
+
+    # Return lists
+    attr_slot_lines = []
+    getter_setter_lines = []
+
+    # Retrieve all slots and attributes from class_entry
+    attributes = get_attr_slot_entries(class_entry, schema_slots)
+
     for attr in attributes:
         other_annotations = {}
         attr_entry = attributes[attr]
         if attr_entry is not None:
-            if 'range' in attr_entry:
-                if attr_entry['range'] == "AnnotationLongType":
-                    java_type = "Long"
-                elif attr_entry['range'] == "AnnotationBytesType":
-                    java_type = "bytes[]"
-                else:
-                    java_type = capitalize(attr_entry['range'])
-                    if java_type in classes:
-                        java_type_package = get_package(classes[java_type])
-                        clazz_package = get_package(class_entry)
-                        if clazz_package != java_type_package:
-                            annotations_imports.add(
-                                'import {}.{};'.format(java_type_package, java_type))
-            else:
-                java_type = "String"
+            java_type, annotations_imports = get_java_type(attr_entry, annotations_imports)
             if 'annotations' in attr_entry:
+                # Accumulate any Java annotations into attr_slot_to_lines[attr]
                 annot_lines, other_annotations, annotations_imports = \
                     get_annotations(attr_entry['annotations'], annot_attr2class, annotations_imports, INDENT_1)
                 attr_slot_to_lines[attr] = annot_lines
@@ -364,14 +399,17 @@ def get_class_attributes_slots(clazz, class_entry, schema_slots, annot_attr2clas
         else:
             java_type = "String"
 
+        # Prepare data structures for storing code for attr
         value = ""
         if attr not in attr_slot_to_lines:
             attr_slot_to_lines[attr] = []
         attr_slot_to_getter[attr] = []
         attr_slot_to_setter[attr] = []
 
-        if attr_entry:
+        if attr_entry is not None:
+            # Retrieve value (if any) to be assigned to the attribute
             value = get_value(class_entry, attr, attr_entry)
+
         if 'getter_only' in other_annotations and other_annotations['getter_only']:
             # 'getter_only' means no variable - just a getter method returning a value (e.g. getExplanation())
             attr_slot_to_lines[attr].append("{}public {} get{}() {{".format(INDENT_1, java_type, capitalize(attr)))
@@ -381,12 +419,21 @@ def get_class_attributes_slots(clazz, class_entry, schema_slots, annot_attr2clas
             attr_slot_to_lines[attr] += [INDENT_1 + "}", ""]
             continue
         elif value is not None and value != "":
+            # Not 'getter_only' attr - generated value assignment code (if there's value to be assigned)
             value = " = {}".format(value)
-        relationship_clazz, target_node_clazz = get_relationship_and_target_node_classs(attr_entry, schema_slots, classes)
+
+        # In preparation of outputting getter for an attr that is of type relationship class, retrieve that
+        # class (=relationship_clazz) and also the type of its attribute annotated as @TargetNode (=target_node_clazz)
+        relationship_clazz, target_node_clazz = get_relationship_and_target_node_class(attr_entry, schema_slots, classes)
+
+        # TODO: move to a separate method
+        # Assemble attr's getter method and any relevant java annotations into attr_slot_to_getter[attr]
         if 'transient' not in other_annotations and 'no_default_getter_setter' not in other_annotations:
+            # Note: transient attributes don't have getters or setters
             if not target_node_clazz and 'no_default_getter' not in other_annotations:
-                if attr_entry is not None and \
-                        'annotations' in attr_entry:
+                # Assemble java annotations and the getter for an attribute _not_ of type relationship class (as in that
+                # case the getter is retrieved from code templates)
+                if attr_entry is not None and 'annotations' in attr_entry:
                     if 'deprecated' in attr_entry['annotations']:
                         attr_slot_to_getter[attr].append(INDENT_1 + "@Deprecated")
                     elif 'allowed' in attr_entry['annotations']:
@@ -395,7 +442,8 @@ def get_class_attributes_slots(clazz, class_entry, schema_slots, annot_attr2clas
                                 break
                         attr_slot_to_getter[attr].append(java_annot)
                     else:
-                        # Process any getter-only annotations
+                        # Process any getter-only annotations (i.e. output just for getters, but not for the attributes
+                        # being 'got'
                         for annot in attr_entry['annotations']:
                             if annot.endswith(GETTER_ONLY_ANNOT_SUFFIX):
                                 annot_attr = annot.replace(GETTER_ONLY_ANNOT_SUFFIX, "")
@@ -407,7 +455,12 @@ def get_class_attributes_slots(clazz, class_entry, schema_slots, annot_attr2clas
                 attr_slot_to_getter[attr] += [
                     "{}public {} get{}() {{ return {}; }}".format(INDENT_1, java_type, capitalize(attr), attr),
                     ""]
+
+            # TODO: move to a separate method
+            # Assemble attr's setter method and any relevant java annotations into attr_slot_to_setter[attr]
             if not target_node_clazz or 'include_default_setter' in other_annotations:
+                # Output setter if attr is _not_ of type relationship class (as in that case the setter is
+                # retrieved from code templates), or if include_default_setter is included in attr's annotations
                 setter_code = None
                 if attr_entry is not None and 'annotations' in attr_entry:
                     if 'deprecated' in attr_entry['annotations']:
@@ -422,6 +475,9 @@ def get_class_attributes_slots(clazz, class_entry, schema_slots, annot_attr2clas
                         "{}this.{} = {};".format(INDENT_2, attr, attr),
                         INDENT_1 + "}", ""]
                 attr_slot_to_setter[attr] += setter_code
+
+        # TODO: move to a separate method
+        # Now output getter/setter/fetch methods in the case attr is of type relationship class
         dbid_variable_name = get_dbid_variable_name(schema_slots)
         if target_node_clazz:
             if 'include_fetch' in other_annotations:
@@ -457,6 +513,7 @@ def get_class_attributes_slots(clazz, class_entry, schema_slots, annot_attr2clas
                                          java_type, attr, value),
                                      ""]
 
+    # Assemble return lists for all attributes/slots
     for attr_slot in sorted(list(attr_slot_to_lines.keys())):
         attr_slot_lines += attr_slot_to_lines[attr_slot]
     for attr_slot in sorted(list(attr_slot_to_lines.keys())):
@@ -466,36 +523,48 @@ def get_class_attributes_slots(clazz, class_entry, schema_slots, annot_attr2clas
     return attr_slot_lines, getter_setter_lines, sorted(list(annotations_imports))
 
 
-def get_value(class_entry, attr, attr_entry):
+def get_value(class_entry: dict, attr: str, attr_entry: dict) -> str:
+    """ Return correctly formatted value to be assigned to attr in the generated Java class"""
     ret = ""
     if attr == "explanation":
+        # For getExplanation() method return the content of 'description' field
         if 'description' in class_entry:
             ret = "\"{}\"".format(class_entry['description'])
     else:
         value = None
         if 'ifabsent' in attr_entry:
+            # Return 'ifabsent' value as is unless it's a boolean in which case lower-case it (boolean in Java in lower case)
             value = attr_entry['ifabsent']
             if type(value) == bool:
                 value = str(value).lower()
         elif 'slot_usage' in class_entry \
             and attr in class_entry['slot_usage'] \
             and 'ifabsent' in class_entry['slot_usage'][attr]:
+                # Cater for attributes that have 'ifabsent' value specified in 'slot_usage' section
                 value = class_entry['slot_usage'][attr]['ifabsent']
         if value is not None:
             if search("^(string|int)", str(value)):
+                # First extract value from within string(val) or int(val) statement
                 ret = findall(r'.*\((.*)\)', value)[0]
                 if value.startswith("string"):
+                    # Double-quote a value of type string
                     ret = "\"{}\"".format(ret)
             else:
                 ret = value
     return ret
 
-
-def get_empty_constructor(clazz):
+def get_empty_constructor(clazz: str) -> str:
+    """ Return empty constructor of class clazz"""
     return "{}public {}() {{}}".format(INDENT_1, clazz)
 
 
-def get_parameterized_constructor(clazz, slots, class_entry, other_annotations):
+def get_parameterized_constructor(clazz: str, slots: dict, class_entry: dict, other_annotations: list) -> str:
+    """ Return parameterised constructor of class clazz with constructor parameter and its type retrieved
+        from other_annotations - e.g.
+        public EntityWithAccessionedSequence(Long dbId) { super(dbId); }
+            or
+        public DatabaseObject(Long dbId) { this.dbId = dbId; }
+    """
     ret = None
     if 'constructor_parameter' in other_annotations:
         parameter_name = other_annotations['constructor_parameter']
@@ -518,17 +587,21 @@ def get_parameterized_constructor(clazz, slots, class_entry, other_annotations):
     return ret
 
 
-def is_annotation(clazz):
+def is_annotation(clazz: str) -> bool:
+    """ Return true if clazz is an annotation class (i.e. should not be output as .java class)"""
     return clazz.startswith("Annotation") or clazz in CLASS_TO_PACKAGE_NAME
 
 
-def find(name, path):
+def find(file_name: str, path: str) -> str:
+    """ Return path to a file called file_name if it exists within path; otherwise return None"""
     for root, dirs, files in os.walk(path):
-        if name in files:
-            return os.path.join(root, name)
+        if file_name in files:
+            return os.path.join(root, file_name)
+    return None
 
 
-def get_additional_class_content(clazz):
+def get_additional_class_content(clazz: str) -> str:
+    """ Return additional content for class clazz """
     ret = None
     fh = find("{}.java".format(clazz), os.path.join("additional_class_content", OUTPUT_DIR))
     if fh:
@@ -536,7 +609,9 @@ def get_additional_class_content(clazz):
             ret = additional_content_file.read()
     return ret
 
-def get_comparable_methods_for_relationship_class(clazz, class_entry):
+
+def get_comparable_methods_for_relationship_class(clazz: str, class_entry: str) -> str:
+    """ Return chunk of code containing methods implementing java Comparable interface for class: clazz """
     ret = None
     if is_class_relationship(class_entry):
         fh = os.path.join("code_templates","RelationshipComparable.java")
@@ -545,8 +620,12 @@ def get_comparable_methods_for_relationship_class(clazz, class_entry):
         ret = ret.replace("@RelationshipClass@", clazz)
     return ret
 
-def get_filled_relationship_code_template(
-        relationship_clazz, target_node_clazz, attr, template_file_name, dbid_variable_name):
+
+def get_filled_relationship_code_template(relationship_clazz: str, target_node_clazz: str,
+                                          attr: str, template_file_name: str, dbid_variable_name: str) -> str:
+    """ Return chunk of code containing a getter/setter/fetch method for class relationship_clazz's attribute attr
+        from template file template_file_name.
+    """
     fh = os.path.join("code_templates", template_file_name)
     with open(fh, 'r') as additional_content_file:
         ret = additional_content_file.read()
@@ -558,7 +637,10 @@ def get_filled_relationship_code_template(
         ret = ret.replace("@DbId@", capitalize(dbid_variable_name))
     return ret
 
-def get_filled_allowed_code_template(attr, allowed_annot, template_file_name):
+
+def get_filled_allowed_code_template(attr: str, allowed_annot: str, template_file_name: str) -> str:
+    """ Generate chunk of code containing a special case setter method for attr that has allowed classes java annotation -
+        this setter method throws a RuntimeException unless the setter's call argument is of the allowed type"""
     allowed_classes_str = findall(r'^\{(.*)\}$', allowed_annot)[0]
     allowed_classes = sub(r'\.class|\s', '', allowed_classes_str).split(",")
     allowed_test_clauses = ""
@@ -578,11 +660,13 @@ def get_filled_allowed_code_template(attr, allowed_annot, template_file_name):
     return ret
 
 def get_dbid_variable_name(slots):
+    """ Get variable name for dbId/DB_ID variable (the name of this variable differs between the curator and web schemas)"""
     if "DB_ID" in slots:
         return "DB_ID"
     else:
         return "dbId"
 
+# Main program body
 with open(schema_file_name, "r") as stream:
     try:
         data = yaml.safe_load(stream)
@@ -592,7 +676,10 @@ with open(schema_file_name, "r") as stream:
         annot_attr2class = map_annotation_attributes_to_classes(annotations, classes)
         for clazz in classes:
             if is_annotation(clazz):
+                # Don't output annotation classes into .java file
                 continue
+
+            # Retrieve content for class clazz
             annotations_imports = set([])
             class_entry = classes[clazz]
             package = get_package(class_entry)
@@ -607,11 +694,12 @@ with open(schema_file_name, "r") as stream:
             implement_clause, annotations_imports = get_implements(clazz, classes, other_annotations, annotations_imports)
             class_declaration += implement_clause
             attr_slot_lines, getter_setter_lines, annotations_imports = \
-                get_class_attributes_slots(clazz, class_entry, slots, annot_attr2class, annotations_imports, classes)
+                get_class_attributes_slots(class_entry, slots, annot_attr2class, annotations_imports, classes)
             parameterized_constructor = get_parameterized_constructor(clazz, data['slots'], class_entry, other_annotations)
             additional_class_content = get_additional_class_content(clazz)
             comparable_methods = get_comparable_methods_for_relationship_class(clazz, class_entry)
-            # Assemble class content
+
+            # Assemble class content into lines list
             lines = []
             lines += ['package {};'.format(package), ""]
             if annotations_imports:
