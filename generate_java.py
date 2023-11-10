@@ -14,10 +14,8 @@ schema_file_name = sys.argv[1]
 GETTER_ONLY_ANNOT_SUFFIX = "_getter"
 if schema_file_name == "schema.web.yaml":
     OUTPUT_DIR = "graph-core-classes"
-    JAVA_PACKAGE = "package org.reactome.server.graph.domain.model;"
 else:
     OUTPUT_DIR = "curator-graph-core-classes"
-    JAVA_PACKAGE = "package org.reactome.server.graph.curator.domain.model;"
 
 CLASS_TO_PACKAGE_NAME = {
     "DatabaseObjectLike": "org.reactome.server.graph.domain.result",
@@ -68,15 +66,18 @@ def is_class_relationship(class_entry: dict) -> bool:
             return True
     return False
 
-
-def get_package(class_entry: dict) -> str:
-    """ Return java package for class represented by class_entry """
-    pkg_root = "org.reactome.server.graph.domain"
+def get_package_suffix(class_entry: dict) -> str:
+    """ Return package suffix for class represented by class_entry"""
     if is_class_relationship(class_entry):
         pkg_suffix = "relationship"
     else:
         pkg_suffix = "model"
-    return "{}.{}".format(pkg_root, pkg_suffix)
+    return pkg_suffix
+
+def get_package(class_entry: dict) -> str:
+    """ Return java package for class represented by class_entry """
+    pkg_suffix = get_package_suffix(class_entry)
+    return "{}.{}".format("org.reactome.server.graph.domain", pkg_suffix)
 
 
 def get_keywords(class_annotations: dict, keywords: list) -> str:
@@ -704,6 +705,7 @@ with open(schema_file_name, "r") as stream:
             annotations_imports = set([])
             class_entry = classes[clazz]
             package = get_package(class_entry)
+            output_dir = os.path.join(OUTPUT_DIR, get_package_suffix(class_entry))
             annot_lines = []
             other_annotations = []
             if 'annotations' in class_entry:
@@ -740,7 +742,7 @@ with open(schema_file_name, "r") as stream:
             lines += ["}", ""]
 
             # Write class content into the file
-            fp = open(os.path.join(OUTPUT_DIR, "{}.java".format(clazz)), 'w')
+            fp = open(os.path.join(output_dir, "{}.java".format(clazz)), 'w')
             # DEBUG: print(clazz, lines)
             fp.write("\n".join(lines)) 
             fp.close()
