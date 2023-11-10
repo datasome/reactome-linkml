@@ -381,7 +381,7 @@ classes:
           type: "includedLocation"
           sorted_set: true
           include_default_setter: true
-          no_list_getter_setter: true
+          no_list_setter: true
     in_subset:
       - curator_schema_only
 
@@ -1941,6 +1941,7 @@ classes:
           type: "author"
           direction: INCOMING
           sorted_set: true
+          no_list_getter_setter: true
     in_subset:
       - curator_schema_only
 
