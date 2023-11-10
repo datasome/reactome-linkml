@@ -52,7 +52,7 @@ VALUE_TO_JAVA_ENUM = {
 OTHER_ANNOTATIONS = ['abstract', 'implements', 'set', 'sorted_set', 'getter_only',
                      'static', 'final', 'transient', 'constructor_parameter',
                      'include_fetch', 'include_default_setter', 'no_default_getter_setter',
-                     'no_default_getter', 'no_list_setter', 'include_stoichiometry']
+                     'no_list_getter_setter', 'no_list_setter', 'include_stoichiometry']
 
 # Indentation used in generated java classes
 INDENT_0 = ""
@@ -141,7 +141,7 @@ def add_collection_if_applicable(java_type: str, attr_entry: dict,
                 break
         if ret_java_type == java_type:
             # No set/sorted_set annotation was found => we default to collection type: List
-            ret = "{}<{}>".format("List", java_type)
+            ret_java_type = "{}<{}>".format("List", java_type)
     return ret_java_type, annotations_imports
 
 
@@ -365,7 +365,87 @@ def get_java_type(attr_entry: dict, annotations_imports: set) -> (str, set):
     return java_type, annotations_imports
 
 
-def get_class_attributes_slots(class_entry: dict, schema_slots: dict, annot_attr2class: dict,
+def add_getter(attr: str, attr_entry: dict, java_type: str, annot_lines: list, attr_slot_to_getter: dict):
+    """ Add to attr_slot_to_getter[attr] a chunk of code containing java annotations and the getter method """
+    if attr_entry is not None and 'annotations' in attr_entry:
+        if 'deprecated' in attr_entry['annotations']:
+            attr_slot_to_getter[attr].append(INDENT_1 + "@Deprecated")
+        elif 'allowed' in attr_entry['annotations']:
+            for java_annot in annot_lines:
+                if 'ReactomeAllowedClasses' in java_annot:
+                    break
+            if java_annot:
+                attr_slot_to_getter[attr].append(java_annot)
+        else:
+            # Process any getter-only annotations (i.e. output just for getters, but not for the attributes
+            # being 'got'
+            for annot in attr_entry['annotations']:
+                if annot.endswith(GETTER_ONLY_ANNOT_SUFFIX):
+                    annot_attr = annot.replace(GETTER_ONLY_ANNOT_SUFFIX, "")
+                    annot_class = capitalize(annot_attr)
+                    for java_annot in annot_lines:
+                        if annot_class in java_annot:
+                            break
+                    attr_slot_to_getter[attr].append(INDENT_1 + "@" + annot_class)
+    attr_slot_to_getter[attr] += [
+        "{}public {} get{}() {{ return {}; }}".format(INDENT_1, java_type, capitalize(attr), attr),
+        ""]
+
+
+def add_setter(attr_entry: dict, attr: str, java_type: str, attr_slot_to_setter: str):
+    """ Add to attr_slot_to_setter[attr] a chunk of code containing the setter method """
+    setter_code = None
+    if attr_entry is not None and 'annotations' in attr_entry:
+        if 'deprecated' in attr_entry['annotations']:
+            attr_slot_to_setter[attr].append(INDENT_1 + "@Deprecated")
+        if 'allowed' in attr_entry['annotations']:
+            setter_code = \
+                [get_filled_allowed_code_template(
+                    attr, java_type, attr_entry['annotations']['allowed'], "SetWithAllowedClasses.java"), ""]
+    if not setter_code:
+        setter_code = \
+            ["{}public void set{}({} {}) {{".format(INDENT_1, capitalize(attr), java_type, attr),
+             "{}this.{} = {};".format(INDENT_2, attr, attr),
+             INDENT_1 + "}", ""]
+    attr_slot_to_setter[attr] += setter_code
+
+def add_getter_setter_fetch_for_relationship_attribute(attr_entry: dict, attr: str,
+                                                       attr_slot_to_getter: dict, attr_slot_to_setter: dict,
+                                                       relationship_clazz: str, target_node_clazz: str,
+                                                       dbid_variable_name: str,
+                                                       other_annotations: dict):
+    """ Output from code templates getter/setter/fetch methods for attr, as well as any getter-only java annotations """
+    if 'include_fetch' in other_annotations:
+        attr_slot_to_getter[attr] += \
+            [get_filled_relationship_code_template(
+                relationship_clazz, target_node_clazz, attr, "RelationshipFetch.java", dbid_variable_name),
+                ""]
+    if 'include_stoichiometry' in other_annotations:
+        getter_template_file = "RelationshipGet.java"
+        setter_template_file = "RelationshipSet.java"
+    else:
+        getter_template_file = "RelationshipGetNoStoichiometry.java"
+        setter_template_file = "RelationshipSetNoStoichiometry.java"
+    # Process any getter-only annotations
+    for annot in attr_entry['annotations']:
+        if annot.endswith(GETTER_ONLY_ANNOT_SUFFIX):
+            annot_attr = annot.replace(GETTER_ONLY_ANNOT_SUFFIX, "")
+            annot_class = capitalize(annot_attr)
+            attr_slot_to_getter[attr].append(INDENT_1 + "@" + annot_class)
+
+    if 'no_list_getter_setter' not in other_annotations:
+        attr_slot_to_getter[attr] += \
+            [get_filled_relationship_code_template(
+                relationship_clazz, target_node_clazz, attr, getter_template_file, dbid_variable_name),
+                ""]
+        if 'no_list_setter' not in other_annotations:
+            attr_slot_to_setter[attr] += \
+                [get_filled_relationship_code_template(
+                    relationship_clazz, target_node_clazz, attr, setter_template_file, dbid_variable_name),
+                    ""]
+
+
+def get_class_attributes_slots(clazz: str, class_entry: dict, schema_slots: dict, annot_attr2class: dict,
                                annotations_imports: set, classes: dict) -> (list, list, list):
     """ Return Java code chunks for all attributes/slots in class_entry, including all relevant
     getters/setters/fetch methods
@@ -386,6 +466,7 @@ def get_class_attributes_slots(class_entry: dict, schema_slots: dict, annot_attr
     for attr in attributes:
         other_annotations = {}
         attr_entry = attributes[attr]
+        annot_lines = []
         if attr_entry is not None:
             java_type, annotations_imports = get_java_type(attr_entry, annotations_imports)
             if 'annotations' in attr_entry:
@@ -397,6 +478,7 @@ def get_class_attributes_slots(class_entry: dict, schema_slots: dict, annot_attr
                 java_type, annotations_imports = \
                     add_collection_if_applicable(java_type, attr_entry, other_annotations, annotations_imports)
         else:
+            # java_type = "String" is the default in linkml schema (hence no attr_entry needed for string attributes)
             java_type = "String"
 
         # Prepare data structures for storing code for attr
@@ -426,88 +508,26 @@ def get_class_attributes_slots(class_entry: dict, schema_slots: dict, annot_attr
         # class (=relationship_clazz) and also the type of its attribute annotated as @TargetNode (=target_node_clazz)
         relationship_clazz, target_node_clazz = get_relationship_and_target_node_class(attr_entry, schema_slots, classes)
 
-        # TODO: move to a separate method
         # Assemble attr's getter method and any relevant java annotations into attr_slot_to_getter[attr]
         if 'transient' not in other_annotations and 'no_default_getter_setter' not in other_annotations:
             # Note: transient attributes don't have getters or setters
-            if not target_node_clazz and 'no_default_getter' not in other_annotations:
+            if not target_node_clazz:
                 # Assemble java annotations and the getter for an attribute _not_ of type relationship class (as in that
                 # case the getter is retrieved from code templates)
-                if attr_entry is not None and 'annotations' in attr_entry:
-                    if 'deprecated' in attr_entry['annotations']:
-                        attr_slot_to_getter[attr].append(INDENT_1 + "@Deprecated")
-                    elif 'allowed' in attr_entry['annotations']:
-                        for java_annot in annot_lines:
-                            if 'ReactomeAllowedClasses' in java_annot:
-                                break
-                        attr_slot_to_getter[attr].append(java_annot)
-                    else:
-                        # Process any getter-only annotations (i.e. output just for getters, but not for the attributes
-                        # being 'got'
-                        for annot in attr_entry['annotations']:
-                            if annot.endswith(GETTER_ONLY_ANNOT_SUFFIX):
-                                annot_attr = annot.replace(GETTER_ONLY_ANNOT_SUFFIX, "")
-                                annot_class = capitalize(annot_attr)
-                                for java_annot in annot_lines:
-                                    if annot_class in java_annot:
-                                        break
-                                attr_slot_to_getter[attr].append(INDENT_1 + "@" + annot_class)
-                attr_slot_to_getter[attr] += [
-                    "{}public {} get{}() {{ return {}; }}".format(INDENT_1, java_type, capitalize(attr), attr),
-                    ""]
-
-            # TODO: move to a separate method
-            # Assemble attr's setter method and any relevant java annotations into attr_slot_to_setter[attr]
+                add_getter(attr, attr_entry, java_type, annot_lines, attr_slot_to_getter)
             if not target_node_clazz or 'include_default_setter' in other_annotations:
                 # Output setter if attr is _not_ of type relationship class (as in that case the setter is
                 # retrieved from code templates), or if include_default_setter is included in attr's annotations
-                setter_code = None
-                if attr_entry is not None and 'annotations' in attr_entry:
-                    if 'deprecated' in attr_entry['annotations']:
-                        attr_slot_to_getter[attr].append(INDENT_1 + "@Deprecated")
-                    if 'allowed' in attr_entry['annotations']:
-                        setter_code = \
-                            [get_filled_allowed_code_template(
-                                attr, attr_entry['annotations']['allowed'], "SetWithAllowedClasses.java"), ""]
-                if not setter_code:
-                    setter_code = \
-                        ["{}public void set{}({} {}) {{".format(INDENT_1, capitalize(attr), java_type, attr),
-                        "{}this.{} = {};".format(INDENT_2, attr, attr),
-                        INDENT_1 + "}", ""]
-                attr_slot_to_setter[attr] += setter_code
+                add_setter(attr_entry, attr, java_type, attr_slot_to_setter)
 
-        # TODO: move to a separate method
         # Now output getter/setter/fetch methods in the case attr is of type relationship class
         dbid_variable_name = get_dbid_variable_name(schema_slots)
         if target_node_clazz:
-            if 'include_fetch' in other_annotations:
-                attr_slot_to_getter[attr] += \
-                    [get_filled_relationship_code_template(
-                        relationship_clazz, target_node_clazz, attr, "RelationshipFetch.java", dbid_variable_name),
-                        ""]
-            if 'include_stoichiometry' in other_annotations:
-                getter_template_file = "RelationshipGet.java"
-                setter_template_file = "RelationshipSet.java"
-            else:
-                getter_template_file = "RelationshipGetNoStoichiometry.java"
-                setter_template_file = "RelationshipSetNoStoichiometry.java"
-            # Process any getter-only annotations
-            for annot in attr_entry['annotations']:
-                if annot.endswith(GETTER_ONLY_ANNOT_SUFFIX):
-                    annot_attr = annot.replace(GETTER_ONLY_ANNOT_SUFFIX, "")
-                    annot_class = capitalize(annot_attr)
-                    attr_slot_to_getter[attr].append(INDENT_1 + "@" + annot_class)
+            add_getter_setter_fetch_for_relationship_attribute(
+                attr_entry, attr, attr_slot_to_getter, attr_slot_to_setter,
+                relationship_clazz, target_node_clazz, dbid_variable_name, other_annotations)
 
-            if 'no_list_getter_setter' not in other_annotations:
-                attr_slot_to_getter[attr] += \
-                    [get_filled_relationship_code_template(
-                        relationship_clazz, target_node_clazz, attr, getter_template_file, dbid_variable_name),
-                        ""]
-                attr_slot_to_setter[attr] += \
-                    [get_filled_relationship_code_template(
-                        relationship_clazz, target_node_clazz, attr, setter_template_file, dbid_variable_name),
-                        ""]
-
+        # Output declaration of attribute attr
         attr_slot_to_lines[attr] += ["{}private{}{} {}{};".format(INDENT_1,
                                          get_keywords(other_annotations, ["static", "final", "transient"]),
                                          java_type, attr, value),
@@ -638,7 +658,7 @@ def get_filled_relationship_code_template(relationship_clazz: str, target_node_c
     return ret
 
 
-def get_filled_allowed_code_template(attr: str, allowed_annot: str, template_file_name: str) -> str:
+def get_filled_allowed_code_template(attr: str, java_type: str, allowed_annot: str, template_file_name: str) -> str:
     """ Generate chunk of code containing a special case setter method for attr that has allowed classes java annotation -
         this setter method throws a RuntimeException unless the setter's call argument is of the allowed type"""
     allowed_classes_str = findall(r'^\{(.*)\}$', allowed_annot)[0]
@@ -653,6 +673,7 @@ def get_filled_allowed_code_template(attr: str, allowed_annot: str, template_fil
     fh = os.path.join("code_templates", template_file_name)
     with open(fh, 'r') as additional_content_file:
         ret = additional_content_file.read()
+        ret = ret.replace("@Clazz@", java_type)
         ret = ret.replace("@attribute@", attr)
         ret = ret.replace("@Attribute@", capitalize(attr))
         ret = ret.replace("@allowed_test_clauses@", allowed_test_clauses)
@@ -694,7 +715,7 @@ with open(schema_file_name, "r") as stream:
             implement_clause, annotations_imports = get_implements(clazz, classes, other_annotations, annotations_imports)
             class_declaration += implement_clause
             attr_slot_lines, getter_setter_lines, annotations_imports = \
-                get_class_attributes_slots(class_entry, slots, annot_attr2class, annotations_imports, classes)
+                get_class_attributes_slots(clazz, class_entry, slots, annot_attr2class, annotations_imports, classes)
             parameterized_constructor = get_parameterized_constructor(clazz, data['slots'], class_entry, other_annotations)
             additional_class_content = get_additional_class_content(clazz)
             comparable_methods = get_comparable_methods_for_relationship_class(clazz, class_entry)
