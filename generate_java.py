@@ -25,6 +25,7 @@ CLASS_TO_PACKAGE_NAME = {
     "JsonIgnore": "com.fasterxml.jackson.annotation",
     "ObjectIdGenerators": "com.fasterxml.jackson.annotation",
     "Node": "org.springframework.data.neo4j.core.schema",
+    "Property": "org.springframework.data.neo4j.core.schema",
     "ReactomeAllowedClasses": "org.reactome.server.graph.domain.annotations",
     "ReactomeConstraint": "org.reactome.server.graph.domain.annotations",
     "ReactomeInstanceDefiningValue": "org.reactome.server.graph.domain.annotations",
@@ -35,7 +36,8 @@ CLASS_TO_PACKAGE_NAME = {
     "Relationship": "org.springframework.data.neo4j.core.schema",
     "RelationshipProperties" : "org.springframework.data.neo4j.core.schema",
     "Serializable": "java.io",
-    "StoichiometryObject": "org.reactome.server.graph.service.helper"
+    "StoichiometryObject": "org.reactome.server.graph.service.helper",
+    "TargetNode": "org.springframework.data.neo4j.core.schema"
 }
 
 VALUE_TO_JAVA_ENUM = {
@@ -135,7 +137,7 @@ def add_collection_if_applicable(java_type: str, attr_entry: dict,
         add entry multivalued """
     ret_java_type = java_type
     if 'multivalued' in attr_entry:
-        annotations_imports.add('java.util.*;')
+        annotations_imports.add('import java.util.*;')
         for collection_type in ['set', 'sorted_set']:
             if collection_type in attr_annotations and attr_annotations[collection_type]:
                 ret_java_type = "{}<{}>".format(capitalize(collection_type), java_type)
@@ -171,10 +173,15 @@ def map_annotation_attributes_to_classes(annotations: dict, classes: dict) -> di
             range = annotations[annotation]['range']
             if range[0].isupper():
                 # The first letter is upper case - it must be a class name
-                for annot_attr in classes[range]['attributes']:
-                    # e.g. for annotation = json_identity_info and range = JsonIdentityInfo:
-                    # classes[range]['attributes'] = ['generator','property']
-                    annot_attr2class[annot_attr] = range
+                if classes[range] is not None and 'attributes' in classes[range]:
+                    for annot_attr in classes[range]['attributes']:
+                        # e.g. for annotation = json_identity_info and range = JsonIdentityInfo:
+                        # classes[range]['attributes'] = ['generator','property']
+                        annot_attr2class[annot_attr] = range
+                else:
+                    # E.g. property1 => @Property - this mapping is needed because of the overlap
+                    # with property attribute of JsonIdentityInfo
+                    annot_attr2class[annotation] = range
     return annot_attr2class
 
 
@@ -414,13 +421,16 @@ def add_getter_setter_fetch_for_relationship_attribute(attr_entry: dict, attr: s
                                                        attr_slot_to_getter: dict, attr_slot_to_setter: dict,
                                                        relationship_clazz: str, target_node_clazz: str,
                                                        dbid_variable_name: str,
-                                                       other_annotations: dict):
+                                                       other_annotations: dict,
+                                                       annotations_imports: set):
     """ Output from code templates getter/setter/fetch methods for attr, as well as any getter-only java annotations """
     if 'include_fetch' in other_annotations:
         attr_slot_to_getter[attr] += \
             [get_filled_relationship_code_template(
                 relationship_clazz, target_node_clazz, attr, "RelationshipFetch.java", dbid_variable_name),
                 ""]
+        annotations_imports.add(
+            'import {}.{};'.format(CLASS_TO_PACKAGE_NAME["StoichiometryObject"], "StoichiometryObject"))
     if 'include_stoichiometry' in other_annotations:
         getter_template_file = "RelationshipGet.java"
         setter_template_file = "RelationshipSet.java"
@@ -526,7 +536,7 @@ def get_class_attributes_slots(clazz: str, class_entry: dict, schema_slots: dict
         if target_node_clazz:
             add_getter_setter_fetch_for_relationship_attribute(
                 attr_entry, attr, attr_slot_to_getter, attr_slot_to_setter,
-                relationship_clazz, target_node_clazz, dbid_variable_name, other_annotations)
+                relationship_clazz, target_node_clazz, dbid_variable_name, other_annotations, annotations_imports)
 
         # Output declaration of attribute attr
         attr_slot_to_lines[attr] += ["{}private{}{} {}{};".format(INDENT_1,
@@ -631,15 +641,16 @@ def get_additional_class_content(clazz: str) -> str:
     return ret
 
 
-def get_comparable_methods_for_relationship_class(clazz: str, class_entry: str) -> str:
+def get_comparable_methods_for_relationship_class(clazz: str, class_entry: str, annotations_imports: list) -> str:
     """ Return chunk of code containing methods implementing java Comparable interface for class: clazz """
-    ret = None
+    ret_code = None
     if is_class_relationship(class_entry):
         fh = os.path.join("code_templates","RelationshipComparable.java")
         with open(fh, 'r') as additional_content_file:
-            ret = additional_content_file.read()
-        ret = ret.replace("@RelationshipClass@", clazz)
-    return ret
+            ret_code = additional_content_file.read()
+            ret_code = ret_code.replace("@RelationshipClass@", clazz)
+            annotations_imports.append("import java.util.Objects;")
+    return ret_code, annotations_imports
 
 
 def get_filled_relationship_code_template(relationship_clazz: str, target_node_clazz: str,
@@ -720,7 +731,8 @@ with open(schema_file_name, "r") as stream:
                 get_class_attributes_slots(clazz, class_entry, slots, annot_attr2class, annotations_imports, classes)
             parameterized_constructor = get_parameterized_constructor(clazz, data['slots'], class_entry, other_annotations)
             additional_class_content = get_additional_class_content(clazz)
-            comparable_methods = get_comparable_methods_for_relationship_class(clazz, class_entry)
+            comparable_methods, annotations_imports = \
+                get_comparable_methods_for_relationship_class(clazz, class_entry, annotations_imports)
 
             # Assemble class content into lines list
             lines = []

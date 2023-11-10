@@ -665,6 +665,7 @@ classes:
         range: boolean
         annotations:
           addedField: true
+          reactome_schema_ignore_getter: true
       disease:
         multivalued: true
         range: Disease
@@ -784,7 +785,7 @@ classes:
       url:
         annotations:
           addedField: false
-          property: true
+          property1: false
     in_subset:
       - web_schema
 
@@ -1653,6 +1654,7 @@ classes:
          multivalued: true
          annotations:
            addedField: true
+           reactome_schema_ignore_getter: true
       disease:
         multivalued: true
         range: Disease
@@ -2508,6 +2510,8 @@ classes:
         range: ReactomeInstanceDefiningValue
       property:
         range: boolean
+      property1:
+        range: Property
       relationship:
         range: Relationship
       relationship_properties:
@@ -2526,6 +2530,8 @@ classes:
     attributes:
       generator:
       property:
+
+  Property:
 
   ReactomeAllowedClasses:
     attributes:

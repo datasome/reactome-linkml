@@ -1017,7 +1017,7 @@ classes:
           constraint: MANDATORY
           category: all
           addedField: false
-          property: true
+          property1: false
     in_subset:
       - curator_schema_only
 
@@ -2777,6 +2777,8 @@ classes:
         range: boolean
       property:
         range: boolean
+      property1:
+        range: Property
       relationship:
         range: Relationship
       relationship_properties:
@@ -2795,6 +2797,8 @@ classes:
     attributes:
       generator:
       property:
+
+  Property:
 
   ReactomeAllowedClasses:
     attributes:
