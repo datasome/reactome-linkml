@@ -21,10 +21,15 @@ CLASS_TO_PACKAGE_NAME = {
     "DatabaseObjectLike": "org.reactome.server.graph.domain.result",
     "GeneratedValue": "org.springframework.data.neo4j.core.schema",
     "Id": "org.springframework.data.neo4j.core.schema",
+    "InvocationTargetException": "java.lang.reflect",
+    "JsonGetter": "com.fasterxml.jackson.annotation",
     "JsonIdentityInfo": "com.fasterxml.jackson.annotation",
     "JsonIgnore": "com.fasterxml.jackson.annotation",
     "ObjectIdGenerators": "com.fasterxml.jackson.annotation",
+    "Method": "java.lang.reflect",
     "Node": "org.springframework.data.neo4j.core.schema",
+    "NonNull": "org.springframework.lang",
+    "ParameterizedType": "java.lang.reflect",
     "Property": "org.springframework.data.neo4j.core.schema",
     "ReactomeAllowedClasses": "org.reactome.server.graph.domain.annotations",
     "ReactomeConstraint": "org.reactome.server.graph.domain.annotations",
@@ -184,11 +189,11 @@ def map_annotation_attributes_to_classes(annotations: dict, classes: dict) -> di
                     annot_attr2class[annotation] = range
     return annot_attr2class
 
-
 def get_annotation_imports(annotations: dict, annot_attr2class: dict) -> set:
     """ Return annotation import statements for each annotation in annotations """
     annotations_imports = set([])
     for annot_attr in annotations:
+        value = annotations[annot_attr]
         if annot_attr in annot_attr2class:
             annot_class = annot_attr2class[annot_attr]
             annotations_imports.add('import {}.{};'.format(CLASS_TO_PACKAGE_NAME[annot_class], annot_class))
@@ -198,11 +203,12 @@ def get_annotation_imports(annotations: dict, annot_attr2class: dict) -> set:
                 if annot_attr.endswith(GETTER_ONLY_ANNOT_SUFFIX):
                     # Some annotations are tagged for getters only via GETTER_ONLY_ANNOT_SUFFIX -
                     # we need to remove the suffix befor we can look up the associated class in  CLASS_TO_PACKAGE_NAME
-                    annot_attr = annot_attr.replace(GETTER_ONLY_ANNOT_SUFFIX,"")
+                    annot_attr = sub(r"{}$".format(GETTER_ONLY_ANNOT_SUFFIX),"", annot_attr)
                 annot_class = capitalize(annot_attr)
-                if annot_class in CLASS_TO_PACKAGE_NAME:
-                    annotations_imports.add(
-                        'import {}.{};'.format(CLASS_TO_PACKAGE_NAME[annot_class], annot_class))
+                if type(value) != bool or value is True:
+                    if annot_class in CLASS_TO_PACKAGE_NAME:
+                        annotations_imports.add(
+                            'import {}.{};'.format(CLASS_TO_PACKAGE_NAME[annot_class], annot_class))
     return annotations_imports
 
 def quote_value(value):
@@ -359,7 +365,7 @@ def get_java_type(attr_entry: dict, annotations_imports: set) -> (str, set):
         if attr_entry['range'] == "AnnotationLongType":
             java_type = "Long"
         elif attr_entry['range'] == "AnnotationBytesType":
-            java_type = "bytes[]"
+            java_type = "byte[]"
         else:
             java_type = capitalize(attr_entry['range'])
             if java_type in classes:
@@ -389,12 +395,18 @@ def add_getter(attr: str, attr_entry: dict, java_type: str, annot_lines: list, a
             # being 'got'
             for annot in attr_entry['annotations']:
                 if annot.endswith(GETTER_ONLY_ANNOT_SUFFIX):
-                    annot_attr = annot.replace(GETTER_ONLY_ANNOT_SUFFIX, "")
+                    annot_attr = sub(r"{}$".format(GETTER_ONLY_ANNOT_SUFFIX), "", annot)
                     annot_class = capitalize(annot_attr)
                     for java_annot in annot_lines:
                         if annot_class in java_annot:
                             break
-                    attr_slot_to_getter[attr].append(INDENT_1 + "@" + annot_class)
+                    value = attr_entry['annotations'][annot]
+                    if value and not type(value) == bool:
+                        value = quote_value(value)
+                        # E.g. @JsonGetter("RNAMarker")
+                        attr_slot_to_getter[attr].append("{}@{}({})".format(INDENT_1, annot_class, value))
+                    else:
+                        attr_slot_to_getter[attr].append(INDENT_1 + "@" + annot_class)
     attr_slot_to_getter[attr] += [
         "{}public {} get{}() {{ return {}; }}".format(INDENT_1, java_type, capitalize(attr), attr),
         ""]
@@ -431,6 +443,8 @@ def add_getter_setter_fetch_for_relationship_attribute(attr_entry: dict, attr: s
                 ""]
         annotations_imports.add(
             'import {}.{};'.format(CLASS_TO_PACKAGE_NAME["StoichiometryObject"], "StoichiometryObject"))
+        annotations_imports.add(
+            'import {}.{};'.format(CLASS_TO_PACKAGE_NAME["JsonIgnore"], "JsonIgnore"))
     if 'include_stoichiometry' in other_annotations:
         getter_template_file = "RelationshipGet.java"
         setter_template_file = "RelationshipSet.java"
@@ -440,7 +454,7 @@ def add_getter_setter_fetch_for_relationship_attribute(attr_entry: dict, attr: s
     # Process any getter-only annotations
     for annot in attr_entry['annotations']:
         if annot.endswith(GETTER_ONLY_ANNOT_SUFFIX):
-            annot_attr = annot.replace(GETTER_ONLY_ANNOT_SUFFIX, "")
+            annot_attr = sub(r"{}$".format(GETTER_ONLY_ANNOT_SUFFIX), "", annot)
             annot_class = capitalize(annot_attr)
             attr_slot_to_getter[attr].append(INDENT_1 + "@" + annot_class)
 
@@ -457,7 +471,7 @@ def add_getter_setter_fetch_for_relationship_attribute(attr_entry: dict, attr: s
 
 
 def get_class_attributes_slots(clazz: str, class_entry: dict, schema_slots: dict, annot_attr2class: dict,
-                               annotations_imports: set, classes: dict) -> (list, list, list):
+                               annotations_imports: set, classes: dict) -> (list, list, set):
     """ Return Java code chunks for all attributes/slots in class_entry, including all relevant
     getters/setters/fetch methods
     """
@@ -551,7 +565,7 @@ def get_class_attributes_slots(clazz: str, class_entry: dict, schema_slots: dict
         getter_setter_lines += attr_slot_to_getter[attr_slot]
         getter_setter_lines += attr_slot_to_setter[attr_slot]
 
-    return attr_slot_lines, getter_setter_lines, sorted(list(annotations_imports))
+    return attr_slot_lines, getter_setter_lines, annotations_imports
 
 
 def get_value(class_entry: dict, attr: str, attr_entry: dict) -> str:
@@ -630,18 +644,29 @@ def find(file_name: str, path: str) -> str:
             return os.path.join(root, file_name)
     return None
 
-
-def get_additional_class_content(clazz: str) -> str:
+def get_additional_class_content(clazz: str, annotations_imports: set) -> (str, set):
     """ Return additional content for class clazz """
-    ret = None
+    ret_code = None
     fh = find("{}.java".format(clazz), os.path.join("additional_class_content", OUTPUT_DIR))
+    if clazz == "DatabaseObject":
+        for annot_clazz in ['NonNull', 'InvocationTargetException', 'ParameterizedType', 'Method']:
+            annotations_imports.add('import {}.{};'
+                                    .format(CLASS_TO_PACKAGE_NAME[annot_clazz], annot_clazz))
+    elif clazz == "Person":
+        for annot_clazz in ['JsonGetter']:
+            annotations_imports.add('import {}.{};'
+                                    .format(CLASS_TO_PACKAGE_NAME[annot_clazz], annot_clazz))
+    elif clazz == "ReferenceEntity":
+        for annot_clazz in ['ReactomeSchemaIgnore', 'JsonIgnore']:
+            annotations_imports.add('import {}.{};'
+                                    .format(CLASS_TO_PACKAGE_NAME[annot_clazz], annot_clazz))
     if fh:
         with open(fh, 'r') as additional_content_file:
-            ret = additional_content_file.read()
-    return ret
+            ret_code = additional_content_file.read()
+    return ret_code, annotations_imports
 
 
-def get_comparable_methods_for_relationship_class(clazz: str, class_entry: str, annotations_imports: list) -> str:
+def get_comparable_methods_for_relationship_class(clazz: str, class_entry: str, annotations_imports: set) -> str:
     """ Return chunk of code containing methods implementing java Comparable interface for class: clazz """
     ret_code = None
     if is_class_relationship(class_entry):
@@ -649,7 +674,7 @@ def get_comparable_methods_for_relationship_class(clazz: str, class_entry: str, 
         with open(fh, 'r') as additional_content_file:
             ret_code = additional_content_file.read()
             ret_code = ret_code.replace("@RelationshipClass@", clazz)
-            annotations_imports.append("import java.util.Objects;")
+            annotations_imports.add("import java.util.Objects;")
     return ret_code, annotations_imports
 
 
@@ -730,7 +755,7 @@ with open(schema_file_name, "r") as stream:
             attr_slot_lines, getter_setter_lines, annotations_imports = \
                 get_class_attributes_slots(clazz, class_entry, slots, annot_attr2class, annotations_imports, classes)
             parameterized_constructor = get_parameterized_constructor(clazz, data['slots'], class_entry, other_annotations)
-            additional_class_content = get_additional_class_content(clazz)
+            additional_class_content, annotations_imports = get_additional_class_content(clazz, annotations_imports)
             comparable_methods, annotations_imports = \
                 get_comparable_methods_for_relationship_class(clazz, class_entry, annotations_imports)
 
@@ -738,7 +763,7 @@ with open(schema_file_name, "r") as stream:
             lines = []
             lines += ['package {};'.format(package), ""]
             if annotations_imports:
-                lines += annotations_imports + [""]
+                lines += sorted(list(annotations_imports)) + [""]
             lines += annot_lines
             lines += ["{} {{".format(class_declaration), ""]
             lines += attr_slot_lines

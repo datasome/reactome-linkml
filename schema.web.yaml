@@ -154,6 +154,8 @@ classes:
         annotations:
           type: "catalystActivity"
           direction: INCOMING
+          json_ignore: true
+          reactome_transient: true
       physicalEntity:
         range: PhysicalEntity
         annotations:
@@ -189,6 +191,7 @@ classes:
         range: EntityWithAccessionedSequence
         annotations:
           type: "rnaMarker"
+          json_getter_getter: "rnaMarker"
       markerReference:
         multivalued: true
         range: MarkerReference
@@ -1186,6 +1189,8 @@ classes:
       abstract: true
       node: true
       suppress_warnings: "{\"unused\", \"WeakerAccess\"}"
+    slots:
+      - referenceDatabase
     attributes:
       databaseName:
         annotations:
@@ -2701,8 +2706,6 @@ slots:
       addedField: false
   ontology:
     range: AnnotationBytesType
-    annotations:
-      addedField: false
   order:
     range: integer
   otherIdentifier:
