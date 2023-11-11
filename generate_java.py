@@ -57,7 +57,8 @@ VALUE_TO_JAVA_ENUM = {
 OTHER_ANNOTATIONS = ['abstract', 'implements', 'set', 'sorted_set', 'getter_only',
                      'static', 'final', 'transient', 'constructor_parameter',
                      'include_fetch', 'include_default_setter', 'no_default_getter_setter',
-                     'no_list_getter_setter', 'no_list_setter', 'include_stoichiometry']
+                     'no_list_getter_setter', 'no_list_setter', 'include_stoichiometry',
+                     'no_default_constructor']
 
 # Indentation used in generated java classes
 INDENT_0 = ""
@@ -767,7 +768,8 @@ with open(schema_file_name, "r") as stream:
             lines += annot_lines
             lines += ["{} {{".format(class_declaration), ""]
             lines += attr_slot_lines
-            lines += [get_empty_constructor(clazz), ""]
+            if 'no_default_constructor' not in other_annotations:
+                lines += [get_empty_constructor(clazz), ""]
             if parameterized_constructor:
                 lines += [parameterized_constructor, ""]
             lines += getter_setter_lines

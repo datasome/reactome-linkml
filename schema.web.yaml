@@ -1028,6 +1028,7 @@ classes:
     annotations:
       relationship_properties: true
       implements: "Comparable<HasCompartment>"
+      suppress_warnings: "unused"
     slots:
       - id
       - order
@@ -1044,6 +1045,7 @@ classes:
     annotations:
       relationship_properties: true
       implements: "Comparable<HasComponent>"
+      suppress_warnings: "unused"
     slots:
       - id
       - order
@@ -1057,6 +1059,7 @@ classes:
     annotations:
       relationship_properties: true
       implements: "Comparable<HasComponentForComplex>"
+      suppress_warnings: "unused"
     slots:
       - id
       - order
@@ -1091,10 +1094,14 @@ classes:
     annotations:
       relationship_properties: true
       implements: "Comparable<HasEvent>"
+      no_default_constructor: true
     slots:
       - id
       - order
       - stoichiometry
+    slot_usage:
+      stoichiometry:
+        ifabsent:
     attributes:
       event:
         range: Event
@@ -1121,6 +1128,7 @@ classes:
     annotations:
       relationship_properties: true
       implements: "Comparable<HasModifiedResidue>"
+      suppress_warnings: "unused"
     slots:
       - id
       - order
@@ -2438,6 +2446,7 @@ classes:
     is_a: Interaction
     annotations:
       node: true
+      suppress_warnings: "unused"
     attributes:
       interactor:
         multivalued: true
@@ -2684,6 +2693,7 @@ slots:
     annotations:
       id: true
       generated_value: true
+      no_default_getter_setter: true
   identifier:
     annotations:
       addedField: false

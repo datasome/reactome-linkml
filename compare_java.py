@@ -27,12 +27,20 @@ def find(file_name: str, path: str) -> str:
             return os.path.join(root, file_name)
     return None
 
+# TODO: Note - exclusion from comparison to original
 def exclude_generic_imports(imports: list) -> list:
     """ Exclude generic imports from imports list """
     ret = []
     for item in imports:
         if 'java.util' not in item and '.relationship.' not in item:
             ret.append(item)
+    return ret
+
+# TODO: Note - exclusion from comparison to original
+def convert_to_primitive(declaration: str) -> str:
+    """ Convert Integer to int and Long to long """
+    ret = declaration.replace("Integer", "int")
+    ret = ret.replace("Long", "long")
     return ret
 
 def retrieve_class_content(class_name: str, file_path: str) -> dict:
@@ -44,15 +52,25 @@ def retrieve_class_content(class_name: str, file_path: str) -> dict:
     current_annotations = []
     with open(file_path) as f:
         for line in f:
+            if re.search('^(\/)* *\*|^ *\/\/', line):
+                # Exclude comment lines from comparison
+                continue
             line = line.replace("\n", "")
             if '@' in line:
                 for entry in line.split('@'):
                     entry = tidy(entry)
-                    if 'private' in entry:
+                    if ' ' in entry:
                         # We're dealing with java annotations and attribute declaration in one line, e.g.
                         # @Id @GeneratedValue private Long id;
-                        class_content['attributes'].append((tidy(entry), sorted(current_annotations)))
-                        current_annotations = []
+                        # In this case entry == 'GeneratedValue private Long id;'
+                        arr = entry.split(" ")
+                        annot = arr[0]
+                        current_annotations.append("@{}".format(tidy(annot)))
+                        if len(arr) > 1:
+                            statement = " ".join(arr[1:])
+                            if 'private' in statement:
+                                class_content['attributes'].append((tidy(statement), sorted(current_annotations)))
+                                current_annotations = []
                     elif entry != "":
                         current_annotations.append("@{}".format(tidy(entry)))
             elif line.startswith("package"):
@@ -111,13 +129,46 @@ for clazz in generated_class_content:
                         errors.append("{} ({}): generated list doesn't match the original:\n\tonly in generated: {}\n\tonly in original: {}"
                                       .format(clazz, key, set(filtered_generated_item) - set(filtered_original_item),
                                               set(filtered_original_item) - set(filtered_generated_item)))
-            elif None:
-                None
-                # TBC
-        elif None:
-            None
-            # TBC
+            else:
+                # key in ['class_constructors', 'attributes', 'methods']
+                for generated_tuple in generated_item:
+                    generated_code = generated_tuple[0]
+                    generated_annotations = generated_tuple[1]
+                    found_code = False
+                    found_annotations = False
+                    for original_tuple in original_item:
+                        original_code = original_tuple[0]
+                        original_annotations = original_tuple[1]
+                        if generated_code == original_code:
+                            found_code = True
+                        elif convert_to_primitive(generated_code) == convert_to_primitive(original_code):
+                                found_code = True
+                        if sorted(generated_annotations) == sorted(original_annotations):
+                            found_annotations = True
+                        if found_code and found_annotations:
+                            break
+                    if found_code:
+                        if not found_annotations:
+                            errors.append("{}: Unable to find annotations for generated {} statement: '{}'"
+                                          .format(clazz, key, generated_code))
+                    else:
+                        errors.append("{}: Unable to find generated {} '({}, {})' in original code: '{}'"
+                                      .format(clazz, key, generated_code, generated_annotations, original_item))
 
+        elif type(generated_item) == tuple:
+            if key == "class_statement":
+                generated_class_statement = generated_item[0]
+                generated_class_annotations = generated_item[1]
+                original_class_statement = original_item[0]
+                original_class_annotations = original_item[1]
+                if generated_class_statement != original_class_statement:
+                    errors.append("{}: Generated class statement: '{}' differs from the original one: '{}'"
+                                  .format(clazz, generated_class_statement, original_class_statement))
+                if sorted(generated_class_annotations) != sorted(original_class_annotations):
+                    errors.append(
+                        "{}: generated class annotations don't match the original:\n\tonly in generated: {}\n\tonly in original: {}"
+                        .format(clazz, set(generated_class_annotations) - set(original_class_annotations),
+                                set(original_class_annotations) - set(generated_class_annotations)))
 
 if errors:
     print("\n".join(errors))
