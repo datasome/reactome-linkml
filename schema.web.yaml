@@ -50,6 +50,8 @@ classes:
       - name
     attributes:
       address:
+        annotations:
+          addedField: false
     in_subset:
       - web_schema
 
@@ -58,6 +60,7 @@ classes:
     is_a: ExternalOntology
     annotations:
       node: true
+      no_default_constructor: true
     in_subset:
       - web_schema
 
@@ -170,6 +173,9 @@ classes:
       node: true
     slots:
       - catalystActivity
+    slot_usage:
+      catalystActivity:
+        multivalued: false
     in_subset:
       - web_schema
 
@@ -179,7 +185,6 @@ classes:
     annotations:
       node: true
     slots:
-      - cellType
       - species
       - tissue
     slot_usage:
@@ -203,7 +208,7 @@ classes:
           type: "organ"
       proteinMarker:
         multivalued: true
-        range: PhysicalEntity
+        range: EntityWithAccessionedSequence
         annotations:
           type: "proteinMarker"
       tissueLayer:
@@ -226,7 +231,7 @@ classes:
   #### CellLineagePath ####
   CellLineagePath:
     description: "A collection of related Events. These events are mostly CellDevelopmentStep. This is used to describe tissues and cell differentiation"
-    is_a: ReactionLikeEvent
+    is_a: Pathway
     annotations:
       node: true
     slots:
@@ -235,7 +240,7 @@ classes:
     slot_usage:
       explanation:
         annotations:
-          override: false
+          override: true
     in_subset:
       - web_schema
 
@@ -392,6 +397,9 @@ classes:
         ifabsent: "getClass().getSimpleName()"
         annotations:
           override: false
+      dbId:
+        annotations:
+          protected: true
     attributes:
       isLoaded:
         range: boolean
@@ -399,12 +407,14 @@ classes:
         annotations:
           reactome_transient: true
           transient: true
+          public: true
       preventLazyLoading:
         range: boolean
         ifabsent: false
         annotations:
           reactome_transient: true
           transient: true
+          public: true
       displayName:
       stId:
         annotations:
@@ -501,9 +511,12 @@ classes:
     annotations:
       abstract: true
       node: true
-      suppress_warnings: "unused"
+      suppress_warnings: "{\"unused\", \"WeakerAccess\"}"
     slots:
       - referenceEntity
+    slot_usage:
+      referenceEntity:
+        range: ReferenceTherapeutic
     in_subset:
       - web_schema
 
@@ -530,10 +543,6 @@ classes:
     slots:
       - definition
       - name
-    slot_usage:
-      definition:
-        annotations:
-          addedField: true
     in_subset:
       - web_schema
 
@@ -580,7 +589,7 @@ classes:
       isOrdered:
         range: boolean
         annotations:
-          addedField: true
+          addedField: false
       hasMember:
         multivalued: true
         range: HasMember
@@ -649,6 +658,9 @@ classes:
       - revised
       - species
       - summation
+    slot_usage:
+      authored:
+        multivalued: true
     attributes:
       isInDisease:
         range: boolean
@@ -665,7 +677,6 @@ classes:
         annotations:
           addedField: false
       speciesName:
-        range: boolean
         annotations:
           addedField: true
           reactome_schema_ignore_getter: true
@@ -676,7 +687,7 @@ classes:
           type: "disease"
       eventOf:
         multivalued: true
-        range: Disease
+        range: Pathway
         annotations:
           type: "hasEvent"
           direction: INCOMING
@@ -716,8 +727,8 @@ classes:
         multivalued: true
         range: InstanceEdit
         annotations:
-          direction: INCOMING
           type: "reviewed"
+          direction: INCOMING
       negativePrecedingEvent:
         multivalued: true
         range: NegativePrecedingEvent
@@ -728,7 +739,7 @@ classes:
 
   #### EvidenceType ####
   EvidenceType:
-    is_a: DatabaseObject
+    is_a: ExternalOntology
     annotations:
       node: true
       suppress_warnings: "unused"
@@ -899,6 +910,7 @@ classes:
     slot_usage:
       species:
         range: Taxon
+        multivalued: false
       className:
         ifabsent: string(Genes and Transcripts)
     in_subset:
@@ -999,6 +1011,8 @@ classes:
   AuthorPublication:
     annotations:
       relationship_properties: true
+      implements: "Comparable<AuthorPublication>"
+      no_default_constructor: true
     slots:
       - id
       - order
@@ -1065,7 +1079,7 @@ classes:
       - order
       - stoichiometry
     attributes:
-      event:
+      complex:
         range: Complex
         annotations:
           target_node: true
@@ -1078,6 +1092,7 @@ classes:
     annotations:
       relationship_properties: true
       implements: "Comparable<HasEncapsulatedEvent>"
+      no_default_constructor: true
     slots:
       - id
       - order
@@ -1164,7 +1179,7 @@ classes:
       - order
       - stoichiometry
     attributes:
-      ReactionLikeEvent:
+      reactionLikeEvent:
         range: ReactionLikeEvent
         annotations:
           target_node: true
@@ -1249,7 +1264,7 @@ classes:
           type: "equivalentTo"
       secondReferenceSequence:
         multivalued: true
-        range: InterChainCrosslinkedResidue
+        range: ReferenceSequence
         annotations:
           type: "secondReferenceSequence"
           set: true
@@ -1450,7 +1465,7 @@ classes:
       - order
       - stoichiometry
     attributes:
-      ReactionLikeEvent:
+      reactionLikeEvent:
         range: ReactionLikeEvent
         annotations:
           target_node: true
@@ -1466,7 +1481,6 @@ classes:
       node: true
       suppress_warnings: "unused"
     slots:
-      - author
       - explanation
     attributes:
       doi:
@@ -1478,6 +1492,7 @@ classes:
           addedField: true
       hasEHLD:
         range: boolean
+        ifabsent: false
         annotations:
           addedField: false
       diagramWidth:
@@ -1556,7 +1571,7 @@ classes:
           annotations:
             type: "author"
             reactome_transient: true
-            no_default_getter_setter: true
+            no_list_getter_setter: true
     in_subset:
       - web_schema
 
@@ -1595,7 +1610,7 @@ classes:
           json_ignore: true
       positivelyRegulates:
         multivalued: true
-        range: NegativeRegulation
+        range: PositiveRegulation
         annotations:
           type: "regulator"
           direction: INCOMING
@@ -1609,6 +1624,7 @@ classes:
           direction: INCOMING
           reactome_transient: true
           json_ignore: true
+          set: true
       consumedByEvent:
         multivalued: true
         range: InputForReactionLikeEvent
@@ -1616,6 +1632,7 @@ classes:
           type: "input"
           direction: INCOMING
           reactome_transient: true
+          no_list_setter: true
       producedByEvent:
         multivalued: true
         range: OutputForReactionLikeEvent
@@ -1623,6 +1640,7 @@ classes:
           type: "output"
           direction: INCOMING
           reactome_transient: true
+          no_list_setter: true
       memberOf:
         multivalued: true
         range: PhysicalEntity
@@ -1653,18 +1671,18 @@ classes:
         multivalued: true
         range: CatalystActivity
         annotations:
-          direction: INCOMING
           type: "physicalEntity"
+          direction: INCOMING
           reactome_transient: true
           json_ignore: true
       systematicName:
         annotations:
           addedField: false
       isInDisease:
+        range: boolean
         annotations:
           addedField: true
       speciesName:
-         multivalued: true
          annotations:
            addedField: true
            reactome_schema_ignore_getter: true
@@ -1692,14 +1710,14 @@ classes:
         multivalued: true
         range: InstanceEdit
         annotations:
-          direction: INCOMING
           type: "reviewed"
+          direction: INCOMING
       markingReferences:
         multivalued: true
         range: MarkerReference
         annotations:
-          direction: INCOMING
           type: "marker"
+          direction: INCOMING
           reactome_transient: true
     in_subset:
       - web_schema
@@ -1818,10 +1836,10 @@ classes:
 
   #### PublicationAuthor ####
   PublicationAuthor:
-    is_a: Event
     annotations:
       relationship_properties: true
       implements: "Comparable<PublicationAuthor>"
+      no_default_constructor: true
     slots:
       - id
       - order
@@ -1925,7 +1943,6 @@ classes:
         range: InteractionEvent
         annotations:
           type: "hasInteraction"
-          set: true
       reactionType:
         multivalued: true
         range: ReactionType
@@ -1940,6 +1957,7 @@ classes:
     annotations:
       node: true
       abstract: true
+      no_default_constructor: true
     in_subset:
       - web_schema
 
@@ -2088,13 +2106,16 @@ classes:
 
   #### ReferenceSequence ####
   ReferenceSequence:
-    is_a: DatabaseObject
+    is_a: ReferenceEntity
     annotations:
       abstract: true
       node: true
       suppress_warnings: "unused"
     slots:
       - species
+    slot_usage:
+      species:
+        multivalued: false
     attributes:
       checksum:
         annotations:
@@ -2213,8 +2234,8 @@ classes:
         multivalued: true
         range: InstanceEdit
         annotations:
-          direction: INCOMING
           type: "reviewed"
+          direction: INCOMING
     in_subset:
       - web_schema
 
@@ -2254,6 +2275,9 @@ classes:
     slots:
       - coordinate
       - psiMod
+    slot_usage:
+      psiMod:
+        multivalued: true
     in_subset:
       - web_schema
 
@@ -2339,6 +2363,8 @@ classes:
     slot_usage:
       className:
         ifabsent: string(Chemical Compound)
+      species:
+        multivalued: false
     attributes:
       referenceType:
         annotations:
@@ -2492,6 +2518,9 @@ classes:
       # (e.g. getPublications() for publicationAuthorList in Person class)
       no_default_getter_setter:
         range: boolean
+      # Don't output a default (i.e. parameterless) constructor
+      no_default_constructor:
+        range: boolean
       # This is needed because getter method for attribute person in PublicationAuthor is non-standard: getAuthor()
       # instead of getPerson(). This means that we need to pull the getter/setter methods for Publication class
       # verbatim from additional_class_content instead of generating them using standard templates.
@@ -2526,6 +2555,8 @@ classes:
         range: boolean
       property1:
         range: Property
+      protected:
+        range: boolean
       relationship:
         range: Relationship
       relationship_properties:
@@ -2663,8 +2694,8 @@ slots:
     multivalued: true
     range: InstanceEdit
     annotations:
-      direction: INCOMING
       type: "edited"
+      direction: INCOMING
   entityOnOtherCell:
     multivalued: true
     range: PhysicalEntity
@@ -2747,8 +2778,8 @@ slots:
     multivalued: true
     range: InstanceEdit
     annotations:
-      direction: INCOMING
       type: "revised"
+      direction: INCOMING
   species:
     multivalued: true
     range: Species

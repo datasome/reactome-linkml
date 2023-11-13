@@ -67,6 +67,7 @@ classes:
     is_a: ExternalOntology
     annotations:
       node: true
+      no_default_constructor: true
     in_subset:
       - curator_schema_only
 
@@ -1304,6 +1305,7 @@ classes:
     annotations:
       relationship_properties: true
       implements: "Comparable<HasEncapsulatedEvent>"
+      no_default_constructor: true
     slots:
       - id
       - order
@@ -1320,6 +1322,7 @@ classes:
     annotations:
       relationship_properties: true
       implements: "Comparable<HasEvent>"
+      no_default_constructor: true
     slots:
       - id
       - order
@@ -1947,10 +1950,10 @@ classes:
 
   #### PublicationAuthor ####
   PublicationAuthor:
-    is_a: Event
     annotations:
       relationship_properties: true
       implements: "Comparable<PublicationAuthor>"
+      no_default_constructor: true
     slots:
       - id
       - order
@@ -2748,6 +2751,9 @@ classes:
       # (e.g. getPublications() for publicationAuthorList in Person class)
       no_default_getter_setter:
           range: boolean
+      # Don't output a default (i.e. parameterless) constructor
+      no_default_constructor:
+        range: boolean
       # This is needed because getter method for attribute person in PublicationAuthor is non-standard: getAuthor()
       # instead of getPerson(). This means that we need to pull the getter/setter methods for Publication class
       # verbatim from additional_class_content instead of generating them using standard templates.

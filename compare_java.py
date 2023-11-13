@@ -15,7 +15,7 @@ generated_classes_dir = sys.argv[1]
 original_classes_dir = sys.argv[2]
 
 def tidy(line: str):
-    line = re.sub(r" * { *$", "", line)
+    line = re.sub(r" *{.*$", "", line)
     line = re.sub(r" +$", "", line)
     line = re.sub(r"^ +","", line)
     return line
@@ -80,7 +80,7 @@ def retrieve_class_content(class_name: str, file_path: str) -> dict:
             elif line.startswith("public class {}".format(class_name)):
                 class_content['class_statement'] = (tidy(line), sorted(current_annotations))
                 current_annotations = []
-            elif "public {}".format(class_name) in line:
+            elif "public class {}".format(class_name) in line or "public abstract class {}".format(class_name) in line:
                 class_content['class_constructors'].append((tidy(line), sorted(current_annotations)))
                 current_annotations = []
             elif 'private' in line:

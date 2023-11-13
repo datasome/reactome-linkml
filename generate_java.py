@@ -58,7 +58,7 @@ OTHER_ANNOTATIONS = ['abstract', 'implements', 'set', 'sorted_set', 'getter_only
                      'static', 'final', 'transient', 'constructor_parameter',
                      'include_fetch', 'include_default_setter', 'no_default_getter_setter',
                      'no_list_getter_setter', 'no_list_setter', 'include_stoichiometry',
-                     'no_default_constructor']
+                     'no_default_constructor', 'protected', 'public']
 
 # Indentation used in generated java classes
 INDENT_0 = ""
@@ -142,7 +142,7 @@ def add_collection_if_applicable(java_type: str, attr_entry: dict,
     """ Add import java.util.* import to annotations_imports; wrap java_type in Java collection generics if
         add entry multivalued """
     ret_java_type = java_type
-    if 'multivalued' in attr_entry:
+    if 'multivalued' in attr_entry and attr_entry['multivalued'] is True:
         annotations_imports.add('import java.util.*;')
         for collection_type in ['set', 'sorted_set']:
             if collection_type in attr_annotations and attr_annotations[collection_type]:
@@ -554,7 +554,12 @@ def get_class_attributes_slots(clazz: str, class_entry: dict, schema_slots: dict
                 relationship_clazz, target_node_clazz, dbid_variable_name, other_annotations, annotations_imports)
 
         # Output declaration of attribute attr
-        attr_slot_to_lines[attr] += ["{}private{}{} {}{};".format(INDENT_1,
+        accessibility = "private"
+        if 'protected' in other_annotations and other_annotations['protected'] is True:
+            accessibility = "protected"
+        elif 'public' in other_annotations and other_annotations['public'] is True:
+            accessibility = "public"
+        attr_slot_to_lines[attr] += ["{}{}{}{} {}{};".format(INDENT_1, accessibility,
                                          get_keywords(other_annotations, ["static", "final", "transient"]),
                                          java_type, attr, value),
                                      ""]
@@ -621,7 +626,7 @@ def get_parameterized_constructor(clazz: str, slots: dict, class_entry: dict, ot
             if range == "AnnotationLongType":
                 java_type = "Long"
             elif range == "AnnotationBytesType":
-                java_type = "bytes[]"
+                java_type = "byte[]"
             else:
                 java_type = capitalize(range)
         if 'slots' in class_entry and parameter_name in class_entry['slots']:
