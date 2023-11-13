@@ -1322,7 +1322,6 @@ classes:
       node: true
     attributes:
       marker:
-        multivalued: true
         range: EntityWithAccessionedSequence
         annotations:
           type: "marker"
@@ -2190,7 +2189,6 @@ classes:
       - goBiologicalProcess
       - literatureReference
       - revised
-      - summation
     attributes:
       releaseDate:
         annotations:
