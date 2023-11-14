@@ -14,36 +14,10 @@ schema_file_name = sys.argv[1]
 GETTER_ONLY_ANNOT_SUFFIX = "_getter"
 if schema_file_name == "schema.web.yaml":
     OUTPUT_DIR = "graph-core-classes"
+    CURATOR = ""
 else:
     OUTPUT_DIR = "curator-graph-core-classes"
-
-CLASS_TO_PACKAGE_NAME = {
-    "DatabaseObjectLike": "org.reactome.server.graph.domain.result",
-    "GeneratedValue": "org.springframework.data.neo4j.core.schema",
-    "Id": "org.springframework.data.neo4j.core.schema",
-    "InvocationTargetException": "java.lang.reflect",
-    "JsonGetter": "com.fasterxml.jackson.annotation",
-    "JsonIdentityInfo": "com.fasterxml.jackson.annotation",
-    "JsonIgnore": "com.fasterxml.jackson.annotation",
-    "ObjectIdGenerators": "com.fasterxml.jackson.annotation",
-    "Method": "java.lang.reflect",
-    "Node": "org.springframework.data.neo4j.core.schema",
-    "NonNull": "org.springframework.lang",
-    "ParameterizedType": "java.lang.reflect",
-    "Property": "org.springframework.data.neo4j.core.schema",
-    "ReactomeAllowedClasses": "org.reactome.server.graph.domain.annotations",
-    "ReactomeConstraint": "org.reactome.server.graph.domain.annotations",
-    "ReactomeInstanceDefiningValue": "org.reactome.server.graph.domain.annotations",
-    "ReactomeProperty": "org.reactome.server.graph.domain.annotations",
-    "ReactomeRelationship": "org.reactome.server.graph.domain.annotations",
-    "ReactomeSchemaIgnore": "org.reactome.server.graph.domain.annotations",
-    "ReactomeTransient": "org.reactome.server.graph.domain.annotations",
-    "Relationship": "org.springframework.data.neo4j.core.schema",
-    "RelationshipProperties" : "org.springframework.data.neo4j.core.schema",
-    "Serializable": "java.io",
-    "StoichiometryObject": "org.reactome.server.graph.service.helper",
-    "TargetNode": "org.springframework.data.neo4j.core.schema"
-}
+    CURATOR = "curator."
 
 VALUE_TO_JAVA_ENUM = {
     "INCOMING" : "Relationship.Direction",
@@ -65,6 +39,33 @@ INDENT_0 = ""
 INDENT_1 = INDENT_0 + "    "
 INDENT_2 = INDENT_1 + "    "
 
+CLASS_TO_PACKAGE_NAME = {
+    "DatabaseObjectLike": "org.reactome.server.graph.{}domain.result".format(CURATOR),
+    "GeneratedValue": "org.springframework.data.neo4j.core.schema",
+    "Id": "org.springframework.data.neo4j.core.schema",
+    "InvocationTargetException": "java.lang.reflect",
+    "JsonGetter": "com.fasterxml.jackson.annotation",
+    "JsonIdentityInfo": "com.fasterxml.jackson.annotation",
+    "JsonIgnore": "com.fasterxml.jackson.annotation",
+    "ObjectIdGenerators": "com.fasterxml.jackson.annotation",
+    "Method": "java.lang.reflect",
+    "Node": "org.springframework.data.neo4j.core.schema",
+    "NonNull": "org.springframework.lang",
+    "ParameterizedType": "java.lang.reflect",
+    "Property": "org.springframework.data.neo4j.core.schema",
+    "ReactomeAllowedClasses": "org.reactome.server.graph.{}domain.annotations".format(CURATOR),
+    "ReactomeConstraint": "org.reactome.server.graph.{}domain.annotations".format(CURATOR),
+    "ReactomeInstanceDefiningValue": "org.reactome.server.graph.{}domain.annotations".format(CURATOR),
+    "ReactomeProperty": "org.reactome.server.graph.{}domain.annotations".format(CURATOR),
+    "ReactomeRelationship": "org.reactome.server.graph.{}domain.annotations".format(CURATOR),
+    "ReactomeSchemaIgnore": "org.reactome.server.graph.{}domain.annotations".format(CURATOR),
+    "ReactomeTransient": "org.reactome.server.graph.{}domain.annotations".format(CURATOR),
+    "Relationship": "org.springframework.data.neo4j.core.schema",
+    "RelationshipProperties" : "org.springframework.data.neo4j.core.schema",
+    "Serializable": "java.io",
+    "StoichiometryObject": "org.reactome.server.graph.service.helper",
+    "TargetNode": "org.springframework.data.neo4j.core.schema"
+}
 
 def is_class_relationship(class_entry: dict) -> bool:
     """ Return true if class_entry represents a relationship properties class """
@@ -85,7 +86,7 @@ def get_package_suffix(class_entry: dict) -> str:
 def get_package(class_entry: dict) -> str:
     """ Return java package for class represented by class_entry """
     pkg_suffix = get_package_suffix(class_entry)
-    return "{}.{}".format("org.reactome.server.graph.domain", pkg_suffix)
+    return "org.reactome.server.graph.{}domain.{}".format(CURATOR, pkg_suffix)
 
 
 def get_keywords(class_annotations: dict, keywords: list) -> str:
@@ -158,10 +159,12 @@ def capitalize(attr: str) -> str:
     """ Capitalize linkml annotation or attr, removing any underscores, e.g.
         reactome_schema_ignore => ReactomeSchemaIgnore and dbId => DbId
         """
-    if not attr[0].isupper():
-        if "_" in attr:
+    if not attr.startswith("_") and not attr[0].isupper():
+        # Example of attr.startswith("_"): _DeletedInstance
+        if "_" in attr and "DB_ID" not in attr:
             return sub(r"_+", " ", attr).title().replace(" ", "")
         else:
+            # # Example of "DB_ID" not in attr: deletedInstanceDB_ID
             attr = attr[0].upper() + attr[1:]
     return attr
 
@@ -419,7 +422,7 @@ def add_setter(attr_entry: dict, attr: str, java_type: str, attr_slot_to_setter:
     if attr_entry is not None and 'annotations' in attr_entry:
         if 'deprecated' in attr_entry['annotations']:
             attr_slot_to_setter[attr].append(INDENT_1 + "@Deprecated")
-        if 'allowed' in attr_entry['annotations']:
+        if 'allowed' in attr_entry['annotations'] and attr_entry['annotations']['allowed']:
             setter_code = \
                 [get_filled_allowed_code_template(
                     attr, java_type, attr_entry['annotations']['allowed'], "SetWithAllowedClasses.java"), ""]

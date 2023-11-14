@@ -979,6 +979,7 @@ classes:
       - literatureReference
     slot_usage:
       authored:
+        multivalued: true
         annotations:
           constraint: REQUIRED
       edited:
@@ -1276,6 +1277,7 @@ classes:
     annotations:
       relationship_properties: true
       implements: "Comparable<HasCompartment>"
+      suppress_warnings: "unused"
     slots:
       - id
       - order
@@ -1292,6 +1294,7 @@ classes:
     annotations:
       relationship_properties: true
       implements: "Comparable<HasComponent>"
+      suppress_warnings: "unused"
     slots:
       - id
       - order
@@ -1327,6 +1330,9 @@ classes:
       - id
       - order
       - stoichiometry
+    slot_usage:
+      stoichiometry:
+        ifabsent:
     attributes:
       event:
         range: Event
@@ -1353,6 +1359,7 @@ classes:
     annotations:
       relationship_properties: true
       implements: "Comparable<HasModifiedResidue>"
+      suppress_warnings: "unused"
     slots:
       - id
       - order
@@ -1646,6 +1653,8 @@ classes:
       compartment:
         annotations:
           constraint: REQUIRED
+      authored:
+        multivalued: true
     attributes:
       doi:
         annotations:
@@ -1653,6 +1662,7 @@ classes:
           addedField: false
       hasEHLD:
         range: boolean
+        ifabsent: false
         annotations:
           constraint: OPTIONAL
           addedField: false
@@ -1800,16 +1810,16 @@ classes:
         range: PhysicalEntity
         annotations:
           constraint: OPTIONAL
-          direction: INCOMING
           type: "inferredTo"
+          direction: INCOMING
           reactome_transient: true
       reviewed:
         multivalued: true
         range: InstanceEdit
         annotations:
           constraint: OPTIONAL
-          direction: INCOMING
           type: "reviewed"
+          direction: INCOMING
     in_subset:
       - curator_schema_only
 
@@ -2934,8 +2944,8 @@ slots:
     range: InstanceEdit
     annotations:
       constraint: OPTIONAL
-      direction: INCOMING
       type: "edited"
+      direction: INCOMING
   entityOnOtherCell:
     multivalued: true
     range: PhysicalEntity
@@ -2968,6 +2978,7 @@ slots:
     annotations:
       id: true
       generated_value: true
+      no_default_getter_setter: true
   identifier:
     annotations:
       addedField: false
@@ -2991,7 +3002,7 @@ slots:
       constraint: MANDATORY
       category: all
       type: "modification"
-      allowed: "{EntitySet.class, Polymer.class, ReferenceGroup.class}"
+      allowed: "{EntitySet.class, Polymer.class, ReferenceMolecule.class, ReferenceGroup.class}"
   name:
     multivalued: true
     annotations:
@@ -3036,8 +3047,8 @@ slots:
     range: InstanceEdit
     annotations:
       constraint: OPTIONAL
-      direction: INCOMING
       type: "revised"
+      direction: INCOMING
   species:
     multivalued: true
     range: Species

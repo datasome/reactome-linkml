@@ -52,7 +52,7 @@ def retrieve_class_content(class_name: str, file_path: str) -> dict:
     current_annotations = []
     with open(file_path) as f:
         for line in f:
-            if re.search('^(\/)* *\*|^ *\/\/', line):
+            if search('^(\/)* *\*|^ *\/\/', line):
                 # Exclude comment lines from comparison
                 continue
             line = line.replace("\n", "")
@@ -77,7 +77,7 @@ def retrieve_class_content(class_name: str, file_path: str) -> dict:
                 class_content['package'] = tidy(line)
             elif line.startswith("import"):
                 class_content['imports'].append(tidy(line))
-            elif line.startswith("public class {}".format(class_name)):
+            elif search("public (abstract )*class {}".format(class_name), line):
                 class_content['class_statement'] = (tidy(line), sorted(current_annotations))
                 current_annotations = []
             elif "public class {}".format(class_name) in line or "public abstract class {}".format(class_name) in line:
@@ -109,6 +109,7 @@ errors = []
 if sorted(list(original_class_content.keys())) != sorted(list(generated_class_content.keys())):
     errors.append("Some classes don't match between original and generated")
 for clazz in generated_class_content:
+
     generated = generated_class_content[clazz]
     original = original_class_content[clazz]
     for key in generated:
