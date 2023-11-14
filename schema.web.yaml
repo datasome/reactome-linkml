@@ -1379,8 +1379,8 @@ classes:
         multivalued: true
         range: Event
         annotations:
-          direction: INCOMING
           type: "negativePrecedingEvent"
+          direction: INCOMING
       reason:
         range: NegativePrecedingEventReason
         annotations:
@@ -1843,7 +1843,7 @@ classes:
       - id
       - order
     attributes:
-      author:
+      person:
         range: Person
         annotations:
           target_node: true
