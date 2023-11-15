@@ -47,6 +47,7 @@ CLASS_TO_PACKAGE_NAME = {
     "JsonGetter": "com.fasterxml.jackson.annotation",
     "JsonIdentityInfo": "com.fasterxml.jackson.annotation",
     "JsonIgnore": "com.fasterxml.jackson.annotation",
+    "JsonProperty": "com.fasterxml.jackson.annotation",
     "ObjectIdGenerators": "com.fasterxml.jackson.annotation",
     "Method": "java.lang.reflect",
     "Node": "org.springframework.data.neo4j.core.schema",
@@ -657,19 +658,19 @@ def get_additional_class_content(clazz: str, annotations_imports: set) -> (str, 
     """ Return additional content for class clazz """
     ret_code = None
     fh = find("{}.java".format(clazz), os.path.join("additional_class_content", OUTPUT_DIR))
-    if clazz == "DatabaseObject":
-        for annot_clazz in ['NonNull', 'InvocationTargetException', 'ParameterizedType', 'Method']:
-            annotations_imports.add('import {}.{};'
-                                    .format(CLASS_TO_PACKAGE_NAME[annot_clazz], annot_clazz))
-    elif clazz == "Person":
-        for annot_clazz in ['JsonGetter']:
-            annotations_imports.add('import {}.{};'
-                                    .format(CLASS_TO_PACKAGE_NAME[annot_clazz], annot_clazz))
-    elif clazz == "ReferenceEntity":
-        for annot_clazz in ['ReactomeSchemaIgnore', 'JsonIgnore']:
-            annotations_imports.add('import {}.{};'
-                                    .format(CLASS_TO_PACKAGE_NAME[annot_clazz], annot_clazz))
     if fh:
+        if clazz == "DatabaseObject":
+            for annot_clazz in ['NonNull', 'InvocationTargetException', 'ParameterizedType', 'Method']:
+                annotations_imports.add('import {}.{};'
+                                        .format(CLASS_TO_PACKAGE_NAME[annot_clazz], annot_clazz))
+        elif clazz == "Person":
+            for annot_clazz in ['JsonGetter']:
+                annotations_imports.add('import {}.{};'
+                                        .format(CLASS_TO_PACKAGE_NAME[annot_clazz], annot_clazz))
+        elif clazz == "ReferenceEntity":
+            for annot_clazz in ['ReactomeSchemaIgnore', 'JsonIgnore']:
+                annotations_imports.add('import {}.{};'
+                                        .format(CLASS_TO_PACKAGE_NAME[annot_clazz], annot_clazz))
         with open(fh, 'r') as additional_content_file:
             ret_code = additional_content_file.read()
     return ret_code, annotations_imports

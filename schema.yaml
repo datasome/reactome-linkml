@@ -76,7 +76,6 @@ classes:
     description: "Shortcut reactions that make the connection between input and output, but don't provide complete mechanistic detail. Used for reactions that do not balance, or complicated processes for which we either don't know all the details, or we choose not to represent every step. (e.g. degradation of a protein)"
     is_a: ReactionlikeEvent
     annotations:
-      abstract: true
       node: true
       suppress_warnings: "unused"
     slots:
@@ -88,6 +87,7 @@ classes:
       - literatureReference
     slot_usage:
       authored:
+        multivalued: true
         annotations:
           constraint: REQUIRED
       edited:
@@ -121,6 +121,7 @@ classes:
           category: all
           type: "output"
           set: true
+          no_list_setter: true
     in_subset:
       - curator_schema_only
 
@@ -183,11 +184,13 @@ classes:
           type: "hasCandidate"
           sorted_set: true
       hasMember:
+        multivalued: true
         range: HasMember
         annotations:
           constraint: REQUIRED
           category: all
           type: "hasMember"
+          sorted_set: true
     in_subset:
       - curator_schema_only
 
@@ -226,12 +229,12 @@ classes:
   CatalystActivityReference:
     is_a: ControlReference
     annotations:
-      abstract: true
       node: true
     slots:
       - catalystActivity
     slot_usage:
       catalystActivity:
+        multivalued: false
         annotations:
           constraint: MANDATORY
     in_subset:
@@ -402,6 +405,7 @@ classes:
   ControlReference:
     is_a: DatabaseObject
     annotations:
+      abstract: true
       node: true
       suppress_warnings: "{\"unused\", \"WeakerAccess\"}"
     slots:
@@ -474,6 +478,10 @@ classes:
       - DB_ID
       - explanation
     slot_usage:
+      DB_ID:
+        annotations:
+          json_property_getter: "DB_ID"
+          protected: true
       explanation:
         annotations:
           override: false
@@ -488,17 +496,22 @@ classes:
         annotations:
           reactome_transient: true
           transient: true
+          public: true
       preventLazyLoading:
         range: boolean
         ifabsent: false
         annotations:
           reactome_transient: true
           transient: true
+          public: true
       _displayName:
         annotations:
           constraint: NOMANUALEDIT
           addedField: false
       _timestamp:
+        annotations:
+          constraint: NOMANUALEDIT
+          addedField: false
       created:
         range: InstanceEdit
         annotations:
@@ -512,9 +525,10 @@ classes:
           type: "modified"
           direction: INCOMING
       stableIdentifier:
-          annotations:
-            constraint: NOMANUALEDIT
-            type: "stableIdentifier"
+        range: StableIdentifier
+        annotations:
+          constraint: NOMANUALEDIT
+          type: "stableIdentifier"
     in_subset:
       - curator_schema_only
 
@@ -644,6 +658,7 @@ classes:
       - literatureReference
     slot_usage:
       authored:
+        multivalued: true
         annotations:
           constraint: REQUIRED
       edited:
@@ -678,6 +693,8 @@ classes:
       compartment:
         annotations:
           category: all
+      referenceEntity:
+        range: ReferenceTherapeutic
     attributes:
       disease:
         multivalued: true
@@ -836,6 +853,8 @@ classes:
       - species
       - summation
     slot_usage:
+      authored:
+        multivalued: true
       goBiologicalProcess:
         annotations:
           constraint: NOMANUALEDIT
@@ -898,8 +917,8 @@ classes:
         range: InstanceEdit
         annotations:
           constraint: REQUIRED
-          direction: INCOMING
           type: "reviewed"
+          direction: INCOMING
       negativePrecedingEvent:
         multivalued: true
         range: NegativePrecedingEvent
@@ -1443,7 +1462,7 @@ classes:
           type: "equivalentTo"
       secondReferenceSequence:
         multivalued: true
-        range: InterChainCrosslinkedResidue
+        range: ReferenceSequence
         annotations:
           constraint: MANDATORY
           category: all
@@ -1708,6 +1727,7 @@ classes:
           constraint: REQUIRED
           addedField: false
       representedPathway:
+        multivalued: true
         range: RepresentedPathway
         annotations:
           constraint: MANDATORY
@@ -1875,6 +1895,7 @@ classes:
       - literatureReference
     slot_usage:
       authored:
+        multivalued: true
         annotations:
           constraint: REQUIRED
       edited:
@@ -1993,6 +2014,7 @@ classes:
       - literatureReference
     slot_usage:
       authored:
+        multivalued: true
         annotations:
           constraint: REQUIRED
       edited:
@@ -2014,6 +2036,7 @@ classes:
   ReactionlikeEvent:
     is_a: Event
     annotations:
+      abstract: true
       constructor_parameter: "dbId"
       node: true
       suppress_warnings: "unused"
@@ -2067,6 +2090,7 @@ classes:
           type: "output"
           set: true
           include_stoichiometry: true
+          no_list_setter: true
       normalReaction:
         range: ReactionlikeEvent
         annotations:
@@ -2112,6 +2136,7 @@ classes:
     annotations:
       abstract: true
       node: true
+      no_default_constructor: true
     in_subset:
       - curator_schema_only
 
@@ -2277,7 +2302,7 @@ classes:
 
   #### ReferenceSequence ####
   ReferenceSequence:
-    is_a: DatabaseObject
+    is_a: ReferenceEntity
     annotations:
       abstract: true
       node: true
@@ -2287,6 +2312,7 @@ classes:
       - species
     slot_usage:
       species:
+        multivalued: false
         annotations:
           constraint: MANDATORY
           category: all
@@ -2603,6 +2629,7 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
+      no_default_constructor: true
     slots:
       - identifier
       - identifierVersion
@@ -2620,6 +2647,7 @@ classes:
     is_a: DatabaseObject
     annotations:
       node: true
+      no_default_constructor: true
     attributes:
       releaseNumber:
         range: integer
@@ -2627,7 +2655,7 @@ classes:
           addedField: false
           category: all
       status:
-        range: integer
+        range: ReleaseStatus
         annotations:
           addedField: false
           category: all
@@ -2778,6 +2806,7 @@ classes:
         range: JsonIdentityInfo
       json_ignore:
         range: boolean
+      json_property:
       node:
         range: boolean
       reactome_allowed_classes:
