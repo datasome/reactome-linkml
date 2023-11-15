@@ -606,6 +606,7 @@ classes:
           reactome_schema_ignore: false
           override: false
       name:
+        multivalued: false
         annotations:
           constraint: NOMANUALEDIT
           category: all
@@ -616,7 +617,6 @@ classes:
           category: all
     attributes:
       deletedInstanceDB_ID:
-        multivalued: true
         range: AnnotationLongType
         annotations:
           constraint: NOMANUALEDIT
@@ -785,6 +785,7 @@ classes:
           category: none
       species:
         range: Taxon
+        multivalued: false
         annotations:
           constraint: MANDATORY
           category: none
@@ -1165,6 +1166,7 @@ classes:
           category: all
       species:
         range: Taxon
+        multivalued: false
         annotations:
           constraint: MANDATORY
           category: all
@@ -2541,6 +2543,7 @@ classes:
         annotations:
           category: all
       species:
+        multivalued: false
         annotations:
           constraint: OPTIONAL
           category: all
