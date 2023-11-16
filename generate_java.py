@@ -34,6 +34,9 @@ OTHER_ANNOTATIONS = ['abstract', 'implements', 'set', 'sorted_set', 'getter_only
                      'no_list_getter_setter', 'no_list_setter', 'include_stoichiometry',
                      'no_default_constructor', 'protected', 'public']
 
+# Acronyms in variable names are capitalized as a whole (not just the first letter)
+ACRONYMS_IN_VARIABLE_NAMES = ['rna']
+
 # Indentation used in generated java classes
 INDENT_0 = ""
 INDENT_1 = INDENT_0 + "    "
@@ -165,8 +168,15 @@ def capitalize(attr: str) -> str:
         if "_" in attr and "DB_ID" not in attr:
             return sub(r"_+", " ", attr).title().replace(" ", "")
         else:
-            # # Example of "DB_ID" not in attr: deletedInstanceDB_ID
-            attr = attr[0].upper() + attr[1:]
+            found = False
+            for acronym in ACRONYMS_IN_VARIABLE_NAMES:
+                if attr.startswith(acronym):
+                    attr = acronym.upper() + attr.replace(acronym,"")
+                    found = True
+                    break
+            if not found:
+                # Example of "DB_ID" in attr: deletedInstanceDB_ID
+                attr = attr[0].upper() + attr[1:]
     return attr
 
 def lower_case(attr: str) -> str:

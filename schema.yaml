@@ -59,6 +59,7 @@ classes:
       address:
         annotations:
           constraint: REQUIRED
+          addedField: false
     in_subset:
       - curator_schema_only
 
@@ -311,7 +312,7 @@ classes:
 
   #### CellLineagePath ####
   CellLineagePath:
-    is_a: ReactionlikeEvent
+    is_a: Pathway
     annotations:
       node: true
     slots:
@@ -362,6 +363,9 @@ classes:
       - isChimeric
       - relatedSpecies
       - species
+    slot_usage:
+      compartment:
+        multivalued: false
     attributes:
       hasComponent:
         multivalued: true
@@ -767,11 +771,14 @@ classes:
     slot_usage:
       className:
         ifabsent: string(Set)
+      compartment:
+        multivalued: false
     attributes:
       isOrdered:
         range: boolean
         annotations:
           constraint: OPTIONAL
+          addedField: false
       hasMember:
         multivalued: true
         range: HasMember
@@ -2464,6 +2471,9 @@ classes:
     slots:
       - coordinate
       - psiMod
+    slot_usage:
+      psiMod:
+        multivalued: true
     in_subset:
       - curator_schema_only
 
