@@ -4,7 +4,7 @@ classes:
   AbstractModifiedResidue:
     is_a: DatabaseObject
     annotations:
-      annotations_removed: "constructor_parameter"
+      removed_annotations: "constructor_parameter"
 
   #### BlackBoxEvent ####
   BlackBoxEvent:

@@ -6,18 +6,18 @@ from re import sub, findall, search
 import copy
 import sys
 
-if len(sys.argv) < 2:
-    print('Specify schema file: schema.yaml or schema.web.yaml')
-    sys.exit()
-schema_file_name = sys.argv[1]
-
-GETTER_ONLY_ANNOT_SUFFIX = "_getter"
-if schema_file_name == "schema.web.yaml":
+web_schema_diff_file_name = None
+if len(sys.argv) > 1:
+    # If an argument is provided, it is expected to be be the name of the linkml file that contains web schema-only content
+    web_schema_diff_file_name = sys.argv[1]
     OUTPUT_DIR = "graph-core-classes"
     CURATOR = ""
 else:
+    # If no arguments are provided, curator schema-only java classes are generated into curator-graph-core-classes
     OUTPUT_DIR = "curator-graph-core-classes"
     CURATOR = "curator."
+
+GETTER_ONLY_ANNOT_SUFFIX = "_getter"
 
 VALUE_TO_JAVA_ENUM = {
     "INCOMING" : "Relationship.Direction",
@@ -70,6 +70,170 @@ CLASS_TO_PACKAGE_NAME = {
     "StoichiometryObject": "org.reactome.server.graph.service.helper",
     "TargetNode": "org.springframework.data.neo4j.core.schema"
 }
+
+def remove_curator_only_annotations(classes: dict, slots: dict) -> (dict, dict):
+    """Remove all constraint and category annotations as they are not used in web schema"""
+    for slot in slots:
+        if 'annotations' in slot:
+            for key in ['category', 'constraint']:
+                if key in slot['annotations']:
+                    slot['annotations'].pop(key)
+    for clazz in classes:
+        class_entry = classes[clazz]
+        if is_annotation(clazz):
+            continue
+        if 'attributes' in class_entry:
+            for attr in class_entry['attributes']:
+                if 'annotations' in attr:
+                    for key in ['category', 'constraint']:
+                        if key in slot['annotations']:
+                            slot['annotations'].pop(key)
+    return classes, slots
+
+def get_web_yaml(web_schema_diff_file_name: str, schema_data: dict):
+    with open(web_schema_diff_file_name, "r") as stream:
+        try:
+            # schema_data contains curator schema
+            classes = schema_data['classes']
+            slots = schema_data['slots']
+            # Remove curator schema-only annotations from all class attributes and slots
+            classes, slots = remove_curator_only_annotations(classes, slots)
+
+            # diff_data contains web-only content
+            diff_data = yaml.safe_load(stream)
+            diff_classes = diff_data['classes']
+            diff_slots = diff_data['slots']
+
+            # clazzes_for_removal will contain names of classes in curator schema that should be removed from the web schema
+            clazzes_for_removal = []
+
+            # By the end of the loop below classes and slots should contain the correct content of the web schema
+            for clazz in classes:
+                class_entry = classes[clazz]
+                if clazz in diff_classes:
+
+                    # Collect all relevant portions of class_entry and diff_class_entry
+                    diff_class_annotations, diff_class_attributes, diff_class_slots, diff_class_slot_usage = {}, {}, {}, {}
+                    class_annotations, class_attributes, class_slots, class_slot_usage = {}, {}, {}, {}
+                    diff_class_entry = diff_classes[clazz]
+                    if 'annotations' in diff_class_entry:
+                        diff_class_annotations = diff_class_entry['annotations']
+                    if 'annotations' in class_entry:
+                        class_annotations = class_entry['annotations']
+                    if 'attributes' in diff_class_entry:
+                        diff_class_attributes = diff_class_entry['attributes']
+                    if 'attributes' in class_entry:
+                        class_attributes = class_entry['attributes']
+                    if 'slots' in diff_class_entry:
+                        diff_class_slots = diff_class_entry['attributes']
+                    if 'slots' in class_entry:
+                        class_slots = class_entry['slots']
+                    if 'slot_usage' in diff_class_entry:
+                        diff_class_slot_usage = diff_class_entry['slot_usage']
+                    if 'slot_usage' in class_entry:
+                        class_slot_usage = class_entry['slot_usage']
+
+                    if 'removed_class' in diff_class_annotations:
+                        # Tag clazz for removal from classes after the main loop has finished
+                        clazzes_for_removal.append(clazz)
+
+                    if 'removed_annotations' in diff_class_annotations:
+                        # Remove any curator schema-only annotations
+                        for annot in diff_class_annotations['removed_annotations'].split(","):
+                            class_annotations.pop(annot.strip())
+
+                    if 'removed_attributes' in diff_class_annotations:
+                        for attr in diff_class_annotations['removed_attributes'].split(","):
+                            # Remove any curator schema-only attributes
+                            class_attributes.pop(attr.strip())
+
+                    if 'removed_slots' in diff_class_annotations:
+                        # Remove any curator schema-only slots and associated slot_usage
+                        for slot in diff_class_annotations['removed_slots'].split(","):
+                            slot = slot.strip()
+                            class_slots.pop(slot)
+                            if slot in class_slot_usage:
+                                class_slot_usage.pop(slot)
+
+                    if 'is_a' in diff_class_entry:
+                        # Override is_a in class_entry if present in diff_class_entry
+                        class_entry['is_a'] = diff_class_entry['is_a']
+
+                    # Iterate through class attributes, removing any curator schema-only annotations
+                    # and overriding any annotations and keys if present in that attribute's entry in
+                    # diff_class_attributes
+                    for attr in class_attributes:
+                        if attr in diff_class_attributes:
+                            if 'annotations' in diff_class_attributes[attr]:
+                                diff_class_attr_annots = diff_class_attributes[attr]['annotations']
+                                if 'removed_annotations' in diff_class_attr_annots:
+                                    for annot in diff_class_attr_annots['removed_annotations'].split(","):
+                                        class_attributes[attr]['annotations'].pop(annot.strip())
+                                for annot in diff_class_attr_annots:
+                                    if annot != 'removed_annotations':
+                                        class_attributes[attr]['annotations'][annot] = diff_class_attr_annots[annot]
+                            for key in diff_class_attributes[attr]:
+                                if key != 'annotations':
+                                    class_attributes[attr][key] = diff_class_attributes[attr][key]
+                    for attr in diff_class_attributes:
+                        # Add any web schema-only attributes to class_attributes
+                        if attr not in class_attributes:
+                            class_attributes[attr] = diff_class_attributes[attr]
+
+                    # Iterate through class slots, removing any curator schema-only annotations from class_usage
+                    # and overriding any annotations and keys if present in that attribute's class_usage in
+                    # diff_class_slots
+                    for slot in class_slots:
+                        if slot in diff_class_slots:
+                            if slot in diff_class_slot_usage:
+                                if 'annotations' in diff_class_slot_usage[slot]:
+                                    diff_class_slot_usage_annots = diff_class_slot_usage[slot]['annotations']
+                                    if 'removed_annotations' in diff_class_slot_usage_annots:
+                                        for annot in diff_class_slot_usage_annots['removed_annotations'].split(","):
+                                            class_slots['slot_usage'][slot]['annotations'].pop(annot.strip())
+                                    for annot in diff_class_slot_usage_annots:
+                                        if annot != 'removed_annotations':
+                                            class_slots['slot_usage'][slot]['annotations'][annot] = \
+                                                diff_class_slot_usage_annots[annot]
+                                for key in diff_class_slots[slot]:
+                                    if key != 'annotations':
+                                        class_slots['slot_usage'][slot][key] = diff_class_slot_usage[slot][key]
+                    for slot in diff_class_slots:
+                        # Add any web schema-only slots to class_slots
+                        if slot not in class_slots:
+                            class_slots[slot] = diff_class_slots[slot]
+
+            # Remove from classes all curator schema-only class entries
+            for clazz in clazzes_for_removal:
+                classes.pop(clazz)
+
+            # Add to classes web schema-only classes
+            for clazz in diff_classes:
+                if clazz not in classes:
+                    classes[clazz] = diff_classes[clazz]
+
+            # Iterate through schema slots, removing any curator schema-only annotations
+            # and overriding any annotations and keys if present in that slot's entry in diff_slots
+            for slot in diff_slots:
+                if slot not in slots:
+                    # Add any web schema-only slots to slots dict
+                    slots[slot] = diff_slots[slot]
+                else:
+                    if 'annotations' in diff_slots[slot]:
+                        diff_slot_annots = diff_slots[slot]['annotations']
+                        if 'removed_annotations' in diff_slot_annots:
+                            for annot in diff_slot_annots['removed_annotations'].split(","):
+                                slots[slot]['annotations'].pop(annot.strip())
+                        for annot in diff_slot_annots:
+                            if annot != 'removed_annotations':
+                                slots[slot]['annotations'][annot] = diff_slot_annots[annot]
+                    for key in diff_slots[slot]:
+                        # Add any web schema-only keys in diff_slot_annots[slot] to slots[slot]
+                        if key != 'annotations':
+                            slots[slot][key] = diff_slot_annots[slot][key]
+        except yaml.YAMLError as exc:
+            print(exc)
+    return schema_data
 
 def is_class_relationship(class_entry: dict) -> bool:
     """ Return true if class_entry represents a relationship properties class """
@@ -745,9 +909,11 @@ def get_dbid_variable_name(slots):
         return "dbId"
 
 # Main program body
-with open(schema_file_name, "r") as stream:
+with open("schema.yaml", "r") as stream:
     try:
         data = yaml.safe_load(stream)
+        if web_schema_diff_file_name is not None:
+            data = get_web_yaml(web_schema_diff_file_name, data)
         classes = data['classes']
         slots = data['slots']
         annotations = classes['Annotations']['attributes']
