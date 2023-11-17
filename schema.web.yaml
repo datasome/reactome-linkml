@@ -2330,7 +2330,8 @@ classes:
 
   ReactomeInstanceDefiningValue:
     attributes:
-      category: CategoryValues
+      category:
+        range: CategoryValues
 
   ReactomeProperty:
     attributes:
