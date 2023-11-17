@@ -12,17 +12,6 @@ imports:
 # types:
 # TBC
 
-subsets:
-  web_schema:
-    description: >-
-      Reactome schema used for the web service
-  curator_schema_only:
-    description: >-
-      Reactome schema used for by the curator tool only
-  schema_annotations:
-    description: >-
-      Annotations used in java classes - external to the schema
-
 classes:
 
   #### AbstractModifiedResidue ####
@@ -40,8 +29,6 @@ classes:
           constraint: MANDATORY
           category: all
           type: "referenceSequence"
-    in_subset:
-      - curator_schema_only
 
   #### Affiliation ####
   Affiliation:
@@ -60,8 +47,6 @@ classes:
         annotations:
           constraint: REQUIRED
           addedField: false
-    in_subset:
-      - curator_schema_only
 
   #### Anatomy ####
   Anatomy:
@@ -69,8 +54,6 @@ classes:
     annotations:
       node: true
       no_default_constructor: true
-    in_subset:
-      - curator_schema_only
 
   #### BlackBoxEvent ####
   BlackBoxEvent:
@@ -123,8 +106,6 @@ classes:
           type: "output"
           set: true
           no_list_setter: true
-    in_subset:
-      - curator_schema_only
 
   #### Book ####
   Book:
@@ -163,8 +144,6 @@ classes:
         annotations:
           constraint: OPTIONAL
           type: "publisher"
-    in_subset:
-      - curator_schema_only
 
   #### CandidateSet ####
   CandidateSet:
@@ -192,8 +171,6 @@ classes:
           category: all
           type: "hasMember"
           sorted_set: true
-    in_subset:
-      - curator_schema_only
 
   #### CatalystActivity ####
   CatalystActivity:
@@ -223,8 +200,6 @@ classes:
           constraint: MANDATORY
           category: all
           type: "physicalEntity"
-    in_subset:
-      - curator_schema_only
 
   #### CatalystActivityReference ####
   CatalystActivityReference:
@@ -238,8 +213,6 @@ classes:
         multivalued: false
         annotations:
           constraint: MANDATORY
-    in_subset:
-      - curator_schema_only
 
   #### Cell ####
   Cell:
@@ -288,8 +261,6 @@ classes:
         annotations:
           constraint: OPTIONAL
           type: "tissueLayer"
-    in_subset:
-      - curator_schema_only
 
   #### CellDevelopmentStep ####
   CellDevelopmentStep:
@@ -307,8 +278,6 @@ classes:
           constraint: REQUIRED
           type: "requiredInputComponent"
           set: true
-    in_subset:
-      - curator_schema_only
 
   #### CellLineagePath ####
   CellLineagePath:
@@ -317,8 +286,6 @@ classes:
       node: true
     slots:
       - tissue
-    in_subset:
-      - curator_schema_only
 
   #### CellType ####
   CellType:
@@ -326,8 +293,6 @@ classes:
     annotations:
       node: true
       suppress_warnings: "unused"
-    in_subset:
-      - curator_schema_only
 
   #### ChemicalDrug ####
   ChemicalDrug:
@@ -335,8 +300,6 @@ classes:
     annotations:
       node: true
       suppress_warnings: "{\"unused\", \"WeakerAccess\"}"
-    in_subset:
-      - curator_schema_only
 
   #### Compartment ####
   Compartment:
@@ -345,8 +308,6 @@ classes:
       constructor_parameter: "dbId"
       node: true
       suppress_warnings: "unused"
-    in_subset:
-      - curator_schema_only
 
   #### Complex ####
   Complex:
@@ -390,8 +351,6 @@ classes:
           sorted_set: true
           include_default_setter: true
           no_list_setter: true
-    in_subset:
-      - curator_schema_only
 
   #### ControlledVocabulary ####
   ControlledVocabulary:
@@ -402,8 +361,6 @@ classes:
     slots:
       - definition
       - name
-    in_subset:
-      - curator_schema_only
 
   #### ControlReference ####
   ControlReference:
@@ -419,8 +376,6 @@ classes:
         annotations:
           constraint: MANDATORY
           category: all
-    in_subset:
-      - curator_schema_only
 
   #### CrosslinkedResidue ####
   CrosslinkedResidue:
@@ -442,8 +397,6 @@ classes:
           constraint: REQUIRED
           category: all
           addedField: false
-    in_subset:
-      - curator_schema_only
 
   #### DatabaseIdentifier ####
   DatabaseIdentifier:
@@ -463,8 +416,6 @@ classes:
       referenceDatabase:
         annotations:
           category: all
-    in_subset:
-      - curator_schema_only
 
   #### DatabaseObject ####
   DatabaseObject:
@@ -533,8 +484,6 @@ classes:
         annotations:
           constraint: NOMANUALEDIT
           type: "stableIdentifier"
-    in_subset:
-      - curator_schema_only
 
   #### DBInfo ####
   DBInfo:
@@ -553,8 +502,6 @@ classes:
         range: integer
       checksum:
         range: AnnotationLongType
-    in_subset:
-      - curator_schema_only
 
   #### DefinedSet ####
   DefinedSet:
@@ -565,8 +512,6 @@ classes:
       suppress_warnings: "unused"
     slots:
       - explanation
-    in_subset:
-      - curator_schema_only
 
   #### _Deleted ####
   _Deleted:
@@ -599,14 +544,10 @@ classes:
         annotations:
           constraint: NOMANUALEDIT
           type: "replacementInstances"
-    in_subset:
-      - curator_schema_only
 
   #### DeletedControlledVocabulary ####
   DeletedControlledVocabulary:
     is_a: ControlledVocabulary
-    in_subset:
-      - curator_schema_only
 
   #### _DeletedInstance ####
   _DeletedInstance:
@@ -646,8 +587,6 @@ classes:
           constraint: NOMANUALEDIT
           category: all
           type: "deletedStableIdentifier"
-    in_subset:
-      - curator_schema_only
 
   #### Depolymerisation ####
   Depolymerisation:
@@ -671,8 +610,6 @@ classes:
       literatureReference:
         annotations:
           constraint: REQUIRED
-    in_subset:
-      - curator_schema_only
 
   #### Disease ####
   Disease:
@@ -680,8 +617,6 @@ classes:
     annotations:
       node: true
       suppress_warnings: "unused"
-    in_subset:
-      - curator_schema_only
 
   #### Drug ####
   Drug:
@@ -707,8 +642,6 @@ classes:
           constraint: MANDATORY
           category: all
           type: "disease"
-    in_subset:
-      - curator_schema_only
 
   #### DrugActionType ####
   DrugActionType:
@@ -722,8 +655,6 @@ classes:
         annotations:
           constraint: OPTIONAL
           type: "instanceOf"
-    in_subset:
-      - curator_schema_only
 
   #### EntityFunctionalStatus ####
   EntityFunctionalStatus:
@@ -751,8 +682,6 @@ classes:
           constraint: REQUIRED
           category: all
           type: "normalEntity"
-    in_subset:
-      - curator_schema_only
 
   #### EntitySet ####
   EntitySet:
@@ -787,8 +716,6 @@ classes:
           category: all
           type: "hasMember"
           sorted_set: true
-    in_subset:
-      - curator_schema_only
 
   #### EntityWithAccessionedSequence ####
   EntityWithAccessionedSequence:
@@ -835,8 +762,6 @@ classes:
           type: "hasModifiedResidue"
           sorted_set: true
           include_stoichiometry: true
-    in_subset:
-      - curator_schema_only
 
   #### Event ####
   Event:
@@ -932,8 +857,6 @@ classes:
         annotations:
           constraint: OPTIONAL
           type: "negativePrecedingEvent"
-    in_subset:
-      - curator_schema_only
 
   #### EvidenceType ####
   EvidenceType:
@@ -955,8 +878,6 @@ classes:
         annotations:
           constraint: OPTIONAL
           type: "instanceOf"
-    in_subset:
-      - curator_schema_only
 
   #### ExternalOntology ####
   ExternalOntology:
@@ -987,8 +908,6 @@ classes:
         annotations:
           constraint: OPTIONAL
           type: "instanceOf"
-    in_subset:
-      - curator_schema_only
 
   #### FailedReaction ####
   FailedReaction:
@@ -1031,8 +950,6 @@ classes:
           set: true
           no_list_setter: true
           include_default_setter: true
-    in_subset:
-      - curator_schema_only
 
   #### Figure ####
   Figure:
@@ -1047,8 +964,6 @@ classes:
           category: all
           addedField: false
           property1: false
-    in_subset:
-      - curator_schema_only
 
   #### FragmentDeletionModification ####
   FragmentDeletionModification:
@@ -1056,8 +971,6 @@ classes:
     annotations:
       node: true
       suppress_warnings: "unused"
-    in_subset:
-      - curator_schema_only
 
   #### FragmentInsertionModification ####
   FragmentInsertionModification:
@@ -1067,8 +980,6 @@ classes:
       suppress_warnings: "unused"
     slots:
       - coordinate
-    in_subset:
-      - curator_schema_only
 
   #### FragmentModification ####
   FragmentModification:
@@ -1090,8 +1001,6 @@ classes:
           constraint: MANDATORY
           category: all
           addedField: false
-    in_subset:
-      - curator_schema_only
 
   #### FragmentReplacedModification ####
   FragmentReplacedModification:
@@ -1105,8 +1014,6 @@ classes:
           constraint: OPTIONAL
           category: all
           addedField: false
-    in_subset:
-      - curator_schema_only
 
   #### FrontPage ####
   FrontPage:
@@ -1120,8 +1027,6 @@ classes:
         annotations:
           constraint: MANDATORY
           type: "frontPageItem"
-    in_subset:
-      - curator_schema_only
 
   #### FunctionalStatus ####
   FunctionalStatus:
@@ -1142,8 +1047,6 @@ classes:
           constraint: MANDATORY
           category: all
           type: "structuralVariant"
-    in_subset:
-      - curator_schema_only
 
   #### FunctionalStatusType ####
   FunctionalStatusType:
@@ -1158,8 +1061,6 @@ classes:
       name:
         annotations:
           category: any
-    in_subset:
-      - curator_schema_only
 
   #### GeneticallyModifiedResidue ####
   GeneticallyModifiedResidue:
@@ -1168,8 +1069,6 @@ classes:
       abstract: true
       node: true
       suppress_warnings: "unused"
-    in_subset:
-      - curator_schema_only
 
   #### GenomeEncodedEntity ####
   GenomeEncodedEntity:
@@ -1196,8 +1095,6 @@ classes:
         annotations:
           constraint: MANDATORY
           category: all
-    in_subset:
-    - curator_schema_only
 
   #### GO_BiologicalProcess ####
   GO_BiologicalProcess:
@@ -1214,8 +1111,6 @@ classes:
       name:
         annotations:
           category: any
-    in_subset:
-      - curator_schema_only
 
   #### GO_CellularComponent ####
   GO_CellularComponent:
@@ -1254,8 +1149,6 @@ classes:
         annotations:
           constraint: OPTIONAL
           type: "surroundedBy"
-    in_subset:
-      - curator_schema_only
 
   #### GO_MolecularFunction ####
   GO_MolecularFunction:
@@ -1273,8 +1166,6 @@ classes:
         annotations:
           constraint: OPTIONAL
           addedField: false
-    in_subset:
-      - curator_schema_only
 
   #### GroupModifiedResidue ####
   GroupModifiedResidue:
@@ -1284,8 +1175,6 @@ classes:
       suppress_warnings: "unused"
     slots:
       - modification
-    in_subset:
-      - curator_schema_only
 
   #### HasCandidate ####
   HasCandidate:
@@ -1297,8 +1186,6 @@ classes:
       - order
       - physicalEntity
       - stoichiometry
-    in_subset:
-      - curator_schema_only
 
   #### HasCompartment ####
   HasCompartment:
@@ -1314,8 +1201,6 @@ classes:
         range: Compartment
         annotations:
           target_node: true
-    in_subset:
-      - curator_schema_only
 
   #### HasComponent ####
   HasComponent:
@@ -1328,8 +1213,6 @@ classes:
       - order
       - physicalEntity
       - stoichiometry
-    in_subset:
-      - curator_schema_only
 
   #### HasEncapsulatedEvent ####
   HasEncapsulatedEvent:
@@ -1345,8 +1228,6 @@ classes:
         range: Event
         annotations:
           target_node: true
-    in_subset:
-      - curator_schema_only
 
   #### HasEvent ####
   HasEvent:
@@ -1366,8 +1247,6 @@ classes:
         range: Event
         annotations:
           target_node: true
-    in_subset:
-      - curator_schema_only
 
   #### HasMember ####
   HasMember:
@@ -1379,8 +1258,6 @@ classes:
       - order
       - physicalEntity
       - stoichiometry
-    in_subset:
-      - curator_schema_only
 
   #### HasModifiedResidue ####
   HasModifiedResidue:
@@ -1397,8 +1274,6 @@ classes:
         range: AbstractModifiedResidue
         annotations:
           target_node: true
-    in_subset:
-      - curator_schema_only
 
   #### Input ####
   Input:
@@ -1410,8 +1285,6 @@ classes:
       - order
       - physicalEntity
       - stoichiometry
-    in_subset:
-      - curator_schema_only
 
   #### InstanceEdit ####
   InstanceEdit:
@@ -1436,8 +1309,6 @@ classes:
         annotations:
           type: "author"
           direction: INCOMING
-    in_subset:
-      - curator_schema_only
 
   #### InteractionEvent ####
   InteractionEvent:
@@ -1451,8 +1322,6 @@ classes:
         annotations:
           constraint: MANDATORY
           type: "partners"
-    in_subset:
-      - curator_schema_only
 
   #### InterChainCrosslinkedResidue ####
   InterChainCrosslinkedResidue:
@@ -1475,8 +1344,6 @@ classes:
           category: all
           type: "secondReferenceSequence"
           set: true
-    in_subset:
-      - curator_schema_only
 
   #### IntraChainCrosslinkedResidue ####
   IntraChainCrosslinkedResidue:
@@ -1484,8 +1351,6 @@ classes:
     annotations:
       node: true
       suppress_warnings: "unused"
-    in_subset:
-      - curator_schema_only
 
   #### LiteratureReference ####
   LiteratureReference:
@@ -1525,8 +1390,6 @@ classes:
         annotations:
           constraint: MANDATORY
           addedField: false
-    in_subset:
-      - curator_schema_only
 
   #### MarkerReference ####
   MarkerReference:
@@ -1540,8 +1403,6 @@ classes:
         annotations:
           constraint: MANDATORY
           type: "marker"
-    in_subset:
-      - curator_schema_only
 
   #### ModifiedNucleotide ####
   ModifiedNucleotide:
@@ -1555,8 +1416,6 @@ classes:
       coordinate:
         annotations:
           constraint: MANDATORY
-    in_subset:
-      - curator_schema_only
 
   #### ModifiedResidue ####
   ModifiedResidue:
@@ -1565,8 +1424,6 @@ classes:
       constructor_parameter: "dbId"
       node: true
       suppress_warnings: "unused"
-    in_subset:
-      - curator_schema_only
 
   #### NegativeGeneExpressionRegulation ####
   NegativeGeneExpressionRegulation:
@@ -1577,8 +1434,6 @@ classes:
       suppress_warnings: "unused"
     slots:
       - explanation
-    in_subset:
-      - curator_schema_only
 
   #### NegativePrecedingEvent ####
   NegativePrecedingEvent:
@@ -1602,16 +1457,12 @@ classes:
         annotations:
           constraint: REQUIRED
           type: "reason"
-    in_subset:
-      - curator_schema_only
 
   #### NegativePrecedingEventReason ####
   NegativePrecedingEventReason:
     is_a: ControlledVocabulary
     annotations:
       node: true
-    in_subset:
-      - curator_schema_only
 
   #### NegativeRegulation ####
   NegativeRegulation:
@@ -1622,16 +1473,12 @@ classes:
       suppress_warnings: "unused"
     slots:
       - explanation
-    in_subset:
-      - curator_schema_only
 
   #### NonsenseMutation ####
   NonsenseMutation:
     is_a: ReplacedResidue
     annotations:
       node: true
-    in_subset:
-      - curator_schema_only
 
   #### OtherEntity ####
   OtherEntity:
@@ -1647,8 +1494,6 @@ classes:
       compartment:
         annotations:
           category: all
-    in_subset:
-      - curator_schema_only
 
   #### Output ####
   Output:
@@ -1660,8 +1505,6 @@ classes:
       - order
       - physicalEntity
       - stoichiometry
-    in_subset:
-      - curator_schema_only
 
   #### Pathway ####
   Pathway:
@@ -1712,8 +1555,6 @@ classes:
         annotations:
           constraint: OPTIONAL
           type: "normalPathway"
-    in_subset:
-      - curator_schema_only
 
   #### PathwayDiagram ####
   PathwayDiagram:
@@ -1741,8 +1582,6 @@ classes:
           category: all
           type: "representedPathway"
           sorted_set: true
-    in_subset:
-      - curator_schema_only
 
   #### Person ####
   Person:
@@ -1785,8 +1624,6 @@ classes:
           annotations:
             constraint: OPTIONAL
             type: "affiliation"
-    in_subset:
-      - curator_schema_only
 
   #### PhysicalEntity ####
   PhysicalEntity:
@@ -1849,8 +1686,6 @@ classes:
           constraint: OPTIONAL
           type: "reviewed"
           direction: INCOMING
-    in_subset:
-      - curator_schema_only
 
   #### Polymer ####
   Polymer:
@@ -1884,8 +1719,6 @@ classes:
           type: "repeatedUnit"
           sorted_set: true
           include_stoichiometry: true
-    in_subset:
-      - curator_schema_only
 
   #### Polymerisation ####
   Polymerisation:
@@ -1911,8 +1744,6 @@ classes:
       literatureReference:
         annotations:
           constraint: REQUIRED
-    in_subset:
-      - curator_schema_only
 
   #### PositiveGeneExpressionRegulation ####
   PositiveGeneExpressionRegulation:
@@ -1923,8 +1754,6 @@ classes:
       suppress_warnings: "unused"
     slots:
       - explanation
-    in_subset:
-      - curator_schema_only
 
   #### PositiveRegulation ####
   PositiveRegulation:
@@ -1935,8 +1764,6 @@ classes:
       suppress_warnings: "unused"
     slots:
       - explanation
-    in_subset:
-    - curator_schema_only
 
   #### ProteinDrug ####
   ProteinDrug:
@@ -1944,8 +1771,6 @@ classes:
     annotations:
       node: true
       suppress_warnings: "{\"unused\", \"WeakerAccess\"}"
-    in_subset:
-      - curator_schema_only
 
   #### PsiMod ####
   PsiMod:
@@ -1958,8 +1783,6 @@ classes:
         annotations:
           constraint: REQUIRED
           addedField: false
-    in_subset:
-      - curator_schema_only
 
   #### Publication ####
   Publication:
@@ -1985,8 +1808,6 @@ classes:
           direction: INCOMING
           sorted_set: true
           no_list_getter_setter: true
-    in_subset:
-      - curator_schema_only
 
   #### PublicationAuthor ####
   PublicationAuthor:
@@ -2002,8 +1823,6 @@ classes:
         range: Person
         annotations:
           target_node: true
-    in_subset:
-      - curator_schema_only
 
   #### Reaction ####
   Reaction:
@@ -2036,8 +1855,6 @@ classes:
         annotations:
           constraint: OPTIONAL
           type: "reverseReaction"
-    in_subset:
-      - curator_schema_only
 
   #### ReactionlikeEvent ####
   ReactionlikeEvent:
@@ -2134,8 +1951,6 @@ classes:
         annotations:
           constraint: OPTIONAL
           type: "reactionType"
-    in_subset:
-      - curator_schema_only
 
   #### ReactionType ####
   ReactionType:
@@ -2144,8 +1959,6 @@ classes:
       abstract: true
       node: true
       no_default_constructor: true
-    in_subset:
-      - curator_schema_only
 
   #### ReferenceDatabase ####
   ReferenceDatabase:
@@ -2173,8 +1986,6 @@ classes:
         annotations:
           constraint: OPTIONAL
           addedField: false
-    in_subset:
-      - curator_schema_only
 
   #### ReferenceDNASequence ####
   ReferenceDNASequence:
@@ -2182,8 +1993,6 @@ classes:
     annotations:
       node: true
       suppress_warnings: "unused"
-    in_subset:
-      - curator_schema_only
 
   #### ReferenceEntity ####
   ReferenceEntity:
@@ -2212,8 +2021,6 @@ classes:
       otherIdentifier:
         annotations:
           constraint: OPTIONAL
-    in_subset:
-      - curator_schema_only
 
   #### ReferenceGeneProduct ####
   ReferenceGeneProduct:
@@ -2241,8 +2048,6 @@ classes:
         range: ReferenceRNASequence
         annotations:
           type: "referenceTranscript"
-    in_subset:
-      - curator_schema_only
 
   #### ReferenceGroup ####
   ReferenceGroup:
@@ -2254,8 +2059,6 @@ classes:
       - otherIdentifier
       - formula
       - name
-    in_subset:
-      - curator_schema_only
 
   #### ReferenceIsoform ####
   ReferenceIsoform:
@@ -2275,8 +2078,6 @@ classes:
         annotations:
           constraint: MANDATORY
           type: "isoformParent"
-    in_subset:
-      - curator_schema_only
 
   #### ReferenceMolecule ####
   ReferenceMolecule:
@@ -2288,8 +2089,6 @@ classes:
       - formula
       - name
       - otherIdentifier
-    in_subset:
-      - curator_schema_only
 
   #### ReferenceRNASequence ####
   ReferenceRNASequence:
@@ -2304,8 +2103,6 @@ classes:
         annotations:
           constraint: OPTIONAL
           type: "referenceGene"
-    in_subset:
-      - curator_schema_only
 
   #### ReferenceSequence ####
   ReferenceSequence:
@@ -2362,8 +2159,6 @@ classes:
         range: integer
         annotations:
           addedField: false
-    in_subset:
-      - curator_schema_only
 
   #### ReferenceTherapeutic ####
   ReferenceTherapeutic:
@@ -2407,8 +2202,6 @@ classes:
         annotations:
           constraint: REQUIRED
           addedField: false
-    in_subset:
-      - curator_schema_only
 
   #### Regulation ####
   Regulation:
@@ -2444,8 +2237,6 @@ classes:
           constraint: MANDATORY
           category: all
           type: "regulator"
-    in_subset:
-      - curator_schema_only
 
   #### RegulationReference ####
   RegulationReference:
@@ -2459,8 +2250,6 @@ classes:
           constraint: MANDATORY
           category: all
           type: "regulation"
-    in_subset:
-      - curator_schema_only
 
   #### ReplacedResidue ####
   ReplacedResidue:
@@ -2474,8 +2263,6 @@ classes:
     slot_usage:
       psiMod:
         multivalued: true
-    in_subset:
-      - curator_schema_only
 
   #### _Release ####
   _Release:
@@ -2490,8 +2277,6 @@ classes:
         annotations:
           constraint: MANDATORY
           addedField: false
-    in_subset:
-      - curator_schema_only
 
   #### RepeatedUnit ####
   RepeatedUnit:
@@ -2503,8 +2288,6 @@ classes:
       - order
       - physicalEntity
       - stoichiometry
-    in_subset:
-      - curator_schema_only
 
   #### RepresentedPathway ####
   RepresentedPathway:
@@ -2520,8 +2303,6 @@ classes:
         range: Pathway
         annotations:
           target_node: true
-    in_subset:
-      - curator_schema_only
 
   #### Requirement ####
   Requirement:
@@ -2532,8 +2313,6 @@ classes:
       suppress_warnings: "unused"
     slots:
       - explanation
-    in_subset:
-      - curator_schema_only
 
   #### RNADrug ####
   RNADrug:
@@ -2541,8 +2320,6 @@ classes:
     annotations:
       node: true
       suppress_warnings: "{\"unused\", \"WeakerAccess\"}"
-    in_subset:
-      - curator_schema_only
 
   #### SequenceOntology ####
   SequenceOntology:
@@ -2557,8 +2334,6 @@ classes:
         annotations:
           constraint: MANDATORY
           category: all
-    in_subset:
-      - curator_schema_only
 
   #### SimpleEntity ####
   SimpleEntity:
@@ -2590,8 +2365,6 @@ classes:
           constraint: MANDATORY
           category: all
           type: "referenceEntity"
-    in_subset:
-    - curator_schema_only
 
   #### Species ####
   Species:
@@ -2604,8 +2377,6 @@ classes:
         annotations:
           constraint: MANDATORY
           addedField: false
-    in_subset:
-      - curator_schema_only
 
   #### StableIdentifier ####
   StableIdentifier:
@@ -2631,8 +2402,6 @@ classes:
         range: StableIdentifierHistory
         annotations:
           type: "history"
-    in_subset:
-      - curator_schema_only
 
   #### StableIdentifierHistory ####
   StableIdentifierHistory:
@@ -2649,8 +2418,6 @@ classes:
         range: StableIdentifierReleaseStatus
         annotations:
           type: "historyStatus"
-    in_subset:
-      - curator_schema_only
 
   #### StableIdentifierReleaseStatus ####
   StableIdentifierReleaseStatus:
@@ -2669,8 +2436,6 @@ classes:
         annotations:
           addedField: false
           category: all
-    in_subset:
-      - curator_schema_only
 
   #### Summation ####
   Summation:
@@ -2686,8 +2451,6 @@ classes:
           constraint: MANDATORY
           category: all
           addedField: false
-    in_subset:
-      - curator_schema_only
 
   #### Taxon ####
   Taxon:
@@ -2712,8 +2475,6 @@ classes:
         annotations:
           constraint: REQUIRED
           type: "superTaxon"
-    in_subset:
-      - curator_schema_only
 
   #### TranscriptionalModification ####
   TranscriptionalModification:
@@ -2722,8 +2483,6 @@ classes:
       abstract: true
       node: true
       suppress_warnings: "unused"
-    in_subset:
-      - curator_schema_only
 
   #### TranslationalModification ####
   TranslationalModification:
@@ -2736,8 +2495,6 @@ classes:
     slots:
       - coordinate
       - psiMod
-    in_subset:
-      - curator_schema_only
 
   #### _UpdateTracker ####
   _UpdateTracker:
@@ -2760,8 +2517,6 @@ classes:
           constraint: NOMANUALEDIT
           type: "updatedInstance"
           allowed: "{Event.class, PhysicalEntity.class}"
-    in_subset:
-      - curator_schema_only
 
   #### URL ####
   URL:
@@ -2771,12 +2526,10 @@ classes:
       suppress_warnings: "unused"
     attributes:
       uniformResourceLocator:
-        annotations:
+        annotatio§ns:
           constraint: MANDATORY
           category: any
           addedField: false
-    in_subset:
-      - curator_schema_only
 
   #### Annotations classes - start ####
   AnnotationLongType:
@@ -2848,8 +2601,6 @@ classes:
       suppress_warnings:
       target_node:
         range: boolean
-    in_subset:
-      - schema_annotations
 
   JsonIdentityInfo:
     attributes:
@@ -2861,36 +2612,26 @@ classes:
   ReactomeAllowedClasses:
     attributes:
       allowed:
-    in_subset:
-      - schema_annotations
 
   ReactomeConstraint:
     attributes:
       constraint:
         range: ReactomeConstraintValues
-    in_subset:
-      - schema_annotations
 
   ReactomeInstanceDefiningValue:
     attributes:
       category:
         range: CategoryValues
-    in_subset:
-      - schema_annotations
 
   ReactomeProperty:
     attributes:
       addedField:
         range: boolean
-    in_subset:
-      - schema_annotations
 
   Relationship:
     attributes:
         type:
         direction: RelationshipDirectionValues
-    in_subset:
-      - schema_annotations
   #### Annotations classes - end ####
 
 #### Enumerations ####

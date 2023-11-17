@@ -12,17 +12,6 @@ imports:
 # types:
 # TBC
 
-subsets:
-  web_schema:
-    description: >-
-      Reactome schema used for the web service
-  curator_schema_only:
-    description: >-
-      Reactome schema used for by the curator tool only
-  schema_annotations:
-    description: >-
-      Annotations used in java classes - external to the schema
-
 classes:
 
   #### AbstractModifiedResidue ####
@@ -37,8 +26,6 @@ classes:
         range: ReferenceSequence
         annotations:
           type: "referenceSequence"
-    in_subset:
-      - web_schema
 
   #### Affiliation ####
   Affiliation:
@@ -52,8 +39,6 @@ classes:
       address:
         annotations:
           addedField: false
-    in_subset:
-      - web_schema
 
   #### Anatomy ####
   Anatomy:
@@ -61,8 +46,6 @@ classes:
     annotations:
       node: true
       no_default_constructor: true
-    in_subset:
-      - web_schema
 
   #### BlackBoxEvent ####
   BlackBoxEvent:
@@ -82,8 +65,6 @@ classes:
         range: Event
         annotations:
           type: "templateEvent"
-    in_subset:
-      - web_schema
 
   #### Book ####
   Book:
@@ -109,8 +90,6 @@ classes:
         range: Affiliation
         annotations:
           type: "publisher"
-    in_subset:
-      - web_schema
 
   #### CandidateSet ####
   CandidateSet:
@@ -128,8 +107,6 @@ classes:
         annotations:
           type: "hasCandidate"
           sorted_set: true
-    in_subset:
-      - web_schema
 
   #### CatalystActivity ####
   CatalystActivity:
@@ -163,8 +140,6 @@ classes:
         range: PhysicalEntity
         annotations:
           type: "physicalEntity"
-    in_subset:
-      - web_schema
 
   #### CatalystActivityReference ####
   CatalystActivityReference:
@@ -176,8 +151,6 @@ classes:
     slot_usage:
       catalystActivity:
         multivalued: false
-    in_subset:
-      - web_schema
 
   #### Cell ####
   Cell:
@@ -215,8 +188,6 @@ classes:
         range: Anatomy
         annotations:
           type: "tissueLayer"
-    in_subset:
-      - web_schema
 
   #### CellDevelopmentStep ####
   CellDevelopmentStep:
@@ -225,8 +196,6 @@ classes:
       node: true
     slots:
       - tissue
-    in_subset:
-      - web_schema
 
   #### CellLineagePath ####
   CellLineagePath:
@@ -241,8 +210,6 @@ classes:
       explanation:
         annotations:
           override: true
-    in_subset:
-      - web_schema
 
   #### CellType ####
   CellType:
@@ -250,8 +217,6 @@ classes:
     annotations:
       node: true
       suppress_warnings: "unused"
-    in_subset:
-      - web_schema
 
   #### ChemicalDrug ####
   ChemicalDrug:
@@ -259,8 +224,6 @@ classes:
     annotations:
       node: true
       suppress_warnings: "{\"unused\", \"WeakerAccess\"}"
-    in_subset:
-      - web_schema
 
   #### Compartment ####
   Compartment:
@@ -269,8 +232,6 @@ classes:
       constructor_parameter: "dbId"
       node: true
       suppress_warnings: "unused"
-    in_subset:
-      - web_schema
 
   #### Complex ####
   Complex:
@@ -306,8 +267,6 @@ classes:
           type: "includedLocation"
           sorted_set: true
           include_default_setter: true
-    in_subset:
-      - web_schema
 
   #### ControlledVocabulary ####
   ControlledVocabulary:
@@ -318,8 +277,6 @@ classes:
     slots:
       - definition
       - name
-    in_subset:
-      - web_schema
 
   #### ControlReference ####
   ControlReference:
@@ -330,8 +287,6 @@ classes:
       suppress_warnings: "{\"unused\", \"WeakerAccess\"}"
     slots:
       - literatureReference
-    in_subset:
-      - web_schema
 
   #### CrosslinkedResidue ####
   CrosslinkedResidue:
@@ -351,8 +306,6 @@ classes:
         range: integer
         annotations:
           addedField: false
-    in_subset:
-      - web_schema
 
   #### DatabaseIdentifier ####
   DatabaseIdentifier:
@@ -371,8 +324,6 @@ classes:
       url:
         annotations:
           addedField: false
-    in_subset:
-      - web_schema
 
   #### DatabaseObject ####
   DatabaseObject:
@@ -434,8 +385,6 @@ classes:
         annotations:
           type: "modified"
           direction: INCOMING
-    in_subset:
-      - web_schema
 
   #### DBInfo ####
   DBInfo:
@@ -454,8 +403,6 @@ classes:
         range: integer
       checksum:
         range: AnnotationLongType
-    in_subset:
-      - web_schema
 
   #### DefinedSet ####
   DefinedSet:
@@ -466,8 +413,6 @@ classes:
       suppress_warnings: "unused"
     slots:
       - explanation
-    in_subset:
-      - web_schema
 
   #### Depolymerisation ####
   Depolymerisation:
@@ -475,8 +420,6 @@ classes:
     annotations:
       node: true
       suppress_warnings: "unused"
-    in_subset:
-      - web_schema
 
   #### DirectedInteraction ####
   DirectedInteraction:
@@ -493,8 +436,6 @@ classes:
         range: ReferenceEntity
         annotations:
           type: "target"
-    in_subset:
-      - web_schema
 
   #### Disease ####
   Disease:
@@ -502,8 +443,6 @@ classes:
     annotations:
       node: true
       suppress_warnings: "unused"
-    in_subset:
-      - web_schema
 
   #### Drug ####
   Drug:
@@ -517,8 +456,6 @@ classes:
     slot_usage:
       referenceEntity:
         range: ReferenceTherapeutic
-    in_subset:
-      - web_schema
 
   #### DrugActionType ####
   DrugActionType:
@@ -531,8 +468,6 @@ classes:
         range: DrugActionType
         annotations:
           type: "instanceOf"
-    in_subset:
-      - web_schema
 
   #### DrugType ####
   DrugType:
@@ -543,8 +478,6 @@ classes:
     slots:
       - definition
       - name
-    in_subset:
-      - web_schema
 
   #### EntityFunctionalStatus ####
   EntityFunctionalStatus:
@@ -566,8 +499,6 @@ classes:
         range: PhysicalEntity
         annotations:
           type: "normalEntity"
-    in_subset:
-      - web_schema
 
   #### EntitySet ####
   EntitySet:
@@ -596,8 +527,6 @@ classes:
         annotations:
           type: "hasMember"
           sorted_set: true
-    in_subset:
-      - web_schema
 
   #### EntityWithAccessionedSequence ####
   EntityWithAccessionedSequence:
@@ -633,8 +562,6 @@ classes:
           type: "hasModifiedResidue"
           sorted_set: true
           include_stoichiometry: true
-    in_subset:
-      - web_schema
 
   #### Event ####
   Event:
@@ -734,8 +661,6 @@ classes:
         range: NegativePrecedingEvent
         annotations:
           type: "negativePrecedingEvent"
-    in_subset:
-      - web_schema
 
   #### EvidenceType ####
   EvidenceType:
@@ -743,8 +668,6 @@ classes:
     annotations:
       node: true
       suppress_warnings: "unused"
-    in_subset:
-      - web_schema
 
   #### ExternalOntology ####
   ExternalOntology:
@@ -774,8 +697,6 @@ classes:
         range: ExternalOntology
         annotations:
           type: "instanceOf"
-    in_subset:
-      - web_schema
 
   #### FailedReaction ####
   FailedReaction:
@@ -786,8 +707,6 @@ classes:
       suppress_warnings: "unused"
     slots:
       - explanation
-    in_subset:
-      - web_schema
 
   #### Figure ####
   Figure:
@@ -800,8 +719,6 @@ classes:
         annotations:
           addedField: false
           property1: false
-    in_subset:
-      - web_schema
 
   #### FragmentDeletionModification ####
   FragmentDeletionModification:
@@ -809,8 +726,6 @@ classes:
     annotations:
       node: true
       suppress_warnings: "unused"
-    in_subset:
-      - web_schema
 
   #### FragmentInsertionModification ####
   FragmentInsertionModification:
@@ -820,8 +735,6 @@ classes:
       suppress_warnings: "unused"
     slots:
       - coordinate
-    in_subset:
-      - web_schema
 
   #### FragmentModification ####
   FragmentModification:
@@ -839,8 +752,6 @@ classes:
         range: integer
         annotations:
           addedField: false
-    in_subset:
-      - web_schema
 
   #### FragmentReplacedModification ####
   FragmentReplacedModification:
@@ -852,8 +763,6 @@ classes:
       alteredAminoAcidFragment:
         annotations:
           addedField: false
-    in_subset:
-      - web_schema
 
   #### FunctionalStatus ####
   FunctionalStatus:
@@ -870,8 +779,6 @@ classes:
         range: SequenceOntology
         annotations:
           type: "structuralVariant"
-    in_subset:
-      - web_schema
 
   #### FunctionalStatusType ####
   FunctionalStatusType:
@@ -882,8 +789,6 @@ classes:
     slots:
       - definition
       - name
-    in_subset:
-      - web_schema
 
   #### GeneticallyModifiedResidue ####
   GeneticallyModifiedResidue:
@@ -892,8 +797,6 @@ classes:
       abstract: true
       node: true
       suppress_warnings: "unused"
-    in_subset:
-      - web_schema
 
   #### GenomeEncodedEntity ####
   GenomeEncodedEntity:
@@ -913,8 +816,6 @@ classes:
         multivalued: false
       className:
         ifabsent: string(Genes and Transcripts)
-    in_subset:
-      - web_schema
 
   #### GO_BiologicalProcess ####
   GO_BiologicalProcess:
@@ -922,8 +823,6 @@ classes:
     annotations:
       node: true
       suppress_warnings: "unused"
-    in_subset:
-      - web_schema
 
   #### GO_CellularComponent ####
   GO_CellularComponent:
@@ -953,8 +852,6 @@ classes:
         range: GO_CellularComponent
         annotations:
           type: "surroundedBy"
-    in_subset:
-      - web_schema
 
   #### GO_MolecularFunction ####
   GO_MolecularFunction:
@@ -966,8 +863,6 @@ classes:
       ecNumber:
         annotations:
           addedField: false
-    in_subset:
-      - web_schema
 
   #### GO_Term ####
   GO_Term:
@@ -989,8 +884,6 @@ classes:
       url:
         annotations:
           addedField: true
-    in_subset:
-      - web_schema
 
   #### GroupModifiedResidue ####
   GroupModifiedResidue:
@@ -1004,8 +897,6 @@ classes:
       modification:
         annotations:
           allowed: "{EntitySet.class, Polymer.class, ReferenceGroup.class}"
-    in_subset:
-      - web_schema
 
   #### AuthorPublication ####
   AuthorPublication:
@@ -1021,8 +912,6 @@ classes:
         range: Publication
         annotations:
           target_node: true
-    in_subset:
-      - web_schema
 
   #### HasCandidate ####
   HasCandidate:
@@ -1034,8 +923,6 @@ classes:
       - order
       - physicalEntity
       - stoichiometry
-    in_subset:
-      - web_schema
 
   #### HasCompartment ####
   HasCompartment:
@@ -1051,8 +938,6 @@ classes:
         range: Compartment
         annotations:
           target_node: true
-    in_subset:
-      - web_schema
 
   #### HasComponent ####
   HasComponent:
@@ -1065,8 +950,6 @@ classes:
       - order
       - physicalEntity
       - stoichiometry
-    in_subset:
-      - web_schema
 
   #### HasComponentForComplex ####
   HasComponentForComplex:
@@ -1083,9 +966,6 @@ classes:
         range: Complex
         annotations:
           target_node: true
-    in_subset:
-      - web_schema
-
 
   #### HasEncapsulatedEvent ####
   HasEncapsulatedEvent:
@@ -1101,8 +981,6 @@ classes:
         range: Event
         annotations:
           target_node: true
-    in_subset:
-      - web_schema
 
   #### HasEvent ####
   HasEvent:
@@ -1122,8 +1000,6 @@ classes:
         range: Event
         annotations:
           target_node: true
-    in_subset:
-      - web_schema
 
   #### HasMember ####
   HasMember:
@@ -1135,8 +1011,6 @@ classes:
       - order
       - physicalEntity
       - stoichiometry
-    in_subset:
-      - web_schema
 
   #### HasModifiedResidue ####
   HasModifiedResidue:
@@ -1153,8 +1027,6 @@ classes:
         range: AbstractModifiedResidue
         annotations:
           target_node: true
-    in_subset:
-      - web_schema
 
   #### Input ####
   Input:
@@ -1166,8 +1038,6 @@ classes:
       - order
       - physicalEntity
       - stoichiometry
-    in_subset:
-      - web_schema
 
   #### InputForReactionLikeEvent ####
   InputForReactionLikeEvent:
@@ -1183,8 +1053,6 @@ classes:
         range: ReactionLikeEvent
         annotations:
           target_node: true
-    in_subset:
-      - web_schema
 
   #### InstanceEdit ####
   InstanceEdit:
@@ -1202,8 +1070,6 @@ classes:
       note:
         annotations:
           addedField: false
-    in_subset:
-      - web_schema
 
   #### Interaction ####
   Interaction:
@@ -1233,8 +1099,6 @@ classes:
       url:
         annotations:
           addedField: false
-    in_subset:
-      - web_schema
 
   #### InteractionEvent ####
   InteractionEvent:
@@ -1247,8 +1111,6 @@ classes:
         range: PhysicalEntity
         annotations:
           type: "partners"
-    in_subset:
-      - web_schema
 
   #### InterChainCrosslinkedResidue ####
   InterChainCrosslinkedResidue:
@@ -1268,8 +1130,6 @@ classes:
         annotations:
           type: "secondReferenceSequence"
           set: true
-    in_subset:
-      - web_schema
 
   #### IntraChainCrosslinkedResidue ####
   IntraChainCrosslinkedResidue:
@@ -1277,8 +1137,6 @@ classes:
     annotations:
       node: true
       suppress_warnings: "unused"
-    in_subset:
-      - web_schema
 
   #### LiteratureReference ####
   LiteratureReference:
@@ -1312,8 +1170,6 @@ classes:
         range: integer
         annotations:
           addedField: false
-    in_subset:
-      - web_schema
 
   #### MarkerReference ####
   MarkerReference:
@@ -1330,8 +1186,6 @@ classes:
         range: Cell
         annotations:
           type: "cell"
-    in_subset:
-      - web_schema
 
   #### ModifiedNucleotide ####
   ModifiedNucleotide:
@@ -1341,8 +1195,6 @@ classes:
     slots:
       - coordinate
       - modification
-    in_subset:
-      - web_schema
 
   #### ModifiedResidue ####
   ModifiedResidue:
@@ -1351,8 +1203,6 @@ classes:
       constructor_parameter: "dbId"
       node: true
       suppress_warnings: "unused"
-    in_subset:
-      - web_schema
 
   #### NegativeGeneExpressionRegulation ####
   NegativeGeneExpressionRegulation:
@@ -1363,8 +1213,6 @@ classes:
       suppress_warnings: "unused"
     slots:
       - explanation
-    in_subset:
-      - web_schema
 
   #### NegativePrecedingEvent ####
   NegativePrecedingEvent:
@@ -1385,16 +1233,12 @@ classes:
         range: NegativePrecedingEventReason
         annotations:
           type: "reason"
-    in_subset:
-      - web_schema
 
   #### NegativePrecedingEventReason ####
   NegativePrecedingEventReason:
     is_a: ControlledVocabulary
     annotations:
       node: true
-    in_subset:
-      - web_schema
 
   #### NegativeRegulation ####
   NegativeRegulation:
@@ -1405,16 +1249,12 @@ classes:
       suppress_warnings: "unused"
     slots:
       - explanation
-    in_subset:
-      - web_schema
 
   #### NonsenseMutation ####
   NonsenseMutation:
     is_a: ReplacedResidue
     annotations:
       node: true
-    in_subset:
-      - web_schema
 
   #### Ontology ####
   Ontology:
@@ -1426,8 +1266,6 @@ classes:
       constructor_parameter: "ontology"
     slots:
       - ontology
-    in_subset:
-      - web_schema
 
   #### OtherEntity ####
   OtherEntity:
@@ -1438,8 +1276,6 @@ classes:
       suppress_warnings: "unused"
     slots:
       - explanation
-    in_subset:
-      - web_schema
 
   #### Output ####
   Output:
@@ -1451,8 +1287,6 @@ classes:
       - order
       - physicalEntity
       - stoichiometry
-    in_subset:
-      - web_schema
 
   #### OutputForReactionLikeEvent ####
   OutputForReactionLikeEvent:
@@ -1468,8 +1302,6 @@ classes:
         range: ReactionLikeEvent
         annotations:
           target_node: true
-    in_subset:
-      - web_schema
 
   #### Pathway ####
   Pathway:
@@ -1528,8 +1360,6 @@ classes:
         range: Pathway
         annotations:
           type: "normalPathway"
-    in_subset:
-      - web_schema
 
   #### Person ####
   Person:
@@ -1571,8 +1401,6 @@ classes:
             type: "author"
             reactome_transient: true
             no_list_getter_setter: true
-    in_subset:
-      - web_schema
 
   #### PhysicalEntity ####
   PhysicalEntity:
@@ -1718,8 +1546,6 @@ classes:
           type: "marker"
           direction: INCOMING
           reactome_transient: true
-    in_subset:
-      - web_schema
 
   #### Polymer ####
   Polymer:
@@ -1749,8 +1575,6 @@ classes:
           sorted_set: true
           include_fetch: true
           include_stoichiometry: true
-    in_subset:
-      - web_schema
 
   #### Polymerisation ####
   Polymerisation:
@@ -1761,8 +1585,6 @@ classes:
       suppress_warnings: "unused"
     slots:
       - explanation
-    in_subset:
-      - web_schema
 
   #### PositiveGeneExpressionRegulation ####
   PositiveGeneExpressionRegulation:
@@ -1773,8 +1595,6 @@ classes:
       suppress_warnings: "unused"
     slots:
       - explanation
-    in_subset:
-      - web_schema
 
   #### PositiveRegulation ####
   PositiveRegulation:
@@ -1785,8 +1605,6 @@ classes:
       suppress_warnings: "unused"
     slots:
       - explanation
-    in_subset:
-      - web_schema
 
   #### ProteinDrug ####
   ProteinDrug:
@@ -1794,8 +1612,6 @@ classes:
     annotations:
       node: true
       suppress_warnings: "{\"unused\", \"WeakerAccess\"}"
-    in_subset:
-      - web_schema
 
   #### PsiMod ####
   PsiMod:
@@ -1807,8 +1623,6 @@ classes:
       label:
         annotations:
           addedField: false
-    in_subset:
-      - web_schema
 
   #### Publication ####
   Publication:
@@ -1830,8 +1644,6 @@ classes:
       title:
         annotations:
           addedField: false
-    in_subset:
-      - web_schema
 
   #### PublicationAuthor ####
   PublicationAuthor:
@@ -1847,8 +1659,6 @@ classes:
         range: Person
         annotations:
           target_node: true
-    in_subset:
-      - web_schema
 
   #### Reaction ####
   Reaction:
@@ -1865,8 +1675,6 @@ classes:
         range: Reaction
         annotations:
           type: "reverseReaction"
-    in_subset:
-      - web_schema
 
   #### ReactionLikeEvent ####
   ReactionLikeEvent:
@@ -1947,8 +1755,6 @@ classes:
         range: ReactionType
         annotations:
           type: "reactionType"
-    in_subset:
-      - web_schema
 
   #### ReactionType ####
   ReactionType:
@@ -1957,8 +1763,6 @@ classes:
       node: true
       abstract: true
       no_default_constructor: true
-    in_subset:
-      - web_schema
 
   #### ReferenceDatabase ####
   ReferenceDatabase:
@@ -1978,8 +1782,6 @@ classes:
       resourceIdentifier:
         annotations:
           addedField: false
-    in_subset:
-      - web_schema
 
   #### ReferenceDNASequence ####
   ReferenceDNASequence:
@@ -1987,8 +1789,6 @@ classes:
     annotations:
       node: true
       suppress_warnings: "unused"
-    in_subset:
-      - web_schema
 
   #### ReferenceEntity ####
   ReferenceEntity:
@@ -2014,8 +1814,6 @@ classes:
         annotations:
           type: "referenceEntity"
           reactome_relationship: true
-    in_subset:
-      - web_schema
 
   #### ReferenceGeneProduct ####
   ReferenceGeneProduct:
@@ -2038,8 +1836,6 @@ classes:
         range: ReferenceRNASequence
         annotations:
           type: "referenceTranscript"
-    in_subset:
-      - web_schema
 
   #### ReferenceGroup ####
   ReferenceGroup:
@@ -2049,8 +1845,6 @@ classes:
       suppress_warnings: "unused"
     slots:
       - formula
-    in_subset:
-      - web_schema
 
   #### ReferenceIsoform ####
   ReferenceIsoform:
@@ -2067,8 +1861,6 @@ classes:
         range: ReferenceGeneProduct
         annotations:
           type: "isoformParent"
-    in_subset:
-      - web_schema
 
   #### ReferenceMolecule ####
   ReferenceMolecule:
@@ -2085,8 +1877,6 @@ classes:
           addedField: true
           reactome_schema_ignore_getter: true
           json_ignore_getter: true
-    in_subset:
-      - web_schema
 
   #### ReferenceRNASequence ####
   ReferenceRNASequence:
@@ -2100,8 +1890,6 @@ classes:
         range: ReferenceDNASequence
         annotations:
           type: "referenceGene"
-    in_subset:
-      - web_schema
 
   #### ReferenceSequence ####
   ReferenceSequence:
@@ -2147,8 +1935,6 @@ classes:
         range: integer
         annotations:
           addedField: false
-    in_subset:
-      - web_schema
 
   #### ReferenceTherapeutic ####
   ReferenceTherapeutic:
@@ -2173,8 +1959,6 @@ classes:
       type:
         annotations:
           addedField: false
-    in_subset:
-      - web_schema
 
   #### Regulation ####
   Regulation:
@@ -2234,8 +2018,6 @@ classes:
         annotations:
           type: "reviewed"
           direction: INCOMING
-    in_subset:
-      - web_schema
 
   #### RegulationReference ####
   RegulationReference:
@@ -2247,8 +2029,6 @@ classes:
         range: Regulation
         annotations:
           type: "regulation"
-    in_subset:
-      - web_schema
 
   #### RegulationType ####
   RegulationType:
@@ -2261,8 +2041,6 @@ classes:
       name:
         annotations:
           addedField: false
-    in_subset:
-      - web_schema
 
   #### ReplacedResidue ####
   ReplacedResidue:
@@ -2276,8 +2054,6 @@ classes:
     slot_usage:
       psiMod:
         multivalued: true
-    in_subset:
-      - web_schema
 
   #### RepeatedUnit ####
   RepeatedUnit:
@@ -2289,8 +2065,6 @@ classes:
       - order
       - physicalEntity
       - stoichiometry
-    in_subset:
-      - web_schema
 
   #### RepeatedUnitForPhysicalEntity ####
   RepeatedUnitForPhysicalEntity:
@@ -2306,8 +2080,6 @@ classes:
         range: Polymer
         annotations:
           target_node: true
-    in_subset:
-      - web_schema
 
   #### Requirement ####
   Requirement:
@@ -2318,16 +2090,12 @@ classes:
       suppress_warnings: "unused"
     slots:
       - explanation
-    in_subset:
-      - web_schema
 
   #### ReviewStatus ####
   ReviewStatus:
     is_a: ControlledVocabulary
     annotations:
       node: true
-    in_subset:
-      - web_schema
 
   #### RNADrug ####
   RNADrug:
@@ -2335,8 +2103,6 @@ classes:
     annotations:
       node: true
       suppress_warnings: "{\"unused\", \"WeakerAccess\"}"
-    in_subset:
-      - web_schema
 
   #### SequenceOntology ####
   SequenceOntology:
@@ -2344,8 +2110,6 @@ classes:
     annotations:
       node: true
       suppress_warnings: "unused"
-    in_subset:
-      - web_schema
 
   #### SimpleEntity ####
   SimpleEntity:
@@ -2371,8 +2135,6 @@ classes:
         range: ReferenceMolecule
         annotations:
           type: "referenceEntity"
-    in_subset:
-      - web_schema
 
   #### Species ####
   Species:
@@ -2384,8 +2146,6 @@ classes:
       abbreviation:
         annotations:
           addedField: false
-    in_subset:
-      - web_schema
 
   #### Summation ####
   Summation:
@@ -2399,8 +2159,6 @@ classes:
       text:
         annotations:
           addedField: false
-    in_subset:
-      - web_schema
 
   #### Taxon ####
   Taxon:
@@ -2423,8 +2181,6 @@ classes:
         range: Taxon
         annotations:
           type: "superTaxon"
-    in_subset:
-      - web_schema
 
   #### TopLevelPathway ####
   TopLevelPathway:
@@ -2432,8 +2188,6 @@ classes:
     annotations:
       node: true
       suppress_warnings: "unused"
-    in_subset:
-      - web_schema
 
   #### TranscriptionalModification ####
   TranscriptionalModification:
@@ -2442,8 +2196,6 @@ classes:
       abstract: true
       node: true
       suppress_warnings: "unused"
-    in_subset:
-      - web_schema
 
   #### TranslationalModification ####
   TranslationalModification:
@@ -2461,9 +2213,6 @@ classes:
         annotations:
           addedField: true
           json_ignore: true
-    in_subset:
-      - web_schema
-
 
   #### UndirectedInteraction ####
   UndirectedInteraction:
@@ -2477,8 +2226,6 @@ classes:
         range: ReferenceEntity
         annotations:
           type: "interactor"
-    in_subset:
-      - web_schema
 
   #### URL ####
   URL:
@@ -2490,8 +2237,6 @@ classes:
       uniformResourceLocator:
         annotations:
           addedField: false
-    in_subset:
-      - web_schema
 
   #### Annotations classes - start ####
   AnnotationBytesType:
@@ -2566,8 +2311,6 @@ classes:
       sorted_set:
         range: boolean
       suppress_warnings:
-    in_subset:
-      - schema_annotations
 
   JsonIdentityInfo:
     attributes:
@@ -2579,35 +2322,25 @@ classes:
   ReactomeAllowedClasses:
     attributes:
       allowed:
-    in_subset:
-      - schema_annotations
 
   ReactomeConstraint:
     attributes:
       constraint:
         range: ReactomeConstraintValues
-    in_subset:
-      - schema_annotations
 
   ReactomeInstanceDefiningValue:
     attributes:
       category: CategoryValues
-    in_subset:
-      - schema_annotations
 
   ReactomeProperty:
     attributes:
       addedField:
         range: boolean
-    in_subset:
-      - schema_annotations
 
   Relationship:
     attributes:
         type:
         direction: RelationshipDirectionValues
-    in_subset:
-      - schema_annotations
   #### Annotations classes - end ####
 
 #### Enumerations ####
