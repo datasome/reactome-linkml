@@ -1,0 +1,852 @@
+classes:
+
+  #### AbstractModifiedResidue ####
+  AbstractModifiedResidue:
+    is_a: DatabaseObject
+    annotations:
+      annotations_removed: "constructor_parameter"
+
+  #### BlackBoxEvent ####
+  BlackBoxEvent:
+    description: "Shortcut reactions that make the connection between input and output, but don't provide complete mechanistic detail. Used for reactions that do not balance, or complicated processes for which we either don't know all the details, or we choose not to represent every step. (e.g. degradation of a protein)"
+    is_a: ReactionLikeEvent
+    annotations:
+      removed_slots: "authored, edited, catalystActivity, goBiologicalProcess, literatureReference"
+      removed_attributes: "input, output"
+
+  #### Book ####
+  Book:
+    annotations:
+      removed_attributes: "chapterAuthors"
+
+  #### CandidateSet ####
+  CandidateSet:
+    annotations:
+      removed_attributes: "hasMember"
+
+  #### CatalystActivity ####
+  CatalystActivity:
+    slots:
+      - literatureReference
+    attributes:
+      catalyzedEvent:
+        multivalued: true
+        range: ReactionLikeEvent
+        annotations:
+          type: "catalystActivity"
+          direction: INCOMING
+          json_ignore: true
+          reactome_transient: true
+
+  #### Cell ####
+  Cell:
+    is_a: PhysicalEntity
+    annotations:
+      removed_slots: "cellType"
+    attributes:
+      RNAMarker:
+        annotations:
+          json_getter_getter: "rnaMarker"
+      proteinMarker:
+        range: EntityWithAccessionedSequence
+        annotations:
+          removed_annotations: "allowed"
+
+  #### CellDevelopmentStep ####
+  CellDevelopmentStep:
+    is_a: ReactionLikeEvent
+    annotations:
+      removed_slots: "catalystActivity"
+      removed_attributes: "catalystActivity"
+
+  #### CellLineagePath ####
+  CellLineagePath:
+    description: "A collection of related Events. These events are mostly CellDevelopmentStep. This is used to describe tissues and cell differentiation"
+    slots:
+      - explanation
+    slot_usage:
+      explanation:
+        annotations:
+          override: true
+
+  #### Complex ####
+  Complex:
+    annotations:
+      removed_slots: "compartment"
+    attributes:
+      hasComponent:
+        annotations:
+          include_fetch: true
+      includedLocation:
+        multivalued: true
+        range: HasCompartment
+        annotations:
+          no_list_setter: false
+
+  #### CrosslinkedResidue ####
+  CrosslinkedResidue:
+    slot_usage:
+      modification:
+        annotations:
+          allowed: "{EntitySet.class, Polymer.class, ReferenceGroup.class}"
+
+  #### DatabaseIdentifier ####
+  DatabaseIdentifier:
+    attributes:
+      databaseName:
+        annotations:
+          addedField: false
+      url:
+        annotations:
+          addedField: false
+
+  #### DatabaseObject ####
+  DatabaseObject:
+    description: "Not available"
+    annotations:
+      removed_annotations: "constructor_parameter, property"
+      removed_slots: "DB_ID"
+      removed_attributes: "_displayName, _timestamp, stableIdentifier"
+      constructor_parameter: "dbId"
+      property: "dbId"
+    slots:
+      - dbId
+    slot_usage:
+      dbId:
+        annotations:
+          protected: true
+    attributes:
+      displayName:
+      stId:
+        annotations:
+          addedField: true
+      stIdVersion:
+      oldStId:
+        annotations:
+          json_ignore: true
+          transient: true
+
+  #### _Deleted ####
+  _Deleted:
+    annotations:
+      removed_class: true
+
+  #### DeletedControlledVocabulary ####
+  DeletedControlledVocabulary:
+    annotations:
+      removed_class: true
+
+  #### _DeletedInstance ####
+  _DeletedInstance:
+    annotations:
+      removed_class: true
+
+  #### Depolymerisation ####
+  Depolymerisation:
+    is_a: ReactionLikeEvent
+    annotations:
+      removed_slots: "authored, edited, goBiologicalProcess, literatureReference"
+
+  #### Drug ####
+  Drug:
+    is_a: PhysicalEntity
+    annotations:
+      removed_slots: "compartment"
+      removed_attributes: "disease"
+
+  #### DrugType ####
+  DrugType:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - definition
+      - name
+
+  #### EntitySet ####
+  EntitySet:
+    annotations:
+      removed_slots: "compartment"
+
+  #### EntityWithAccessionedSequence ####
+  EntityWithAccessionedSequence:
+    description: "A protein, RNA, or DNA molecule or fragment thereof in a specified cellular compartment and specific post-translational state. Must be linked to an external database reference, given as the value of referenceSequence. An EWAS typically corresponds to the entire protein or polynucleotide described in the external database. Fragments are defined by setting the first and last residue using the numbering scheme of the external database, entered as startCoordinate and endCoordinate values. Values of 1 and -1 respectively indicate that the true start and end are unconfirmed. EWAS instances are specific to a subcellular compartment; if the same molecule is found in two cellular components it will have two EWASes. EWAS instances by default define an unmodified protein sequence, any post-translational modification (PTM), such as phosphorylation, requires a new EWAS instance. The location and type of any PTM are defined in the hasModifiedResidue slot"
+    is_a: GenomeEncodedEntity
+    annotations:
+      removed_slots: "name, species"
+    slots:
+      - className
+    slot_usage:
+      className:
+        ifabsent: "switch (referenceType) { \n          case (\"ReferenceGeneProduct\"):\n            return \"Protein\";\n           case (\"ReferenceDNASequence\"):\n            return \"DNA Sequence\";\n           case (\"ReferenceRNASequence\"):\n            return \"RNA Sequence\";\n           default:\n            return super.getClassName();\n        }"
+
+  #### Event ####
+  Event:
+    annotations:
+      removed_attributes: "_doRelease"
+    slots:
+      - compartment
+    attributes:
+      isInDisease:
+        range: boolean
+        annotations:
+          addedField: true
+      isInferred:
+        range: boolean
+        annotations:
+          addedField: true
+      speciesName:
+        annotations:
+          addedField: true
+          reactome_schema_ignore_getter: true
+      eventOf:
+        multivalued: true
+        range: Pathway
+        annotations:
+          type: "hasEvent"
+          direction: INCOMING
+          reactome_transient: true
+          json_ignore: true
+      followingEvent:
+        multivalued: true
+        range: Event
+        annotations:
+          type: "precedingEvent"
+          direction: INCOMING
+          reactome_transient: true
+          json_ignore: true
+      orthologousEvent:
+        annotations:
+          # TBC - Shouldn't the type be "orthologousEvent" ?
+          type: "inferredTo"
+
+  #### EvidenceType ####
+  EvidenceType:
+    is_a: ExternalOntology
+    annotations:
+      removed_slots: "definition, name"
+      removed_attributes: "instanceOf"
+
+  #### ExternalOntology ####
+  ExternalOntology:
+    attributes:
+      databaseName:
+        annotations:
+          addedField: false
+
+  #### FailedReaction ####
+  FailedReaction:
+    is_a: ReactionLikeEvent
+    annotations:
+      removed_slots: "authored, edited, catalystActivity, goBiologicalProcess, literatureReference"
+      removed_attributes: "normalReaction, output"
+
+  #### FrontPage ####
+  FrontPage:
+    annotations:
+      removed_class: true
+
+  #### GenomeEncodedEntity ####
+  GenomeEncodedEntity:
+    annotations:
+      removed_slots: "compartment"
+
+  #### GO_BiologicalProcess ####
+  GO_BiologicalProcess:
+    is_a: GO_Term
+    annotations:
+      removed_slots: "accession, definition, name, referenceDatabase"
+
+  #### GO_CellularComponent ####
+  GO_CellularComponent:
+    is_a: GO_Term
+    annotations:
+      removed_slots: "accession, definition, name, referenceDatabase"
+
+  #### GO_MolecularFunction ####
+  GO_MolecularFunction:
+    is_a: GO_Term
+    annotations:
+      removed_slots: "accession, definition, name, referenceDatabase"
+
+  #### GO_Term ####
+  GO_Term:
+    is_a: DatabaseObject
+    annotations:
+      abstract: true
+      constructor_parameter: "dbId"
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - accession
+      - definition
+      - referenceDatabase
+    attributes:
+      databaseName:
+      name:
+        annotations:
+          addedField: false
+      url:
+        annotations:
+
+  #### GroupModifiedResidue ####
+  GroupModifiedResidue:
+    slot_usage:
+      modification:
+        annotations:
+          allowed: "{EntitySet.class, Polymer.class, ReferenceGroup.class}"
+
+  #### HasEncapsulatedEvent ####
+  HasEncapsulatedEvent:
+    annotations:
+      relationship_properties: true
+      implements: "Comparable<HasEncapsulatedEvent>"
+      no_default_constructor: true
+    slots:
+      - id
+      - order
+    attributes:
+      event:
+        range: Event
+        annotations:
+          target_node: true
+
+  #### InputForReactionLikeEvent ####
+  InputForReactionLikeEvent:
+    annotations:
+      relationship_properties: true
+      implements: "Comparable<InputForReactionLikeEvent>"
+    slots:
+      - id
+      - order
+      - stoichiometry
+    attributes:
+      reactionLikeEvent:
+        range: ReactionLikeEvent
+        annotations:
+          target_node: true
+
+  #### InstanceEdit ####
+  InstanceEdit:
+    annotations:
+      removed_attributes: "_applyToAllEditedInstances, author"
+    slots:
+      - author
+
+  #### Interaction ####
+  Interaction:
+    is_a: DatabaseObject
+    annotations:
+      abstract: true
+      node: true
+      suppress_warnings: "{\"unused\", \"WeakerAccess\"}"
+    slots:
+      - referenceDatabase
+    attributes:
+      databaseName:
+        annotations:
+          addedField: false
+      score:
+        range: double
+        annotations:
+          addedField: false
+      accession:
+        multivalued: true
+        annotations:
+          addedField: false
+      pubmed:
+        multivalued: true
+        annotations:
+          addedField: false
+      url:
+        annotations:
+          addedField: false
+
+  #### MarkerReference ####
+  MarkerReference:
+    attributes:
+      marker:
+        multivalued: false
+
+  #### Ontology ####
+  Ontology:
+    is_a: DatabaseObject
+    annotations:
+      deprecated: true
+      node: true
+      suppress_warnings: "unused"
+      constructor_parameter: "ontology"
+    slots:
+      - ontology
+
+  #### OtherEntity ####
+  OtherEntity:
+    annotations:
+      removed_slots: "compartment"
+
+  #### OutputForReactionLikeEvent ####
+  OutputForReactionLikeEvent:
+    annotations:
+      relationship_properties: true
+      implements: "Comparable<OutputForReactionLikeEvent>"
+    slots:
+      - id
+      - order
+      - stoichiometry
+    attributes:
+      reactionLikeEvent:
+        range: ReactionLikeEvent
+        annotations:
+          target_node: true
+
+  #### Pathway ####
+  Pathway:
+    annotations:
+        removed_slots: "authored, compartment, edited, goBiologicalProcess"
+    attributes:
+      hasDiagram:
+        range: boolean
+        annotations:
+          addedField: true
+      diagramWidth:
+        range: integer
+        annotations:
+          reactome_transient: true
+          reactome_schema_ignore_getter: true
+          json_ignore_getter: true
+      diagramHeight:
+        range: integer
+        annotations:
+          reactome_transient: true
+          reactome_schema_ignore_getter: true
+          json_ignore_getter: true
+      isCanonical:
+        range: string
+      hasEncapsulatedEvent:
+        multivalued: true
+        range: HasEncapsulatedEvent
+        annotations:
+          type: "hasEncapsulatedEvent"
+          reactome_relationship: true
+          sorted_set: true
+          reactome_schema_ignore_getter: true
+          json_ignore_getter: true
+
+  #### PathwayDiagram ####
+  PathwayDiagram:
+    annotations:
+      removed_class: true
+
+  #### Person ####
+  Person:
+    annotations:
+      removed_slots: "figure"
+      removed_attributes: "url"
+    slot_usage:
+      crossReference:
+        annotations:
+          deprecated: true
+    attributes:
+        initial:
+          annotations:
+            addedField: true
+        orcidId:
+          annotations:
+            addedField: false
+        publicationAuthorList:
+          multivalued: true
+          range: AuthorPublication
+          annotations:
+            type: "author"
+            reactome_transient: true
+            no_list_getter_setter: true
+
+  #### PhysicalEntity ####
+  PhysicalEntity:
+    slots:
+      - compartment
+    slot_usage:
+      compartment:
+        annotations:
+          include_default_setter: true
+    attributes:
+     negativelyRegulates:
+        multivalued: true
+        range: NegativeRegulation
+        annotations:
+          type: "regulator"
+          direction: INCOMING
+          reactome_transient: true
+          json_ignore: true
+      positivelyRegulates:
+        multivalued: true
+        range: PositiveRegulation
+        annotations:
+          type: "regulator"
+          direction: INCOMING
+          reactome_transient: true
+          json_ignore: true
+      repeatedUnitOf:
+        multivalued: true
+        range: RepeatedUnitForPhysicalEntity
+        annotations:
+          type: "repeatedUnit"
+          direction: INCOMING
+          reactome_transient: true
+          json_ignore: true
+          set: true
+      consumedByEvent:
+        multivalued: true
+        range: InputForReactionLikeEvent
+        annotations:
+          type: "input"
+          direction: INCOMING
+          reactome_transient: true
+          no_list_setter: true
+      producedByEvent:
+        multivalued: true
+        range: OutputForReactionLikeEvent
+        annotations:
+          type: "output"
+          direction: INCOMING
+          reactome_transient: true
+          no_list_setter: true
+      memberOf:
+        multivalued: true
+        range: PhysicalEntity
+        annotations:
+          type: "hasMember"
+          direction: INCOMING
+          reactome_transient: true
+          json_ignore: true
+      isRequired:
+        multivalued: true
+        range: Requirement
+        annotations:
+          type: "regulator"
+          direction: INCOMING
+          reactome_transient: true
+          json_ignore: true
+      componentOf:
+        multivalued: true
+        range: HasComponentForComplex
+        annotations:
+          type: "hasComponent"
+          direction: INCOMING
+          reactome_transient: true
+          json_ignore: true
+          sorted_set: true
+          include_default_setter: true
+      catalystActivities:
+        multivalued: true
+        range: CatalystActivity
+        annotations:
+          type: "physicalEntity"
+          direction: INCOMING
+          reactome_transient: true
+          json_ignore: true
+      isInDisease:
+        range: boolean
+        annotations:
+          addedField: true
+      speciesName:
+         annotations:
+           addedField: true
+           reactome_schema_ignore_getter: true
+      reviewed:
+        multivalued: true
+        range: InstanceEdit
+        annotations:
+          constraint: OPTIONAL
+          type: "reviewed"
+          direction: INCOMING
+      markingReferences:
+        multivalued: true
+        range: MarkerReference
+        annotations:
+          type: "marker"
+          direction: INCOMING
+          reactome_transient: true
+
+  #### Polymer ####
+  Polymer:
+    annotations:
+      removed_slots: "compartment"
+    attributes:
+      repeatedUnit:
+        annotations:
+          include_fetch: true
+
+  #### Polymerisation ####
+  Polymerisation:
+    is_a: ReactionLikeEvent
+    annotations:
+      removed_slots: "authored, edited, goBiologicalProcess, literatureReference"
+
+  #### Publication ####
+  Publication:
+    is_a: DatabaseObject
+    annotations:
+      removed_attributes: "author"
+    slots:
+      - author
+    slot_usage:
+      author:
+        range: PublicationAuthor
+        annotations:
+          sorted_set: true
+          no_list_getter_setter: true
+
+  #### PublicationAuthor ####
+  PublicationAuthor:
+    annotations:
+      removed_attributes: "author"
+    attributes:
+      person:
+        range: Person
+        annotations:
+          target_node: true
+
+  #### Reaction ####
+  Reaction:
+    is_a: ReactionLikeEvent
+    annotations:
+      removed_slots: "authored, edited, goBiologicalProcess, literatureReference"
+
+  #### ReactionLikeEvent ####
+  ReactionLikeEvent:
+    annotations:
+      removed_slots: "compartment"
+    attributes:
+      input:
+        annotations:
+          include_fetch: true
+      output:
+        annotations:
+          include_fetch: true
+          include_default_setter: true
+      normalReaction:
+        range: ReactionLikeEvent
+
+  #### ReferenceEntity ####
+  ReferenceEntity:
+    attributes:
+      databaseName:
+      url:
+        annotations:
+          addedField: true
+      physicalEntity:
+        multivalued: true
+        range: PhysicalEntity
+        annotations:
+          type: "referenceEntity"
+          reactome_relationship: true
+
+  #### ReferenceGeneProduct ####
+  ReferenceGeneProduct:
+    annotations:
+      removed_attributes: "_chainChangeLog"
+
+  #### ReferenceGroup ####
+  ReferenceGroup:
+    annotations:
+      removed_slots: "otherIdentifier, name"
+
+  #### ReferenceMolecule ####
+  ReferenceMolecule:
+    annotations:
+      removed_slots: "name, otherIdentifier"
+    attributes:
+      trivial:
+        range: boolean
+        annotations:
+          addedField: true
+          reactome_schema_ignore_getter: true
+          json_ignore_getter: true
+
+  #### ReferenceSequence ####
+  ReferenceSequence:
+    annotations:
+      removed_slots: "otherIdentifier"
+
+  #### ReferenceTherapeutic ####
+  ReferenceTherapeutic:
+    annotations:
+      removed_attributes: "activeDrugIds, proDrugIds, withdrawn"
+
+  #### Regulation ####
+  Regulation:
+    annotations:
+      removed_slots: "summation"
+    slots:
+      - authored
+      - edited
+      - literatureReference
+      - revised
+    attributes:
+      releaseDate:
+        annotations:
+          addedField: false
+      inferredTo:
+        multivalued: true
+        range: Regulation
+        annotations:
+          type: "inferredTo"
+      inferredFrom:
+        multivalued: true
+        range: Regulation
+        annotations:
+          type: "inferredTo"
+          direction: INCOMING
+      regulatedEntity:
+        multivalued: true
+        range: ReactionLikeEvent
+        annotations:
+          type: "regulatedBy"
+          direction: INCOMING
+          reactome_transient: true
+      reviewed:
+        multivalued: true
+        range: InstanceEdit
+        annotations:
+          type: "reviewed"
+          direction: INCOMING
+
+  #### RegulationType ####
+  RegulationType:
+    is_a: DatabaseObject
+    annotations:
+      deprecated: true
+      node: true
+      suppress_warnings: "unused"
+    attributes:
+      name:
+        annotations:
+          addedField: false
+
+  #### _Release ####
+  _Release:
+    annotations:
+      removed_class: true
+
+  #### RepresentedPathway ####
+  RepresentedPathway:
+    annotations:
+      removed_class: true
+
+  #### RepeatedUnitForPhysicalEntity ####
+  RepeatedUnitForPhysicalEntity:
+    annotations:
+      relationship_properties: true
+      implements: "Comparable<RepeatedUnitForPhysicalEntity>"
+    slots:
+      - id
+      - order
+      - stoichiometry
+    attributes:
+      polymer:
+        range: Polymer
+        annotations:
+          target_node: true
+
+  #### ReviewStatus ####
+  ReviewStatus:
+    is_a: ControlledVocabulary
+    annotations:
+      node: true
+
+  #### SequenceOntology ####
+  SequenceOntology:
+    annotations:
+      removed_slots: "identifier"
+
+  #### SimpleEntity ####
+  SimpleEntity:
+    description: "A chemical species not encoded directly or indirectly in the genome, typically small molecules such as ATP or ethanol. The detailed structure of a simpleEntity is specified by linking it to details of the molecule in the ChEBI or KEGG databases via the referenceEntity slot. Use of KEGG is deprecated"
+    is_a: PhysicalEntity
+    annotations:
+      removed_slots: "compartment"
+    attributes:
+      referenceType:
+        annotations:
+          addedField: true
+      referenceEntity:
+
+  #### StableIdentifier ####
+  StableIdentifier:
+    annotations:
+      removed_class: true
+
+  #### StableIdentifierHistory ####
+  StableIdentifierHistory:
+    annotations:
+      removed_class: true
+
+  #### StableIdentifierReleaseStatus ####
+  StableIdentifierReleaseStatus:
+    annotations:
+      removed_class: true
+
+  #### Taxon ####
+  Taxon:
+    slots:
+      - crossReference
+      - name
+    attributes:
+      taxId:
+        annotations:
+          addedField: true
+
+  #### TopLevelPathway ####
+  TopLevelPathway:
+    is_a: Pathway
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+
+  #### TranslationalModification ####
+  TranslationalModification:
+    attributes:
+      label:
+        annotations:
+          addedField: true
+          json_ignore: true
+
+  #### _UpdateTracker ####
+  _UpdateTracker:
+    annotations:
+      removed_class: true
+
+  #### UndirectedInteraction ####
+  UndirectedInteraction:
+    is_a: Interaction
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    attributes:
+      interactor:
+        multivalued: true
+        range: ReferenceEntity
+        annotations:
+          type: "interactor"
+
+#### Slots ####
+slots:
+  author:
+    multivalued: true
+    range: Person
+    annotations:
+      type: "author"
+      direction: INCOMING
+  compartment:
+    range: HasCompartment
+    annotations:
+      sorted_set: true
+  dbId:
+    range: AnnotationLongType
+    annotations:
+      id: true
+  modification:
+    annotations:
+      allowed:

@@ -2526,18 +2526,24 @@ classes:
       suppress_warnings: "unused"
     attributes:
       uniformResourceLocator:
-        annotatio§ns:
+        annotations:
           constraint: MANDATORY
           category: any
           addedField: false
 
   #### Annotations classes - start ####
+  AnnotationBytesType:
   AnnotationLongType:
   Annotations:
     attributes:
       abstract:
-        range: boolean      
+        range: boolean
+      constructor_parameter:
       deprecated:
+        range: boolean
+      # For relationship fields that are Sets, include in class a fetch method returning the field without converting
+      # it to List first
+      include_fetch:
         range: boolean
       generated_value:
         range: boolean
@@ -2580,6 +2586,8 @@ classes:
         range: ReactomeConstraint
       reactome_property:
         range: ReactomeProperty
+      reactome_relationship:
+        range: boolean
       reactome_instance_defining_value:
         range: ReactomeInstanceDefiningValue
       reactome_schema_ignore:
@@ -2590,6 +2598,8 @@ classes:
         range: boolean
       property1:
         range: Property
+      protected:
+        range: boolean
       relationship:
         range: Relationship
       relationship_properties:
