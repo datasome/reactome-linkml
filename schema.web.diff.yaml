@@ -46,7 +46,7 @@ classes:
     attributes:
       RNAMarker:
         annotations:
-          json_getter_getter: "rnaMarker"
+          json_getter@getter: "rnaMarker"
       proteinMarker:
         range: EntityWithAccessionedSequence
         annotations:
@@ -57,7 +57,7 @@ classes:
     is_a: ReactionLikeEvent
     annotations:
       removed_slots: "catalystActivity"
-      removed_attributes: "catalystActivity"
+      removed_attributes: "requiredInputComponent"
 
   #### CellLineagePath ####
   CellLineagePath:
@@ -199,7 +199,7 @@ classes:
       speciesName:
         annotations:
           addedField: true
-          reactome_schema_ignore_getter: true
+          reactome_schema_ignore@getter: true
       eventOf:
         multivalued: true
         range: Pathway
@@ -289,6 +289,7 @@ classes:
           addedField: false
       url:
         annotations:
+          addedField: true
 
   #### GroupModifiedResidue ####
   GroupModifiedResidue:
@@ -296,6 +297,22 @@ classes:
       modification:
         annotations:
           allowed: "{EntitySet.class, Polymer.class, ReferenceGroup.class}"
+
+  #### HasComponentForComplex ####
+  HasComponentForComplex:
+    annotations:
+      relationship_properties: true
+      implements: "Comparable<HasComponentForComplex>"
+      suppress_warnings: "unused"
+    slots:
+      - id
+      - order
+      - stoichiometry
+    attributes:
+      complex:
+        range: Complex
+        annotations:
+          target_node: true
 
   #### HasEncapsulatedEvent ####
   HasEncapsulatedEvent:
@@ -413,14 +430,14 @@ classes:
         range: integer
         annotations:
           reactome_transient: true
-          reactome_schema_ignore_getter: true
-          json_ignore_getter: true
+          reactome_schema_ignore@getter: true
+          json_ignore@getter: true
       diagramHeight:
         range: integer
         annotations:
           reactome_transient: true
-          reactome_schema_ignore_getter: true
-          json_ignore_getter: true
+          reactome_schema_ignore@getter: true
+          json_ignore@getter: true
       isCanonical:
         range: string
       hasEncapsulatedEvent:
@@ -430,8 +447,8 @@ classes:
           type: "hasEncapsulatedEvent"
           reactome_relationship: true
           sorted_set: true
-          reactome_schema_ignore_getter: true
-          json_ignore_getter: true
+          reactome_schema_ignore@getter: true
+          json_ignore@getter: true
 
   #### PathwayDiagram ####
   PathwayDiagram:
@@ -460,7 +477,7 @@ classes:
           annotations:
             type: "author"
             reactome_transient: true
-            no_list_getter_setter: true
+            no_default_getter_setter: true
 
   #### PhysicalEntity ####
   PhysicalEntity:
@@ -471,7 +488,7 @@ classes:
         annotations:
           include_default_setter: true
     attributes:
-     negativelyRegulates:
+      negativelyRegulates:
         multivalued: true
         range: NegativeRegulation
         annotations:
@@ -538,6 +555,7 @@ classes:
           json_ignore: true
           sorted_set: true
           include_default_setter: true
+          no_default_getter: true
       catalystActivities:
         multivalued: true
         range: CatalystActivity
@@ -553,12 +571,11 @@ classes:
       speciesName:
          annotations:
            addedField: true
-           reactome_schema_ignore_getter: true
+           reactome_schema_ignore@getter: true
       reviewed:
         multivalued: true
         range: InstanceEdit
         annotations:
-          constraint: OPTIONAL
           type: "reviewed"
           direction: INCOMING
       markingReferences:
@@ -614,6 +631,11 @@ classes:
     annotations:
       removed_slots: "authored, edited, goBiologicalProcess, literatureReference"
 
+  #### ReactionlikeEvent ####
+  ReactionlikeEvent:
+    annotations:
+      renamed_to: ReactionLikeEvent
+
   #### ReactionLikeEvent ####
   ReactionLikeEvent:
     annotations:
@@ -662,8 +684,8 @@ classes:
         range: boolean
         annotations:
           addedField: true
-          reactome_schema_ignore_getter: true
-          json_ignore_getter: true
+          reactome_schema_ignore@getter: true
+          json_ignore@getter: true
 
   #### ReferenceSequence ####
   ReferenceSequence:
@@ -771,7 +793,6 @@ classes:
       referenceType:
         annotations:
           addedField: true
-      referenceEntity:
 
   #### StableIdentifier ####
   StableIdentifier:
@@ -850,3 +871,5 @@ slots:
   modification:
     annotations:
       allowed:
+  ontology:
+    range: AnnotationBytesType

@@ -92,6 +92,8 @@ def retrieve_class_content(class_name: str, file_path: str) -> dict:
                 current_annotations = []
     return class_content
 
+
+# Main program body
 generated_class_content = {}
 original_class_content = {}
 pp = pprint.PrettyPrinter(indent=4)

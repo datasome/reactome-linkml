@@ -79,7 +79,7 @@ classes:
           constraint: REQUIRED
       explanation:
         annotations:
-          json_ignore: false
+          json_ignore:
       literatureReference:
         annotations:
           constraint: REQUIRED
@@ -435,15 +435,15 @@ classes:
     slot_usage:
       DB_ID:
         annotations:
-          json_property_getter: "DB_ID"
+          json_property@getter: "DB_ID"
           protected: true
       explanation:
         annotations:
-          override: false
+          override:
       className:
         ifabsent: "getClass().getSimpleName()"
         annotations:
-          override: false
+          override:
     attributes:
       isLoaded:
         range: boolean
@@ -494,7 +494,7 @@ classes:
     slot_usage:
       id:
         annotations:
-          generated_value: false
+          generated_value:
           json_ignore: true
     attributes:
       name:
@@ -562,8 +562,8 @@ classes:
           constraint: NOMANUALEDIT
           addedField: false
           getter_only: false
-          reactome_schema_ignore: false
-          override: false
+          reactome_schema_ignore:
+          override:
       name:
         multivalued: false
         annotations:
@@ -1450,8 +1450,8 @@ classes:
         range: Event
         annotations:
           constraint: MANDATORY
-          direction: INCOMING
           type: "negativePrecedingEvent"
+          direction: INCOMING
       reason:
         range: NegativePrecedingEventReason
         annotations:
@@ -2560,6 +2560,9 @@ classes:
       # A non-standard getter and/or setter methods may have been provided in additional_class_content directory
       # (e.g. getPublications() for publicationAuthorList in Person class)
       no_default_getter_setter:
+          range: boolean
+      # For non-relationship fields, do not output any getter
+      no_default_getter:
           range: boolean
       # Don't output a default (i.e. parameterless) constructor
       no_default_constructor:

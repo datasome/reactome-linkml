@@ -17,7 +17,7 @@ else:
     OUTPUT_DIR = "curator-graph-core-classes"
     CURATOR = "curator."
 
-GETTER_ONLY_ANNOT_SUFFIX = "_getter"
+GETTER_ONLY_ANNOT_SUFFIX = "@getter"
 
 VALUE_TO_JAVA_ENUM = {
     "INCOMING" : "Relationship.Direction",
@@ -31,8 +31,8 @@ VALUE_TO_JAVA_ENUM = {
 OTHER_ANNOTATIONS = ['abstract', 'implements', 'set', 'sorted_set', 'getter_only',
                      'static', 'final', 'transient', 'constructor_parameter',
                      'include_fetch', 'include_default_setter', 'no_default_getter_setter',
-                     'no_list_getter_setter', 'no_list_setter', 'include_stoichiometry',
-                     'no_default_constructor', 'protected', 'public']
+                     'no_default_getter', 'no_list_getter_setter', 'no_list_setter',
+                     'include_stoichiometry', 'no_default_constructor', 'protected', 'public']
 
 # Acronyms in variable names are capitalized as a whole (not just the first letter)
 ACRONYMS_IN_VARIABLE_NAMES = ['rna']
@@ -74,20 +74,29 @@ CLASS_TO_PACKAGE_NAME = {
 def remove_curator_only_annotations(classes: dict, slots: dict) -> (dict, dict):
     """Remove all constraint and category annotations as they are not used in web schema"""
     for slot in slots:
-        if 'annotations' in slot:
+        slot_entry = slots[slot]
+        if 'annotations' in slot_entry:
             for key in ['category', 'constraint']:
-                if key in slot['annotations']:
-                    slot['annotations'].pop(key)
+                if key in slot_entry['annotations']:
+                    slot_entry['annotations'].pop(key)
     for clazz in classes:
         class_entry = classes[clazz]
         if is_annotation(clazz):
             continue
         if 'attributes' in class_entry:
             for attr in class_entry['attributes']:
-                if 'annotations' in attr:
+                attr_entry = class_entry['attributes'][attr]
+                if attr_entry and 'annotations' in attr_entry:
                     for key in ['category', 'constraint']:
-                        if key in slot['annotations']:
-                            slot['annotations'].pop(key)
+                        if key in attr_entry['annotations']:
+                            attr_entry['annotations'].pop(key)
+        if 'slot_usage' in class_entry:
+            for slot in class_entry['slot_usage']:
+                slot_entry = class_entry['slot_usage'][slot]
+                if slot_entry and 'annotations' in slot_entry:
+                    for key in ['category', 'constraint']:
+                        if key in slot_entry['annotations']:
+                            slot_entry['annotations'].pop(key)
     return classes, slots
 
 def get_web_yaml(web_schema_diff_file_name: str, schema_data: dict):
@@ -106,30 +115,49 @@ def get_web_yaml(web_schema_diff_file_name: str, schema_data: dict):
 
             # clazzes_for_removal will contain names of classes in curator schema that should be removed from the web schema
             clazzes_for_removal = []
+            # For the classes that have been renamed in web schema (e.g. ReactionlikeEvent => ReactionLikeEvent)
+            clazz2web_clazz = {}
 
             # By the end of the loop below classes and slots should contain the correct content of the web schema
             for clazz in classes:
                 class_entry = classes[clazz]
                 if clazz in diff_classes:
-
                     # Collect all relevant portions of class_entry and diff_class_entry
-                    diff_class_annotations, diff_class_attributes, diff_class_slots, diff_class_slot_usage = {}, {}, {}, {}
-                    class_annotations, class_attributes, class_slots, class_slot_usage = {}, {}, {}, {}
+                    diff_class_annotations, diff_class_attributes, diff_class_slot_usage = {}, {}, {}
+                    class_annotations, class_attributes, class_slot_usage = {}, {}, {}
+                    class_slots, diff_class_slots = [], []
+
+                    # Deal with classes that were renamed in web schema compared to curator schema
                     diff_class_entry = diff_classes[clazz]
                     if 'annotations' in diff_class_entry:
                         diff_class_annotations = diff_class_entry['annotations']
+                        if 'renamed_to' in diff_class_annotations:
+                            web_clazz = diff_class_annotations['renamed_to']
+                            clazz2web_clazz[clazz] = web_clazz
+                            # For renamed classes, the content of clazz in curator schema will be updated with the web schema-only
+                            # content of web_clazz. Once classes have been iterated over, classes[clazz] will be moved to classes[web_clazz]
+                            diff_class_entry = diff_classes[web_clazz]
+                            diff_class_annotations = {}
+                            if 'annotations' in diff_class_entry:
+                                diff_class_annotations = diff_class_entry['annotations']
                     if 'annotations' in class_entry:
                         class_annotations = class_entry['annotations']
                     if 'attributes' in diff_class_entry:
                         diff_class_attributes = diff_class_entry['attributes']
+                        if 'attributes' not in class_entry:
+                            class_entry['attributes'] = {}
                     if 'attributes' in class_entry:
                         class_attributes = class_entry['attributes']
                     if 'slots' in diff_class_entry:
-                        diff_class_slots = diff_class_entry['attributes']
+                        diff_class_slots = diff_class_entry['slots']
+                        if 'slots' not in class_entry:
+                            class_entry['slots'] = []
                     if 'slots' in class_entry:
                         class_slots = class_entry['slots']
                     if 'slot_usage' in diff_class_entry:
                         diff_class_slot_usage = diff_class_entry['slot_usage']
+                        if 'slot_usage' not in class_entry:
+                            class_entry['slot_usage'] = {}
                     if 'slot_usage' in class_entry:
                         class_slot_usage = class_entry['slot_usage']
 
@@ -151,7 +179,7 @@ def get_web_yaml(web_schema_diff_file_name: str, schema_data: dict):
                         # Remove any curator schema-only slots and associated slot_usage
                         for slot in diff_class_annotations['removed_slots'].split(","):
                             slot = slot.strip()
-                            class_slots.pop(slot)
+                            class_slots.remove(slot)
                             if slot in class_slot_usage:
                                 class_slot_usage.pop(slot)
 
@@ -195,25 +223,36 @@ def get_web_yaml(web_schema_diff_file_name: str, schema_data: dict):
                                         if annot != 'removed_annotations':
                                             class_slots['slot_usage'][slot]['annotations'][annot] = \
                                                 diff_class_slot_usage_annots[annot]
-                                for key in diff_class_slots[slot]:
+                                for key in diff_class_slots['slot_usage'][slot]:
                                     if key != 'annotations':
                                         class_slots['slot_usage'][slot][key] = diff_class_slot_usage[slot][key]
                     for slot in diff_class_slots:
                         # Add any web schema-only slots to class_slots
                         if slot not in class_slots:
-                            class_slots[slot] = diff_class_slots[slot]
-
-            # Remove from classes all curator schema-only class entries
-            for clazz in clazzes_for_removal:
-                classes.pop(clazz)
+                            class_slots.append(slot)
+                    for slot in diff_class_slot_usage:
+                        # Add any web schema-only slot usage to class_slot_usage
+                        if 'slot_usage' not in class_entry:
+                            class_entry['slot_usage'] = {}
+                        class_entry['slot_usage'][slot] = diff_class_slot_usage[slot]
 
             # Add to classes web schema-only classes
             for clazz in diff_classes:
                 if clazz not in classes:
                     classes[clazz] = diff_classes[clazz]
 
+            # Remove from classes all curator schema-only class entries
+            for clazz in clazzes_for_removal:
+                classes.pop(clazz)
+
+            # Rename any classes, according to clazz2web_clazz[clazz]
+            for clazz in clazz2web_clazz:
+                web_clazz =  clazz2web_clazz[clazz]
+                classes[web_clazz] = copy.deepcopy(classes[clazz])
+                classes.pop(clazz)
+
             # Iterate through schema slots, removing any curator schema-only annotations
-            # and overriding any annotations and keys if present in that slot's entry in diff_slots
+            # and overriding any annotations and keys if present in the corresponding slot's entry in diff_slots
             for slot in diff_slots:
                 if slot not in slots:
                     # Add any web schema-only slots to slots dict
@@ -226,11 +265,13 @@ def get_web_yaml(web_schema_diff_file_name: str, schema_data: dict):
                                 slots[slot]['annotations'].pop(annot.strip())
                         for annot in diff_slot_annots:
                             if annot != 'removed_annotations':
+                                if 'annotations' not in slots[slot]:
+                                    slots[slot]['annotations'] = {}
                                 slots[slot]['annotations'][annot] = diff_slot_annots[annot]
                     for key in diff_slots[slot]:
-                        # Add any web schema-only keys in diff_slot_annots[slot] to slots[slot]
+                        # Add any web schema-only keys in diff_slots[slot] to slots[slot]
                         if key != 'annotations':
-                            slots[slot][key] = diff_slot_annots[slot][key]
+                            slots[slot][key] = diff_slots[slot][key]
         except yaml.YAMLError as exc:
             print(exc)
     return schema_data
@@ -368,11 +409,14 @@ def map_annotation_attributes_to_classes(annotations: dict, classes: dict) -> di
                     annot_attr2class[annotation] = range
     return annot_attr2class
 
+
 def get_annotation_imports(annotations: dict, annot_attr2class: dict) -> set:
     """ Return annotation import statements for each annotation in annotations """
     annotations_imports = set([])
     for annot_attr in annotations:
         value = annotations[annot_attr]
+        if value is None:
+            continue
         if annot_attr in annot_attr2class:
             annot_class = annot_attr2class[annot_attr]
             annotations_imports.add('import {}.{};'.format(CLASS_TO_PACKAGE_NAME[annot_class], annot_class))
@@ -441,6 +485,11 @@ def get_annotations(annotations: dict, annot_attr2class: dict,
     other_annotations = {}
 
     for annot_attr in annotations:
+        if annotations[annot_attr] is None:
+            # N.B. To 'switch off' annot_attr that is not in annot_attr2class, it has to have no value
+            # (e.g. generated_value in DBInfo), whereas to 'switch off' annot_attr that is in annot_attr2class
+            # (e.g. addedField in _Deleted class in attr: curatorComment) it needs to be assigned False.
+            continue
         if annot_attr in annot_attr2class:
             annot_class = annot_attr2class[annot_attr]
             if annot_class not in class_to_annotation_clauses:
@@ -451,23 +500,22 @@ def get_annotations(annotations: dict, annot_attr2class: dict,
                 # Store value assignment clause for annot_class
                 class_to_annotation_clauses[annot_class].append("{} = {}".format(annot_attr, value))
         else:
-            if annotations[annot_attr]:
-                # annot_attr not in annot_attr2class
-                if not annot_attr.endswith(GETTER_ONLY_ANNOT_SUFFIX):
-                    # Ignore getter-only annotations here - they are processed within get_class_attributes_slots() method
-                    if annot_attr not in OTHER_ANNOTATIONS:
-                        # For all non-OTHER_ANNOTATIONS, add java annotation statement to ret_java_annotations
-                        annot_class = capitalize(annot_attr)
-                        value = annotations[annot_attr]
-                        if value and not type(value) == bool:
-                            value = quote_value(value)
-                            # E.g. @SuppressWarnings("unused")
-                            ret_java_annotations.append("{}@{}({})".format(indent, annot_class, value))
-                        else:
-                            # E.g. @Node
-                            ret_java_annotations.append("{}@{}".format(indent, annot_class))
+            # annot_attr not in annot_attr2class
+            if not annot_attr.endswith(GETTER_ONLY_ANNOT_SUFFIX):
+                # Ignore getter-only annotations here - they are processed within get_class_attributes_slots() method
+                if annot_attr not in OTHER_ANNOTATIONS:
+                    # For all non-OTHER_ANNOTATIONS, add java annotation statement to ret_java_annotations
+                    annot_class = capitalize(annot_attr)
+                    value = annotations[annot_attr]
+                    if value and not type(value) == bool:
+                        value = quote_value(value)
+                        # E.g. @SuppressWarnings("unused")
+                        ret_java_annotations.append("{}@{}({})".format(indent, annot_class, value))
                     else:
-                        other_annotations[annot_attr] = annotations[annot_attr]
+                        # E.g. @Node
+                        ret_java_annotations.append("{}@{}".format(indent, annot_class))
+                else:
+                    other_annotations[annot_attr] = annotations[annot_attr]
 
     # Output java annotations involving annotation classes
     for annot_class in class_to_annotation_clauses:
@@ -563,7 +611,7 @@ def add_getter(attr: str, attr_entry: dict, java_type: str, annot_lines: list, a
     if attr_entry is not None and 'annotations' in attr_entry:
         if 'deprecated' in attr_entry['annotations']:
             attr_slot_to_getter[attr].append(INDENT_1 + "@Deprecated")
-        elif 'allowed' in attr_entry['annotations']:
+        elif 'allowed' in attr_entry['annotations'] and attr_entry['annotations']['allowed']:
             for java_annot in annot_lines:
                 if 'ReactomeAllowedClasses' in java_annot:
                     break
@@ -726,7 +774,7 @@ def get_class_attributes_slots(clazz: str, class_entry: dict, schema_slots: dict
 
         # Now output getter/setter/fetch methods in the case attr is of type relationship class
         dbid_variable_name = get_dbid_variable_name(schema_slots)
-        if target_node_clazz:
+        if target_node_clazz and 'no_default_getter' not in other_annotations:
             add_getter_setter_fetch_for_relationship_attribute(
                 attr_entry, attr, attr_slot_to_getter, attr_slot_to_setter,
                 relationship_clazz, target_node_clazz, dbid_variable_name, other_annotations, annotations_imports)
@@ -962,7 +1010,6 @@ with open("schema.yaml", "r") as stream:
                 lines += [additional_class_content, ""]
             if comparable_methods:
                 lines += [comparable_methods, ""]
-            # TODO: The rest of the class goes here
             lines += ["}", ""]
 
             # Write class content into the file

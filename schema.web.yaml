@@ -169,7 +169,7 @@ classes:
         range: EntityWithAccessionedSequence
         annotations:
           type: "rnaMarker"
-          json_getter_getter: "rnaMarker"
+          json_getter@getter: "rnaMarker"
       markerReference:
         multivalued: true
         range: MarkerReference
@@ -606,7 +606,7 @@ classes:
       speciesName:
         annotations:
           addedField: true
-          reactome_schema_ignore_getter: true
+          reactome_schema_ignore@getter: true
       disease:
         multivalued: true
         range: Disease
@@ -1330,14 +1330,14 @@ classes:
         range: integer
         annotations:
           reactome_transient: true
-          reactome_schema_ignore_getter: true
-          json_ignore_getter: true
+          reactome_schema_ignore@getter: true
+          json_ignore@getter: true
       diagramHeight:
         range: integer
         annotations:
           reactome_transient: true
-          reactome_schema_ignore_getter: true
-          json_ignore_getter: true
+          reactome_schema_ignore@getter: true
+          json_ignore@getter: true
       isCanonical:
         annotations:
           addedField: false
@@ -1354,8 +1354,8 @@ classes:
           type: "hasEncapsulatedEvent"
           reactome_relationship: true
           sorted_set: true
-          reactome_schema_ignore_getter: true
-          json_ignore_getter: true
+          reactome_schema_ignore@getter: true
+          json_ignore@getter: true
       normalPathway:
         range: Pathway
         annotations:
@@ -1400,7 +1400,7 @@ classes:
           annotations:
             type: "author"
             reactome_transient: true
-            no_list_getter_setter: true
+            no_default_getter_setter: true
 
   #### PhysicalEntity ####
   PhysicalEntity:
@@ -1512,7 +1512,7 @@ classes:
       speciesName:
          annotations:
            addedField: true
-           reactome_schema_ignore_getter: true
+           reactome_schema_ignore@getter: true
       disease:
         multivalued: true
         range: Disease
@@ -1875,8 +1875,8 @@ classes:
         range: boolean
         annotations:
           addedField: true
-          reactome_schema_ignore_getter: true
-          json_ignore_getter: true
+          reactome_schema_ignore@getter: true
+          json_ignore@getter: true
 
   #### ReferenceRNASequence ####
   ReferenceRNASequence:
