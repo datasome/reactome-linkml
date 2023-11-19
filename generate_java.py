@@ -7,9 +7,16 @@ import copy
 import sys
 
 web_schema_diff_file_name = None
+output_type = None
 if len(sys.argv) > 1:
-    # If an argument is provided, it is expected to be be the name of the linkml file that contains web schema-only content
-    web_schema_diff_file_name = sys.argv[1]
+    output_type = sys.argv[1]
+else:
+    print("ERROR: please provide at least one argument specifying the type of output: java or graphql")
+    sys.exit(1)
+
+if len(sys.argv) > 2:
+    # If the second argument is provided, it is expected to be be the name of the linkml file that contains web schema-only content
+    web_schema_diff_file_name = sys.argv[2]
     OUTPUT_DIR = "graph-core-classes"
     CURATOR = ""
 else:
@@ -615,7 +622,7 @@ def get_attr_slot_entries(class_entry: dict, schema_slots: dict) -> dict:
     attributes = attrs | slots
     return attributes
 
-def get_java_type(attr_entry: dict, annotations_imports: set) -> (str, set):
+def get_java_type(attr_entry: dict, class_entry: dict, annotations_imports: set) -> (str, set):
     """ Return a tuple containing a Java type for attr_entry, and annotations_imports with any
         relevant import statements added
     """
@@ -751,7 +758,7 @@ def get_class_attributes_slots(clazz: str, class_entry: dict, schema_slots: dict
         attr_entry = attributes[attr]
         annot_lines = []
         if attr_entry is not None:
-            java_type, annotations_imports = get_java_type(attr_entry, annotations_imports)
+            java_type, annotations_imports = get_java_type(attr_entry, class_entry, annotations_imports)
             if 'annotations' in attr_entry:
                 # Accumulate any Java annotations into attr_slot_to_lines[attr]
                 annot_lines, other_annotations, annotations_imports = \
@@ -987,6 +994,52 @@ def get_dbid_variable_name(slots):
     else:
         return "dbId"
 
+def output_java(clazz: str, classes: dict, slots: dict, annot_attr2class: dict):
+    # Retrieve content for class clazz
+    annotations_imports = set([])
+    class_entry = classes[clazz]
+    package = get_package(class_entry)
+    output_dir = os.path.join(OUTPUT_DIR, get_package_suffix(class_entry))
+    annot_lines = []
+    other_annotations = []
+    if 'annotations' in class_entry:
+        annot_lines, other_annotations, annotations_imports = \
+            get_annotations(class_entry['annotations'], annot_attr2class, annotations_imports, INDENT_0)
+        annotations_imports.update(get_annotation_imports(class_entry['annotations'], annot_attr2class))
+    class_declaration = "public{}class {}".format(get_keywords(other_annotations, ["abstract"]), clazz)
+    class_declaration += get_extends(class_entry)
+    implement_clause, annotations_imports = get_implements(clazz, classes, other_annotations, annotations_imports)
+    class_declaration += implement_clause
+    attr_slot_lines, getter_setter_lines, annotations_imports = \
+        get_class_attributes_slots(clazz, class_entry, slots, annot_attr2class, annotations_imports, classes)
+    parameterized_constructor = get_parameterized_constructor(clazz, data['slots'], class_entry, other_annotations)
+    additional_class_content, annotations_imports = get_additional_class_content(clazz, annotations_imports)
+    comparable_methods, annotations_imports = \
+        get_comparable_methods_for_relationship_class(clazz, class_entry, annotations_imports)
+    # Assemble class content into lines list
+    lines = []
+    lines += ['package {};'.format(package), ""]
+    if annotations_imports:
+        lines += sorted(list(annotations_imports)) + [""]
+    lines += annot_lines
+    lines += ["{} {{".format(class_declaration), ""]
+    lines += attr_slot_lines
+    if 'no_default_constructor' not in other_annotations:
+        lines += [get_empty_constructor(clazz), ""]
+    if parameterized_constructor:
+        lines += [parameterized_constructor, ""]
+    lines += getter_setter_lines
+    if additional_class_content:
+        lines += [additional_class_content, ""]
+    if comparable_methods:
+        lines += [comparable_methods, ""]
+    lines += ["}", ""]
+    # Write class content into the file
+    fp = open(os.path.join(output_dir, "{}.java".format(clazz)), 'w')
+    # DEBUG: print(clazz, lines)
+    fp.write("\n".join(lines))
+    fp.close()
+
 # Main program body
 with open("schema.yaml", "r") as stream:
     try:
@@ -1001,53 +1054,10 @@ with open("schema.yaml", "r") as stream:
             if is_annotation(clazz):
                 # Don't output annotation classes into .java file
                 continue
-
-            # Retrieve content for class clazz
-            annotations_imports = set([])
-            class_entry = classes[clazz]
-            package = get_package(class_entry)
-            output_dir = os.path.join(OUTPUT_DIR, get_package_suffix(class_entry))
-            annot_lines = []
-            other_annotations = []
-            if 'annotations' in class_entry:
-                annot_lines, other_annotations, annotations_imports = \
-                    get_annotations(class_entry['annotations'], annot_attr2class, annotations_imports, INDENT_0)
-                annotations_imports.update(get_annotation_imports(class_entry['annotations'], annot_attr2class))
-            class_declaration = "public{}class {}".format(get_keywords(other_annotations, ["abstract"]), clazz)
-            class_declaration += get_extends(class_entry)
-            implement_clause, annotations_imports = get_implements(clazz, classes, other_annotations, annotations_imports)
-            class_declaration += implement_clause
-            attr_slot_lines, getter_setter_lines, annotations_imports = \
-                get_class_attributes_slots(clazz, class_entry, slots, annot_attr2class, annotations_imports, classes)
-            parameterized_constructor = get_parameterized_constructor(clazz, data['slots'], class_entry, other_annotations)
-            additional_class_content, annotations_imports = get_additional_class_content(clazz, annotations_imports)
-            comparable_methods, annotations_imports = \
-                get_comparable_methods_for_relationship_class(clazz, class_entry, annotations_imports)
-
-            # Assemble class content into lines list
-            lines = []
-            lines += ['package {};'.format(package), ""]
-            if annotations_imports:
-                lines += sorted(list(annotations_imports)) + [""]
-            lines += annot_lines
-            lines += ["{} {{".format(class_declaration), ""]
-            lines += attr_slot_lines
-            if 'no_default_constructor' not in other_annotations:
-                lines += [get_empty_constructor(clazz), ""]
-            if parameterized_constructor:
-                lines += [parameterized_constructor, ""]
-            lines += getter_setter_lines
-            if additional_class_content:
-                lines += [additional_class_content, ""]
-            if comparable_methods:
-                lines += [comparable_methods, ""]
-            lines += ["}", ""]
-
-            # Write class content into the file
-            fp = open(os.path.join(output_dir, "{}.java".format(clazz)), 'w')
-            # DEBUG: print(clazz, lines)
-            fp.write("\n".join(lines)) 
-            fp.close()
+            if output_type == "java":
+                output_java(clazz, classes, slots, annot_attr2class)
+            elif output_type == "graphql":
+                None
 
     except yaml.YAMLError as exc:
         print(exc)
