@@ -1040,6 +1040,60 @@ def output_java(clazz: str, classes: dict, slots: dict, annot_attr2class: dict):
     fp.write("\n".join(lines))
     fp.close()
 
+def inherit_attributes_slots(class_entry: dict, attributes: dict, classes: dict):
+    """Inherit all attributes/slots of parents of clazz in class_entry - recursively to the top parent"""
+    if 'is_a' in class_entry:
+        parent_clazz = class_entry['is_a']
+        parent_class_attributes = get_attr_slot_entries(classes[parent_clazz], slots)
+        for attr in parent_class_attributes:
+            if attr not in attributes:
+                attributes[attr] = parent_class_attributes[attr]
+
+def generate_graphql(clazz: str, classes: dict, slots: dict):
+    """Generate grqphql representation of clazz"""
+    lines = []
+    class_entry = classes[clazz]
+    if 'description' in class_entry:
+        lines += ["\"\"\""]
+        lines.append(class_entry['description'])
+        lines += ["\"\"\""]
+    lines.append("type {}".format(clazz))
+    lines.append("{")
+    attributes = get_attr_slot_entries(class_entry, slots)
+    inherit_attributes_slots(class_entry, attributes, classes)
+    attr2line = {}
+    for attr in attributes:
+        attr_entry = attributes[attr]
+
+        # Get graphql_type for attr
+        if attr_entry is not None:
+            if 'range' in attr_entry:
+                # TODO: Deal correctly with conversion of linkml type to graphql_type
+                if attr_entry['range'] == "AnnotationLongType" or attr_entry['range'] == "integer":
+                    # TODO: Long is not one of basic types in https://graphql.org/graphql-js/basic-types/
+                    graphql_type = "Int"
+                elif attr_entry['range'] == "AnnotationBytesType":
+                    # TODO: byte[] is not one of basic types in https://graphql.org/graphql-js/basic-types/
+                    graphql_type = "String"
+                else:
+                    graphql_type = capitalize(attr_entry['range'])
+            else:
+                graphql_type = "String"
+            # Wrap in [] if attr multivalued
+            if 'multivalued' in attr_entry and attr_entry['multivalued']:
+                graphql_type = "[{}]".format(graphql_type)
+        else:
+            graphql_type = "String"
+
+        attr2line[attr] = "{}{}: {}".format(INDENT_1, attr, graphql_type)
+
+    for attr in sorted(list(attr2line.keys())):
+        lines.append(attr2line[attr])
+
+    lines += ["}", "", ""]
+    return lines
+
+
 # Main program body
 with open("schema.yaml", "r") as stream:
     try:
@@ -1050,6 +1104,7 @@ with open("schema.yaml", "r") as stream:
         slots = data['slots']
         annotations = classes['Annotations']['attributes']
         annot_attr2class = map_annotation_attributes_to_classes(annotations, classes)
+        graphql_lines = []
         for clazz in classes:
             if is_annotation(clazz):
                 # Don't output annotation classes into .java file
@@ -1057,7 +1112,16 @@ with open("schema.yaml", "r") as stream:
             if output_type == "java":
                 output_java(clazz, classes, slots, annot_attr2class)
             elif output_type == "graphql":
-                None
+                graphql_lines += generate_graphql(clazz, classes, slots)
+
+        if output_type == "graphql":
+            # Write generated graphql content to a file
+            suffix = ""
+            if web_schema_diff_file_name is not None:
+                suffix = ".web"
+            fp = open(os.path.join(OUTPUT_DIR, "schema{}.graphql".format(suffix)), 'w')
+            fp.write("\n".join(graphql_lines))
+            fp.close()
 
     except yaml.YAMLError as exc:
         print(exc)
