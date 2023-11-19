@@ -1,0 +1,1958 @@
+type AbstractModifiedResidue
+{
+    className: String
+    created: InstanceEdit
+    dbId: Int
+    displayName: String
+    explanation: String
+    isLoaded: Boolean
+    modified: InstanceEdit
+    oldStId: String
+    preventLazyLoading: Boolean
+    referenceSequence: ReferenceSequence
+    stId: String
+    stIdVersion: String
+}
+
+
+type Affiliation
+{
+    address: String
+    className: String
+    created: InstanceEdit
+    dbId: Int
+    displayName: String
+    explanation: String
+    isLoaded: Boolean
+    modified: InstanceEdit
+    name: [String]
+    oldStId: String
+    preventLazyLoading: Boolean
+    stId: String
+    stIdVersion: String
+}
+
+
+type Anatomy
+{
+    databaseName: String
+    definition: String
+    identifier: String
+    instanceOf: [ExternalOntology]
+    name: [String]
+    referenceDatabase: ReferenceDatabase
+    synonym: [String]
+}
+
+
+"""
+Shortcut reactions that make the connection between input and output, but don't provide complete mechanistic detail. Used for reactions that do not balance, or complicated processes for which we either don't know all the details, or we choose not to represent every step. (e.g. degradation of a protein)
+"""
+type BlackBoxEvent
+{
+    catalystActivity: [CatalystActivity]
+    catalystActivityReference: CatalystActivityReference
+    className: String
+    entityFunctionalStatus: [EntityFunctionalStatus]
+    entityOnOtherCell: [PhysicalEntity]
+    explanation: String
+    hasInteraction: [InteractionEvent]
+    input: [Input]
+    isChimeric: Boolean
+    normalReaction: ReactionLikeEvent
+    output: [Output]
+    reactionType: [ReactionType]
+    regulatedBy: [Regulation]
+    regulationReference: [RegulationReference]
+    requiredInputComponent: [PhysicalEntity]
+    systematicName: String
+    templateEvent: Event
+}
+
+
+type Book
+{
+    ISBN: String
+    author: [PublicationAuthor]
+    chapterTitle: String
+    pages: String
+    publisher: Affiliation
+    title: String
+    year: Int
+}
+
+
+"""
+A set of entities that are interchangeable in function, with two subclasses, members that are hypothetical and members that have been demonstrated. Hypothetical members are identified as values of the hasCandidate slot. Members that have been demonstrated are identified in the hasMember slot. At least one hasCandidate value is required; hasMember values are optional
+"""
+type CandidateSet
+{
+    className: String
+    explanation: String
+    hasCandidate: [HasCandidate]
+    hasMember: [HasMember]
+    isOrdered: Boolean
+    relatedSpecies: [Species]
+    species: [Species]
+}
+
+
+type CatalystActivity
+{
+    activeUnit: [PhysicalEntity]
+    activity: GO_MolecularFunction
+    catalyzedEvent: [ReactionLikeEvent]
+    className: String
+    created: InstanceEdit
+    dbId: Int
+    displayName: String
+    explanation: String
+    isLoaded: Boolean
+    literatureReference: [Publication]
+    modified: InstanceEdit
+    oldStId: String
+    physicalEntity: PhysicalEntity
+    preventLazyLoading: Boolean
+    stId: String
+    stIdVersion: String
+}
+
+
+type CatalystActivityReference
+{
+    catalystActivity: CatalystActivity
+    literatureReference: [Publication]
+}
+
+
+type Cell
+{
+    RNAMarker: [EntityWithAccessionedSequence]
+    authored: InstanceEdit
+    catalystActivities: [CatalystActivity]
+    cellType: [CellType]
+    compartment: [HasCompartment]
+    componentOf: [HasComponentForComplex]
+    consumedByEvent: [InputForReactionLikeEvent]
+    crossReference: [DatabaseIdentifier]
+    definition: String
+    disease: [Disease]
+    edited: [InstanceEdit]
+    figure: [Figure]
+    goCellularComponent: GO_CellularComponent
+    inferredFrom: [PhysicalEntity]
+    inferredTo: [PhysicalEntity]
+    isInDisease: Boolean
+    isRequired: [Requirement]
+    literatureReference: [Publication]
+    markerReference: [MarkerReference]
+    markingReferences: [MarkerReference]
+    memberOf: [PhysicalEntity]
+    name: [String]
+    negativelyRegulates: [NegativeRegulation]
+    organ: Anatomy
+    positivelyRegulates: [PositiveRegulation]
+    producedByEvent: [OutputForReactionLikeEvent]
+    proteinMarker: [EntityWithAccessionedSequence]
+    repeatedUnitOf: [RepeatedUnitForPhysicalEntity]
+    reviewed: [InstanceEdit]
+    revised: [InstanceEdit]
+    species: [Taxon]
+    speciesName: String
+    summation: [Summation]
+    systematicName: String
+    tissue: Anatomy
+    tissueLayer: Anatomy
+}
+
+
+type CellDevelopmentStep
+{
+    catalystActivity: [CatalystActivity]
+    catalystActivityReference: CatalystActivityReference
+    className: String
+    entityFunctionalStatus: [EntityFunctionalStatus]
+    entityOnOtherCell: [PhysicalEntity]
+    hasInteraction: [InteractionEvent]
+    input: [Input]
+    isChimeric: Boolean
+    normalReaction: ReactionLikeEvent
+    output: [Output]
+    reactionType: [ReactionType]
+    regulatedBy: [Regulation]
+    regulationReference: [RegulationReference]
+    requiredInputComponent: [PhysicalEntity]
+    systematicName: String
+    tissue: Anatomy
+}
+
+
+type CellLineagePath
+{
+    diagramHeight: Int
+    diagramWidth: Int
+    doi: String
+    explanation: String
+    hasDiagram: Boolean
+    hasEHLD: Boolean
+    hasEncapsulatedEvent: [HasEncapsulatedEvent]
+    hasEvent: [HasEvent]
+    isCanonical: String
+    normalPathway: Pathway
+    tissue: Anatomy
+}
+
+
+type CellType
+{
+    databaseName: String
+    definition: String
+    identifier: String
+    instanceOf: [ExternalOntology]
+    name: [String]
+    referenceDatabase: ReferenceDatabase
+    synonym: [String]
+}
+
+
+type ChemicalDrug
+{
+    referenceEntity: ReferenceTherapeutic
+}
+
+
+type Compartment
+{
+    componentOf: [GO_CellularComponent]
+    hasPart: [GO_CellularComponent]
+    instanceOf: [GO_CellularComponent]
+    surroundedBy: [GO_CellularComponent]
+}
+
+
+"""
+An entity formed by the association of two or more component entities (these components can themselves be complexes). At least one component must be specified. Complexes represent all experimentally verified components and their stoichiometry where this is known but may not include as yet unidentified components
+"""
+type Complex
+{
+    authored: InstanceEdit
+    catalystActivities: [CatalystActivity]
+    cellType: [CellType]
+    compartment: [HasCompartment]
+    componentOf: [HasComponentForComplex]
+    consumedByEvent: [InputForReactionLikeEvent]
+    crossReference: [DatabaseIdentifier]
+    definition: String
+    disease: [Disease]
+    edited: [InstanceEdit]
+    entityOnOtherCell: [PhysicalEntity]
+    explanation: String
+    figure: [Figure]
+    goCellularComponent: GO_CellularComponent
+    hasComponent: [HasComponent]
+    includedLocation: [HasCompartment]
+    inferredFrom: [PhysicalEntity]
+    inferredTo: [PhysicalEntity]
+    isChimeric: Boolean
+    isInDisease: Boolean
+    isRequired: [Requirement]
+    literatureReference: [Publication]
+    markingReferences: [MarkerReference]
+    memberOf: [PhysicalEntity]
+    name: [String]
+    negativelyRegulates: [NegativeRegulation]
+    positivelyRegulates: [PositiveRegulation]
+    producedByEvent: [OutputForReactionLikeEvent]
+    relatedSpecies: [Species]
+    repeatedUnitOf: [RepeatedUnitForPhysicalEntity]
+    reviewed: [InstanceEdit]
+    revised: [InstanceEdit]
+    species: [Species]
+    speciesName: String
+    stoichiometryKnown: Boolean
+    summation: [Summation]
+    systematicName: String
+}
+
+
+type ControlledVocabulary
+{
+    className: String
+    created: InstanceEdit
+    dbId: Int
+    definition: String
+    displayName: String
+    explanation: String
+    isLoaded: Boolean
+    modified: InstanceEdit
+    name: [String]
+    oldStId: String
+    preventLazyLoading: Boolean
+    stId: String
+    stIdVersion: String
+}
+
+
+type ControlReference
+{
+    className: String
+    created: InstanceEdit
+    dbId: Int
+    displayName: String
+    explanation: String
+    isLoaded: Boolean
+    literatureReference: [Publication]
+    modified: InstanceEdit
+    oldStId: String
+    preventLazyLoading: Boolean
+    stId: String
+    stIdVersion: String
+}
+
+
+type CrosslinkedResidue
+{
+    coordinate: Int
+    label: String
+    modification: DatabaseObject
+    psiMod: PsiMod
+    secondCoordinate: Int
+}
+
+
+type DatabaseIdentifier
+{
+    className: String
+    created: InstanceEdit
+    crossReference: [DatabaseIdentifier]
+    databaseName: String
+    dbId: Int
+    displayName: String
+    explanation: String
+    identifier: String
+    isLoaded: Boolean
+    modified: InstanceEdit
+    oldStId: String
+    preventLazyLoading: Boolean
+    referenceDatabase: ReferenceDatabase
+    stId: String
+    stIdVersion: String
+    url: String
+}
+
+
+"""
+Not available
+"""
+type DatabaseObject
+{
+    className: String
+    created: InstanceEdit
+    dbId: Int
+    displayName: String
+    explanation: String
+    isLoaded: Boolean
+    modified: InstanceEdit
+    oldStId: String
+    preventLazyLoading: Boolean
+    stId: String
+    stIdVersion: String
+}
+
+
+type DBInfo
+{
+    checksum: Int
+    id: Int
+    name: String
+    version: Int
+}
+
+
+"""
+Two or more entities that are interchangeable in function
+"""
+type DefinedSet
+{
+    className: String
+    explanation: String
+    hasMember: [HasMember]
+    isOrdered: Boolean
+    relatedSpecies: [Species]
+    species: [Species]
+}
+
+
+type Depolymerisation
+{
+    catalystActivity: [CatalystActivity]
+    catalystActivityReference: CatalystActivityReference
+    className: String
+    entityFunctionalStatus: [EntityFunctionalStatus]
+    entityOnOtherCell: [PhysicalEntity]
+    hasInteraction: [InteractionEvent]
+    input: [Input]
+    isChimeric: Boolean
+    normalReaction: ReactionLikeEvent
+    output: [Output]
+    reactionType: [ReactionType]
+    regulatedBy: [Regulation]
+    regulationReference: [RegulationReference]
+    requiredInputComponent: [PhysicalEntity]
+    systematicName: String
+}
+
+
+type Disease
+{
+    databaseName: String
+    definition: String
+    identifier: String
+    instanceOf: [ExternalOntology]
+    name: [String]
+    referenceDatabase: ReferenceDatabase
+    synonym: [String]
+}
+
+
+type Drug
+{
+    authored: InstanceEdit
+    catalystActivities: [CatalystActivity]
+    cellType: [CellType]
+    compartment: [HasCompartment]
+    componentOf: [HasComponentForComplex]
+    consumedByEvent: [InputForReactionLikeEvent]
+    crossReference: [DatabaseIdentifier]
+    definition: String
+    disease: [Disease]
+    edited: [InstanceEdit]
+    figure: [Figure]
+    goCellularComponent: GO_CellularComponent
+    inferredFrom: [PhysicalEntity]
+    inferredTo: [PhysicalEntity]
+    isInDisease: Boolean
+    isRequired: [Requirement]
+    literatureReference: [Publication]
+    markingReferences: [MarkerReference]
+    memberOf: [PhysicalEntity]
+    name: [String]
+    negativelyRegulates: [NegativeRegulation]
+    positivelyRegulates: [PositiveRegulation]
+    producedByEvent: [OutputForReactionLikeEvent]
+    referenceEntity: ReferenceTherapeutic
+    repeatedUnitOf: [RepeatedUnitForPhysicalEntity]
+    reviewed: [InstanceEdit]
+    revised: [InstanceEdit]
+    speciesName: String
+    summation: [Summation]
+    systematicName: String
+}
+
+
+type DrugActionType
+{
+    instanceOf: [DrugActionType]
+}
+
+
+type EntityFunctionalStatus
+{
+    className: String
+    created: InstanceEdit
+    dbId: Int
+    diseaseEntity: PhysicalEntity
+    displayName: String
+    explanation: String
+    functionalStatus: [FunctionalStatus]
+    isLoaded: Boolean
+    modified: InstanceEdit
+    normalEntity: PhysicalEntity
+    oldStId: String
+    preventLazyLoading: Boolean
+    stId: String
+    stIdVersion: String
+}
+
+
+"""
+Two or more entities grouped because of a shared molecular feature. The superclass for CandidateSet and DefinedSet
+"""
+type EntitySet
+{
+    authored: InstanceEdit
+    catalystActivities: [CatalystActivity]
+    cellType: [CellType]
+    className: String
+    compartment: [HasCompartment]
+    componentOf: [HasComponentForComplex]
+    consumedByEvent: [InputForReactionLikeEvent]
+    crossReference: [DatabaseIdentifier]
+    definition: String
+    disease: [Disease]
+    edited: [InstanceEdit]
+    explanation: String
+    figure: [Figure]
+    goCellularComponent: GO_CellularComponent
+    hasMember: [HasMember]
+    inferredFrom: [PhysicalEntity]
+    inferredTo: [PhysicalEntity]
+    isInDisease: Boolean
+    isOrdered: Boolean
+    isRequired: [Requirement]
+    literatureReference: [Publication]
+    markingReferences: [MarkerReference]
+    memberOf: [PhysicalEntity]
+    name: [String]
+    negativelyRegulates: [NegativeRegulation]
+    positivelyRegulates: [PositiveRegulation]
+    producedByEvent: [OutputForReactionLikeEvent]
+    relatedSpecies: [Species]
+    repeatedUnitOf: [RepeatedUnitForPhysicalEntity]
+    reviewed: [InstanceEdit]
+    revised: [InstanceEdit]
+    species: [Species]
+    speciesName: String
+    summation: [Summation]
+    systematicName: String
+}
+
+
+"""
+A protein, RNA, or DNA molecule or fragment thereof in a specified cellular compartment and specific post-translational state. Must be linked to an external database reference, given as the value of referenceSequence. An EWAS typically corresponds to the entire protein or polynucleotide described in the external database. Fragments are defined by setting the first and last residue using the numbering scheme of the external database, entered as startCoordinate and endCoordinate values. Values of 1 and -1 respectively indicate that the true start and end are unconfirmed. EWAS instances are specific to a subcellular compartment; if the same molecule is found in two cellular components it will have two EWASes. EWAS instances by default define an unmodified protein sequence, any post-translational modification (PTM), such as phosphorylation, requires a new EWAS instance. The location and type of any PTM are defined in the hasModifiedResidue slot
+"""
+type EntityWithAccessionedSequence
+{
+    className: String
+    endCoordinate: Int
+    explanation: String
+    hasModifiedResidue: [HasModifiedResidue]
+    referenceEntity: ReferenceSequence
+    species: Taxon
+    startCoordinate: Int
+}
+
+
+type Event
+{
+    authored: [InstanceEdit]
+    className: String
+    compartment: [HasCompartment]
+    created: InstanceEdit
+    crossReference: [DatabaseIdentifier]
+    dbId: Int
+    definition: String
+    disease: [Disease]
+    displayName: String
+    edited: [InstanceEdit]
+    eventOf: [Pathway]
+    evidenceType: EvidenceType
+    explanation: String
+    figure: [Figure]
+    followingEvent: [Event]
+    goBiologicalProcess: GO_BiologicalProcess
+    inferredFrom: [Event]
+    isInDisease: Boolean
+    isInferred: Boolean
+    isLoaded: Boolean
+    literatureReference: [Publication]
+    modified: InstanceEdit
+    name: [String]
+    negativePrecedingEvent: [NegativePrecedingEvent]
+    oldStId: String
+    orthologousEvent: [Event]
+    precedingEvent: [Event]
+    preventLazyLoading: Boolean
+    relatedSpecies: [Species]
+    releaseDate: String
+    releaseStatus: String
+    reviewed: [InstanceEdit]
+    revised: [InstanceEdit]
+    species: [Species]
+    speciesName: String
+    stId: String
+    stIdVersion: String
+    summation: [Summation]
+}
+
+
+type EvidenceType
+{
+    databaseName: String
+    definition: String
+    identifier: String
+    instanceOf: [ExternalOntology]
+    name: [String]
+    referenceDatabase: ReferenceDatabase
+    synonym: [String]
+}
+
+
+type ExternalOntology
+{
+    className: String
+    created: InstanceEdit
+    databaseName: String
+    dbId: Int
+    definition: String
+    displayName: String
+    explanation: String
+    identifier: String
+    instanceOf: [ExternalOntology]
+    isLoaded: Boolean
+    modified: InstanceEdit
+    name: [String]
+    oldStId: String
+    preventLazyLoading: Boolean
+    referenceDatabase: ReferenceDatabase
+    stId: String
+    stIdVersion: String
+    synonym: [String]
+}
+
+
+"""
+Defines an event where genetic mutations in the nucleotide sequence produces a protein with a very little or no activity. The consequence of this is that substrates are not converted to products and can therefore build up to cause pathological conditions. It could also mean entities are not moved between compartments again causing imbalances in entity concentrations which can lead to pathological conditions.
+"""
+type FailedReaction
+{
+    catalystActivity: [CatalystActivity]
+    catalystActivityReference: CatalystActivityReference
+    className: String
+    entityFunctionalStatus: [EntityFunctionalStatus]
+    entityOnOtherCell: [PhysicalEntity]
+    explanation: String
+    hasInteraction: [InteractionEvent]
+    input: [Input]
+    isChimeric: Boolean
+    normalReaction: ReactionLikeEvent
+    output: [Output]
+    reactionType: [ReactionType]
+    regulatedBy: [Regulation]
+    regulationReference: [RegulationReference]
+    requiredInputComponent: [PhysicalEntity]
+    systematicName: String
+}
+
+
+type Figure
+{
+    className: String
+    created: InstanceEdit
+    dbId: Int
+    displayName: String
+    explanation: String
+    isLoaded: Boolean
+    modified: InstanceEdit
+    oldStId: String
+    preventLazyLoading: Boolean
+    stId: String
+    stIdVersion: String
+    url: String
+}
+
+
+type FragmentDeletionModification
+{
+    endPositionInReferenceSequence: Int
+    startPositionInReferenceSequence: Int
+}
+
+
+type FragmentInsertionModification
+{
+    coordinate: Int
+    endPositionInReferenceSequence: Int
+    startPositionInReferenceSequence: Int
+}
+
+
+type FragmentModification
+{
+    endPositionInReferenceSequence: Int
+    startPositionInReferenceSequence: Int
+}
+
+
+type FragmentReplacedModification
+{
+    alteredAminoAcidFragment: String
+    endPositionInReferenceSequence: Int
+    startPositionInReferenceSequence: Int
+}
+
+
+type FunctionalStatus
+{
+    className: String
+    created: InstanceEdit
+    dbId: Int
+    displayName: String
+    explanation: String
+    functionalStatusType: FunctionalStatusType
+    isLoaded: Boolean
+    modified: InstanceEdit
+    oldStId: String
+    preventLazyLoading: Boolean
+    stId: String
+    stIdVersion: String
+    structuralVariant: SequenceOntology
+}
+
+
+type FunctionalStatusType
+{
+    className: String
+    created: InstanceEdit
+    dbId: Int
+    definition: String
+    displayName: String
+    explanation: String
+    isLoaded: Boolean
+    modified: InstanceEdit
+    name: [String]
+    oldStId: String
+    preventLazyLoading: Boolean
+    stId: String
+    stIdVersion: String
+}
+
+
+type GeneticallyModifiedResidue
+{
+    referenceSequence: ReferenceSequence
+}
+
+
+"""
+A peptide or polynucleotide whose sequence is unknown and thus cannot be linked to external sequence databases or used for orthology inference
+"""
+type GenomeEncodedEntity
+{
+    authored: InstanceEdit
+    catalystActivities: [CatalystActivity]
+    cellType: [CellType]
+    className: String
+    compartment: [HasCompartment]
+    componentOf: [HasComponentForComplex]
+    consumedByEvent: [InputForReactionLikeEvent]
+    crossReference: [DatabaseIdentifier]
+    definition: String
+    disease: [Disease]
+    edited: [InstanceEdit]
+    explanation: String
+    figure: [Figure]
+    goCellularComponent: GO_CellularComponent
+    inferredFrom: [PhysicalEntity]
+    inferredTo: [PhysicalEntity]
+    isInDisease: Boolean
+    isRequired: [Requirement]
+    literatureReference: [Publication]
+    markingReferences: [MarkerReference]
+    memberOf: [PhysicalEntity]
+    name: [String]
+    negativelyRegulates: [NegativeRegulation]
+    positivelyRegulates: [PositiveRegulation]
+    producedByEvent: [OutputForReactionLikeEvent]
+    repeatedUnitOf: [RepeatedUnitForPhysicalEntity]
+    reviewed: [InstanceEdit]
+    revised: [InstanceEdit]
+    species: Taxon
+    speciesName: String
+    summation: [Summation]
+    systematicName: String
+}
+
+
+type GO_BiologicalProcess
+{
+    accession: String
+    databaseName: String
+    definition: String
+    name: String
+    referenceDatabase: ReferenceDatabase
+    url: String
+}
+
+
+type GO_CellularComponent
+{
+    accession: String
+    componentOf: [GO_CellularComponent]
+    databaseName: String
+    definition: String
+    hasPart: [GO_CellularComponent]
+    instanceOf: [GO_CellularComponent]
+    name: String
+    referenceDatabase: ReferenceDatabase
+    surroundedBy: [GO_CellularComponent]
+    url: String
+}
+
+
+type GO_MolecularFunction
+{
+    accession: String
+    databaseName: String
+    definition: String
+    ecNumber: String
+    name: String
+    referenceDatabase: ReferenceDatabase
+    url: String
+}
+
+
+type GroupModifiedResidue
+{
+    coordinate: Int
+    label: String
+    modification: DatabaseObject
+    psiMod: PsiMod
+}
+
+
+type HasCandidate
+{
+    id: Int
+    order: Int
+    physicalEntity: PhysicalEntity
+    stoichiometry: Int
+}
+
+
+type HasCompartment
+{
+    compartment: Compartment
+    id: Int
+    order: Int
+}
+
+
+type HasComponent
+{
+    id: Int
+    order: Int
+    physicalEntity: PhysicalEntity
+    stoichiometry: Int
+}
+
+
+type HasEncapsulatedEvent
+{
+    event: Event
+    id: Int
+    order: Int
+}
+
+
+type HasEvent
+{
+    event: Event
+    id: Int
+    order: Int
+    stoichiometry: Int
+}
+
+
+type HasMember
+{
+    id: Int
+    order: Int
+    physicalEntity: PhysicalEntity
+    stoichiometry: Int
+}
+
+
+type HasModifiedResidue
+{
+    abstractModifiedResidue: AbstractModifiedResidue
+    id: Int
+    order: Int
+    stoichiometry: Int
+}
+
+
+type Input
+{
+    id: Int
+    order: Int
+    physicalEntity: PhysicalEntity
+    stoichiometry: Int
+}
+
+
+type InstanceEdit
+{
+    author: [Person]
+    className: String
+    created: InstanceEdit
+    dateTime: String
+    dbId: Int
+    displayName: String
+    explanation: String
+    isLoaded: Boolean
+    modified: InstanceEdit
+    note: String
+    oldStId: String
+    preventLazyLoading: Boolean
+    stId: String
+    stIdVersion: String
+}
+
+
+type InteractionEvent
+{
+    authored: [InstanceEdit]
+    compartment: [HasCompartment]
+    crossReference: [DatabaseIdentifier]
+    definition: String
+    disease: [Disease]
+    edited: [InstanceEdit]
+    eventOf: [Pathway]
+    evidenceType: EvidenceType
+    figure: [Figure]
+    followingEvent: [Event]
+    goBiologicalProcess: GO_BiologicalProcess
+    inferredFrom: [Event]
+    isInDisease: Boolean
+    isInferred: Boolean
+    literatureReference: [Publication]
+    name: [String]
+    negativePrecedingEvent: [NegativePrecedingEvent]
+    orthologousEvent: [Event]
+    partners: [PhysicalEntity]
+    precedingEvent: [Event]
+    relatedSpecies: [Species]
+    releaseDate: String
+    releaseStatus: String
+    reviewed: [InstanceEdit]
+    revised: [InstanceEdit]
+    species: [Species]
+    speciesName: String
+    summation: [Summation]
+}
+
+
+type InterChainCrosslinkedResidue
+{
+    equivalentTo: [InterChainCrosslinkedResidue]
+    modification: DatabaseObject
+    secondCoordinate: Int
+    secondReferenceSequence: [ReferenceSequence]
+}
+
+
+type IntraChainCrosslinkedResidue
+{
+    modification: DatabaseObject
+    secondCoordinate: Int
+}
+
+
+type LiteratureReference
+{
+    PUBMED_URL: String
+    author: [PublicationAuthor]
+    journal: String
+    pages: String
+    pubMedIdentifier: Int
+    title: String
+    volume: Int
+    year: Int
+}
+
+
+type MarkerReference
+{
+    literatureReference: [Publication]
+    marker: EntityWithAccessionedSequence
+}
+
+
+type ModifiedNucleotide
+{
+    coordinate: Int
+    modification: DatabaseObject
+}
+
+
+type ModifiedResidue
+{
+    coordinate: Int
+    label: String
+    psiMod: PsiMod
+}
+
+
+"""
+A negative gene expression regulation
+"""
+type NegativeGeneExpressionRegulation
+{
+    explanation: String
+}
+
+
+type NegativePrecedingEvent
+{
+    className: String
+    comment: String
+    created: InstanceEdit
+    dbId: Int
+    displayName: String
+    explanation: String
+    isLoaded: Boolean
+    modified: InstanceEdit
+    oldStId: String
+    precedingEvent: [Event]
+    preventLazyLoading: Boolean
+    reason: NegativePrecedingEventReason
+    stId: String
+    stIdVersion: String
+}
+
+
+type NegativePrecedingEventReason
+{
+    definition: String
+    name: [String]
+}
+
+
+"""
+This describes an Event/CatalystActivity that is negatively regulated by the Regulator (e.g., allosteric inhibition, competitive inhibition
+"""
+type NegativeRegulation
+{
+    activeUnit: [PhysicalEntity]
+    activity: GO_MolecularFunction
+    authored: InstanceEdit
+    edited: [InstanceEdit]
+    explanation: String
+    goBiologicalProcess: GO_BiologicalProcess
+    inferredFrom: [Regulation]
+    inferredTo: [Regulation]
+    literatureReference: [Publication]
+    regulatedEntity: [ReactionLikeEvent]
+    regulator: PhysicalEntity
+    releaseDate: String
+    reviewed: [InstanceEdit]
+    revised: [InstanceEdit]
+}
+
+
+type NonsenseMutation
+{
+    coordinate: Int
+    psiMod: [PsiMod]
+}
+
+
+"""
+Entities that we are unable or unwilling to describe in chemical detail and cannot be put in any other class. Can be used to represent complex structures in the cell that take part in a reaction but which we cannot or do not want to define molecularly, e.g. cell membrane, Holliday structure
+"""
+type OtherEntity
+{
+    authored: InstanceEdit
+    catalystActivities: [CatalystActivity]
+    cellType: [CellType]
+    compartment: [HasCompartment]
+    componentOf: [HasComponentForComplex]
+    consumedByEvent: [InputForReactionLikeEvent]
+    crossReference: [DatabaseIdentifier]
+    definition: String
+    disease: [Disease]
+    edited: [InstanceEdit]
+    explanation: String
+    figure: [Figure]
+    goCellularComponent: GO_CellularComponent
+    inferredFrom: [PhysicalEntity]
+    inferredTo: [PhysicalEntity]
+    isInDisease: Boolean
+    isRequired: [Requirement]
+    literatureReference: [Publication]
+    markingReferences: [MarkerReference]
+    memberOf: [PhysicalEntity]
+    name: [String]
+    negativelyRegulates: [NegativeRegulation]
+    positivelyRegulates: [PositiveRegulation]
+    producedByEvent: [OutputForReactionLikeEvent]
+    repeatedUnitOf: [RepeatedUnitForPhysicalEntity]
+    reviewed: [InstanceEdit]
+    revised: [InstanceEdit]
+    speciesName: String
+    summation: [Summation]
+    systematicName: String
+}
+
+
+type Output
+{
+    id: Int
+    order: Int
+    physicalEntity: PhysicalEntity
+    stoichiometry: Int
+}
+
+
+"""
+A collection of related Events. These events can be ReactionLikeEvents or Pathways
+"""
+type Pathway
+{
+    authored: [InstanceEdit]
+    compartment: [HasCompartment]
+    crossReference: [DatabaseIdentifier]
+    definition: String
+    diagramHeight: Int
+    diagramWidth: Int
+    disease: [Disease]
+    doi: String
+    edited: [InstanceEdit]
+    eventOf: [Pathway]
+    evidenceType: EvidenceType
+    explanation: String
+    figure: [Figure]
+    followingEvent: [Event]
+    goBiologicalProcess: GO_BiologicalProcess
+    hasDiagram: Boolean
+    hasEHLD: Boolean
+    hasEncapsulatedEvent: [HasEncapsulatedEvent]
+    hasEvent: [HasEvent]
+    inferredFrom: [Event]
+    isCanonical: String
+    isInDisease: Boolean
+    isInferred: Boolean
+    literatureReference: [Publication]
+    name: [String]
+    negativePrecedingEvent: [NegativePrecedingEvent]
+    normalPathway: Pathway
+    orthologousEvent: [Event]
+    precedingEvent: [Event]
+    relatedSpecies: [Species]
+    releaseDate: String
+    releaseStatus: String
+    reviewed: [InstanceEdit]
+    revised: [InstanceEdit]
+    species: [Species]
+    speciesName: String
+    summation: [Summation]
+}
+
+
+type Person
+{
+    affiliation: [Affiliation]
+    className: String
+    created: InstanceEdit
+    crossReference: [DatabaseIdentifier]
+    dbId: Int
+    displayName: String
+    explanation: String
+    firstname: String
+    initial: String
+    isLoaded: Boolean
+    modified: InstanceEdit
+    oldStId: String
+    orcidId: String
+    preventLazyLoading: Boolean
+    project: String
+    publicationAuthorList: [AuthorPublication]
+    stId: String
+    stIdVersion: String
+    surname: String
+}
+
+
+type PhysicalEntity
+{
+    authored: InstanceEdit
+    catalystActivities: [CatalystActivity]
+    cellType: [CellType]
+    className: String
+    compartment: [HasCompartment]
+    componentOf: [HasComponentForComplex]
+    consumedByEvent: [InputForReactionLikeEvent]
+    created: InstanceEdit
+    crossReference: [DatabaseIdentifier]
+    dbId: Int
+    definition: String
+    disease: [Disease]
+    displayName: String
+    edited: [InstanceEdit]
+    explanation: String
+    figure: [Figure]
+    goCellularComponent: GO_CellularComponent
+    inferredFrom: [PhysicalEntity]
+    inferredTo: [PhysicalEntity]
+    isInDisease: Boolean
+    isLoaded: Boolean
+    isRequired: [Requirement]
+    literatureReference: [Publication]
+    markingReferences: [MarkerReference]
+    memberOf: [PhysicalEntity]
+    modified: InstanceEdit
+    name: [String]
+    negativelyRegulates: [NegativeRegulation]
+    oldStId: String
+    positivelyRegulates: [PositiveRegulation]
+    preventLazyLoading: Boolean
+    producedByEvent: [OutputForReactionLikeEvent]
+    repeatedUnitOf: [RepeatedUnitForPhysicalEntity]
+    reviewed: [InstanceEdit]
+    revised: [InstanceEdit]
+    speciesName: String
+    stId: String
+    stIdVersion: String
+    summation: [Summation]
+    systematicName: String
+}
+
+
+"""
+Molecules that consist of an indeterminate number of repeated units. Includes complexes whose stoichiometry is variable or unknown. The repeated unit(s) is(are) identified in the repeatedUnit slot
+"""
+type Polymer
+{
+    authored: InstanceEdit
+    catalystActivities: [CatalystActivity]
+    cellType: [CellType]
+    compartment: [HasCompartment]
+    componentOf: [HasComponentForComplex]
+    consumedByEvent: [InputForReactionLikeEvent]
+    crossReference: [DatabaseIdentifier]
+    definition: String
+    disease: [Disease]
+    edited: [InstanceEdit]
+    explanation: String
+    figure: [Figure]
+    goCellularComponent: GO_CellularComponent
+    inferredFrom: [PhysicalEntity]
+    inferredTo: [PhysicalEntity]
+    isInDisease: Boolean
+    isRequired: [Requirement]
+    literatureReference: [Publication]
+    markingReferences: [MarkerReference]
+    maxUnitCount: Int
+    memberOf: [PhysicalEntity]
+    minUnitCount: Int
+    name: [String]
+    negativelyRegulates: [NegativeRegulation]
+    positivelyRegulates: [PositiveRegulation]
+    producedByEvent: [OutputForReactionLikeEvent]
+    repeatedUnit: [RepeatedUnit]
+    repeatedUnitOf: [RepeatedUnitForPhysicalEntity]
+    reviewed: [InstanceEdit]
+    revised: [InstanceEdit]
+    species: [Species]
+    speciesName: String
+    summation: [Summation]
+    systematicName: String
+}
+
+
+"""
+Reactions that follow the pattern: Polymer + Unit -> Polymer (there may be a catalyst involved). Used to describe the mechanistic detail of a polymerisation
+"""
+type Polymerisation
+{
+    catalystActivity: [CatalystActivity]
+    catalystActivityReference: CatalystActivityReference
+    className: String
+    entityFunctionalStatus: [EntityFunctionalStatus]
+    entityOnOtherCell: [PhysicalEntity]
+    explanation: String
+    hasInteraction: [InteractionEvent]
+    input: [Input]
+    isChimeric: Boolean
+    normalReaction: ReactionLikeEvent
+    output: [Output]
+    reactionType: [ReactionType]
+    regulatedBy: [Regulation]
+    regulationReference: [RegulationReference]
+    requiredInputComponent: [PhysicalEntity]
+    systematicName: String
+}
+
+
+"""
+A positive gene expression regulation
+"""
+type PositiveGeneExpressionRegulation
+{
+    explanation: String
+}
+
+
+"""
+This describes an Event/CatalystActivity that is positively regulated by the Regulator (e.g., allosteric activation)
+"""
+type PositiveRegulation
+{
+    activeUnit: [PhysicalEntity]
+    activity: GO_MolecularFunction
+    authored: InstanceEdit
+    edited: [InstanceEdit]
+    explanation: String
+    goBiologicalProcess: GO_BiologicalProcess
+    inferredFrom: [Regulation]
+    inferredTo: [Regulation]
+    literatureReference: [Publication]
+    regulatedEntity: [ReactionLikeEvent]
+    regulator: PhysicalEntity
+    releaseDate: String
+    reviewed: [InstanceEdit]
+    revised: [InstanceEdit]
+}
+
+
+type ProteinDrug
+{
+    referenceEntity: ReferenceTherapeutic
+}
+
+
+type PsiMod
+{
+    databaseName: String
+    definition: String
+    identifier: String
+    instanceOf: [ExternalOntology]
+    label: String
+    name: [String]
+    referenceDatabase: ReferenceDatabase
+    synonym: [String]
+}
+
+
+type Publication
+{
+    author: [PublicationAuthor]
+    className: String
+    created: InstanceEdit
+    dbId: Int
+    displayName: String
+    explanation: String
+    isLoaded: Boolean
+    modified: InstanceEdit
+    oldStId: String
+    preventLazyLoading: Boolean
+    stId: String
+    stIdVersion: String
+    title: String
+}
+
+
+type PublicationAuthor
+{
+    id: Int
+    order: Int
+    person: Person
+}
+
+
+"""
+Defines a change of state for one or more molecular entities. Most reactions in Reactome involve either a) the interaction of entities to form a complex, or b) the movement of entities between compartments, or c) the chemical conversion of entities as part of a metabolic process. Reactions have a molecular balance between input and output entities
+"""
+type Reaction
+{
+    catalystActivity: [CatalystActivity]
+    catalystActivityReference: CatalystActivityReference
+    className: String
+    entityFunctionalStatus: [EntityFunctionalStatus]
+    entityOnOtherCell: [PhysicalEntity]
+    explanation: String
+    hasInteraction: [InteractionEvent]
+    input: [Input]
+    isChimeric: Boolean
+    normalReaction: ReactionLikeEvent
+    output: [Output]
+    reactionType: [ReactionType]
+    regulatedBy: [Regulation]
+    regulationReference: [RegulationReference]
+    requiredInputComponent: [PhysicalEntity]
+    reverseReaction: Reaction
+    systematicName: String
+}
+
+
+type ReactionType
+{
+    definition: String
+    name: [String]
+}
+
+
+type ReferenceDatabase
+{
+    accessUrl: String
+    className: String
+    created: InstanceEdit
+    dbId: Int
+    displayName: String
+    explanation: String
+    isLoaded: Boolean
+    modified: InstanceEdit
+    name: [String]
+    oldStId: String
+    preventLazyLoading: Boolean
+    resourceIdentifier: String
+    stId: String
+    stIdVersion: String
+    url: String
+}
+
+
+type ReferenceDNASequence
+{
+    checksum: String
+    comment: [String]
+    description: [String]
+    geneName: [String]
+    isSequenceChanged: Boolean
+    keyword: [String]
+    secondaryIdentifier: [String]
+    sequenceLength: Int
+    species: Species
+}
+
+
+type ReferenceEntity
+{
+    className: String
+    created: InstanceEdit
+    crossReference: [DatabaseIdentifier]
+    databaseName: String
+    dbId: Int
+    displayName: String
+    explanation: String
+    identifier: String
+    isLoaded: Boolean
+    modified: InstanceEdit
+    name: [String]
+    oldStId: String
+    otherIdentifier: [String]
+    physicalEntity: [PhysicalEntity]
+    preventLazyLoading: Boolean
+    referenceDatabase: ReferenceDatabase
+    stId: String
+    stIdVersion: String
+    url: String
+}
+
+
+type ReferenceGeneProduct
+{
+    chain: [String]
+    checksum: String
+    comment: [String]
+    description: [String]
+    geneName: [String]
+    isSequenceChanged: Boolean
+    keyword: [String]
+    referenceGene: [ReferenceDNASequence]
+    referenceTranscript: [ReferenceRNASequence]
+    secondaryIdentifier: [String]
+    sequenceLength: Int
+    species: Species
+}
+
+
+type ReferenceGroup
+{
+    crossReference: [DatabaseIdentifier]
+    databaseName: String
+    formula: String
+    identifier: String
+    name: [String]
+    otherIdentifier: [String]
+    physicalEntity: [PhysicalEntity]
+    referenceDatabase: ReferenceDatabase
+    url: String
+}
+
+
+type ReferenceIsoform
+{
+    chain: [String]
+    isoformParent: [ReferenceGeneProduct]
+    referenceGene: [ReferenceDNASequence]
+    referenceTranscript: [ReferenceRNASequence]
+    variantIdentifier: String
+}
+
+
+type ReferenceMolecule
+{
+    crossReference: [DatabaseIdentifier]
+    databaseName: String
+    formula: String
+    identifier: String
+    name: [String]
+    otherIdentifier: [String]
+    physicalEntity: [PhysicalEntity]
+    referenceDatabase: ReferenceDatabase
+    trivial: Boolean
+    url: String
+}
+
+
+type ReferenceRNASequence
+{
+    checksum: String
+    comment: [String]
+    description: [String]
+    geneName: [String]
+    isSequenceChanged: Boolean
+    keyword: [String]
+    referenceGene: [ReferenceDNASequence]
+    secondaryIdentifier: [String]
+    sequenceLength: Int
+    species: Species
+}
+
+
+type ReferenceSequence
+{
+    checksum: String
+    comment: [String]
+    crossReference: [DatabaseIdentifier]
+    databaseName: String
+    description: [String]
+    geneName: [String]
+    identifier: String
+    isSequenceChanged: Boolean
+    keyword: [String]
+    name: [String]
+    otherIdentifier: [String]
+    physicalEntity: [PhysicalEntity]
+    referenceDatabase: ReferenceDatabase
+    secondaryIdentifier: [String]
+    sequenceLength: Int
+    species: Species
+    url: String
+}
+
+
+type ReferenceTherapeutic
+{
+    abbreviation: String
+    approvalSource: [String]
+    approved: Boolean
+    crossReference: [DatabaseIdentifier]
+    databaseName: String
+    identifier: String
+    inn: String
+    name: [String]
+    otherIdentifier: [String]
+    physicalEntity: [PhysicalEntity]
+    referenceDatabase: ReferenceDatabase
+    type: String
+    url: String
+}
+
+
+type Regulation
+{
+    activeUnit: [PhysicalEntity]
+    activity: GO_MolecularFunction
+    authored: InstanceEdit
+    className: String
+    created: InstanceEdit
+    dbId: Int
+    displayName: String
+    edited: [InstanceEdit]
+    explanation: String
+    goBiologicalProcess: GO_BiologicalProcess
+    inferredFrom: [Regulation]
+    inferredTo: [Regulation]
+    isLoaded: Boolean
+    literatureReference: [Publication]
+    modified: InstanceEdit
+    oldStId: String
+    preventLazyLoading: Boolean
+    regulatedEntity: [ReactionLikeEvent]
+    regulator: PhysicalEntity
+    releaseDate: String
+    reviewed: [InstanceEdit]
+    revised: [InstanceEdit]
+    stId: String
+    stIdVersion: String
+}
+
+
+type RegulationReference
+{
+    literatureReference: [Publication]
+    regulation: Regulation
+}
+
+
+type ReplacedResidue
+{
+    coordinate: Int
+    psiMod: [PsiMod]
+}
+
+
+type RepeatedUnit
+{
+    id: Int
+    order: Int
+    physicalEntity: PhysicalEntity
+    stoichiometry: Int
+}
+
+
+"""
+A regulator that is required for an Event/CatalystActivity to happen
+"""
+type Requirement
+{
+    explanation: String
+}
+
+
+type RNADrug
+{
+    referenceEntity: ReferenceTherapeutic
+}
+
+
+type SequenceOntology
+{
+    databaseName: String
+    definition: String
+    identifier: String
+    instanceOf: [ExternalOntology]
+    name: [String]
+    referenceDatabase: ReferenceDatabase
+    synonym: [String]
+}
+
+
+"""
+A chemical species not encoded directly or indirectly in the genome, typically small molecules such as ATP or ethanol. The detailed structure of a simpleEntity is specified by linking it to details of the molecule in the ChEBI or KEGG databases via the referenceEntity slot. Use of KEGG is deprecated
+"""
+type SimpleEntity
+{
+    authored: InstanceEdit
+    catalystActivities: [CatalystActivity]
+    cellType: [CellType]
+    className: String
+    compartment: [HasCompartment]
+    componentOf: [HasComponentForComplex]
+    consumedByEvent: [InputForReactionLikeEvent]
+    crossReference: [DatabaseIdentifier]
+    definition: String
+    disease: [Disease]
+    edited: [InstanceEdit]
+    explanation: String
+    figure: [Figure]
+    goCellularComponent: GO_CellularComponent
+    inferredFrom: [PhysicalEntity]
+    inferredTo: [PhysicalEntity]
+    isInDisease: Boolean
+    isRequired: [Requirement]
+    literatureReference: [Publication]
+    markingReferences: [MarkerReference]
+    memberOf: [PhysicalEntity]
+    name: [String]
+    negativelyRegulates: [NegativeRegulation]
+    positivelyRegulates: [PositiveRegulation]
+    producedByEvent: [OutputForReactionLikeEvent]
+    referenceEntity: ReferenceMolecule
+    referenceType: String
+    repeatedUnitOf: [RepeatedUnitForPhysicalEntity]
+    reviewed: [InstanceEdit]
+    revised: [InstanceEdit]
+    species: Species
+    speciesName: String
+    summation: [Summation]
+    systematicName: String
+}
+
+
+type Species
+{
+    abbreviation: String
+    crossReference: [DatabaseIdentifier]
+    name: [String]
+    superTaxon: Taxon
+    taxId: String
+}
+
+
+type Summation
+{
+    className: String
+    created: InstanceEdit
+    dbId: Int
+    displayName: String
+    explanation: String
+    isLoaded: Boolean
+    literatureReference: [Publication]
+    modified: InstanceEdit
+    oldStId: String
+    preventLazyLoading: Boolean
+    stId: String
+    stIdVersion: String
+    text: String
+}
+
+
+type Taxon
+{
+    className: String
+    created: InstanceEdit
+    crossReference: [DatabaseIdentifier]
+    dbId: Int
+    displayName: String
+    explanation: String
+    isLoaded: Boolean
+    modified: InstanceEdit
+    name: [String]
+    oldStId: String
+    preventLazyLoading: Boolean
+    stId: String
+    stIdVersion: String
+    superTaxon: Taxon
+    taxId: String
+}
+
+
+type TranscriptionalModification
+{
+    referenceSequence: ReferenceSequence
+}
+
+
+type TranslationalModification
+{
+    coordinate: Int
+    label: String
+    psiMod: PsiMod
+    referenceSequence: ReferenceSequence
+}
+
+
+type URL
+{
+    author: [PublicationAuthor]
+    title: String
+    uniformResourceLocator: String
+}
+
+
+type DrugType
+{
+    className: String
+    created: InstanceEdit
+    dbId: Int
+    definition: String
+    displayName: String
+    explanation: String
+    isLoaded: Boolean
+    modified: InstanceEdit
+    name: [String]
+    oldStId: String
+    preventLazyLoading: Boolean
+    stId: String
+    stIdVersion: String
+}
+
+
+type GO_Term
+{
+    accession: String
+    className: String
+    created: InstanceEdit
+    databaseName: String
+    dbId: Int
+    definition: String
+    displayName: String
+    explanation: String
+    isLoaded: Boolean
+    modified: InstanceEdit
+    name: String
+    oldStId: String
+    preventLazyLoading: Boolean
+    referenceDatabase: ReferenceDatabase
+    stId: String
+    stIdVersion: String
+    url: String
+}
+
+
+type HasComponentForComplex
+{
+    complex: Complex
+    id: Int
+    order: Int
+    stoichiometry: Int
+}
+
+
+type InputForReactionLikeEvent
+{
+    id: Int
+    order: Int
+    reactionLikeEvent: ReactionLikeEvent
+    stoichiometry: Int
+}
+
+
+type Interaction
+{
+    accession: [String]
+    className: String
+    created: InstanceEdit
+    databaseName: String
+    dbId: Int
+    displayName: String
+    explanation: String
+    isLoaded: Boolean
+    modified: InstanceEdit
+    oldStId: String
+    preventLazyLoading: Boolean
+    pubmed: [String]
+    referenceDatabase: ReferenceDatabase
+    score: Double
+    stId: String
+    stIdVersion: String
+    url: String
+}
+
+
+type Ontology
+{
+    className: String
+    created: InstanceEdit
+    dbId: Int
+    displayName: String
+    explanation: String
+    isLoaded: Boolean
+    modified: InstanceEdit
+    oldStId: String
+    ontology: String
+    preventLazyLoading: Boolean
+    stId: String
+    stIdVersion: String
+}
+
+
+type OutputForReactionLikeEvent
+{
+    id: Int
+    order: Int
+    reactionLikeEvent: ReactionLikeEvent
+    stoichiometry: Int
+}
+
+
+type ReactionLikeEvent
+{
+    authored: [InstanceEdit]
+    catalystActivity: [CatalystActivity]
+    catalystActivityReference: CatalystActivityReference
+    className: String
+    compartment: [HasCompartment]
+    crossReference: [DatabaseIdentifier]
+    definition: String
+    disease: [Disease]
+    edited: [InstanceEdit]
+    entityFunctionalStatus: [EntityFunctionalStatus]
+    entityOnOtherCell: [PhysicalEntity]
+    eventOf: [Pathway]
+    evidenceType: EvidenceType
+    figure: [Figure]
+    followingEvent: [Event]
+    goBiologicalProcess: GO_BiologicalProcess
+    hasInteraction: [InteractionEvent]
+    inferredFrom: [Event]
+    input: [Input]
+    isChimeric: Boolean
+    isInDisease: Boolean
+    isInferred: Boolean
+    literatureReference: [Publication]
+    name: [String]
+    negativePrecedingEvent: [NegativePrecedingEvent]
+    normalReaction: ReactionLikeEvent
+    orthologousEvent: [Event]
+    output: [Output]
+    precedingEvent: [Event]
+    reactionType: [ReactionType]
+    regulatedBy: [Regulation]
+    regulationReference: [RegulationReference]
+    relatedSpecies: [Species]
+    releaseDate: String
+    releaseStatus: String
+    requiredInputComponent: [PhysicalEntity]
+    reviewed: [InstanceEdit]
+    revised: [InstanceEdit]
+    species: [Species]
+    speciesName: String
+    summation: [Summation]
+    systematicName: String
+}
+
+
+type RegulationType
+{
+    className: String
+    created: InstanceEdit
+    dbId: Int
+    displayName: String
+    explanation: String
+    isLoaded: Boolean
+    modified: InstanceEdit
+    name: String
+    oldStId: String
+    preventLazyLoading: Boolean
+    stId: String
+    stIdVersion: String
+}
+
+
+type RepeatedUnitForPhysicalEntity
+{
+    id: Int
+    order: Int
+    polymer: Polymer
+    stoichiometry: Int
+}
+
+
+type ReviewStatus
+{
+    definition: String
+    name: [String]
+}
+
+
+type TopLevelPathway
+{
+    diagramHeight: Int
+    diagramWidth: Int
+    doi: String
+    explanation: String
+    hasDiagram: Boolean
+    hasEHLD: Boolean
+    hasEncapsulatedEvent: [HasEncapsulatedEvent]
+    hasEvent: [HasEvent]
+    isCanonical: String
+    normalPathway: Pathway
+}
+
+
+type UndirectedInteraction
+{
+    accession: [String]
+    databaseName: String
+    interactor: [ReferenceEntity]
+    pubmed: [String]
+    referenceDatabase: ReferenceDatabase
+    score: Double
+    url: String
+}
+
