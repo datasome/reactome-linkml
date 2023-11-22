@@ -189,10 +189,12 @@ classes:
       - compartment
     attributes:
       isInDisease:
+        description: "A simple flag to indicate if this Event object is a disease"
         range: boolean
         annotations:
           addedField: true
       isInferred:
+        description: "A simple flag to indicate if this Event is inferred from another"
         range: boolean
         annotations:
           addedField: true
@@ -565,6 +567,7 @@ classes:
           reactome_transient: true
           json_ignore: true
       isInDisease:
+        description: "A simple flag to indicate if this PhysicalEntity object is a disease"
         range: boolean
         annotations:
           addedField: true

@@ -9,7 +9,7 @@ type AbstractModifiedResidue
     isLoaded: Boolean
     modified: InstanceEdit
     preventLazyLoading: Boolean
-    referenceSequence: ReferenceSequence
+    referenceSequence: ReferenceSequence!
     stableIdentifier: StableIdentifier
 }
 
@@ -25,7 +25,7 @@ type Affiliation
     explanation: String
     isLoaded: Boolean
     modified: InstanceEdit
-    name: [String]
+    name: [String!]!
     preventLazyLoading: Boolean
     stableIdentifier: StableIdentifier
 }
@@ -34,10 +34,10 @@ type Affiliation
 type Anatomy
 {
     definition: String
-    identifier: String
+    identifier: String!
     instanceOf: [ExternalOntology]
-    name: [String]
-    referenceDatabase: ReferenceDatabase
+    name: [String!]!
+    referenceDatabase: ReferenceDatabase!
     synonym: [String]
 }
 
@@ -75,13 +75,13 @@ type BlackBoxEvent
 type Book
 {
     ISBN: String
-    author: [PublicationAuthor]
+    author: [PublicationAuthor!]!
     chapterAuthors: [Person]
     chapterTitle: String
     pages: String
     publisher: Affiliation
-    title: String
-    year: Int
+    title: String!
+    year: Int!
 }
 
 
@@ -91,9 +91,9 @@ A set of entities that are interchangeable in function, with two subclasses, mem
 type CandidateSet
 {
     className: String
-    compartment: Compartment
+    compartment: Compartment!
     explanation: String
-    hasCandidate: [HasCandidate]
+    hasCandidate: [HasCandidate!]!
     hasMember: [HasMember]
     isOrdered: Boolean
     relatedSpecies: [Species]
@@ -113,7 +113,7 @@ type CatalystActivity
     explanation: String
     isLoaded: Boolean
     modified: InstanceEdit
-    physicalEntity: PhysicalEntity
+    physicalEntity: PhysicalEntity!
     preventLazyLoading: Boolean
     stableIdentifier: StableIdentifier
 }
@@ -121,8 +121,8 @@ type CatalystActivity
 
 type CatalystActivityReference
 {
-    catalystActivity: CatalystActivity
-    literatureReference: [Publication]
+    catalystActivity: CatalystActivity!
+    literatureReference: [Publication!]!
 }
 
 
@@ -130,7 +130,7 @@ type Cell
 {
     RNAMarker: [EntityWithAccessionedSequence]
     authored: InstanceEdit
-    cellType: [CellType]
+    cellType: [CellType!]!
     crossReference: [DatabaseIdentifier]
     definition: String
     disease: [Disease]
@@ -141,15 +141,15 @@ type Cell
     inferredTo: [PhysicalEntity]
     literatureReference: [Publication]
     markerReference: [MarkerReference]
-    name: [String]
+    name: [String!]!
     organ: Anatomy
     proteinMarker: [PhysicalEntity]
     reviewed: [InstanceEdit]
     revised: [InstanceEdit]
-    species: [Taxon]
+    species: [Taxon!]!
     summation: [Summation]
     systematicName: String
-    tissue: Anatomy
+    tissue: Anatomy!
     tissueLayer: Anatomy
 }
 
@@ -163,10 +163,10 @@ type CellDevelopmentStep
     entityFunctionalStatus: [EntityFunctionalStatus]
     entityOnOtherCell: [PhysicalEntity]
     hasInteraction: [InteractionEvent]
-    input: [Input]
+    input: [Input!]!
     isChimeric: Boolean
     normalReaction: ReactionlikeEvent
-    output: [Output]
+    output: [Output!]!
     reactionType: [ReactionType]
     regulatedBy: [Regulation]
     regulationReference: [RegulationReference]
@@ -185,7 +185,7 @@ type CellLineagePath
     explanation: String
     goBiologicalProcess: GO_BiologicalProcess
     hasEHLD: Boolean
-    hasEvent: [HasEvent]
+    hasEvent: [HasEvent!]!
     isCanonical: Boolean
     normalPathway: Pathway
     tissue: Anatomy
@@ -195,31 +195,31 @@ type CellLineagePath
 type CellType
 {
     definition: String
-    identifier: String
+    identifier: String!
     instanceOf: [ExternalOntology]
-    name: [String]
-    referenceDatabase: ReferenceDatabase
+    name: [String!]!
+    referenceDatabase: ReferenceDatabase!
     synonym: [String]
 }
 
 
 type ChemicalDrug
 {
-    compartment: [Compartment]
-    disease: [Disease]
-    referenceEntity: ReferenceTherapeutic
+    compartment: [Compartment!]!
+    disease: [Disease!]!
+    referenceEntity: ReferenceTherapeutic!
 }
 
 
 type Compartment
 {
-    accession: String
+    accession: String!
     componentOf: [GO_CellularComponent]
     definition: String
     hasPart: [GO_CellularComponent]
     instanceOf: [GO_CellularComponent]
-    name: [String]
-    referenceDatabase: ReferenceDatabase
+    name: [String!]!
+    referenceDatabase: ReferenceDatabase!
     surroundedBy: [GO_CellularComponent]
 }
 
@@ -230,8 +230,8 @@ An entity formed by the association of two or more component entities (these com
 type Complex
 {
     authored: InstanceEdit
-    cellType: [CellType]
-    compartment: Compartment
+    cellType: [CellType!]!
+    compartment: Compartment!
     crossReference: [DatabaseIdentifier]
     definition: String
     disease: [Disease]
@@ -240,13 +240,13 @@ type Complex
     explanation: String
     figure: [Figure]
     goCellularComponent: GO_CellularComponent
-    hasComponent: [HasComponent]
+    hasComponent: [HasComponent!]!
     includedLocation: [HasCompartment]
     inferredFrom: [PhysicalEntity]
     inferredTo: [PhysicalEntity]
     isChimeric: Boolean
     literatureReference: [Publication]
-    name: [String]
+    name: [String!]!
     relatedSpecies: [Species]
     reviewed: [InstanceEdit]
     revised: [InstanceEdit]
@@ -268,7 +268,7 @@ type ControlledVocabulary
     explanation: String
     isLoaded: Boolean
     modified: InstanceEdit
-    name: [String]
+    name: [String!]!
     preventLazyLoading: Boolean
     stableIdentifier: StableIdentifier
 }
@@ -283,7 +283,7 @@ type ControlReference
     created: InstanceEdit
     explanation: String
     isLoaded: Boolean
-    literatureReference: [Publication]
+    literatureReference: [Publication!]!
     modified: InstanceEdit
     preventLazyLoading: Boolean
     stableIdentifier: StableIdentifier
@@ -294,7 +294,7 @@ type CrosslinkedResidue
 {
     coordinate: Int
     modification: DatabaseObject
-    psiMod: PsiMod
+    psiMod: PsiMod!
     secondCoordinate: Int
 }
 
@@ -308,11 +308,11 @@ type DatabaseIdentifier
     created: InstanceEdit
     crossReference: [DatabaseIdentifier]
     explanation: String
-    identifier: String
+    identifier: String!
     isLoaded: Boolean
     modified: InstanceEdit
     preventLazyLoading: Boolean
-    referenceDatabase: ReferenceDatabase
+    referenceDatabase: ReferenceDatabase!
     stableIdentifier: StableIdentifier
 }
 
@@ -350,9 +350,9 @@ Two or more entities that are interchangeable in function
 type DefinedSet
 {
     className: String
-    compartment: Compartment
+    compartment: Compartment!
     explanation: String
-    hasMember: [HasMember]
+    hasMember: [HasMember!]!
     isOrdered: Boolean
     relatedSpecies: [Species]
     species: [Species]
@@ -382,7 +382,7 @@ type _Deleted
 type DeletedControlledVocabulary
 {
     definition: String
-    name: [String]
+    name: [String!]!
 }
 
 
@@ -417,11 +417,11 @@ type Depolymerisation
     entityOnOtherCell: [PhysicalEntity]
     goBiologicalProcess: GO_BiologicalProcess
     hasInteraction: [InteractionEvent]
-    input: [Input]
+    input: [Input!]!
     isChimeric: Boolean
     literatureReference: [Publication]
     normalReaction: ReactionlikeEvent
-    output: [Output]
+    output: [Output!]!
     reactionType: [ReactionType]
     regulatedBy: [Regulation]
     regulationReference: [RegulationReference]
@@ -433,10 +433,10 @@ type Depolymerisation
 type Disease
 {
     definition: String
-    identifier: String
+    identifier: String!
     instanceOf: [ExternalOntology]
-    name: [String]
-    referenceDatabase: ReferenceDatabase
+    name: [String!]!
+    referenceDatabase: ReferenceDatabase!
     synonym: [String]
 }
 
@@ -444,19 +444,19 @@ type Disease
 type Drug
 {
     authored: InstanceEdit
-    cellType: [CellType]
-    compartment: [Compartment]
+    cellType: [CellType!]!
+    compartment: [Compartment!]!
     crossReference: [DatabaseIdentifier]
     definition: String
-    disease: [Disease]
+    disease: [Disease!]!
     edited: [InstanceEdit]
     figure: [Figure]
     goCellularComponent: GO_CellularComponent
     inferredFrom: [PhysicalEntity]
     inferredTo: [PhysicalEntity]
     literatureReference: [Publication]
-    name: [String]
-    referenceEntity: ReferenceTherapeutic
+    name: [String!]!
+    referenceEntity: ReferenceTherapeutic!
     reviewed: [InstanceEdit]
     revised: [InstanceEdit]
     summation: [Summation]
@@ -477,9 +477,9 @@ type EntityFunctionalStatus
     _timestamp: String
     className: String
     created: InstanceEdit
-    diseaseEntity: PhysicalEntity
+    diseaseEntity: PhysicalEntity!
     explanation: String
-    functionalStatus: [FunctionalStatus]
+    functionalStatus: [FunctionalStatus!]!
     isLoaded: Boolean
     modified: InstanceEdit
     normalEntity: PhysicalEntity
@@ -494,9 +494,9 @@ Two or more entities grouped because of a shared molecular feature. The supercla
 type EntitySet
 {
     authored: InstanceEdit
-    cellType: [CellType]
+    cellType: [CellType!]!
     className: String
-    compartment: Compartment
+    compartment: Compartment!
     crossReference: [DatabaseIdentifier]
     definition: String
     disease: [Disease]
@@ -504,12 +504,12 @@ type EntitySet
     explanation: String
     figure: [Figure]
     goCellularComponent: GO_CellularComponent
-    hasMember: [HasMember]
+    hasMember: [HasMember!]!
     inferredFrom: [PhysicalEntity]
     inferredTo: [PhysicalEntity]
     isOrdered: Boolean
     literatureReference: [Publication]
-    name: [String]
+    name: [String!]!
     relatedSpecies: [Species]
     reviewed: [InstanceEdit]
     revised: [InstanceEdit]
@@ -525,13 +525,13 @@ A protein, RNA, or DNA molecule or fragment thereof in a specified cellular comp
 type EntityWithAccessionedSequence
 {
     className: String
-    compartment: [Compartment]
+    compartment: [Compartment!]!
     endCoordinate: Int
     explanation: String
     hasModifiedResidue: [HasModifiedResidue]
-    name: [String]
-    referenceEntity: ReferenceSequence
-    species: Taxon
+    name: [String!]!
+    referenceEntity: ReferenceSequence!
+    species: Taxon!
     startCoordinate: Int
 }
 
@@ -557,19 +557,19 @@ type Event
     isLoaded: Boolean
     literatureReference: [Publication]
     modified: InstanceEdit
-    name: [String]
+    name: [String!]!
     negativePrecedingEvent: [NegativePrecedingEvent]
     orthologousEvent: [Event]
     precedingEvent: [Event]
     preventLazyLoading: Boolean
     relatedSpecies: [Species]
-    releaseDate: String
+    releaseDate: String!
     releaseStatus: String
     reviewed: [InstanceEdit]
     revised: [InstanceEdit]
-    species: [Species]
+    species: [Species!]!
     stableIdentifier: StableIdentifier
-    summation: [Summation]
+    summation: [Summation!]!
 }
 
 
@@ -585,7 +585,7 @@ type EvidenceType
     instanceOf: [EvidenceType]
     isLoaded: Boolean
     modified: InstanceEdit
-    name: [String]
+    name: [String!]!
     preventLazyLoading: Boolean
     stableIdentifier: StableIdentifier
 }
@@ -600,13 +600,13 @@ type ExternalOntology
     created: InstanceEdit
     definition: String
     explanation: String
-    identifier: String
+    identifier: String!
     instanceOf: [ExternalOntology]
     isLoaded: Boolean
     modified: InstanceEdit
-    name: [String]
+    name: [String!]!
     preventLazyLoading: Boolean
-    referenceDatabase: ReferenceDatabase
+    referenceDatabase: ReferenceDatabase!
     stableIdentifier: StableIdentifier
     synonym: [String]
 }
@@ -628,10 +628,10 @@ type FailedReaction
     explanation: String
     goBiologicalProcess: GO_BiologicalProcess
     hasInteraction: [InteractionEvent]
-    input: [Input]
+    input: [Input!]!
     isChimeric: Boolean
     literatureReference: [Publication]
-    normalReaction: ReactionlikeEvent
+    normalReaction: ReactionlikeEvent!
     output: [Output]
     reactionType: [ReactionType]
     regulatedBy: [Regulation]
@@ -653,37 +653,37 @@ type Figure
     modified: InstanceEdit
     preventLazyLoading: Boolean
     stableIdentifier: StableIdentifier
-    url: String
+    url: String!
 }
 
 
 type FragmentDeletionModification
 {
-    endPositionInReferenceSequence: Int
-    startPositionInReferenceSequence: Int
+    endPositionInReferenceSequence: Int!
+    startPositionInReferenceSequence: Int!
 }
 
 
 type FragmentInsertionModification
 {
     coordinate: Int
-    endPositionInReferenceSequence: Int
-    startPositionInReferenceSequence: Int
+    endPositionInReferenceSequence: Int!
+    startPositionInReferenceSequence: Int!
 }
 
 
 type FragmentModification
 {
-    endPositionInReferenceSequence: Int
-    startPositionInReferenceSequence: Int
+    endPositionInReferenceSequence: Int!
+    startPositionInReferenceSequence: Int!
 }
 
 
 type FragmentReplacedModification
 {
     alteredAminoAcidFragment: String
-    endPositionInReferenceSequence: Int
-    startPositionInReferenceSequence: Int
+    endPositionInReferenceSequence: Int!
+    startPositionInReferenceSequence: Int!
 }
 
 
@@ -695,7 +695,7 @@ type FrontPage
     className: String
     created: InstanceEdit
     explanation: String
-    frontPageItem: [Event]
+    frontPageItem: [Event!]!
     isLoaded: Boolean
     modified: InstanceEdit
     preventLazyLoading: Boolean
@@ -711,12 +711,12 @@ type FunctionalStatus
     className: String
     created: InstanceEdit
     explanation: String
-    functionalStatusType: FunctionalStatusType
+    functionalStatusType: FunctionalStatusType!
     isLoaded: Boolean
     modified: InstanceEdit
     preventLazyLoading: Boolean
     stableIdentifier: StableIdentifier
-    structuralVariant: SequenceOntology
+    structuralVariant: SequenceOntology!
 }
 
 
@@ -731,7 +731,7 @@ type FunctionalStatusType
     explanation: String
     isLoaded: Boolean
     modified: InstanceEdit
-    name: [String]
+    name: [String!]!
     preventLazyLoading: Boolean
     stableIdentifier: StableIdentifier
 }
@@ -739,7 +739,7 @@ type FunctionalStatusType
 
 type GeneticallyModifiedResidue
 {
-    referenceSequence: ReferenceSequence
+    referenceSequence: ReferenceSequence!
 }
 
 
@@ -749,9 +749,9 @@ A peptide or polynucleotide whose sequence is unknown and thus cannot be linked 
 type GenomeEncodedEntity
 {
     authored: InstanceEdit
-    cellType: [CellType]
+    cellType: [CellType!]!
     className: String
-    compartment: [Compartment]
+    compartment: [Compartment!]!
     crossReference: [DatabaseIdentifier]
     definition: String
     disease: [Disease]
@@ -762,10 +762,10 @@ type GenomeEncodedEntity
     inferredFrom: [PhysicalEntity]
     inferredTo: [PhysicalEntity]
     literatureReference: [Publication]
-    name: [String]
+    name: [String!]!
     reviewed: [InstanceEdit]
     revised: [InstanceEdit]
-    species: Taxon
+    species: Taxon!
     summation: [Summation]
     systematicName: String
 }
@@ -776,16 +776,16 @@ type GO_BiologicalProcess
     DB_ID: Int
     _displayName: String
     _timestamp: String
-    accession: String
+    accession: String!
     className: String
     created: InstanceEdit
     definition: String
     explanation: String
     isLoaded: Boolean
     modified: InstanceEdit
-    name: [String]
+    name: [String!]!
     preventLazyLoading: Boolean
-    referenceDatabase: ReferenceDatabase
+    referenceDatabase: ReferenceDatabase!
     stableIdentifier: StableIdentifier
 }
 
@@ -795,7 +795,7 @@ type GO_CellularComponent
     DB_ID: Int
     _displayName: String
     _timestamp: String
-    accession: String
+    accession: String!
     className: String
     componentOf: [GO_CellularComponent]
     created: InstanceEdit
@@ -805,9 +805,9 @@ type GO_CellularComponent
     instanceOf: [GO_CellularComponent]
     isLoaded: Boolean
     modified: InstanceEdit
-    name: [String]
+    name: [String!]!
     preventLazyLoading: Boolean
-    referenceDatabase: ReferenceDatabase
+    referenceDatabase: ReferenceDatabase!
     stableIdentifier: StableIdentifier
     surroundedBy: [GO_CellularComponent]
 }
@@ -818,7 +818,7 @@ type GO_MolecularFunction
     DB_ID: Int
     _displayName: String
     _timestamp: String
-    accession: String
+    accession: String!
     className: String
     created: InstanceEdit
     definition: String
@@ -826,9 +826,9 @@ type GO_MolecularFunction
     explanation: String
     isLoaded: Boolean
     modified: InstanceEdit
-    name: [String]
+    name: [String!]!
     preventLazyLoading: Boolean
-    referenceDatabase: ReferenceDatabase
+    referenceDatabase: ReferenceDatabase!
     stableIdentifier: StableIdentifier
 }
 
@@ -836,8 +836,8 @@ type GO_MolecularFunction
 type GroupModifiedResidue
 {
     coordinate: Int
-    modification: DatabaseObject
-    psiMod: PsiMod
+    modification: DatabaseObject!
+    psiMod: PsiMod!
 }
 
 
@@ -943,27 +943,27 @@ type InteractionEvent
     goBiologicalProcess: GO_BiologicalProcess
     inferredFrom: [Event]
     literatureReference: [Publication]
-    name: [String]
+    name: [String!]!
     negativePrecedingEvent: [NegativePrecedingEvent]
     orthologousEvent: [Event]
-    partners: [PhysicalEntity]
+    partners: [PhysicalEntity!]!
     precedingEvent: [Event]
     relatedSpecies: [Species]
-    releaseDate: String
+    releaseDate: String!
     releaseStatus: String
     reviewed: [InstanceEdit]
     revised: [InstanceEdit]
-    species: [Species]
-    summation: [Summation]
+    species: [Species!]!
+    summation: [Summation!]!
 }
 
 
 type InterChainCrosslinkedResidue
 {
-    equivalentTo: [InterChainCrosslinkedResidue]
+    equivalentTo: [InterChainCrosslinkedResidue!]!
     modification: DatabaseObject
     secondCoordinate: Int
-    secondReferenceSequence: [ReferenceSequence]
+    secondReferenceSequence: [ReferenceSequence!]!
 }
 
 
@@ -977,34 +977,34 @@ type IntraChainCrosslinkedResidue
 type LiteratureReference
 {
     PUBMED_URL: String
-    author: [PublicationAuthor]
+    author: [PublicationAuthor!]!
     journal: String
     pages: String
     pubMedIdentifier: Int
-    title: String
+    title: String!
     volume: Int
-    year: Int
+    year: Int!
 }
 
 
 type MarkerReference
 {
-    literatureReference: [Publication]
-    marker: [EntityWithAccessionedSequence]
+    literatureReference: [Publication!]!
+    marker: [EntityWithAccessionedSequence!]!
 }
 
 
 type ModifiedNucleotide
 {
-    coordinate: Int
-    modification: DatabaseObject
+    coordinate: Int!
+    modification: DatabaseObject!
 }
 
 
 type ModifiedResidue
 {
     coordinate: Int
-    psiMod: PsiMod
+    psiMod: PsiMod!
 }
 
 
@@ -1028,7 +1028,7 @@ type NegativePrecedingEvent
     explanation: String
     isLoaded: Boolean
     modified: InstanceEdit
-    precedingEvent: [Event]
+    precedingEvent: [Event!]!
     preventLazyLoading: Boolean
     reason: NegativePrecedingEventReason
     stableIdentifier: StableIdentifier
@@ -1038,7 +1038,7 @@ type NegativePrecedingEvent
 type NegativePrecedingEventReason
 {
     definition: String
-    name: [String]
+    name: [String!]!
 }
 
 
@@ -1051,7 +1051,7 @@ type NegativeRegulation
     activity: GO_MolecularFunction
     explanation: String
     goBiologicalProcess: GO_BiologicalProcess
-    regulator: PhysicalEntity
+    regulator: PhysicalEntity!
     summation: [Summation]
 }
 
@@ -1059,7 +1059,7 @@ type NegativeRegulation
 type NonsenseMutation
 {
     coordinate: Int
-    psiMod: [PsiMod]
+    psiMod: [PsiMod!]!
 }
 
 
@@ -1069,8 +1069,8 @@ Entities that we are unable or unwilling to describe in chemical detail and cann
 type OtherEntity
 {
     authored: InstanceEdit
-    cellType: [CellType]
-    compartment: [Compartment]
+    cellType: [CellType!]!
+    compartment: [Compartment!]!
     crossReference: [DatabaseIdentifier]
     definition: String
     disease: [Disease]
@@ -1081,7 +1081,7 @@ type OtherEntity
     inferredFrom: [PhysicalEntity]
     inferredTo: [PhysicalEntity]
     literatureReference: [Publication]
-    name: [String]
+    name: [String!]!
     reviewed: [InstanceEdit]
     revised: [InstanceEdit]
     summation: [Summation]
@@ -1116,22 +1116,22 @@ type Pathway
     figure: [Figure]
     goBiologicalProcess: GO_BiologicalProcess
     hasEHLD: Boolean
-    hasEvent: [HasEvent]
+    hasEvent: [HasEvent!]!
     inferredFrom: [Event]
     isCanonical: Boolean
     literatureReference: [Publication]
-    name: [String]
+    name: [String!]!
     negativePrecedingEvent: [NegativePrecedingEvent]
     normalPathway: Pathway
     orthologousEvent: [Event]
     precedingEvent: [Event]
     relatedSpecies: [Species]
-    releaseDate: String
+    releaseDate: String!
     releaseStatus: String
     reviewed: [InstanceEdit]
     revised: [InstanceEdit]
-    species: [Species]
-    summation: [Summation]
+    species: [Species!]!
+    summation: [Summation!]!
 }
 
 
@@ -1147,7 +1147,7 @@ type PathwayDiagram
     isLoaded: Boolean
     modified: InstanceEdit
     preventLazyLoading: Boolean
-    representedPathway: [RepresentedPathway]
+    representedPathway: [RepresentedPathway!]!
     stableIdentifier: StableIdentifier
     storedATXML: String
     width: Int
@@ -1166,13 +1166,13 @@ type Person
     explanation: String
     figure: [Figure]
     firstname: String
-    initial: String
+    initial: String!
     isLoaded: Boolean
     modified: InstanceEdit
     preventLazyLoading: Boolean
     project: String
     stableIdentifier: StableIdentifier
-    surname: String
+    surname: String!
     url: String
 }
 
@@ -1183,7 +1183,7 @@ type PhysicalEntity
     _displayName: String
     _timestamp: String
     authored: InstanceEdit
-    cellType: [CellType]
+    cellType: [CellType!]!
     className: String
     created: InstanceEdit
     crossReference: [DatabaseIdentifier]
@@ -1198,7 +1198,7 @@ type PhysicalEntity
     isLoaded: Boolean
     literatureReference: [Publication]
     modified: InstanceEdit
-    name: [String]
+    name: [String!]!
     preventLazyLoading: Boolean
     reviewed: [InstanceEdit]
     revised: [InstanceEdit]
@@ -1214,8 +1214,8 @@ Molecules that consist of an indeterminate number of repeated units. Includes co
 type Polymer
 {
     authored: InstanceEdit
-    cellType: [CellType]
-    compartment: [Compartment]
+    cellType: [CellType!]!
+    compartment: [Compartment!]!
     crossReference: [DatabaseIdentifier]
     definition: String
     disease: [Disease]
@@ -1228,8 +1228,8 @@ type Polymer
     literatureReference: [Publication]
     maxUnitCount: Int
     minUnitCount: Int
-    name: [String]
-    repeatedUnit: [RepeatedUnit]
+    name: [String!]!
+    repeatedUnit: [RepeatedUnit!]!
     reviewed: [InstanceEdit]
     revised: [InstanceEdit]
     species: [Species]
@@ -1254,11 +1254,11 @@ type Polymerisation
     explanation: String
     goBiologicalProcess: GO_BiologicalProcess
     hasInteraction: [InteractionEvent]
-    input: [Input]
+    input: [Input!]!
     isChimeric: Boolean
     literatureReference: [Publication]
     normalReaction: ReactionlikeEvent
-    output: [Output]
+    output: [Output!]!
     reactionType: [ReactionType]
     regulatedBy: [Regulation]
     regulationReference: [RegulationReference]
@@ -1285,27 +1285,27 @@ type PositiveRegulation
     activity: GO_MolecularFunction
     explanation: String
     goBiologicalProcess: GO_BiologicalProcess
-    regulator: PhysicalEntity
+    regulator: PhysicalEntity!
     summation: [Summation]
 }
 
 
 type ProteinDrug
 {
-    compartment: [Compartment]
-    disease: [Disease]
-    referenceEntity: ReferenceTherapeutic
+    compartment: [Compartment!]!
+    disease: [Disease!]!
+    referenceEntity: ReferenceTherapeutic!
 }
 
 
 type PsiMod
 {
     definition: String
-    identifier: String
+    identifier: String!
     instanceOf: [ExternalOntology]
     label: String
-    name: [String]
-    referenceDatabase: ReferenceDatabase
+    name: [String!]!
+    referenceDatabase: ReferenceDatabase!
     synonym: [String]
 }
 
@@ -1315,7 +1315,7 @@ type Publication
     DB_ID: Int
     _displayName: String
     _timestamp: String
-    author: [PublicationAuthor]
+    author: [PublicationAuthor!]!
     className: String
     created: InstanceEdit
     explanation: String
@@ -1323,7 +1323,7 @@ type Publication
     modified: InstanceEdit
     preventLazyLoading: Boolean
     stableIdentifier: StableIdentifier
-    title: String
+    title: String!
 }
 
 
@@ -1351,11 +1351,11 @@ type Reaction
     explanation: String
     goBiologicalProcess: GO_BiologicalProcess
     hasInteraction: [InteractionEvent]
-    input: [Input]
+    input: [Input!]!
     isChimeric: Boolean
     literatureReference: [Publication]
     normalReaction: ReactionlikeEvent
-    output: [Output]
+    output: [Output!]!
     reactionType: [ReactionType]
     regulatedBy: [Regulation]
     regulationReference: [RegulationReference]
@@ -1384,26 +1384,26 @@ type ReactionlikeEvent
     goBiologicalProcess: GO_BiologicalProcess
     hasInteraction: [InteractionEvent]
     inferredFrom: [Event]
-    input: [Input]
+    input: [Input!]!
     isChimeric: Boolean
     literatureReference: [Publication]
-    name: [String]
+    name: [String!]!
     negativePrecedingEvent: [NegativePrecedingEvent]
     normalReaction: ReactionlikeEvent
     orthologousEvent: [Event]
-    output: [Output]
+    output: [Output!]!
     precedingEvent: [Event]
     reactionType: [ReactionType]
     regulatedBy: [Regulation]
     regulationReference: [RegulationReference]
     relatedSpecies: [Species]
-    releaseDate: String
+    releaseDate: String!
     releaseStatus: String
     requiredInputComponent: [PhysicalEntity]
     reviewed: [InstanceEdit]
     revised: [InstanceEdit]
-    species: [Species]
-    summation: [Summation]
+    species: [Species!]!
+    summation: [Summation!]!
     systematicName: String
 }
 
@@ -1411,7 +1411,7 @@ type ReactionlikeEvent
 type ReactionType
 {
     definition: String
-    name: [String]
+    name: [String!]!
 }
 
 
@@ -1420,7 +1420,7 @@ type ReferenceDatabase
     DB_ID: Int
     _displayName: String
     _timestamp: String
-    accessUrl: String
+    accessUrl: String!
     className: String
     created: InstanceEdit
     explanation: String
@@ -1430,7 +1430,7 @@ type ReferenceDatabase
     preventLazyLoading: Boolean
     resourceIdentifier: String
     stableIdentifier: StableIdentifier
-    url: String
+    url: String!
 }
 
 
@@ -1445,7 +1445,7 @@ type ReferenceDNASequence
     otherIdentifier: [String]
     secondaryIdentifier: [String]
     sequenceLength: Int
-    species: Species
+    species: Species!
 }
 
 
@@ -1458,13 +1458,13 @@ type ReferenceEntity
     created: InstanceEdit
     crossReference: [DatabaseIdentifier]
     explanation: String
-    identifier: String
+    identifier: String!
     isLoaded: Boolean
     modified: InstanceEdit
     name: [String]
     otherIdentifier: [String]
     preventLazyLoading: Boolean
-    referenceDatabase: ReferenceDatabase
+    referenceDatabase: ReferenceDatabase!
     stableIdentifier: StableIdentifier
 }
 
@@ -1484,7 +1484,7 @@ type ReferenceGeneProduct
     referenceTranscript: [ReferenceRNASequence]
     secondaryIdentifier: [String]
     sequenceLength: Int
-    species: Species
+    species: Species!
 }
 
 
@@ -1492,10 +1492,10 @@ type ReferenceGroup
 {
     crossReference: [DatabaseIdentifier]
     formula: String
-    identifier: String
-    name: [String]
+    identifier: String!
+    name: [String!]!
     otherIdentifier: [String]
-    referenceDatabase: ReferenceDatabase
+    referenceDatabase: ReferenceDatabase!
 }
 
 
@@ -1503,10 +1503,10 @@ type ReferenceIsoform
 {
     _chainChangeLog: String
     chain: [String]
-    isoformParent: [ReferenceGeneProduct]
+    isoformParent: [ReferenceGeneProduct!]!
     referenceGene: [ReferenceDNASequence]
     referenceTranscript: [ReferenceRNASequence]
-    variantIdentifier: String
+    variantIdentifier: String!
 }
 
 
@@ -1514,10 +1514,10 @@ type ReferenceMolecule
 {
     crossReference: [DatabaseIdentifier]
     formula: String
-    identifier: String
-    name: [String]
+    identifier: String!
+    name: [String!]!
     otherIdentifier: [String]
-    referenceDatabase: ReferenceDatabase
+    referenceDatabase: ReferenceDatabase!
 }
 
 
@@ -1533,7 +1533,7 @@ type ReferenceRNASequence
     referenceGene: [ReferenceDNASequence]
     secondaryIdentifier: [String]
     sequenceLength: Int
-    species: Species
+    species: Species!
 }
 
 
@@ -1544,15 +1544,15 @@ type ReferenceSequence
     crossReference: [DatabaseIdentifier]
     description: [String]
     geneName: [String]
-    identifier: String
+    identifier: String!
     isSequenceChanged: Boolean
     keyword: [String]
     name: [String]
     otherIdentifier: [String]
-    referenceDatabase: ReferenceDatabase
+    referenceDatabase: ReferenceDatabase!
     secondaryIdentifier: [String]
     sequenceLength: Int
-    species: Species
+    species: Species!
 }
 
 
@@ -1561,14 +1561,14 @@ type ReferenceTherapeutic
     abbreviation: String
     activeDrugIds: [String]
     approvalSource: [String]
-    approved: Boolean
+    approved: Boolean!
     crossReference: [DatabaseIdentifier]
-    identifier: String
+    identifier: String!
     inn: String
     name: [String]
     otherIdentifier: [String]
     proDrugIds: [String]
-    referenceDatabase: ReferenceDatabase
+    referenceDatabase: ReferenceDatabase!
     type: String
     withdrawn: Boolean
 }
@@ -1588,7 +1588,7 @@ type Regulation
     isLoaded: Boolean
     modified: InstanceEdit
     preventLazyLoading: Boolean
-    regulator: PhysicalEntity
+    regulator: PhysicalEntity!
     stableIdentifier: StableIdentifier
     summation: [Summation]
 }
@@ -1596,15 +1596,15 @@ type Regulation
 
 type RegulationReference
 {
-    literatureReference: [Publication]
-    regulation: Regulation
+    literatureReference: [Publication!]!
+    regulation: Regulation!
 }
 
 
 type ReplacedResidue
 {
     coordinate: Int
-    psiMod: [PsiMod]
+    psiMod: [PsiMod!]!
 }
 
 
@@ -1619,8 +1619,8 @@ type _Release
     isLoaded: Boolean
     modified: InstanceEdit
     preventLazyLoading: Boolean
-    releaseDate: String
-    releaseNumber: Int
+    releaseDate: String!
+    releaseNumber: Int!
     stableIdentifier: StableIdentifier
 }
 
@@ -1654,19 +1654,19 @@ type Requirement
 
 type RNADrug
 {
-    compartment: [Compartment]
-    disease: [Disease]
-    referenceEntity: ReferenceTherapeutic
+    compartment: [Compartment!]!
+    disease: [Disease!]!
+    referenceEntity: ReferenceTherapeutic!
 }
 
 
 type SequenceOntology
 {
     definition: String
-    identifier: String
+    identifier: String!
     instanceOf: [ExternalOntology]
-    name: [String]
-    referenceDatabase: ReferenceDatabase
+    name: [String!]!
+    referenceDatabase: ReferenceDatabase!
     synonym: [String]
 }
 
@@ -1677,9 +1677,9 @@ A chemical species not encoded directly or indirectly in the genome, typically s
 type SimpleEntity
 {
     authored: InstanceEdit
-    cellType: [CellType]
+    cellType: [CellType!]!
     className: String
-    compartment: [Compartment]
+    compartment: [Compartment!]!
     crossReference: [DatabaseIdentifier]
     definition: String
     disease: [Disease]
@@ -1690,8 +1690,8 @@ type SimpleEntity
     inferredFrom: [PhysicalEntity]
     inferredTo: [PhysicalEntity]
     literatureReference: [Publication]
-    name: [String]
-    referenceEntity: ReferenceMolecule
+    name: [String!]!
+    referenceEntity: ReferenceMolecule!
     reviewed: [InstanceEdit]
     revised: [InstanceEdit]
     species: Species
@@ -1702,9 +1702,9 @@ type SimpleEntity
 
 type Species
 {
-    abbreviation: String
-    crossReference: [DatabaseIdentifier]
-    name: [String]
+    abbreviation: String!
+    crossReference: [DatabaseIdentifier!]!
+    name: [String!]!
     superTaxon: Taxon
 }
 
@@ -1778,7 +1778,7 @@ type Summation
     modified: InstanceEdit
     preventLazyLoading: Boolean
     stableIdentifier: StableIdentifier
-    text: String
+    text: String!
 }
 
 
@@ -1789,11 +1789,11 @@ type Taxon
     _timestamp: String
     className: String
     created: InstanceEdit
-    crossReference: [DatabaseIdentifier]
+    crossReference: [DatabaseIdentifier!]!
     explanation: String
     isLoaded: Boolean
     modified: InstanceEdit
-    name: [String]
+    name: [String!]!
     preventLazyLoading: Boolean
     stableIdentifier: StableIdentifier
     superTaxon: Taxon
@@ -1802,15 +1802,15 @@ type Taxon
 
 type TranscriptionalModification
 {
-    referenceSequence: ReferenceSequence
+    referenceSequence: ReferenceSequence!
 }
 
 
 type TranslationalModification
 {
     coordinate: Int
-    psiMod: PsiMod
-    referenceSequence: ReferenceSequence
+    psiMod: PsiMod!
+    referenceSequence: ReferenceSequence!
 }
 
 
@@ -1834,8 +1834,8 @@ type _UpdateTracker
 
 type URL
 {
-    author: [PublicationAuthor]
-    title: String
-    uniformResourceLocator: String
+    author: [PublicationAuthor!]!
+    title: String!
+    uniformResourceLocator: String!
 }
 

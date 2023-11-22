@@ -1054,19 +1054,33 @@ def generate_graphql(clazz: str, classes: dict, slots: dict):
     lines = []
     class_entry = classes[clazz]
     if 'description' in class_entry:
-        lines += ["\"\"\""]
-        lines.append(class_entry['description'])
-        lines += ["\"\"\""]
+        lines += ["\"\"\"", class_entry['description'], "\"\"\""]
     lines.append("type {}".format(clazz))
     lines.append("{")
     attributes = get_attr_slot_entries(class_entry, slots)
     inherit_attributes_slots(class_entry, attributes, classes)
     attr2line = {}
     for attr in attributes:
+        attrLines = []
+        mandatory = ""
         attr_entry = attributes[attr]
-
-        # Get graphql_type for attr
         if attr_entry is not None:
+
+            # Get mandatory flag
+            if 'annotations' in attr_entry and \
+                    'constraint' in attr_entry['annotations'] and \
+                    attr_entry['annotations']['constraint'] == 'MANDATORY':
+                mandatory = "!"
+
+            # Get attribute description if available
+            if 'description' in attr_entry:
+                description = attr_entry['description']
+                if description != "":
+                    attrLines.append("{}{}".format(INDENT_1, "\"\"\""))
+                    attrLines.append("{}{}".format(INDENT_1, description))
+                    attrLines.append("{}{}".format(INDENT_1, "\"\"\""))
+
+            # Get graphql_type for attr
             if 'range' in attr_entry:
                 # TODO: Deal correctly with conversion of linkml type to graphql_type
                 if attr_entry['range'] == "AnnotationLongType" or attr_entry['range'] == "integer":
@@ -1081,11 +1095,15 @@ def generate_graphql(clazz: str, classes: dict, slots: dict):
                 graphql_type = "String"
             # Wrap in [] if attr multivalued
             if 'multivalued' in attr_entry and attr_entry['multivalued']:
-                graphql_type = "[{}]".format(graphql_type)
+                # Putting mandatory flag inside a list means that no null entries are
+                # allowed in that list - i.e. any entry in that list has to be of type: graphql_type
+                # See: https://graphql.org/learn/schema/
+                graphql_type = "[{}{}]".format(graphql_type, mandatory)
         else:
             graphql_type = "String"
 
-        attr2line[attr] = "{}{}: {}".format(INDENT_1, attr, graphql_type)
+        attrLines.append("{}{}: {}{}".format(INDENT_1, attr, graphql_type, mandatory))
+        attr2line[attr] = "\n".join(attrLines)
 
     for attr in sorted(list(attr2line.keys())):
         lines.append(attr2line[attr])
