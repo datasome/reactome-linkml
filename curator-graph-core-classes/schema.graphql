@@ -1,6 +1,6 @@
-type AbstractModifiedResidue
+type AbstractModifiedResidue implements DatabaseObject
 {
-    DB_ID: Int
+    DB_ID: ID!
     _displayName: String
     _timestamp: String
     className: String
@@ -14,9 +14,9 @@ type AbstractModifiedResidue
 }
 
 
-type Affiliation
+type Affiliation implements DatabaseObject
 {
-    DB_ID: Int
+    DB_ID: ID!
     _displayName: String
     _timestamp: String
     address: String
@@ -101,9 +101,9 @@ type CandidateSet
 }
 
 
-type CatalystActivity
+type CatalystActivity implements DatabaseObject
 {
-    DB_ID: Int
+    DB_ID: ID!
     _displayName: String
     _timestamp: String
     activeUnit: [PhysicalEntity]
@@ -257,9 +257,9 @@ type Complex
 }
 
 
-type ControlledVocabulary
+type ControlledVocabulary implements DatabaseObject
 {
-    DB_ID: Int
+    DB_ID: ID!
     _displayName: String
     _timestamp: String
     className: String
@@ -274,9 +274,9 @@ type ControlledVocabulary
 }
 
 
-type ControlReference
+type ControlReference implements DatabaseObject
 {
-    DB_ID: Int
+    DB_ID: ID!
     _displayName: String
     _timestamp: String
     className: String
@@ -299,9 +299,9 @@ type CrosslinkedResidue
 }
 
 
-type DatabaseIdentifier
+type DatabaseIdentifier implements DatabaseObject
 {
-    DB_ID: Int
+    DB_ID: ID!
     _displayName: String
     _timestamp: String
     className: String
@@ -320,9 +320,9 @@ type DatabaseIdentifier
 """
 Not available
 """
-type DatabaseObject
+interface DatabaseObject
 {
-    DB_ID: Int
+    DB_ID: ID!
     _displayName: String
     _timestamp: String
     className: String
@@ -338,7 +338,7 @@ type DatabaseObject
 type DBInfo
 {
     checksum: Int
-    id: Int
+    id: ID!
     name: String
     version: Int
 }
@@ -359,9 +359,9 @@ type DefinedSet
 }
 
 
-type _Deleted
+type _Deleted implements DatabaseObject
 {
-    DB_ID: Int
+    DB_ID: ID!
     _displayName: String
     _timestamp: String
     className: String
@@ -386,9 +386,9 @@ type DeletedControlledVocabulary
 }
 
 
-type _DeletedInstance
+type _DeletedInstance implements DatabaseObject
 {
-    DB_ID: Int
+    DB_ID: ID!
     _displayName: String
     _timestamp: String
     className: String
@@ -470,9 +470,9 @@ type DrugActionType
 }
 
 
-type EntityFunctionalStatus
+type EntityFunctionalStatus implements DatabaseObject
 {
-    DB_ID: Int
+    DB_ID: ID!
     _displayName: String
     _timestamp: String
     className: String
@@ -536,9 +536,9 @@ type EntityWithAccessionedSequence
 }
 
 
-type Event
+type Event implements DatabaseObject
 {
-    DB_ID: Int
+    DB_ID: ID!
     _displayName: String
     _doRelease: Boolean
     _timestamp: String
@@ -573,9 +573,9 @@ type Event
 }
 
 
-type EvidenceType
+type EvidenceType implements DatabaseObject
 {
-    DB_ID: Int
+    DB_ID: ID!
     _displayName: String
     _timestamp: String
     className: String
@@ -591,9 +591,9 @@ type EvidenceType
 }
 
 
-type ExternalOntology
+type ExternalOntology implements DatabaseObject
 {
-    DB_ID: Int
+    DB_ID: ID!
     _displayName: String
     _timestamp: String
     className: String
@@ -641,9 +641,9 @@ type FailedReaction
 }
 
 
-type Figure
+type Figure implements DatabaseObject
 {
-    DB_ID: Int
+    DB_ID: ID!
     _displayName: String
     _timestamp: String
     className: String
@@ -687,9 +687,9 @@ type FragmentReplacedModification
 }
 
 
-type FrontPage
+type FrontPage implements DatabaseObject
 {
-    DB_ID: Int
+    DB_ID: ID!
     _displayName: String
     _timestamp: String
     className: String
@@ -703,9 +703,9 @@ type FrontPage
 }
 
 
-type FunctionalStatus
+type FunctionalStatus implements DatabaseObject
 {
-    DB_ID: Int
+    DB_ID: ID!
     _displayName: String
     _timestamp: String
     className: String
@@ -720,9 +720,9 @@ type FunctionalStatus
 }
 
 
-type FunctionalStatusType
+type FunctionalStatusType implements DatabaseObject
 {
-    DB_ID: Int
+    DB_ID: ID!
     _displayName: String
     _timestamp: String
     className: String
@@ -771,9 +771,9 @@ type GenomeEncodedEntity
 }
 
 
-type GO_BiologicalProcess
+type GO_BiologicalProcess implements DatabaseObject
 {
-    DB_ID: Int
+    DB_ID: ID!
     _displayName: String
     _timestamp: String
     accession: String!
@@ -790,9 +790,9 @@ type GO_BiologicalProcess
 }
 
 
-type GO_CellularComponent
+type GO_CellularComponent implements DatabaseObject
 {
-    DB_ID: Int
+    DB_ID: ID!
     _displayName: String
     _timestamp: String
     accession: String!
@@ -813,9 +813,9 @@ type GO_CellularComponent
 }
 
 
-type GO_MolecularFunction
+type GO_MolecularFunction implements DatabaseObject
 {
-    DB_ID: Int
+    DB_ID: ID!
     _displayName: String
     _timestamp: String
     accession: String!
@@ -843,7 +843,7 @@ type GroupModifiedResidue
 
 type HasCandidate
 {
-    id: Int
+    id: ID!
     order: Int
     physicalEntity: PhysicalEntity
     stoichiometry: Int
@@ -853,14 +853,14 @@ type HasCandidate
 type HasCompartment
 {
     compartment: Compartment
-    id: Int
+    id: ID!
     order: Int
 }
 
 
 type HasComponent
 {
-    id: Int
+    id: ID!
     order: Int
     physicalEntity: PhysicalEntity
     stoichiometry: Int
@@ -870,7 +870,7 @@ type HasComponent
 type HasEncapsulatedEvent
 {
     event: Event
-    id: Int
+    id: ID!
     order: Int
 }
 
@@ -878,7 +878,7 @@ type HasEncapsulatedEvent
 type HasEvent
 {
     event: Event
-    id: Int
+    id: ID!
     order: Int
     stoichiometry: Int
 }
@@ -886,7 +886,7 @@ type HasEvent
 
 type HasMember
 {
-    id: Int
+    id: ID!
     order: Int
     physicalEntity: PhysicalEntity
     stoichiometry: Int
@@ -896,7 +896,7 @@ type HasMember
 type HasModifiedResidue
 {
     abstractModifiedResidue: AbstractModifiedResidue
-    id: Int
+    id: ID!
     order: Int
     stoichiometry: Int
 }
@@ -904,16 +904,16 @@ type HasModifiedResidue
 
 type Input
 {
-    id: Int
+    id: ID!
     order: Int
     physicalEntity: PhysicalEntity
     stoichiometry: Int
 }
 
 
-type InstanceEdit
+type InstanceEdit implements DatabaseObject
 {
-    DB_ID: Int
+    DB_ID: ID!
     _applyToAllEditedInstances: String
     _displayName: String
     _timestamp: String
@@ -1017,9 +1017,9 @@ type NegativeGeneExpressionRegulation
 }
 
 
-type NegativePrecedingEvent
+type NegativePrecedingEvent implements DatabaseObject
 {
-    DB_ID: Int
+    DB_ID: ID!
     _displayName: String
     _timestamp: String
     className: String
@@ -1091,7 +1091,7 @@ type OtherEntity
 
 type Output
 {
-    id: Int
+    id: ID!
     order: Int
     physicalEntity: PhysicalEntity
     stoichiometry: Int
@@ -1135,9 +1135,9 @@ type Pathway
 }
 
 
-type PathwayDiagram
+type PathwayDiagram implements DatabaseObject
 {
-    DB_ID: Int
+    DB_ID: ID!
     _displayName: String
     _timestamp: String
     className: String
@@ -1154,9 +1154,9 @@ type PathwayDiagram
 }
 
 
-type Person
+type Person implements DatabaseObject
 {
-    DB_ID: Int
+    DB_ID: ID!
     _displayName: String
     _timestamp: String
     affiliation: [Affiliation]
@@ -1177,9 +1177,9 @@ type Person
 }
 
 
-type PhysicalEntity
+type PhysicalEntity implements DatabaseObject
 {
-    DB_ID: Int
+    DB_ID: ID!
     _displayName: String
     _timestamp: String
     authored: InstanceEdit
@@ -1310,9 +1310,9 @@ type PsiMod
 }
 
 
-type Publication
+type Publication implements DatabaseObject
 {
-    DB_ID: Int
+    DB_ID: ID!
     _displayName: String
     _timestamp: String
     author: [PublicationAuthor!]!
@@ -1330,7 +1330,7 @@ type Publication
 type PublicationAuthor
 {
     author: Person
-    id: Int
+    id: ID!
     order: Int
 }
 
@@ -1415,9 +1415,9 @@ type ReactionType
 }
 
 
-type ReferenceDatabase
+type ReferenceDatabase implements DatabaseObject
 {
-    DB_ID: Int
+    DB_ID: ID!
     _displayName: String
     _timestamp: String
     accessUrl: String!
@@ -1449,9 +1449,9 @@ type ReferenceDNASequence
 }
 
 
-type ReferenceEntity
+type ReferenceEntity implements DatabaseObject
 {
-    DB_ID: Int
+    DB_ID: ID!
     _displayName: String
     _timestamp: String
     className: String
@@ -1574,9 +1574,9 @@ type ReferenceTherapeutic
 }
 
 
-type Regulation
+type Regulation implements DatabaseObject
 {
-    DB_ID: Int
+    DB_ID: ID!
     _displayName: String
     _timestamp: String
     activeUnit: [PhysicalEntity]
@@ -1608,9 +1608,9 @@ type ReplacedResidue
 }
 
 
-type _Release
+type _Release implements DatabaseObject
 {
-    DB_ID: Int
+    DB_ID: ID!
     _displayName: String
     _timestamp: String
     className: String
@@ -1627,7 +1627,7 @@ type _Release
 
 type RepeatedUnit
 {
-    id: Int
+    id: ID!
     order: Int
     physicalEntity: PhysicalEntity
     stoichiometry: Int
@@ -1636,7 +1636,7 @@ type RepeatedUnit
 
 type RepresentedPathway
 {
-    id: Int
+    id: ID!
     order: Int
     pathway: Pathway
     stoichiometry: Int
@@ -1709,9 +1709,9 @@ type Species
 }
 
 
-type StableIdentifier
+type StableIdentifier implements DatabaseObject
 {
-    DB_ID: Int
+    DB_ID: ID!
     _displayName: String
     _timestamp: String
     className: String
@@ -1730,9 +1730,9 @@ type StableIdentifier
 }
 
 
-type StableIdentifierHistory
+type StableIdentifierHistory implements DatabaseObject
 {
-    DB_ID: Int
+    DB_ID: ID!
     _displayName: String
     _timestamp: String
     className: String
@@ -1748,9 +1748,9 @@ type StableIdentifierHistory
 }
 
 
-type StableIdentifierReleaseStatus
+type StableIdentifierReleaseStatus implements DatabaseObject
 {
-    DB_ID: Int
+    DB_ID: ID!
     _displayName: String
     _timestamp: String
     className: String
@@ -1765,9 +1765,9 @@ type StableIdentifierReleaseStatus
 }
 
 
-type Summation
+type Summation implements DatabaseObject
 {
-    DB_ID: Int
+    DB_ID: ID!
     _displayName: String
     _timestamp: String
     className: String
@@ -1782,9 +1782,9 @@ type Summation
 }
 
 
-type Taxon
+type Taxon implements DatabaseObject
 {
-    DB_ID: Int
+    DB_ID: ID!
     _displayName: String
     _timestamp: String
     className: String
@@ -1814,9 +1814,9 @@ type TranslationalModification
 }
 
 
-type _UpdateTracker
+type _UpdateTracker implements DatabaseObject
 {
-    DB_ID: Int
+    DB_ID: ID!
     _displayName: String
     _release: _Release
     _timestamp: String

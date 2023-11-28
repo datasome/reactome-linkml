@@ -1,8 +1,8 @@
-type AbstractModifiedResidue
+type AbstractModifiedResidue implements DatabaseObject
 {
     className: String
     created: InstanceEdit
-    dbId: Int
+    dbId: ID!
     displayName: String
     explanation: String
     isLoaded: Boolean
@@ -15,12 +15,12 @@ type AbstractModifiedResidue
 }
 
 
-type Affiliation
+type Affiliation implements DatabaseObject
 {
     address: String
     className: String
     created: InstanceEdit
-    dbId: Int
+    dbId: ID!
     displayName: String
     explanation: String
     isLoaded: Boolean
@@ -97,14 +97,14 @@ type CandidateSet
 }
 
 
-type CatalystActivity
+type CatalystActivity implements DatabaseObject
 {
     activeUnit: [PhysicalEntity]
     activity: GO_MolecularFunction
     catalyzedEvent: [ReactionLikeEvent]
     className: String
     created: InstanceEdit
-    dbId: Int
+    dbId: ID!
     displayName: String
     explanation: String
     isLoaded: Boolean
@@ -142,9 +142,7 @@ type Cell
     goCellularComponent: GO_CellularComponent
     inferredFrom: [PhysicalEntity]
     inferredTo: [PhysicalEntity]
-    """
-    A simple flag to indicate if this PhysicalEntity object is a disease
-    """
+    "A simple flag to indicate if this PhysicalEntity object is a disease"
     isInDisease: Boolean
     isRequired: [Requirement]
     literatureReference: [Publication]
@@ -257,9 +255,7 @@ type Complex
     inferredFrom: [PhysicalEntity]
     inferredTo: [PhysicalEntity]
     isChimeric: Boolean
-    """
-    A simple flag to indicate if this PhysicalEntity object is a disease
-    """
+    "A simple flag to indicate if this PhysicalEntity object is a disease"
     isInDisease: Boolean
     isRequired: [Requirement]
     literatureReference: [Publication]
@@ -281,11 +277,11 @@ type Complex
 }
 
 
-type ControlledVocabulary
+type ControlledVocabulary implements DatabaseObject
 {
     className: String
     created: InstanceEdit
-    dbId: Int
+    dbId: ID!
     definition: String
     displayName: String
     explanation: String
@@ -299,11 +295,11 @@ type ControlledVocabulary
 }
 
 
-type ControlReference
+type ControlReference implements DatabaseObject
 {
     className: String
     created: InstanceEdit
-    dbId: Int
+    dbId: ID!
     displayName: String
     explanation: String
     isLoaded: Boolean
@@ -326,13 +322,13 @@ type CrosslinkedResidue
 }
 
 
-type DatabaseIdentifier
+type DatabaseIdentifier implements DatabaseObject
 {
     className: String
     created: InstanceEdit
     crossReference: [DatabaseIdentifier]
     databaseName: String
-    dbId: Int
+    dbId: ID!
     displayName: String
     explanation: String
     identifier: String
@@ -350,11 +346,11 @@ type DatabaseIdentifier
 """
 Not available
 """
-type DatabaseObject
+interface DatabaseObject
 {
     className: String
     created: InstanceEdit
-    dbId: Int
+    dbId: ID!
     displayName: String
     explanation: String
     isLoaded: Boolean
@@ -369,7 +365,7 @@ type DatabaseObject
 type DBInfo
 {
     checksum: Int
-    id: Int
+    id: ID!
     name: String
     version: Int
 }
@@ -437,9 +433,7 @@ type Drug
     goCellularComponent: GO_CellularComponent
     inferredFrom: [PhysicalEntity]
     inferredTo: [PhysicalEntity]
-    """
-    A simple flag to indicate if this PhysicalEntity object is a disease
-    """
+    "A simple flag to indicate if this PhysicalEntity object is a disease"
     isInDisease: Boolean
     isRequired: [Requirement]
     literatureReference: [Publication]
@@ -465,11 +459,11 @@ type DrugActionType
 }
 
 
-type EntityFunctionalStatus
+type EntityFunctionalStatus implements DatabaseObject
 {
     className: String
     created: InstanceEdit
-    dbId: Int
+    dbId: ID!
     diseaseEntity: PhysicalEntity
     displayName: String
     explanation: String
@@ -506,9 +500,7 @@ type EntitySet
     hasMember: [HasMember]
     inferredFrom: [PhysicalEntity]
     inferredTo: [PhysicalEntity]
-    """
-    A simple flag to indicate if this PhysicalEntity object is a disease
-    """
+    "A simple flag to indicate if this PhysicalEntity object is a disease"
     isInDisease: Boolean
     isOrdered: Boolean
     isRequired: [Requirement]
@@ -545,14 +537,14 @@ type EntityWithAccessionedSequence
 }
 
 
-type Event
+type Event implements DatabaseObject
 {
     authored: [InstanceEdit]
     className: String
     compartment: [HasCompartment]
     created: InstanceEdit
     crossReference: [DatabaseIdentifier]
-    dbId: Int
+    dbId: ID!
     definition: String
     disease: [Disease]
     displayName: String
@@ -564,13 +556,9 @@ type Event
     followingEvent: [Event]
     goBiologicalProcess: GO_BiologicalProcess
     inferredFrom: [Event]
-    """
-    A simple flag to indicate if this Event object is a disease
-    """
+    "A simple flag to indicate if this Event object is a disease"
     isInDisease: Boolean
-    """
-    A simple flag to indicate if this Event is inferred from another
-    """
+    "A simple flag to indicate if this Event is inferred from another"
     isInferred: Boolean
     isLoaded: Boolean
     literatureReference: [Publication]
@@ -606,12 +594,12 @@ type EvidenceType
 }
 
 
-type ExternalOntology
+type ExternalOntology implements DatabaseObject
 {
     className: String
     created: InstanceEdit
     databaseName: String
-    dbId: Int
+    dbId: ID!
     definition: String
     displayName: String
     explanation: String
@@ -653,11 +641,11 @@ type FailedReaction
 }
 
 
-type Figure
+type Figure implements DatabaseObject
 {
     className: String
     created: InstanceEdit
-    dbId: Int
+    dbId: ID!
     displayName: String
     explanation: String
     isLoaded: Boolean
@@ -700,11 +688,11 @@ type FragmentReplacedModification
 }
 
 
-type FunctionalStatus
+type FunctionalStatus implements DatabaseObject
 {
     className: String
     created: InstanceEdit
-    dbId: Int
+    dbId: ID!
     displayName: String
     explanation: String
     functionalStatusType: FunctionalStatusType
@@ -718,11 +706,11 @@ type FunctionalStatus
 }
 
 
-type FunctionalStatusType
+type FunctionalStatusType implements DatabaseObject
 {
     className: String
     created: InstanceEdit
-    dbId: Int
+    dbId: ID!
     definition: String
     displayName: String
     explanation: String
@@ -763,9 +751,7 @@ type GenomeEncodedEntity
     goCellularComponent: GO_CellularComponent
     inferredFrom: [PhysicalEntity]
     inferredTo: [PhysicalEntity]
-    """
-    A simple flag to indicate if this PhysicalEntity object is a disease
-    """
+    "A simple flag to indicate if this PhysicalEntity object is a disease"
     isInDisease: Boolean
     isRequired: [Requirement]
     literatureReference: [Publication]
@@ -834,7 +820,7 @@ type GroupModifiedResidue
 
 type HasCandidate
 {
-    id: Int
+    id: ID!
     order: Int
     physicalEntity: PhysicalEntity
     stoichiometry: Int
@@ -844,14 +830,14 @@ type HasCandidate
 type HasCompartment
 {
     compartment: Compartment
-    id: Int
+    id: ID!
     order: Int
 }
 
 
 type HasComponent
 {
-    id: Int
+    id: ID!
     order: Int
     physicalEntity: PhysicalEntity
     stoichiometry: Int
@@ -861,7 +847,7 @@ type HasComponent
 type HasEncapsulatedEvent
 {
     event: Event
-    id: Int
+    id: ID!
     order: Int
 }
 
@@ -869,7 +855,7 @@ type HasEncapsulatedEvent
 type HasEvent
 {
     event: Event
-    id: Int
+    id: ID!
     order: Int
     stoichiometry: Int
 }
@@ -877,7 +863,7 @@ type HasEvent
 
 type HasMember
 {
-    id: Int
+    id: ID!
     order: Int
     physicalEntity: PhysicalEntity
     stoichiometry: Int
@@ -887,7 +873,7 @@ type HasMember
 type HasModifiedResidue
 {
     abstractModifiedResidue: AbstractModifiedResidue
-    id: Int
+    id: ID!
     order: Int
     stoichiometry: Int
 }
@@ -895,20 +881,20 @@ type HasModifiedResidue
 
 type Input
 {
-    id: Int
+    id: ID!
     order: Int
     physicalEntity: PhysicalEntity
     stoichiometry: Int
 }
 
 
-type InstanceEdit
+type InstanceEdit implements DatabaseObject
 {
     author: [Person]
     className: String
     created: InstanceEdit
     dateTime: String
-    dbId: Int
+    dbId: ID!
     displayName: String
     explanation: String
     isLoaded: Boolean
@@ -935,13 +921,9 @@ type InteractionEvent
     followingEvent: [Event]
     goBiologicalProcess: GO_BiologicalProcess
     inferredFrom: [Event]
-    """
-    A simple flag to indicate if this Event object is a disease
-    """
+    "A simple flag to indicate if this Event object is a disease"
     isInDisease: Boolean
-    """
-    A simple flag to indicate if this Event is inferred from another
-    """
+    "A simple flag to indicate if this Event is inferred from another"
     isInferred: Boolean
     literatureReference: [Publication]
     name: [String]
@@ -1020,12 +1002,12 @@ type NegativeGeneExpressionRegulation
 }
 
 
-type NegativePrecedingEvent
+type NegativePrecedingEvent implements DatabaseObject
 {
     className: String
     comment: String
     created: InstanceEdit
-    dbId: Int
+    dbId: ID!
     displayName: String
     explanation: String
     isLoaded: Boolean
@@ -1095,9 +1077,7 @@ type OtherEntity
     goCellularComponent: GO_CellularComponent
     inferredFrom: [PhysicalEntity]
     inferredTo: [PhysicalEntity]
-    """
-    A simple flag to indicate if this PhysicalEntity object is a disease
-    """
+    "A simple flag to indicate if this PhysicalEntity object is a disease"
     isInDisease: Boolean
     isRequired: [Requirement]
     literatureReference: [Publication]
@@ -1118,7 +1098,7 @@ type OtherEntity
 
 type Output
 {
-    id: Int
+    id: ID!
     order: Int
     physicalEntity: PhysicalEntity
     stoichiometry: Int
@@ -1151,13 +1131,9 @@ type Pathway
     hasEvent: [HasEvent]
     inferredFrom: [Event]
     isCanonical: String
-    """
-    A simple flag to indicate if this Event object is a disease
-    """
+    "A simple flag to indicate if this Event object is a disease"
     isInDisease: Boolean
-    """
-    A simple flag to indicate if this Event is inferred from another
-    """
+    "A simple flag to indicate if this Event is inferred from another"
     isInferred: Boolean
     literatureReference: [Publication]
     name: [String]
@@ -1176,13 +1152,13 @@ type Pathway
 }
 
 
-type Person
+type Person implements DatabaseObject
 {
     affiliation: [Affiliation]
     className: String
     created: InstanceEdit
     crossReference: [DatabaseIdentifier]
-    dbId: Int
+    dbId: ID!
     displayName: String
     explanation: String
     firstname: String
@@ -1200,7 +1176,7 @@ type Person
 }
 
 
-type PhysicalEntity
+type PhysicalEntity implements DatabaseObject
 {
     authored: InstanceEdit
     catalystActivities: [CatalystActivity]
@@ -1211,7 +1187,7 @@ type PhysicalEntity
     consumedByEvent: [InputForReactionLikeEvent]
     created: InstanceEdit
     crossReference: [DatabaseIdentifier]
-    dbId: Int
+    dbId: ID!
     definition: String
     disease: [Disease]
     displayName: String
@@ -1221,9 +1197,7 @@ type PhysicalEntity
     goCellularComponent: GO_CellularComponent
     inferredFrom: [PhysicalEntity]
     inferredTo: [PhysicalEntity]
-    """
-    A simple flag to indicate if this PhysicalEntity object is a disease
-    """
+    "A simple flag to indicate if this PhysicalEntity object is a disease"
     isInDisease: Boolean
     isLoaded: Boolean
     isRequired: [Requirement]
@@ -1268,9 +1242,7 @@ type Polymer
     goCellularComponent: GO_CellularComponent
     inferredFrom: [PhysicalEntity]
     inferredTo: [PhysicalEntity]
-    """
-    A simple flag to indicate if this PhysicalEntity object is a disease
-    """
+    "A simple flag to indicate if this PhysicalEntity object is a disease"
     isInDisease: Boolean
     isRequired: [Requirement]
     literatureReference: [Publication]
@@ -1367,12 +1339,12 @@ type PsiMod
 }
 
 
-type Publication
+type Publication implements DatabaseObject
 {
     author: [PublicationAuthor]
     className: String
     created: InstanceEdit
-    dbId: Int
+    dbId: ID!
     displayName: String
     explanation: String
     isLoaded: Boolean
@@ -1387,7 +1359,7 @@ type Publication
 
 type PublicationAuthor
 {
-    id: Int
+    id: ID!
     order: Int
     person: Person
 }
@@ -1425,12 +1397,12 @@ type ReactionType
 }
 
 
-type ReferenceDatabase
+type ReferenceDatabase implements DatabaseObject
 {
     accessUrl: String
     className: String
     created: InstanceEdit
-    dbId: Int
+    dbId: ID!
     displayName: String
     explanation: String
     isLoaded: Boolean
@@ -1459,13 +1431,13 @@ type ReferenceDNASequence
 }
 
 
-type ReferenceEntity
+type ReferenceEntity implements DatabaseObject
 {
     className: String
     created: InstanceEdit
     crossReference: [DatabaseIdentifier]
     databaseName: String
-    dbId: Int
+    dbId: ID!
     displayName: String
     explanation: String
     identifier: String
@@ -1594,14 +1566,14 @@ type ReferenceTherapeutic
 }
 
 
-type Regulation
+type Regulation implements DatabaseObject
 {
     activeUnit: [PhysicalEntity]
     activity: GO_MolecularFunction
     authored: InstanceEdit
     className: String
     created: InstanceEdit
-    dbId: Int
+    dbId: ID!
     displayName: String
     edited: [InstanceEdit]
     explanation: String
@@ -1639,7 +1611,7 @@ type ReplacedResidue
 
 type RepeatedUnit
 {
-    id: Int
+    id: ID!
     order: Int
     physicalEntity: PhysicalEntity
     stoichiometry: Int
@@ -1694,9 +1666,7 @@ type SimpleEntity
     goCellularComponent: GO_CellularComponent
     inferredFrom: [PhysicalEntity]
     inferredTo: [PhysicalEntity]
-    """
-    A simple flag to indicate if this PhysicalEntity object is a disease
-    """
+    "A simple flag to indicate if this PhysicalEntity object is a disease"
     isInDisease: Boolean
     isRequired: [Requirement]
     literatureReference: [Publication]
@@ -1728,11 +1698,11 @@ type Species
 }
 
 
-type Summation
+type Summation implements DatabaseObject
 {
     className: String
     created: InstanceEdit
-    dbId: Int
+    dbId: ID!
     displayName: String
     explanation: String
     isLoaded: Boolean
@@ -1746,12 +1716,12 @@ type Summation
 }
 
 
-type Taxon
+type Taxon implements DatabaseObject
 {
     className: String
     created: InstanceEdit
     crossReference: [DatabaseIdentifier]
-    dbId: Int
+    dbId: ID!
     displayName: String
     explanation: String
     isLoaded: Boolean
@@ -1789,11 +1759,11 @@ type URL
 }
 
 
-type DrugType
+type DrugType implements DatabaseObject
 {
     className: String
     created: InstanceEdit
-    dbId: Int
+    dbId: ID!
     definition: String
     displayName: String
     explanation: String
@@ -1807,13 +1777,13 @@ type DrugType
 }
 
 
-type GO_Term
+type GO_Term implements DatabaseObject
 {
     accession: String
     className: String
     created: InstanceEdit
     databaseName: String
-    dbId: Int
+    dbId: ID!
     definition: String
     displayName: String
     explanation: String
@@ -1832,7 +1802,7 @@ type GO_Term
 type HasComponentForComplex
 {
     complex: Complex
-    id: Int
+    id: ID!
     order: Int
     stoichiometry: Int
 }
@@ -1840,20 +1810,20 @@ type HasComponentForComplex
 
 type InputForReactionLikeEvent
 {
-    id: Int
+    id: ID!
     order: Int
     reactionLikeEvent: ReactionLikeEvent
     stoichiometry: Int
 }
 
 
-type Interaction
+type Interaction implements DatabaseObject
 {
     accession: [String]
     className: String
     created: InstanceEdit
     databaseName: String
-    dbId: Int
+    dbId: ID!
     displayName: String
     explanation: String
     isLoaded: Boolean
@@ -1869,11 +1839,11 @@ type Interaction
 }
 
 
-type Ontology
+type Ontology implements DatabaseObject
 {
     className: String
     created: InstanceEdit
-    dbId: Int
+    dbId: ID!
     displayName: String
     explanation: String
     isLoaded: Boolean
@@ -1888,7 +1858,7 @@ type Ontology
 
 type OutputForReactionLikeEvent
 {
-    id: Int
+    id: ID!
     order: Int
     reactionLikeEvent: ReactionLikeEvent
     stoichiometry: Int
@@ -1917,13 +1887,9 @@ type ReactionLikeEvent
     inferredFrom: [Event]
     input: [Input]
     isChimeric: Boolean
-    """
-    A simple flag to indicate if this Event object is a disease
-    """
+    "A simple flag to indicate if this Event object is a disease"
     isInDisease: Boolean
-    """
-    A simple flag to indicate if this Event is inferred from another
-    """
+    "A simple flag to indicate if this Event is inferred from another"
     isInferred: Boolean
     literatureReference: [Publication]
     name: [String]
@@ -1948,11 +1914,11 @@ type ReactionLikeEvent
 }
 
 
-type RegulationType
+type RegulationType implements DatabaseObject
 {
     className: String
     created: InstanceEdit
-    dbId: Int
+    dbId: ID!
     displayName: String
     explanation: String
     isLoaded: Boolean
@@ -1967,7 +1933,7 @@ type RegulationType
 
 type RepeatedUnitForPhysicalEntity
 {
-    id: Int
+    id: ID!
     order: Int
     polymer: Polymer
     stoichiometry: Int

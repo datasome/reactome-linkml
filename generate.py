@@ -1055,7 +1055,13 @@ def generate_graphql(clazz: str, classes: dict, slots: dict):
     class_entry = classes[clazz]
     if 'description' in class_entry:
         lines += ["\"\"\"", class_entry['description'], "\"\"\""]
-    lines.append("type {}".format(clazz))
+    prefix = "type"
+    implements_clause = ""
+    if clazz == "DatabaseObject":
+        prefix = "interface"
+    if 'is_a' in class_entry and class_entry['is_a'] == "DatabaseObject":
+        implements_clause = " implements {}".format(class_entry['is_a'])
+    lines.append("{} {}{}".format(prefix, clazz, implements_clause))
     lines.append("{")
     attributes = get_attr_slot_entries(class_entry, slots)
     inherit_attributes_slots(class_entry, attributes, classes)
@@ -1064,35 +1070,38 @@ def generate_graphql(clazz: str, classes: dict, slots: dict):
         attrLines = []
         mandatory = ""
         attr_entry = attributes[attr]
+        graphql_type = None
         if attr_entry is not None:
 
             # Get mandatory flag
-            if 'annotations' in attr_entry and \
-                    'constraint' in attr_entry['annotations'] and \
+            if 'annotations' in attr_entry:
+                if 'constraint' in attr_entry['annotations'] and \
                     attr_entry['annotations']['constraint'] == 'MANDATORY':
-                mandatory = "!"
+                    mandatory = "!"
+                if 'id' in attr_entry['annotations'] and attr_entry['annotations']['id']:
+                    mandatory = "!"
+                    graphql_type = "ID"
 
             # Get attribute description if available
             if 'description' in attr_entry:
                 description = attr_entry['description']
                 if description != "":
-                    attrLines.append("{}{}".format(INDENT_1, "\"\"\""))
-                    attrLines.append("{}{}".format(INDENT_1, description))
-                    attrLines.append("{}{}".format(INDENT_1, "\"\"\""))
+                    attrLines.append("{}{}{}{}".format(INDENT_1, "\"", description, "\""))
 
-            # Get graphql_type for attr
-            if 'range' in attr_entry:
-                # TODO: Deal correctly with conversion of linkml type to graphql_type
-                if attr_entry['range'] == "AnnotationLongType" or attr_entry['range'] == "integer":
-                    # TODO: Long is not one of basic types in https://graphql.org/graphql-js/basic-types/
-                    graphql_type = "Int"
-                elif attr_entry['range'] == "AnnotationBytesType":
-                    # TODO: byte[] is not one of basic types in https://graphql.org/graphql-js/basic-types/
-                    graphql_type = "String"
+            # Get graphql_type for attr (unless already assigned - see above)
+            if not graphql_type:
+                if 'range' in attr_entry:
+                    # TODO: Deal correctly with conversion of linkml type to graphql_type
+                    if attr_entry['range'] == "AnnotationLongType" or attr_entry['range'] == "integer":
+                        # TODO: Long is not one of basic types in https://graphql.org/graphql-js/basic-types/
+                        graphql_type = "Int"
+                    elif attr_entry['range'] == "AnnotationBytesType":
+                        # TODO: byte[] is not one of basic types in https://graphql.org/graphql-js/basic-types/
+                        graphql_type = "String"
+                    else:
+                        graphql_type = capitalize(attr_entry['range'])
                 else:
-                    graphql_type = capitalize(attr_entry['range'])
-            else:
-                graphql_type = "String"
+                    graphql_type = "String"
             # Wrap in [] if attr multivalued
             if 'multivalued' in attr_entry and attr_entry['multivalued']:
                 # Putting mandatory flag inside a list means that no null entries are
