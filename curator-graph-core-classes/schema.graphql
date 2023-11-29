@@ -4,9 +4,11 @@ type AbstractModifiedResidue implements DatabaseObject
     _displayName: String
     _timestamp: String
     className: String
+    "direction: INCOMING"
     created: InstanceEdit
     explanation: String
     isLoaded: Boolean
+    "direction: INCOMING"
     modified: InstanceEdit
     preventLazyLoading: Boolean
     referenceSequence: ReferenceSequence!
@@ -21,9 +23,11 @@ type Affiliation implements DatabaseObject
     _timestamp: String
     address: String
     className: String
+    "direction: INCOMING"
     created: InstanceEdit
     explanation: String
     isLoaded: Boolean
+    "direction: INCOMING"
     modified: InstanceEdit
     name: [String!]!
     preventLazyLoading: Boolean
@@ -47,11 +51,13 @@ Shortcut reactions that make the connection between input and output, but don't 
 """
 type BlackBoxEvent
 {
+    "direction: INCOMING"
     authored: [InstanceEdit]
     catalystActivity: [CatalystActivity]
     catalystActivityReference: CatalystActivityReference
     className: String
     compartment: [Compartment]
+    "direction: INCOMING"
     edited: [InstanceEdit]
     entityFunctionalStatus: [EntityFunctionalStatus]
     entityOnOtherCell: [PhysicalEntity]
@@ -75,6 +81,7 @@ type BlackBoxEvent
 type Book
 {
     ISBN: String
+    "direction: INCOMING"
     author: [PublicationAuthor!]!
     chapterAuthors: [Person]
     chapterTitle: String
@@ -109,9 +116,11 @@ type CatalystActivity implements DatabaseObject
     activeUnit: [PhysicalEntity]
     activity: GO_MolecularFunction
     className: String
+    "direction: INCOMING"
     created: InstanceEdit
     explanation: String
     isLoaded: Boolean
+    "direction: INCOMING"
     modified: InstanceEdit
     physicalEntity: PhysicalEntity!
     preventLazyLoading: Boolean
@@ -129,14 +138,17 @@ type CatalystActivityReference
 type Cell
 {
     RNAMarker: [EntityWithAccessionedSequence]
+    "direction: INCOMING"
     authored: InstanceEdit
     cellType: [CellType!]!
     crossReference: [DatabaseIdentifier]
     definition: String
     disease: [Disease]
+    "direction: INCOMING"
     edited: [InstanceEdit]
     figure: [Figure]
     goCellularComponent: GO_CellularComponent
+    "direction: INCOMING"
     inferredFrom: [PhysicalEntity]
     inferredTo: [PhysicalEntity]
     literatureReference: [Publication]
@@ -144,7 +156,9 @@ type Cell
     name: [String!]!
     organ: Anatomy
     proteinMarker: [PhysicalEntity]
+    "direction: INCOMING"
     reviewed: [InstanceEdit]
+    "direction: INCOMING"
     revised: [InstanceEdit]
     species: [Taxon!]!
     summation: [Summation]
@@ -178,9 +192,11 @@ type CellDevelopmentStep
 
 type CellLineagePath
 {
+    "direction: INCOMING"
     authored: [InstanceEdit]
     compartment: [Compartment]
     doi: String
+    "direction: INCOMING"
     edited: [InstanceEdit]
     explanation: String
     goBiologicalProcess: GO_BiologicalProcess
@@ -229,12 +245,14 @@ An entity formed by the association of two or more component entities (these com
 """
 type Complex
 {
+    "direction: INCOMING"
     authored: InstanceEdit
     cellType: [CellType!]!
     compartment: Compartment!
     crossReference: [DatabaseIdentifier]
     definition: String
     disease: [Disease]
+    "direction: INCOMING"
     edited: [InstanceEdit]
     entityOnOtherCell: [PhysicalEntity]
     explanation: String
@@ -242,13 +260,16 @@ type Complex
     goCellularComponent: GO_CellularComponent
     hasComponent: [HasComponent!]!
     includedLocation: [HasCompartment]
+    "direction: INCOMING"
     inferredFrom: [PhysicalEntity]
     inferredTo: [PhysicalEntity]
     isChimeric: Boolean
     literatureReference: [Publication]
     name: [String!]!
     relatedSpecies: [Species]
+    "direction: INCOMING"
     reviewed: [InstanceEdit]
+    "direction: INCOMING"
     revised: [InstanceEdit]
     species: [Species]
     stoichiometryKnown: Boolean
@@ -263,10 +284,12 @@ type ControlledVocabulary implements DatabaseObject
     _displayName: String
     _timestamp: String
     className: String
+    "direction: INCOMING"
     created: InstanceEdit
     definition: String
     explanation: String
     isLoaded: Boolean
+    "direction: INCOMING"
     modified: InstanceEdit
     name: [String!]!
     preventLazyLoading: Boolean
@@ -280,10 +303,12 @@ type ControlReference implements DatabaseObject
     _displayName: String
     _timestamp: String
     className: String
+    "direction: INCOMING"
     created: InstanceEdit
     explanation: String
     isLoaded: Boolean
     literatureReference: [Publication!]!
+    "direction: INCOMING"
     modified: InstanceEdit
     preventLazyLoading: Boolean
     stableIdentifier: StableIdentifier
@@ -305,11 +330,13 @@ type DatabaseIdentifier implements DatabaseObject
     _displayName: String
     _timestamp: String
     className: String
+    "direction: INCOMING"
     created: InstanceEdit
     crossReference: [DatabaseIdentifier]
     explanation: String
     identifier: String!
     isLoaded: Boolean
+    "direction: INCOMING"
     modified: InstanceEdit
     preventLazyLoading: Boolean
     referenceDatabase: ReferenceDatabase!
@@ -326,9 +353,11 @@ interface DatabaseObject
     _displayName: String
     _timestamp: String
     className: String
+    "direction: INCOMING"
     created: InstanceEdit
     explanation: String
     isLoaded: Boolean
+    "direction: INCOMING"
     modified: InstanceEdit
     preventLazyLoading: Boolean
     stableIdentifier: StableIdentifier
@@ -365,12 +394,14 @@ type _Deleted implements DatabaseObject
     _displayName: String
     _timestamp: String
     className: String
+    "direction: INCOMING"
     created: InstanceEdit
     curatorComment: String
     deletedInstance: [_DeletedInstance]
     deletedInstanceDB_ID: [Int]
     explanation: String
     isLoaded: Boolean
+    "direction: INCOMING"
     modified: InstanceEdit
     preventLazyLoading: Boolean
     reason: DeletedControlledVocabulary
@@ -392,11 +423,13 @@ type _DeletedInstance implements DatabaseObject
     _displayName: String
     _timestamp: String
     className: String
+    "direction: INCOMING"
     created: InstanceEdit
     deletedInstanceDB_ID: Int
     deletedStableIdentifier: StableIdentifier
     explanation: String
     isLoaded: Boolean
+    "direction: INCOMING"
     modified: InstanceEdit
     name: String
     preventLazyLoading: Boolean
@@ -407,11 +440,13 @@ type _DeletedInstance implements DatabaseObject
 
 type Depolymerisation
 {
+    "direction: INCOMING"
     authored: [InstanceEdit]
     catalystActivity: [CatalystActivity]
     catalystActivityReference: CatalystActivityReference
     className: String
     compartment: [Compartment]
+    "direction: INCOMING"
     edited: [InstanceEdit]
     entityFunctionalStatus: [EntityFunctionalStatus]
     entityOnOtherCell: [PhysicalEntity]
@@ -443,21 +478,26 @@ type Disease
 
 type Drug
 {
+    "direction: INCOMING"
     authored: InstanceEdit
     cellType: [CellType!]!
     compartment: [Compartment!]!
     crossReference: [DatabaseIdentifier]
     definition: String
     disease: [Disease!]!
+    "direction: INCOMING"
     edited: [InstanceEdit]
     figure: [Figure]
     goCellularComponent: GO_CellularComponent
+    "direction: INCOMING"
     inferredFrom: [PhysicalEntity]
     inferredTo: [PhysicalEntity]
     literatureReference: [Publication]
     name: [String!]!
     referenceEntity: ReferenceTherapeutic!
+    "direction: INCOMING"
     reviewed: [InstanceEdit]
+    "direction: INCOMING"
     revised: [InstanceEdit]
     summation: [Summation]
     systematicName: String
@@ -476,11 +516,13 @@ type EntityFunctionalStatus implements DatabaseObject
     _displayName: String
     _timestamp: String
     className: String
+    "direction: INCOMING"
     created: InstanceEdit
     diseaseEntity: PhysicalEntity!
     explanation: String
     functionalStatus: [FunctionalStatus!]!
     isLoaded: Boolean
+    "direction: INCOMING"
     modified: InstanceEdit
     normalEntity: PhysicalEntity
     preventLazyLoading: Boolean
@@ -493,6 +535,7 @@ Two or more entities grouped because of a shared molecular feature. The supercla
 """
 type EntitySet
 {
+    "direction: INCOMING"
     authored: InstanceEdit
     cellType: [CellType!]!
     className: String
@@ -500,18 +543,22 @@ type EntitySet
     crossReference: [DatabaseIdentifier]
     definition: String
     disease: [Disease]
+    "direction: INCOMING"
     edited: [InstanceEdit]
     explanation: String
     figure: [Figure]
     goCellularComponent: GO_CellularComponent
     hasMember: [HasMember!]!
+    "direction: INCOMING"
     inferredFrom: [PhysicalEntity]
     inferredTo: [PhysicalEntity]
     isOrdered: Boolean
     literatureReference: [Publication]
     name: [String!]!
     relatedSpecies: [Species]
+    "direction: INCOMING"
     reviewed: [InstanceEdit]
+    "direction: INCOMING"
     revised: [InstanceEdit]
     species: [Species]
     summation: [Summation]
@@ -542,12 +589,15 @@ type Event implements DatabaseObject
     _displayName: String
     _doRelease: Boolean
     _timestamp: String
+    "direction: INCOMING"
     authored: [InstanceEdit]
     className: String
+    "direction: INCOMING"
     created: InstanceEdit
     crossReference: [DatabaseIdentifier]
     definition: String
     disease: [Disease]
+    "direction: INCOMING"
     edited: [InstanceEdit]
     evidenceType: EvidenceType
     explanation: String
@@ -556,6 +606,7 @@ type Event implements DatabaseObject
     inferredFrom: [Event]
     isLoaded: Boolean
     literatureReference: [Publication]
+    "direction: INCOMING"
     modified: InstanceEdit
     name: [String!]!
     negativePrecedingEvent: [NegativePrecedingEvent]
@@ -565,7 +616,9 @@ type Event implements DatabaseObject
     relatedSpecies: [Species]
     releaseDate: String!
     releaseStatus: String
+    "direction: INCOMING"
     reviewed: [InstanceEdit]
+    "direction: INCOMING"
     revised: [InstanceEdit]
     species: [Species!]!
     stableIdentifier: StableIdentifier
@@ -579,11 +632,13 @@ type EvidenceType implements DatabaseObject
     _displayName: String
     _timestamp: String
     className: String
+    "direction: INCOMING"
     created: InstanceEdit
     definition: String
     explanation: String
     instanceOf: [EvidenceType]
     isLoaded: Boolean
+    "direction: INCOMING"
     modified: InstanceEdit
     name: [String!]!
     preventLazyLoading: Boolean
@@ -597,12 +652,14 @@ type ExternalOntology implements DatabaseObject
     _displayName: String
     _timestamp: String
     className: String
+    "direction: INCOMING"
     created: InstanceEdit
     definition: String
     explanation: String
     identifier: String!
     instanceOf: [ExternalOntology]
     isLoaded: Boolean
+    "direction: INCOMING"
     modified: InstanceEdit
     name: [String!]!
     preventLazyLoading: Boolean
@@ -617,11 +674,13 @@ Defines an event where genetic mutations in the nucleotide sequence produces a p
 """
 type FailedReaction
 {
+    "direction: INCOMING"
     authored: [InstanceEdit]
     catalystActivity: [CatalystActivity]
     catalystActivityReference: CatalystActivityReference
     className: String
     compartment: [Compartment]
+    "direction: INCOMING"
     edited: [InstanceEdit]
     entityFunctionalStatus: [EntityFunctionalStatus]
     entityOnOtherCell: [PhysicalEntity]
@@ -647,9 +706,11 @@ type Figure implements DatabaseObject
     _displayName: String
     _timestamp: String
     className: String
+    "direction: INCOMING"
     created: InstanceEdit
     explanation: String
     isLoaded: Boolean
+    "direction: INCOMING"
     modified: InstanceEdit
     preventLazyLoading: Boolean
     stableIdentifier: StableIdentifier
@@ -693,10 +754,12 @@ type FrontPage implements DatabaseObject
     _displayName: String
     _timestamp: String
     className: String
+    "direction: INCOMING"
     created: InstanceEdit
     explanation: String
     frontPageItem: [Event!]!
     isLoaded: Boolean
+    "direction: INCOMING"
     modified: InstanceEdit
     preventLazyLoading: Boolean
     stableIdentifier: StableIdentifier
@@ -709,10 +772,12 @@ type FunctionalStatus implements DatabaseObject
     _displayName: String
     _timestamp: String
     className: String
+    "direction: INCOMING"
     created: InstanceEdit
     explanation: String
     functionalStatusType: FunctionalStatusType!
     isLoaded: Boolean
+    "direction: INCOMING"
     modified: InstanceEdit
     preventLazyLoading: Boolean
     stableIdentifier: StableIdentifier
@@ -726,10 +791,12 @@ type FunctionalStatusType implements DatabaseObject
     _displayName: String
     _timestamp: String
     className: String
+    "direction: INCOMING"
     created: InstanceEdit
     definition: String
     explanation: String
     isLoaded: Boolean
+    "direction: INCOMING"
     modified: InstanceEdit
     name: [String!]!
     preventLazyLoading: Boolean
@@ -748,6 +815,7 @@ A peptide or polynucleotide whose sequence is unknown and thus cannot be linked 
 """
 type GenomeEncodedEntity
 {
+    "direction: INCOMING"
     authored: InstanceEdit
     cellType: [CellType!]!
     className: String
@@ -755,15 +823,19 @@ type GenomeEncodedEntity
     crossReference: [DatabaseIdentifier]
     definition: String
     disease: [Disease]
+    "direction: INCOMING"
     edited: [InstanceEdit]
     explanation: String
     figure: [Figure]
     goCellularComponent: GO_CellularComponent
+    "direction: INCOMING"
     inferredFrom: [PhysicalEntity]
     inferredTo: [PhysicalEntity]
     literatureReference: [Publication]
     name: [String!]!
+    "direction: INCOMING"
     reviewed: [InstanceEdit]
+    "direction: INCOMING"
     revised: [InstanceEdit]
     species: Taxon!
     summation: [Summation]
@@ -778,10 +850,12 @@ type GO_BiologicalProcess implements DatabaseObject
     _timestamp: String
     accession: String!
     className: String
+    "direction: INCOMING"
     created: InstanceEdit
     definition: String
     explanation: String
     isLoaded: Boolean
+    "direction: INCOMING"
     modified: InstanceEdit
     name: [String!]!
     preventLazyLoading: Boolean
@@ -798,12 +872,14 @@ type GO_CellularComponent implements DatabaseObject
     accession: String!
     className: String
     componentOf: [GO_CellularComponent]
+    "direction: INCOMING"
     created: InstanceEdit
     definition: String
     explanation: String
     hasPart: [GO_CellularComponent]
     instanceOf: [GO_CellularComponent]
     isLoaded: Boolean
+    "direction: INCOMING"
     modified: InstanceEdit
     name: [String!]!
     preventLazyLoading: Boolean
@@ -820,11 +896,13 @@ type GO_MolecularFunction implements DatabaseObject
     _timestamp: String
     accession: String!
     className: String
+    "direction: INCOMING"
     created: InstanceEdit
     definition: String
     ecNumber: String
     explanation: String
     isLoaded: Boolean
+    "direction: INCOMING"
     modified: InstanceEdit
     name: [String!]!
     preventLazyLoading: Boolean
@@ -917,12 +995,15 @@ type InstanceEdit implements DatabaseObject
     _applyToAllEditedInstances: String
     _displayName: String
     _timestamp: String
+    "direction: INCOMING"
     author: [Person]
     className: String
+    "direction: INCOMING"
     created: InstanceEdit
     dateTime: String
     explanation: String
     isLoaded: Boolean
+    "direction: INCOMING"
     modified: InstanceEdit
     note: String
     preventLazyLoading: Boolean
@@ -933,10 +1014,12 @@ type InstanceEdit implements DatabaseObject
 type InteractionEvent
 {
     _doRelease: Boolean
+    "direction: INCOMING"
     authored: [InstanceEdit]
     crossReference: [DatabaseIdentifier]
     definition: String
     disease: [Disease]
+    "direction: INCOMING"
     edited: [InstanceEdit]
     evidenceType: EvidenceType
     figure: [Figure]
@@ -951,7 +1034,9 @@ type InteractionEvent
     relatedSpecies: [Species]
     releaseDate: String!
     releaseStatus: String
+    "direction: INCOMING"
     reviewed: [InstanceEdit]
+    "direction: INCOMING"
     revised: [InstanceEdit]
     species: [Species!]!
     summation: [Summation!]!
@@ -977,6 +1062,7 @@ type IntraChainCrosslinkedResidue
 type LiteratureReference
 {
     PUBMED_URL: String
+    "direction: INCOMING"
     author: [PublicationAuthor!]!
     journal: String
     pages: String
@@ -1024,10 +1110,13 @@ type NegativePrecedingEvent implements DatabaseObject
     _timestamp: String
     className: String
     comment: String
+    "direction: INCOMING"
     created: InstanceEdit
     explanation: String
     isLoaded: Boolean
+    "direction: INCOMING"
     modified: InstanceEdit
+    "direction: INCOMING"
     precedingEvent: [Event!]!
     preventLazyLoading: Boolean
     reason: NegativePrecedingEventReason
@@ -1068,21 +1157,26 @@ Entities that we are unable or unwilling to describe in chemical detail and cann
 """
 type OtherEntity
 {
+    "direction: INCOMING"
     authored: InstanceEdit
     cellType: [CellType!]!
     compartment: [Compartment!]!
     crossReference: [DatabaseIdentifier]
     definition: String
     disease: [Disease]
+    "direction: INCOMING"
     edited: [InstanceEdit]
     explanation: String
     figure: [Figure]
     goCellularComponent: GO_CellularComponent
+    "direction: INCOMING"
     inferredFrom: [PhysicalEntity]
     inferredTo: [PhysicalEntity]
     literatureReference: [Publication]
     name: [String!]!
+    "direction: INCOMING"
     reviewed: [InstanceEdit]
+    "direction: INCOMING"
     revised: [InstanceEdit]
     summation: [Summation]
     systematicName: String
@@ -1104,12 +1198,14 @@ A collection of related Events. These events can be ReactionLikeEvents or Pathwa
 type Pathway
 {
     _doRelease: Boolean
+    "direction: INCOMING"
     authored: [InstanceEdit]
     compartment: [Compartment]
     crossReference: [DatabaseIdentifier]
     definition: String
     disease: [Disease]
     doi: String
+    "direction: INCOMING"
     edited: [InstanceEdit]
     evidenceType: EvidenceType
     explanation: String
@@ -1128,7 +1224,9 @@ type Pathway
     relatedSpecies: [Species]
     releaseDate: String!
     releaseStatus: String
+    "direction: INCOMING"
     reviewed: [InstanceEdit]
+    "direction: INCOMING"
     revised: [InstanceEdit]
     species: [Species!]!
     summation: [Summation!]!
@@ -1141,10 +1239,12 @@ type PathwayDiagram implements DatabaseObject
     _displayName: String
     _timestamp: String
     className: String
+    "direction: INCOMING"
     created: InstanceEdit
     explanation: String
     height: Int
     isLoaded: Boolean
+    "direction: INCOMING"
     modified: InstanceEdit
     preventLazyLoading: Boolean
     representedPathway: [RepresentedPathway!]!
@@ -1161,6 +1261,7 @@ type Person implements DatabaseObject
     _timestamp: String
     affiliation: [Affiliation]
     className: String
+    "direction: INCOMING"
     created: InstanceEdit
     crossReference: [DatabaseIdentifier]
     explanation: String
@@ -1168,6 +1269,7 @@ type Person implements DatabaseObject
     firstname: String
     initial: String!
     isLoaded: Boolean
+    "direction: INCOMING"
     modified: InstanceEdit
     preventLazyLoading: Boolean
     project: String
@@ -1182,25 +1284,32 @@ type PhysicalEntity implements DatabaseObject
     DB_ID: ID!
     _displayName: String
     _timestamp: String
+    "direction: INCOMING"
     authored: InstanceEdit
     cellType: [CellType!]!
     className: String
+    "direction: INCOMING"
     created: InstanceEdit
     crossReference: [DatabaseIdentifier]
     definition: String
     disease: [Disease]
+    "direction: INCOMING"
     edited: [InstanceEdit]
     explanation: String
     figure: [Figure]
     goCellularComponent: GO_CellularComponent
+    "direction: INCOMING"
     inferredFrom: [PhysicalEntity]
     inferredTo: [PhysicalEntity]
     isLoaded: Boolean
     literatureReference: [Publication]
+    "direction: INCOMING"
     modified: InstanceEdit
     name: [String!]!
     preventLazyLoading: Boolean
+    "direction: INCOMING"
     reviewed: [InstanceEdit]
+    "direction: INCOMING"
     revised: [InstanceEdit]
     stableIdentifier: StableIdentifier
     summation: [Summation]
@@ -1213,16 +1322,19 @@ Molecules that consist of an indeterminate number of repeated units. Includes co
 """
 type Polymer
 {
+    "direction: INCOMING"
     authored: InstanceEdit
     cellType: [CellType!]!
     compartment: [Compartment!]!
     crossReference: [DatabaseIdentifier]
     definition: String
     disease: [Disease]
+    "direction: INCOMING"
     edited: [InstanceEdit]
     explanation: String
     figure: [Figure]
     goCellularComponent: GO_CellularComponent
+    "direction: INCOMING"
     inferredFrom: [PhysicalEntity]
     inferredTo: [PhysicalEntity]
     literatureReference: [Publication]
@@ -1230,7 +1342,9 @@ type Polymer
     minUnitCount: Int
     name: [String!]!
     repeatedUnit: [RepeatedUnit!]!
+    "direction: INCOMING"
     reviewed: [InstanceEdit]
+    "direction: INCOMING"
     revised: [InstanceEdit]
     species: [Species]
     summation: [Summation]
@@ -1243,11 +1357,13 @@ Reactions that follow the pattern: Polymer + Unit -> Polymer (there may be a cat
 """
 type Polymerisation
 {
+    "direction: INCOMING"
     authored: [InstanceEdit]
     catalystActivity: [CatalystActivity]
     catalystActivityReference: CatalystActivityReference
     className: String
     compartment: [Compartment]
+    "direction: INCOMING"
     edited: [InstanceEdit]
     entityFunctionalStatus: [EntityFunctionalStatus]
     entityOnOtherCell: [PhysicalEntity]
@@ -1315,11 +1431,14 @@ type Publication implements DatabaseObject
     DB_ID: ID!
     _displayName: String
     _timestamp: String
+    "direction: INCOMING"
     author: [PublicationAuthor!]!
     className: String
+    "direction: INCOMING"
     created: InstanceEdit
     explanation: String
     isLoaded: Boolean
+    "direction: INCOMING"
     modified: InstanceEdit
     preventLazyLoading: Boolean
     stableIdentifier: StableIdentifier
@@ -1340,11 +1459,13 @@ Defines a change of state for one or more molecular entities. Most reactions in 
 """
 type Reaction
 {
+    "direction: INCOMING"
     authored: [InstanceEdit]
     catalystActivity: [CatalystActivity]
     catalystActivityReference: CatalystActivityReference
     className: String
     compartment: [Compartment]
+    "direction: INCOMING"
     edited: [InstanceEdit]
     entityFunctionalStatus: [EntityFunctionalStatus]
     entityOnOtherCell: [PhysicalEntity]
@@ -1368,6 +1489,7 @@ type Reaction
 type ReactionlikeEvent
 {
     _doRelease: Boolean
+    "direction: INCOMING"
     authored: [InstanceEdit]
     catalystActivity: [CatalystActivity]
     catalystActivityReference: CatalystActivityReference
@@ -1376,6 +1498,7 @@ type ReactionlikeEvent
     crossReference: [DatabaseIdentifier]
     definition: String
     disease: [Disease]
+    "direction: INCOMING"
     edited: [InstanceEdit]
     entityFunctionalStatus: [EntityFunctionalStatus]
     entityOnOtherCell: [PhysicalEntity]
@@ -1400,7 +1523,9 @@ type ReactionlikeEvent
     releaseDate: String!
     releaseStatus: String
     requiredInputComponent: [PhysicalEntity]
+    "direction: INCOMING"
     reviewed: [InstanceEdit]
+    "direction: INCOMING"
     revised: [InstanceEdit]
     species: [Species!]!
     summation: [Summation!]!
@@ -1422,9 +1547,11 @@ type ReferenceDatabase implements DatabaseObject
     _timestamp: String
     accessUrl: String!
     className: String
+    "direction: INCOMING"
     created: InstanceEdit
     explanation: String
     isLoaded: Boolean
+    "direction: INCOMING"
     modified: InstanceEdit
     name: [String]
     preventLazyLoading: Boolean
@@ -1455,11 +1582,13 @@ type ReferenceEntity implements DatabaseObject
     _displayName: String
     _timestamp: String
     className: String
+    "direction: INCOMING"
     created: InstanceEdit
     crossReference: [DatabaseIdentifier]
     explanation: String
     identifier: String!
     isLoaded: Boolean
+    "direction: INCOMING"
     modified: InstanceEdit
     name: [String]
     otherIdentifier: [String]
@@ -1582,10 +1711,12 @@ type Regulation implements DatabaseObject
     activeUnit: [PhysicalEntity]
     activity: GO_MolecularFunction
     className: String
+    "direction: INCOMING"
     created: InstanceEdit
     explanation: String
     goBiologicalProcess: GO_BiologicalProcess
     isLoaded: Boolean
+    "direction: INCOMING"
     modified: InstanceEdit
     preventLazyLoading: Boolean
     regulator: PhysicalEntity!
@@ -1614,9 +1745,11 @@ type _Release implements DatabaseObject
     _displayName: String
     _timestamp: String
     className: String
+    "direction: INCOMING"
     created: InstanceEdit
     explanation: String
     isLoaded: Boolean
+    "direction: INCOMING"
     modified: InstanceEdit
     preventLazyLoading: Boolean
     releaseDate: String!
@@ -1676,6 +1809,7 @@ A chemical species not encoded directly or indirectly in the genome, typically s
 """
 type SimpleEntity
 {
+    "direction: INCOMING"
     authored: InstanceEdit
     cellType: [CellType!]!
     className: String
@@ -1683,16 +1817,20 @@ type SimpleEntity
     crossReference: [DatabaseIdentifier]
     definition: String
     disease: [Disease]
+    "direction: INCOMING"
     edited: [InstanceEdit]
     explanation: String
     figure: [Figure]
     goCellularComponent: GO_CellularComponent
+    "direction: INCOMING"
     inferredFrom: [PhysicalEntity]
     inferredTo: [PhysicalEntity]
     literatureReference: [Publication]
     name: [String!]!
     referenceEntity: ReferenceMolecule!
+    "direction: INCOMING"
     reviewed: [InstanceEdit]
+    "direction: INCOMING"
     revised: [InstanceEdit]
     species: Species
     summation: [Summation]
@@ -1715,12 +1853,14 @@ type StableIdentifier implements DatabaseObject
     _displayName: String
     _timestamp: String
     className: String
+    "direction: INCOMING"
     created: InstanceEdit
     explanation: String
     history: [StableIdentifierHistory]
     identifier: String
     identifierVersion: String
     isLoaded: Boolean
+    "direction: INCOMING"
     modified: InstanceEdit
     oldIdentifier: String
     oldIdentifierVersion: String
@@ -1736,12 +1876,14 @@ type StableIdentifierHistory implements DatabaseObject
     _displayName: String
     _timestamp: String
     className: String
+    "direction: INCOMING"
     created: InstanceEdit
     explanation: String
     historyStatus: [StableIdentifierReleaseStatus]
     identifier: String
     identifierVersion: String
     isLoaded: Boolean
+    "direction: INCOMING"
     modified: InstanceEdit
     preventLazyLoading: Boolean
     stableIdentifier: StableIdentifier
@@ -1754,9 +1896,11 @@ type StableIdentifierReleaseStatus implements DatabaseObject
     _displayName: String
     _timestamp: String
     className: String
+    "direction: INCOMING"
     created: InstanceEdit
     explanation: String
     isLoaded: Boolean
+    "direction: INCOMING"
     modified: InstanceEdit
     preventLazyLoading: Boolean
     releaseNumber: Int
@@ -1771,10 +1915,12 @@ type Summation implements DatabaseObject
     _displayName: String
     _timestamp: String
     className: String
+    "direction: INCOMING"
     created: InstanceEdit
     explanation: String
     isLoaded: Boolean
     literatureReference: [Publication]
+    "direction: INCOMING"
     modified: InstanceEdit
     preventLazyLoading: Boolean
     stableIdentifier: StableIdentifier
@@ -1788,10 +1934,12 @@ type Taxon implements DatabaseObject
     _displayName: String
     _timestamp: String
     className: String
+    "direction: INCOMING"
     created: InstanceEdit
     crossReference: [DatabaseIdentifier!]!
     explanation: String
     isLoaded: Boolean
+    "direction: INCOMING"
     modified: InstanceEdit
     name: [String!]!
     preventLazyLoading: Boolean
@@ -1822,9 +1970,11 @@ type _UpdateTracker implements DatabaseObject
     _timestamp: String
     action: [String]
     className: String
+    "direction: INCOMING"
     created: InstanceEdit
     explanation: String
     isLoaded: Boolean
+    "direction: INCOMING"
     modified: InstanceEdit
     preventLazyLoading: Boolean
     stableIdentifier: StableIdentifier
@@ -1834,6 +1984,7 @@ type _UpdateTracker implements DatabaseObject
 
 type URL
 {
+    "direction: INCOMING"
     author: [PublicationAuthor!]!
     title: String!
     uniformResourceLocator: String!

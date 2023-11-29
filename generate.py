@@ -1083,10 +1083,17 @@ def generate_graphql(clazz: str, classes: dict, slots: dict):
                     graphql_type = "ID"
 
             # Get attribute description if available
+            description = ""
             if 'description' in attr_entry:
                 description = attr_entry['description']
-                if description != "":
-                    attrLines.append("{}{}{}{}".format(INDENT_1, "\"", description, "\""))
+            if 'annotations' in attr_entry and 'direction' in attr_entry['annotations']:
+                direction = attr_entry['annotations']['direction']
+                if direction:
+                    if description:
+                        description += "; "
+                    description += "direction: {}".format(direction)
+            if description:
+                attrLines.append("{}{}{}{}".format(INDENT_1, "\"", description, "\""))
 
             # Get graphql_type for attr (unless already assigned - see above)
             if not graphql_type:
