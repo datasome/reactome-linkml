@@ -2590,7 +2590,7 @@ classes:
       reactome_property:
         range: ReactomeProperty
       reactome_relationship:
-        range: boolean
+        range: ReactomeRelationship
       reactome_instance_defining_value:
         range: ReactomeInstanceDefiningValue
       reactome_schema_ignore:
@@ -2640,6 +2640,14 @@ classes:
     attributes:
       addedField:
         range: boolean
+
+  ReactomeRelationship:
+    attributes:
+      # N.B. This cannot be addedField as this would make the mapping between the attribute name and the class
+      # ambiguous (we couldn't tell if it's ReactomeProperty or ReactomeRelationship)
+      addedField_ReactomeRelationship:
+        range: boolean
+      originName:
 
   Relationship:
     attributes:

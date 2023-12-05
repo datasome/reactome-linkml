@@ -164,12 +164,13 @@ classes:
       species:
         range: Taxon
     attributes:
-      RNAMarker:
+      rnaMarker:
         multivalued: true
         range: EntityWithAccessionedSequence
         annotations:
           type: "rnaMarker"
           json_getter@getter: "rnaMarker"
+          originName: "RNAMarker"
       markerReference:
         multivalued: true
         range: MarkerReference
@@ -388,19 +389,11 @@ classes:
 
   #### DBInfo ####
   DBInfo:
+    is_a: Release
     annotations:
       node: true
-    slots:
-      - id
-    slot_usage:
-      id:
-        annotations:
-          generated_value: false
-          json_ignore: true
     attributes:
       name:
-      version:
-        range: integer
       checksum:
         range: AnnotationLongType
 
@@ -571,6 +564,7 @@ classes:
       constructor_parameter: "dbId"
       node: true
       suppress_warnings: "unused"
+      implements: "Trackable, Deletable"
     slots:
       - authored
       - edited
@@ -1189,6 +1183,14 @@ classes:
         annotations:
           type: "cell"
 
+  #### MetaDatabaseObject ####
+  MetaDatabaseObject:
+    is_a: DatabaseObject
+    annotations:
+      abstract: true
+      node: true
+      no_default_constructor: true
+
   #### ModifiedNucleotide ####
   ModifiedNucleotide:
     is_a: TranscriptionalModification
@@ -1353,8 +1355,8 @@ classes:
         multivalued: true
         range: HasEncapsulatedEvent
         annotations:
+          addedField_ReactomeRelationship: true
           type: "hasEncapsulatedEvent"
-          reactome_relationship: true
           sorted_set: true
           reactome_schema_ignore@getter: true
           json_ignore@getter: true
@@ -1408,6 +1410,7 @@ classes:
   PhysicalEntity:
     is_a: DatabaseObject
     annotations:
+      implements: "Trackable, Deletable"
       abstract: true
       constructor_parameter: "dbId"
       node: true
@@ -1816,6 +1819,7 @@ classes:
         range: PhysicalEntity
         annotations:
           type: "referenceEntity"
+          addedField_ReactomeRelationship: true
           reactome_relationship: true
 
   #### ReferenceGeneProduct ####
@@ -1970,6 +1974,7 @@ classes:
       abstract: true
       node: true
       suppress_warnings: "unused"
+      implements: "Deletable"
     slots:
       - authored
       - edited
@@ -2042,6 +2047,23 @@ classes:
       suppress_warnings: "unused"
     attributes:
       name:
+        annotations:
+          addedField: false
+
+  #### Release ####
+  Release:
+    description: "Release details"
+    is_a: MetaDatabaseObject
+    annotations:
+      node: true
+    slots:
+      - explanation
+    attributes:
+      releaseNumber:
+        range: integer
+        annotations:
+          addedField: false
+      releaseDate:
         annotations:
           addedField: false
 
@@ -2294,7 +2316,7 @@ classes:
       reactome_property:
         range: ReactomeProperty
       reactome_relationship:
-        range: boolean
+        range: ReactomeRelationship
       reactome_instance_defining_value:
         range: ReactomeInstanceDefiningValue
       property:
@@ -2340,6 +2362,16 @@ classes:
     attributes:
       addedField:
         range: boolean
+
+  ReactomeRelationship:
+    attributes:
+      # N.B. This cannot be addedField as this would make the mapping between the attribute name and the class
+      # ambiguous (we couldn't tell if it's ReactomeProperty or ReactomeRelationship)
+      # Note also standardised class prefix (here: _ReactomeRelationship) - this prefix gets stripped when java
+      # class code is generated
+      addedField_ReactomeRelationship:
+        range: boolean
+      originName:
 
   Relationship:
     attributes:

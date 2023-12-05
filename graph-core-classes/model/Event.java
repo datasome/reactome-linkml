@@ -11,7 +11,7 @@ import org.springframework.data.neo4j.core.schema.Relationship;
 
 @Node
 @SuppressWarnings("unused")
-public abstract class Event extends DatabaseObject {
+public abstract class Event extends DatabaseObject implements Trackable, Deletable {
 
     @Relationship(type = "authored", direction = Relationship.Direction.INCOMING)
     private List<InstanceEdit> authored;

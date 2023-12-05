@@ -1,21 +1,13 @@
 package org.reactome.server.graph.domain.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
 
 @Node
-public class DBInfo {
+public class DBInfo extends Release {
 
     private Long checksum;
 
-    @Id
-    @JsonIgnore
-    private Long id;
-
     private String name;
-
-    private Integer version;
 
     public DBInfo() {}
 
@@ -31,10 +23,15 @@ public class DBInfo {
         this.name = name;
     }
 
-    public Integer getVersion() { return version; }
-
-    public void setVersion(Integer version) {
-        this.version = version;
+    /**
+     * @deprecated
+     * Use {@link Release#getReleaseNumber()} instead
+     * @return Database version
+     */
+    @Deprecated
+    public int getVersion() {
+        return this.getReleaseNumber();
     }
+
 
 }

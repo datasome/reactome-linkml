@@ -2,14 +2,12 @@ package org.reactome.server.graph.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import java.util.*;
+import org.reactome.server.graph.domain.annotations.ReactomeRelationship;
 import org.springframework.data.neo4j.core.schema.Node;
 import org.springframework.data.neo4j.core.schema.Relationship;
 
 @Node
 public class Cell extends PhysicalEntity {
-
-    @Relationship(type = "rnaMarker")
-    private List<EntityWithAccessionedSequence> RNAMarker;
 
     @Relationship(type = "markerReference")
     private List<MarkerReference> markerReference;
@@ -19,6 +17,10 @@ public class Cell extends PhysicalEntity {
 
     @Relationship(type = "proteinMarker")
     private List<EntityWithAccessionedSequence> proteinMarker;
+
+    @Relationship(type = "rnaMarker")
+    @ReactomeRelationship(originName = "RNAMarker")
+    private List<EntityWithAccessionedSequence> rnaMarker;
 
     @Relationship(type = "species")
     private List<Taxon> species;
@@ -30,13 +32,6 @@ public class Cell extends PhysicalEntity {
     private Anatomy tissueLayer;
 
     public Cell() {}
-
-    @JsonGetter("rnaMarker")
-    public List<EntityWithAccessionedSequence> getRNAMarker() { return RNAMarker; }
-
-    public void setRNAMarker(List<EntityWithAccessionedSequence> RNAMarker) {
-        this.RNAMarker = RNAMarker;
-    }
 
     public List<MarkerReference> getMarkerReference() { return markerReference; }
 
@@ -54,6 +49,13 @@ public class Cell extends PhysicalEntity {
 
     public void setProteinMarker(List<EntityWithAccessionedSequence> proteinMarker) {
         this.proteinMarker = proteinMarker;
+    }
+
+    @JsonGetter("rnaMarker")
+    public List<EntityWithAccessionedSequence> getRNAMarker() { return rnaMarker; }
+
+    public void setRNAMarker(List<EntityWithAccessionedSequence> rnaMarker) {
+        this.rnaMarker = rnaMarker;
     }
 
     public List<Taxon> getSpecies() { return species; }

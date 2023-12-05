@@ -78,6 +78,9 @@ CLASS_TO_PACKAGE_NAME = {
     "TargetNode": "org.springframework.data.neo4j.core.schema"
 }
 
+# These java interfaces are not represented in yaml
+JAVA_INTERFACES_IN_MODEL = ["Trackable", "Deletable"]
+
 def remove_curator_only_annotations(classes: dict, slots: dict) -> (dict, dict):
     """Remove all constraint and category annotations as they are not used in web schema"""
     for slot in slots:
@@ -137,6 +140,8 @@ def override_class_attributes(class_attributes: dict, diff_class_attributes: dic
                         class_attributes[attr]['annotations'].pop(annot.strip())
                 for annot in diff_class_attr_annots:
                     if annot != 'removed_annotations':
+                        if 'annotations' not in class_attributes[attr]:
+                            class_attributes[attr]['annotations'] = {}
                         class_attributes[attr]['annotations'][annot] = diff_class_attr_annots[annot]
             for key in diff_class_attributes[attr]:
                 if key != 'annotations':
@@ -230,7 +235,6 @@ def get_web_yaml(web_schema_diff_file_name: str, schema_data: dict):
                     # Deal with classes that were renamed in web schema compared to curator schema
                     diff_class_entry, diff_class_annotations = \
                         effect_any_class_renaming(clazz, diff_classes, clazz2web_clazz)
-
                     # Collect all relevant portions of class_entry and diff_class_entry
                     diff_class_attributes, diff_class_slot_usage = {}, {}
                     diff_class_slots = []
@@ -280,6 +284,17 @@ def get_web_yaml(web_schema_diff_file_name: str, schema_data: dict):
                     # Override is_a in class_entry if present in diff_class_entry
                     if 'is_a' in diff_class_entry:
                         class_entry['is_a'] = diff_class_entry['is_a']
+
+                    # Add/override any 'non-removed' annotations from diff_class_annotations to class_entry['annotations']
+                    if 'annotations' not in class_entry:
+                        class_entry['annotations'] = {}
+                    for key in diff_class_annotations:
+                        if not key.startswith("removed_"):
+                            class_entry['annotations'][key] = diff_class_annotations[key]
+
+                    # Override 'description' in class_entry from diff_class_entry
+                    if 'description' in diff_class_entry:
+                        class_entry['description'] = diff_class_entry['description']
 
                     # Iterate through class attributes, removing any curator schema-only annotations
                     # and overriding any annotations and keys if present in that attribute's entry in
@@ -374,7 +389,7 @@ def get_implements(clazz: str, classes: dict, class_annotations: dict, annotatio
             if implemented_clazz in CLASS_TO_PACKAGE_NAME:
                 annotations_imports.add('import {}.{};'
                                         .format(CLASS_TO_PACKAGE_NAME[implemented_clazz], implemented_clazz))
-            else:
+            elif implemented_clazz not in JAVA_INTERFACES_IN_MODEL:
                 clazz_package = get_package(classes[clazz])
                 implemented_clazz_package = get_package(classes[implemented_clazz])
                 if clazz_package != implemented_clazz_package:
@@ -536,6 +551,9 @@ def get_annotations(annotations: dict, annot_attr2class: dict,
                 format_value_for_java_annotation(annotations[annot_attr], annotations_imports)
             if value:
                 # Store value assignment clause for annot_class
+                class_suffix = "_{}".format(annot_class)
+                if annot_attr.endswith(class_suffix):
+                    annot_attr = annot_attr.replace(class_suffix, "")
                 class_to_annotation_clauses[annot_class].append("{} = {}".format(annot_attr, value))
         else:
             # annot_attr not in annot_attr2class

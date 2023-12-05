@@ -37,8 +37,8 @@ public class Pathway extends Event {
     @ReactomeProperty
     private Boolean hasEHLD = false;
 
-    @ReactomeRelationship
     @Relationship(type = "hasEncapsulatedEvent")
+    @ReactomeRelationship(addedField = true)
     private SortedSet<HasEncapsulatedEvent> hasEncapsulatedEvent;
 
     @Relationship(type = "hasEvent")

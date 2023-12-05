@@ -26,8 +26,8 @@ public abstract class ReferenceEntity extends DatabaseObject {
     @ReactomeProperty
     private List<String> otherIdentifier;
 
-    @ReactomeRelationship
     @Relationship(type = "referenceEntity")
+    @ReactomeRelationship(addedField = true)
     private List<PhysicalEntity> physicalEntity;
 
     @Relationship(type = "referenceDatabase")

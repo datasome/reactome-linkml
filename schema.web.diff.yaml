@@ -43,10 +43,16 @@ classes:
     is_a: PhysicalEntity
     annotations:
       removed_slots: "cellType"
+      removed_attributes: "RNAMarker"
     attributes:
-      RNAMarker:
+      rnaMarker:
+        multivalued: true
+        range: EntityWithAccessionedSequence
         annotations:
+          type: "rnaMarker"
           json_getter@getter: "rnaMarker"
+          originName: "RNAMarker"
+
       proteinMarker:
         range: EntityWithAccessionedSequence
         annotations:
@@ -126,6 +132,14 @@ classes:
           json_ignore: true
           transient: true
 
+  #### DBInfo ####
+  DBInfo:
+    is_a: Release
+    annotations:
+      node: true
+      removed_slots: "id"
+      removed_attributes: "version"
+
   #### _Deleted ####
   _Deleted:
     annotations:
@@ -185,6 +199,7 @@ classes:
   Event:
     annotations:
       removed_attributes: "_doRelease"
+      implements: "Trackable, Deletable"
     slots:
       - compartment
     attributes:
@@ -388,6 +403,14 @@ classes:
       marker:
         multivalued: false
 
+  #### MetaDatabaseObject ####
+  MetaDatabaseObject:
+    is_a: DatabaseObject
+    annotations:
+      abstract: true
+      node: true
+      no_default_constructor: true
+
   #### Ontology ####
   Ontology:
     is_a: DatabaseObject
@@ -447,7 +470,7 @@ classes:
         range: HasEncapsulatedEvent
         annotations:
           type: "hasEncapsulatedEvent"
-          reactome_relationship: true
+          addedField_ReactomeRelationship: true
           sorted_set: true
           reactome_schema_ignore@getter: true
           json_ignore@getter: true
@@ -483,6 +506,8 @@ classes:
 
   #### PhysicalEntity ####
   PhysicalEntity:
+    annotations:
+      implements: "Trackable, Deletable"
     slots:
       - compartment
     slot_usage:
@@ -666,7 +691,7 @@ classes:
         range: PhysicalEntity
         annotations:
           type: "referenceEntity"
-          reactome_relationship: true
+          addedField_ReactomeRelationship: true
 
   #### ReferenceGeneProduct ####
   ReferenceGeneProduct:
@@ -704,6 +729,7 @@ classes:
   Regulation:
     annotations:
       removed_slots: "summation"
+      implements: "Deletable"
     slots:
       - authored
       - edited
@@ -753,7 +779,16 @@ classes:
   #### _Release ####
   _Release:
     annotations:
-      removed_class: true
+      renamed_to: Release
+
+  #### Release ####
+  Release:
+    description: "Release details"
+    annotations:
+      node: true
+    is_a: MetaDatabaseObject
+    slots:
+      - explanation
 
   #### RepresentedPathway ####
   RepresentedPathway:

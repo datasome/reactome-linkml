@@ -18,7 +18,7 @@ import org.springframework.lang.NonNull;
 
 @Node
 @SuppressWarnings("unused")
-@JsonIdentityInfo(generator = ObjectIdGenerators)
+@JsonIdentityInfo(generator = ObjectIdGenerators, property = "dbId")
 public abstract class DatabaseObject implements Serializable, Comparable<DatabaseObject>, DatabaseObjectLike {
 
     @ReactomeSchemaIgnore
@@ -58,6 +58,8 @@ public abstract class DatabaseObject implements Serializable, Comparable<Databas
     private String stIdVersion;
 
     public DatabaseObject() {}
+
+    public DatabaseObject(Long dbId) { this.dbId = dbId; }
 
     public InstanceEdit getCreated() { return created; }
 

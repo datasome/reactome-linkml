@@ -12,7 +12,7 @@ public class CellLineagePath extends Pathway {
     @JsonIgnore
     @Override
     public String getExplanation() {
-        return ;
+        return "A collection of related Events. These events are mostly CellDevelopmentStep. This is used to describe tissues and cell differentiation";
     }
 
     @Relationship(type = "tissue")

@@ -8,7 +8,7 @@ import org.springframework.data.neo4j.core.schema.Relationship;
 
 @Node
 @SuppressWarnings("unused")
-public abstract class Regulation extends DatabaseObject {
+public abstract class Regulation extends DatabaseObject implements Deletable {
 
     @Relationship(type = "activeUnit")
     @ReactomeProperty
