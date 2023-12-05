@@ -135,7 +135,6 @@ type CatalystActivityReference
 
 type Cell
 {
-    RNAMarker: [EntityWithAccessionedSequence]
     "direction: INCOMING"
     authored: InstanceEdit
     "direction: INCOMING"
@@ -181,6 +180,7 @@ type Cell
     reviewed: [InstanceEdit]
     "direction: INCOMING"
     revised: [InstanceEdit]
+    rnaMarker: [EntityWithAccessionedSequence]
     species: [Taxon]
     speciesName: String
     summation: [Summation]
@@ -211,6 +211,9 @@ type CellDevelopmentStep
 }
 
 
+"""
+A collection of related Events. These events are mostly CellDevelopmentStep. This is used to describe tissues and cell differentiation
+"""
 type CellLineagePath
 {
     diagramHeight: Int
@@ -411,9 +414,10 @@ interface DatabaseObject
 type DBInfo
 {
     checksum: Int
-    id: ID!
+    explanation: String
     name: String
-    version: Int
+    releaseDate: String
+    releaseNumber: Int
 }
 
 
@@ -2069,6 +2073,24 @@ type Interaction implements DatabaseObject
 }
 
 
+type MetaDatabaseObject implements DatabaseObject
+{
+    className: String
+    "direction: INCOMING"
+    created: InstanceEdit
+    dbId: ID!
+    displayName: String
+    explanation: String
+    isLoaded: Boolean
+    "direction: INCOMING"
+    modified: InstanceEdit
+    oldStId: String
+    preventLazyLoading: Boolean
+    stId: String
+    stIdVersion: String
+}
+
+
 type Ontology implements DatabaseObject
 {
     className: String
@@ -2168,6 +2190,17 @@ type RegulationType implements DatabaseObject
     preventLazyLoading: Boolean
     stId: String
     stIdVersion: String
+}
+
+
+"""
+Release details
+"""
+type Release
+{
+    explanation: String
+    releaseDate: String
+    releaseNumber: Int
 }
 
 
