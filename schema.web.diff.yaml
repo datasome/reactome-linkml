@@ -43,13 +43,9 @@ classes:
     is_a: PhysicalEntity
     annotations:
       removed_slots: "cellType"
-      removed_attributes: "RNAMarker"
     attributes:
       rnaMarker:
-        multivalued: true
-        range: EntityWithAccessionedSequence
         annotations:
-          type: "rnaMarker"
           json_getter@getter: "rnaMarker"
           originName: "RNAMarker"
 

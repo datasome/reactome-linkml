@@ -21,18 +21,20 @@ public class StableIdentifierReleaseStatus extends DatabaseObject {
         this.releaseNumber = releaseNumber;
     }
 
-    public ReleaseStatus getStatus() { return status; }
-
-    public void setStatus(ReleaseStatus status) {
-        this.status = status;
-    }
-
     private static enum ReleaseStatus {
         EXISTS,
         CREATED,
         INCREMENTED,
         REPLACED,
         ORTHO
+    }
+
+    public String getStatus() {
+        return status.toString();
+    }
+
+    public void setStatus(String status) {
+        this.status = ReleaseStatus.valueOf(status);
     }
 
 

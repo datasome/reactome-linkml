@@ -1990,13 +1990,11 @@ classes:
         range: PhysicalEntity
         annotations:
           type: "activeUnit"
-          # TBC: Is the following an error in java class - given it's a relationship field?
           addedField: false
       activity:
         range: GO_MolecularFunction
         annotations:
           type: "activity"
-          # TBC: Is the following an error in java class - given it's a relationship field?
           addedField: false
       inferredTo:
         multivalued: true

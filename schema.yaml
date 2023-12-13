@@ -232,7 +232,7 @@ classes:
         annotations:
           constraint: MANDATORY
     attributes:
-      RNAMarker:
+      rnaMarker:
         multivalued: true
         range: EntityWithAccessionedSequence
         annotations:
@@ -2221,7 +2221,6 @@ classes:
           constraint: OPTIONAL
           category: all
           type: "activeUnit"
-          # TBC: Is the following an error in java class - given it's a relationship field?
           addedField: false
       activity:
         range: GO_MolecularFunction
@@ -2229,7 +2228,6 @@ classes:
           constraint: OPTIONAL
           category: all
           type: "activity"
-          # TBC: Is the following an error in java class - given it's a relationship field?
           addedField: false
       regulator:
         range: PhysicalEntity
@@ -2436,6 +2434,7 @@ classes:
         annotations:
           addedField: false
           category: all
+          no_default_getter_setter: true
 
   #### Summation ####
   Summation:

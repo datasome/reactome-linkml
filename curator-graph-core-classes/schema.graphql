@@ -137,7 +137,6 @@ type CatalystActivityReference
 
 type Cell
 {
-    RNAMarker: [EntityWithAccessionedSequence]
     "direction: INCOMING"
     authored: InstanceEdit
     cellType: [CellType!]!
@@ -160,6 +159,7 @@ type Cell
     reviewed: [InstanceEdit]
     "direction: INCOMING"
     revised: [InstanceEdit]
+    rnaMarker: [EntityWithAccessionedSequence]
     species: [Taxon!]!
     summation: [Summation]
     systematicName: String

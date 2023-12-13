@@ -10,10 +10,6 @@ import org.springframework.data.neo4j.core.schema.Relationship;
 @Node
 public class Cell extends PhysicalEntity {
 
-    @ReactomeConstraint(constraint = ReactomeConstraint.Constraint.REQUIRED)
-    @Relationship(type = "rnaMarker")
-    private List<EntityWithAccessionedSequence> RNAMarker;
-
     @ReactomeConstraint(constraint = ReactomeConstraint.Constraint.MANDATORY)
     @ReactomeInstanceDefiningValue(category = "all")
     @Relationship(type = "cellType")
@@ -32,6 +28,10 @@ public class Cell extends PhysicalEntity {
     @ReactomeAllowedClasses(allowed = {Complex.class, EntityWithAccessionedSequence.class})
     private List<PhysicalEntity> proteinMarker;
 
+    @ReactomeConstraint(constraint = ReactomeConstraint.Constraint.REQUIRED)
+    @Relationship(type = "rnaMarker")
+    private List<EntityWithAccessionedSequence> rnaMarker;
+
     @ReactomeConstraint(constraint = ReactomeConstraint.Constraint.MANDATORY)
     @Relationship(type = "species")
     private List<Taxon> species;
@@ -45,12 +45,6 @@ public class Cell extends PhysicalEntity {
     private Anatomy tissueLayer;
 
     public Cell() {}
-
-    public List<EntityWithAccessionedSequence> getRNAMarker() { return RNAMarker; }
-
-    public void setRNAMarker(List<EntityWithAccessionedSequence> RNAMarker) {
-        this.RNAMarker = RNAMarker;
-    }
 
     public List<CellType> getCellType() { return cellType; }
 
@@ -81,6 +75,12 @@ public class Cell extends PhysicalEntity {
         } else {
             throw new RuntimeException(proteinMarker + " is none of: Complex, EntityWithAccessionedSequence");
         }
+    }
+
+    public List<EntityWithAccessionedSequence> getRNAMarker() { return rnaMarker; }
+
+    public void setRNAMarker(List<EntityWithAccessionedSequence> rnaMarker) {
+        this.rnaMarker = rnaMarker;
     }
 
     public List<Taxon> getSpecies() { return species; }
