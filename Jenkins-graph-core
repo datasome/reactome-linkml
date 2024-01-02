@@ -1,0 +1,41 @@
+import org.reactome.release.jenkins.utilities.Utilities
+
+// Shared library maintained at 'release-jenkins-utils' repository.
+def utils = new Utilities()
+
+pipeline {
+	agent any
+
+    environment {
+        ECRURL = '851227637779.dkr.ecr.us-east-1.amazonaws.com'
+    }
+	
+	stages {
+		stage('pull image') {
+            		steps {
+		        	script{
+				    sh("eval \$(aws ecr get-login --no-include-email --region us-east-1)")
+					docker.withRegistry("https://" + ECRURL) {
+						docker.image("reactome-schemas:latest").pull()
+					}
+			    	}
+		    	}
+        	}
+		// This stage generates graph-core classes, validates them against those in feature/graph-core-reformat
+		// branch of graph-core, and then generates graphql
+		stage('Main: graph-core-curator'){
+			steps{
+				script{
+				    utils.cloneOrUpdateLocalRepo("graph-core")
+				    dir("graph-core"){
+                        sh "git checkout feature/graph-core-reformat"
+                    }
+                    sh "./generate.py java schema.web.diff.yaml"
+                    sh "./compare_java.py graph-core-classes graph-core/src/main/java/org/reactome/server/graph/domain > diff.txt"
+                    sh "if [ -s diff.txt ]; then echo 'ERROR: The following differences exist between generated and original graph-core classes: ''; cat diff.txt; exit 1; fi"
+                    sh "./generate.py graphql schema.web.diff.yaml"
+				}
+			}
+		}
+	}
+}
