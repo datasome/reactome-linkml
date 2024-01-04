@@ -31,9 +31,11 @@ pipeline {
 				    dir("graph-core-curator"){
                         sh "git checkout feature/graph-core-curator-reformat"
                     }
+                    // Validate the syntax of schema.yaml
+                    sh "gen-json-schema schema.yaml 1> /dev/null 2> err.log; if [ \"$?\" -ne \"0\" ]; then echo \"schema.yaml syntax is not valid: \"`cat err.log`; exit 1; fi"
                     sh "./generate.py java"
                     sh "./compare_java.py curator-graph-core-classes graph-core-curator/src/main/java/org/reactome/server/graph/curator/domain/ > diff.txt"
-                    sh "if [ -s diff.txt ]; then echo 'ERROR: The following differences exist between generated and original graph-core-curator classes: ''; cat diff.txt; exit 1; fi"
+                    sh "if [ -s diff.txt ]; then echo 'ERROR: The following differences exist between generated and original graph-core-curator classes: '; cat diff.txt; exit 1; fi"
                     sh "./generate.py graphql"
 				}
 			}

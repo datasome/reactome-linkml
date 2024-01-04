@@ -79,7 +79,7 @@ classes:
           constraint: REQUIRED
       explanation:
         annotations:
-          json_ignore:
+          json_ignore: false
       literatureReference:
         annotations:
           constraint: REQUIRED
@@ -439,11 +439,11 @@ classes:
           protected: true
       explanation:
         annotations:
-          override:
+          override: false
       className:
         ifabsent: "getClass().getSimpleName()"
         annotations:
-          override:
+          override: false
     attributes:
       isLoaded:
         range: boolean
@@ -494,7 +494,7 @@ classes:
     slot_usage:
       id:
         annotations:
-          generated_value:
+          generated_value: false
           json_ignore: true
     attributes:
       name:
@@ -562,8 +562,8 @@ classes:
           constraint: NOMANUALEDIT
           addedField: false
           getter_only: false
-          reactome_schema_ignore:
-          override:
+          reactome_schema_ignore: false
+          override: false
       name:
         multivalued: false
         annotations:

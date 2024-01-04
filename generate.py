@@ -3,15 +3,20 @@
 import yaml
 import os
 from re import sub, findall, search
+from help import print_help
 import copy
 import sys
 
 web_schema_diff_file_name = None
 output_type = None
+script_name = sys.argv[0]
 if len(sys.argv) > 1:
     output_type = sys.argv[1]
+    if output_type not in ["java", "graphql", "yaml"]:
+        print_help(script_name)
+        sys.exit(1)
 else:
-    print("ERROR: please provide at least one argument specifying the type of output: java or graphql")
+    print_help(script_name)
     sys.exit(1)
 
 if len(sys.argv) > 2:
@@ -557,7 +562,9 @@ def get_annotations(annotations: dict, annot_attr2class: dict,
                 class_to_annotation_clauses[annot_class].append("{} = {}".format(annot_attr, value))
         else:
             # annot_attr not in annot_attr2class
-            if not annot_attr.endswith(GETTER_ONLY_ANNOT_SUFFIX):
+            if not annotations[annot_attr]:
+                continue
+            elif not annot_attr.endswith(GETTER_ONLY_ANNOT_SUFFIX):
                 # Ignore getter-only annotations here - they are processed within get_class_attributes_slots() method
                 if annot_attr not in OTHER_ANNOTATIONS:
                     # For all non-OTHER_ANNOTATIONS, add java annotation statement to ret_java_annotations
@@ -574,6 +581,8 @@ def get_annotations(annotations: dict, annot_attr2class: dict,
                     other_annotations[annot_attr] = annotations[annot_attr]
 
     # Output java annotations involving annotation classes
+    # if attr == "modification":
+    #     print(attr, value, class_to_annotation_clauses)
     for annot_class in class_to_annotation_clauses:
         if class_to_annotation_clauses[annot_class]:
             annot_clauses = "({})".format(", ".join(class_to_annotation_clauses[annot_class]))
@@ -1165,6 +1174,20 @@ with open("schema.yaml", "r") as stream:
                 output_java(clazz, classes, slots, annot_attr2class)
             elif output_type == "graphql":
                 graphql_lines += generate_graphql(clazz, classes, slots)
+            elif output_type == "yaml":
+                # Output data as yaml so that it can be validated
+                aux = copy.deepcopy(data)
+                # Remove any slot annotations with None as value - as that makes validation fail
+                for slot_name in aux['slots']:
+                    slot = aux['slots'][slot_name]
+                    if 'annotations' in slot:
+                        non_null_annots = {}
+                        for key in slot['annotations']:
+                            if slot['annotations'][key] is not None:
+                                non_null_annots[key] = slot['annotations'][key]
+                        slot['annotations'] = non_null_annots
+                with open("schema.web.yaml", "w") as outf:
+                    yaml.dump(aux, outf, default_flow_style=False)
 
         if output_type == "graphql":
             # Write generated graphql content to a file

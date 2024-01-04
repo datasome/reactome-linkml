@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 
-import yaml
 import os
-from re import sub, findall, search
-import copy
+from re import search
+from help import print_help
 import pprint
 import sys
 import re
 
 if len(sys.argv) < 3:
-    print('Specify generated_classes_dir and original_classes_dir')
+    script_name = sys.argv[0]
+    print_help(script_name)
     sys.exit()
 generated_classes_dir = sys.argv[1]
 original_classes_dir = sys.argv[2]

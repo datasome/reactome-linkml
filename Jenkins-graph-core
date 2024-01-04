@@ -30,6 +30,10 @@ pipeline {
 				    dir("graph-core"){
                         sh "git checkout feature/graph-core-reformat"
                     }
+                    // Generate schema.web.yaml so that its syntax can be validated
+                    sh "./generate.py yaml schema.web.diff.yaml"
+                    // Now validate the syntax of just generated schema.web.yaml
+                    sh "gen-json-schema schema.web.yaml 1> /dev/null 2> err.log; if [ \"$?\" -ne \"0\" ]; then echo \"schema.web.yaml syntax is not valid: \"`cat err.log`; exit 1; fi"
                     sh "./generate.py java schema.web.diff.yaml"
                     sh "./compare_java.py graph-core-classes graph-core/src/main/java/org/reactome/server/graph/domain > diff.txt"
                     sh "if [ -s diff.txt ]; then echo 'ERROR: The following differences exist between generated and original graph-core classes: ''; cat diff.txt; exit 1; fi"

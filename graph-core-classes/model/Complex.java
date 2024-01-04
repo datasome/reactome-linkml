@@ -110,6 +110,20 @@ public class Complex extends PhysicalEntity {
         this.includedLocation = includedLocation;
     }
 
+    public void setIncludedLocation(List<Compartment> includedLocation) {
+        if (includedLocation == null) return;
+        Map<Long, HasCompartment> map = new LinkedHashMap<>();
+        int order = 0;
+        for (Compartment compartment : includedLocation) {
+            relInst = new HasCompartment();
+            relInst.setCompartment(compartment);
+            relInst.setOrder(order++);
+            map.put(compartment.getDB_ID(), relInst);
+        }
+        this.includedLocation = new TreeSet<>(map.values());
+    }
+
+
     public Boolean getIsChimeric() { return isChimeric; }
 
     public void setIsChimeric(Boolean isChimeric) {
