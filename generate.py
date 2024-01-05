@@ -332,6 +332,7 @@ def get_web_yaml(web_schema_diff_file_name: str, schema_data: dict):
 
         except yaml.YAMLError as exc:
             print(exc)
+            return None
     return schema_data
 
 def is_class_relationship(class_entry: dict) -> bool:
@@ -1161,6 +1162,9 @@ with open("schema.yaml", "r") as stream:
         data = yaml.safe_load(stream)
         if web_schema_diff_file_name is not None:
             data = get_web_yaml(web_schema_diff_file_name, data)
+            if data is None:
+                print("ERROR: Failed to generate schema.web.yaml")
+                sys.exit(1)
         classes = data['classes']
         slots = data['slots']
         annotations = classes['Annotations']['attributes']
@@ -1200,4 +1204,5 @@ with open("schema.yaml", "r") as stream:
 
     except yaml.YAMLError as exc:
         print(exc)
+        sys.exit(1)
 
