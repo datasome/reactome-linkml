@@ -69,6 +69,7 @@ classes:
       - catalystActivity
       - goBiologicalProcess
       - literatureReference
+      - blah
     slot_usage:
       authored:
         multivalued: true
