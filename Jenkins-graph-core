@@ -4,39 +4,21 @@ import org.reactome.release.jenkins.utilities.Utilities
 def utils = new Utilities()
 
 pipeline {
-	agent any
-
-    environment {
-        ECRURL = '851227637779.dkr.ecr.us-east-1.amazonaws.com'
+	agent {
+        docker { image 'reactome-schemas:latest' }
     }
-	
+
 	stages {
-		stage('pull image') {
-                steps {
-                    script{
-                        sh("eval \$(aws ecr get-login --no-include-email --region us-east-1)")
-                        docker.withRegistry("https://" + ECRURL) {
-                            docker.image("reactome-schemas:latest").pull()
-                        }
-                    }
-                }
-        	}
 
        	// This stage generates graph-core-curator classes, validates them against those in feature/graph-core-curator-reformat
 		// branch of graph-core-curator, and then generates graphql
 		stage('Main: graph-core-curator'){
 			steps{
 				script{
-				    utils.cloneOrUpdateLocalRepo("graph-core-curator")
-				    dir("graph-core-curator"){
-                        sh "git checkout feature/graph-core-curator-reformat"
-                    }
-                    // Validate the syntax of schema.yaml
-                    sh "gen-json-schema schema.yaml 1> /dev/null 2> err.log; if [ \"$?\" -ne \"0\" ]; then echo \"schema.yaml syntax is not valid: \"`cat err.log`; exit 1; fi"
-                    sh "./generate.py java"
+				    sh "./generate.py java"
+                    sh "if [ ! -d graph-core-curator ]; then git clone -b feature/graph-core-curator-reformat https://github.com/reactome/graph-core-curator.git; else cd graph-core-curator; git pull; fi"
                     sh "./compare_java.py curator-graph-core-classes graph-core-curator/src/main/java/org/reactome/server/graph/curator/domain/ > diff.txt"
                     sh "if [ -s diff.txt ]; then echo 'ERROR: The following differences exist between generated and original graph-core-curator classes: '; cat diff.txt; exit 1; fi"
-                    sh "./generate.py graphql"
 				}
 			}
 		}
@@ -46,18 +28,10 @@ pipeline {
 		stage('Main: graph-core'){
 			steps{
 				script{
-				    utils.cloneOrUpdateLocalRepo("graph-core")
-				    dir("graph-core"){
-                        sh "git checkout feature/graph-core-reformat"
-                    }
-                    // Generate schema.web.yaml so that its syntax can be validated
-                    sh "./generate.py yaml schema.web.diff.yaml"
-                    // Now validate the syntax of just generated schema.web.yaml
-                    sh "gen-json-schema schema.web.yaml 1> /dev/null 2> err.log; if [ \"$?\" -ne \"0\" ]; then echo \"schema.web.yaml syntax is not valid: \"`cat err.log`; exit 1; fi"
-                    sh "./generate.py java schema.web.diff.yaml"
+				    sh "./generate.py java schema.web.diff.yaml"
+                    sh "if [ ! -d graph-core ]; then git clone -b feature/graph-core-reformat https://github.com/reactome/graph-core.git; else cd graph-core; git pull; fi"
                     sh "./compare_java.py graph-core-classes graph-core/src/main/java/org/reactome/server/graph/domain > diff.txt"
-                    sh "if [ -s diff.txt ]; then echo 'ERROR: The following differences exist between generated and original graph-core classes: ''; cat diff.txt; exit 1; fi"
-                    sh "./generate.py graphql schema.web.diff.yaml"
+                    sh "if [ -s diff.txt ]; then echo 'ERROR: The following differences exist between generated and original graph-core classes: '; cat diff.txt; exit 1; fi"
 				}
 			}
 		}
