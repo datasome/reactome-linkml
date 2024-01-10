@@ -11,8 +11,8 @@ help_content['./generate.py'] = [
         "Generate schema.web.yaml by merging schema.yaml and schema.web.diff.yaml - so that schema.web.yaml's syntax can be validated")
 ]
 help_content['gen-json-schema'] = [
-    ("./gen-json-schema schema.yaml", "Generate json schema from schema.yaml - can be used to validate linkml syntax of schema.yaml"),
-    ("./gen-json-schema schema.web.yaml", "Generate json schema from schema.web.yaml - can be used to validate linkml syntax of schema.web.yaml")
+    ("gen-json-schema schema.yaml", "Generate json schema from schema.yaml - can be used to validate linkml syntax of schema.yaml"),
+    ("gen-json-schema schema.web.yaml", "Generate json schema from schema.web.yaml - can be used to validate linkml syntax of schema.web.yaml")
 ]
 help_content['./compare_java.py'] = [
     ("./compare_java.py curator-graph-core-classes <graph-core-curator clone dir>/src/main/java/org/reactome/server/graph/curator/",
