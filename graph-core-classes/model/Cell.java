@@ -52,9 +52,9 @@ public class Cell extends PhysicalEntity {
     }
 
     @JsonGetter("rnaMarker")
-    public List<EntityWithAccessionedSequence> getRNAMarker() { return rnaMarker; }
+    public List<EntityWithAccessionedSequence> getRnaMarker() { return rnaMarker; }
 
-    public void setRNAMarker(List<EntityWithAccessionedSequence> rnaMarker) {
+    public void setRnaMarker(List<EntityWithAccessionedSequence> rnaMarker) {
         this.rnaMarker = rnaMarker;
     }
 
