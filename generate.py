@@ -12,7 +12,7 @@ output_type = None
 script_name = sys.argv[0]
 if len(sys.argv) > 1:
     output_type = sys.argv[1]
-    if output_type not in ["java", "graphql", "yaml"]:
+    if output_type not in ["java", "graphql", "yaml", "mysql"]:
         print_help(script_name)
         sys.exit(1)
 else:
@@ -82,6 +82,28 @@ CLASS_TO_PACKAGE_NAME = {
 
 # These java interfaces are not represented in yaml
 JAVA_INTERFACES_IN_MODEL = ["Trackable", "Deletable"]
+
+# Mapping of range to MySQL types
+RANGE_TO_MYSQL_TYPE = {
+    "string" : "mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci",
+    "integer" : "int unsigned",
+    "AnnotationLongType" : "int unsigned",
+    "boolean" : "enum('TRUE','FALSE') CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci"
+}
+
+# Bespoke class-attribute to MySQL type mappings
+# TODO: N.B. gk_current.sql contains table: Ontology and DataModel, but they're not shown on
+# https://curator.reactome.org/cgi-bin/classbrowser?DB=gk_central&CLASS=AbstractModifiedResidue
+CLAZZ_TO_ATTRIBUTE_TO_MYSQL_TYPE = {
+    "InstanceEdit" : { "dateTime" : "timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP" },
+    "PathwayDiagram" : { "storedATXML" : "longblob" },
+    "Ontology" : { "ontology" : "longblob" },
+    "Person" : {
+        "initial" : "varchar(10) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL",
+        "surname" : "varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL"
+    },
+    "LiteratureReference" : {"journal" : "varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci"}
+}
 
 def remove_curator_only_annotations(classes: dict, slots: dict) -> (dict, dict):
     """Remove all constraint and category annotations as they are not used in web schema"""
@@ -1067,6 +1089,58 @@ def inherit_attributes_slots(class_entry: dict, attributes: dict, classes: dict)
             if attr not in attributes:
                 attributes[attr] = parent_class_attributes[attr]
 
+def get_filled_mysql_table_template(clazz: str, classes: dict, slots: dict) -> str:
+    """Generate mysql representation of clazz, by filling the table mysql template"""
+    ret = None
+    lines = ["`DB_ID` int unsigned NOT NULL DEFAULT 0,"]
+
+    class_entry = classes[clazz]
+    fh = os.path.join("mysql_templates", "gk_table.sql")
+    with open(fh, 'r') as mysql_table_template:
+        ret = mysql_table_template.read()
+        ret = ret.replace("@TABLE_NAME@", clazz)
+        attributes = get_attr_slot_entries(class_entry, slots)
+        for attr in attributes:
+            # DEBUG: print(clazz, attr, attributes, attributes[attr])
+            attr_entry = attributes[attr]
+            if attr in attributes and attributes[attr] is not None:
+                # TODO: deal with multivalued here
+                if 'multivalued' in attr_entry and attr_entry['multivalued'] is True:
+                    None
+                    # TODO: output class_2_multivalued_primitive_attribute - ret needs to be become a list of class str's -
+                    # TODO clazz's str being the first, followed by any class_2_*'s str's
+                else:
+                    # Get suffix: (NOT NULL or DEFAULT NULL)
+                    if 'annotations' in attr_entry:
+                        if 'constraint' in attr_entry['annotations'] and \
+                            attr_entry['annotations']['constraint'] == 'MANDATORY':
+                            suffix = "NOT NULL"
+                        else:
+                            suffix = "DEFAULT NULL"
+                    else:
+                        suffix = "DEFAULT NULL"
+                    mysql_type = "TBC"
+                    if 'range' in attr_entry:
+                        range = attr_entry['range']
+                        if range in RANGE_TO_MYSQL_TYPE:
+                            mysql_type = RANGE_TO_MYSQL_TYPE[range]
+                        elif range[0].isupper():
+                            # attr refers to a class
+                            None
+                    else:
+                        mysql_type = RANGE_TO_MYSQL_TYPE['string']
+                    lines.append("{}`{}` {} {},".format(INDENT_1, attr, mysql_type, suffix))
+            else:
+                # e.g. name in DBInfo - a simple string with no annotations
+                range = "string"
+                suffix = "DEFAULT NULL"
+                mysql_type = RANGE_TO_MYSQL_TYPE[range]
+                lines.append("{}`{}` {} {},".format(INDENT_1, attr, mysql_type, suffix))
+        lines.append("{}PRIMARY KEY (`DB_ID`),".format(INDENT_1))
+        ret = ret.replace("@TABLE_CONTENT@", "\n".join(lines))
+
+    return ret
+
 def generate_graphql(clazz: str, classes: dict, slots: dict):
     """Generate grqphql representation of clazz"""
     lines = []
@@ -1160,6 +1234,7 @@ with open("schema.yaml", "r") as stream:
         annotations = classes['Annotations']['attributes']
         annot_attr2class = map_annotation_attributes_to_classes(annotations, classes)
         graphql_lines = []
+        mysql_lines = []
         for clazz in classes:
             if is_annotation(clazz):
                 # Don't output annotation classes into .java file
@@ -1182,6 +1257,8 @@ with open("schema.yaml", "r") as stream:
                         slot['annotations'] = non_null_annots
                 with open("schema.web.yaml", "w") as outf:
                     yaml.dump(aux, outf, default_flow_style=False)
+            elif output_type == "mysql":
+                mysql_lines.append(get_filled_mysql_table_template(clazz, classes, slots))
 
         if output_type == "graphql":
             # Write generated graphql content to a file
@@ -1191,6 +1268,17 @@ with open("schema.yaml", "r") as stream:
             fp = open(os.path.join(OUTPUT_DIR, "schema{}.graphql".format(suffix)), 'w')
             fp.write("\n".join(graphql_lines))
             fp.close()
+
+        elif output_type == "mysql":
+            fh = os.path.join("mysql_templates", "gk_current.sql")
+            with open(fh, 'r') as mysql_template:
+                mysql_content = mysql_template.read()
+                mysql_content = mysql_content.replace("@SCHEMA_CONTENT@", "\n".join(mysql_lines))
+                # Write generated mysql content to a file
+                fp = open(os.path.join(OUTPUT_DIR, "gk_current.sql"), 'w')
+                fp.write(mysql_content)
+                fp.close()
+
 
     except yaml.YAMLError as exc:
         print(exc)
