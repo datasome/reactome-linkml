@@ -63,49 +63,17 @@ classes:
       node: true
       suppress_warnings: "unused"
     slots:
-      - authored
-      - edited
       - explanation
-      - catalystActivity
-      - goBiologicalProcess
-      - literatureReference
     slot_usage:
-      authored:
-        multivalued: true
-        annotations:
-          constraint: REQUIRED
-      edited:
-        annotations:
-          constraint: REQUIRED
       explanation:
         annotations:
           json_ignore: false
-      literatureReference:
-        annotations:
-          constraint: REQUIRED
     attributes:
       templateEvent:
         range: Event
         annotations:
           constraint: OPTIONAL
           type: "templateEvent"
-      input:
-        multivalued: true
-        range: Input
-        annotations:
-          constraint: REQUIRED
-          category: all
-          type: "input"
-          set: true
-      output:
-        multivalued: true
-        range: Output
-        annotations:
-          constraint: REQUIRED
-          category: all
-          type: "output"
-          set: true
-          no_list_setter: true
 
   #### Book ####
   Book:
@@ -1360,12 +1328,6 @@ classes:
       node: true
       suppress_warnings: "unused"
     attributes:
-      PUBMED_URL:
-        ifabsent: string(http://www.ncbi.nlm.nih.gov/pubmed/)
-        annotations:
-          static: true
-          final: true
-          transient: true
       journal:
         annotations:
           constraint: REQUIRED

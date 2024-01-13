@@ -102,7 +102,15 @@ CLAZZ_TO_ATTRIBUTE_TO_MYSQL_TYPE = {
         "initial" : "varchar(10) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL",
         "surname" : "varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL"
     },
-    "LiteratureReference" : {"journal" : "varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci"}
+    "LiteratureReference" : {"journal" : "varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci"},
+    # Default is used for single-valued Instance attributes
+    "default": "varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci"
+}
+
+# Some attributes' name have been regularized for curator and web classes, but not for mysql - hence
+# the mapping below - so that the generated mysql matches the one in gk_current.sql
+REGULAR_TO_NONREGULAR_ATTR_NAME_FOR_MYSQL = {
+    "rnaMarker" : "RNAMarker"
 }
 
 def remove_curator_only_annotations(classes: dict, slots: dict) -> (dict, dict):
@@ -460,6 +468,10 @@ def lower_case(attr: str) -> str:
     return attr[0].lower() + attr[1:]
 
 
+def is_class_name(range: str) -> bool:
+    """ Returns true for e.g. Publication or _Release"""
+    return range[0].isupper() or (range.startswith("_") and range[1].isupper())
+
 def map_annotation_attributes_to_classes(annotations: dict, classes: dict) -> dict:
     """ Return map of attributes in annotations to their corresponding classes """
     annot_attr2class = {}
@@ -467,7 +479,7 @@ def map_annotation_attributes_to_classes(annotations: dict, classes: dict) -> di
         if annotations[annotation] is not None:
             # N.B. annotations[annotation] is None means its range is str (hence doesn't go into annot_attr2class)
             range = annotations[annotation]['range']
-            if range[0].isupper():
+            if is_class_name(range):
                 # The first letter is upper case - it must be a class name
                 if classes[range] is not None and 'attributes' in classes[range]:
                     for annot_attr in classes[range]['attributes']:
@@ -1089,27 +1101,52 @@ def inherit_attributes_slots(class_entry: dict, attributes: dict, classes: dict)
             if attr not in attributes:
                 attributes[attr] = parent_class_attributes[attr]
 
-def get_filled_mysql_table_template(clazz: str, classes: dict, slots: dict) -> str:
-    """Generate mysql representation of clazz, by filling the table mysql template"""
-    ret = None
-    lines = ["`DB_ID` int unsigned NOT NULL DEFAULT 0,"]
-
-    class_entry = classes[clazz]
-    fh = os.path.join("mysql_templates", "gk_table.sql")
+def get_filled_mysql_table_template_for_multivalued_attr(clazz: str, attr: str, range: range) -> str:
+    if is_class_name(range):
+        # The multivalued attribute's value is an instance
+        template_file_name = "gk_class2instance_attr_table.sql"
+    else:
+        # The multivalued attribute's value is a primitive
+        template_file_name = "gk_class2non_instance_attr_table.sql"
+    fh = os.path.join("mysql_templates", template_file_name)
     with open(fh, 'r') as mysql_table_template:
         ret = mysql_table_template.read()
-        ret = ret.replace("@TABLE_NAME@", clazz)
+        ret = ret.replace("@CLAZZ@", clazz)
+        ret = ret.replace("@ATTRIBUTE@", attr)
+        return ret
+
+# The multivalued attribute's value is a primitive
+
+def get_filled_mysql_table_templates(clazz: str, classes: dict, slots: dict) -> list:
+    """Generate mysql representation of clazz, by filling the table mysql template.
+       The method returns a list of string table entries, one of which corresponds to clazz
+       and the remaining ones correspond to tables encoding multivalued (Instance or primitive) attributes
+    """
+    ret_tables = []
+    lines = []
+    class_entry = classes[clazz]
+    table_keys = []
+    fh = os.path.join("mysql_templates", "gk_table.sql")
+    with open(fh, 'r') as mysql_table_template:
+        ret_table = mysql_table_template.read()
+        ret_table = ret_table.replace("@TABLE_NAME@", clazz)
         attributes = get_attr_slot_entries(class_entry, slots)
         for attr in attributes:
+            if attr == "explanation":
+                # Don't output explanation attribute into mysql
+                continue
             # DEBUG: print(clazz, attr, attributes, attributes[attr])
             attr_entry = attributes[attr]
             if attr in attributes and attributes[attr] is not None:
-                # TODO: deal with multivalued here
                 if 'multivalued' in attr_entry and attr_entry['multivalued'] is True:
-                    None
-                    # TODO: output class_2_multivalued_primitive_attribute - ret needs to be become a list of class str's -
-                    # TODO clazz's str being the first, followed by any class_2_*'s str's
+                    if 'range' in attr_entry:
+                        range = attr_entry['range']
+                        if attr in REGULAR_TO_NONREGULAR_ATTR_NAME_FOR_MYSQL:
+                            # Switch to non-regular attribute name if that's what mysql is using
+                            attr = REGULAR_TO_NONREGULAR_ATTR_NAME_FOR_MYSQL[attr]
+                        ret_tables.append(get_filled_mysql_table_template_for_multivalued_attr(clazz, attr, range))
                 else:
+                    # attr is single-valued
                     # Get suffix: (NOT NULL or DEFAULT NULL)
                     if 'annotations' in attr_entry:
                         if 'constraint' in attr_entry['annotations'] and \
@@ -1119,27 +1156,46 @@ def get_filled_mysql_table_template(clazz: str, classes: dict, slots: dict) -> s
                             suffix = "DEFAULT NULL"
                     else:
                         suffix = "DEFAULT NULL"
-                    mysql_type = "TBC"
+                    additional_clazz_attribute = None
+                    if attr in REGULAR_TO_NONREGULAR_ATTR_NAME_FOR_MYSQL:
+                        # Switch to non-regular attribute name if that's what mysql is using
+                        attr = REGULAR_TO_NONREGULAR_ATTR_NAME_FOR_MYSQL[attr]
                     if 'range' in attr_entry:
                         range = attr_entry['range']
-                        if range in RANGE_TO_MYSQL_TYPE:
+                        if is_class_name(range):
+                            # The single-valued attribute's value is an Instance
+                            additional_clazz_attribute = \
+                                "{}`{}` {} {},".format(INDENT_1, "{}_class".format(attr), \
+                                                       CLAZZ_TO_ATTRIBUTE_TO_MYSQL_TYPE["default"], "DEFAULT NULL")
+                            table_keys.append("{}KEY `{}` (`{}`),".format(INDENT_1, attr, attr))
+                            mysql_type = RANGE_TO_MYSQL_TYPE["integer"]
+                        else:
                             mysql_type = RANGE_TO_MYSQL_TYPE[range]
-                        elif range[0].isupper():
-                            # attr refers to a class
-                            None
+                            # TODO: The action below is because in gq_current.sql many (or all??) non-instance
+                            # TODO: attributes are KEYs in table - confirm with Guanming
+                            if range == "string":
+                                table_keys.append("{}KEY `{}` (`{}`(10)),".format(INDENT_1, attr, attr))
+                            else:
+                                table_keys.append("{}KEY `{}` (`{}`),".format(INDENT_1, attr, attr))
                     else:
                         mysql_type = RANGE_TO_MYSQL_TYPE['string']
+                        table_keys.append("{}KEY `{}` (`{}`(10)),".format(INDENT_1, attr, attr))
                     lines.append("{}`{}` {} {},".format(INDENT_1, attr, mysql_type, suffix))
+                    if additional_clazz_attribute:
+                        lines.append(additional_clazz_attribute)
             else:
                 # e.g. name in DBInfo - a simple string with no annotations
                 range = "string"
                 suffix = "DEFAULT NULL"
                 mysql_type = RANGE_TO_MYSQL_TYPE[range]
                 lines.append("{}`{}` {} {},".format(INDENT_1, attr, mysql_type, suffix))
-        lines.append("{}PRIMARY KEY (`DB_ID`),".format(INDENT_1))
-        ret = ret.replace("@TABLE_CONTENT@", "\n".join(lines))
+        lines += table_keys
+        ret_table = ret_table.replace("@TABLE_CONTENT@", "\n".join(lines))
+        # Remove any empty lines
+        ret_table = "\n".join([s for s in ret_table.split("\n") if s])
+        ret_tables.append(ret_table)
 
-    return ret
+    return ret_tables
 
 def generate_graphql(clazz: str, classes: dict, slots: dict):
     """Generate grqphql representation of clazz"""
@@ -1258,7 +1314,7 @@ with open("schema.yaml", "r") as stream:
                 with open("schema.web.yaml", "w") as outf:
                     yaml.dump(aux, outf, default_flow_style=False)
             elif output_type == "mysql":
-                mysql_lines.append(get_filled_mysql_table_template(clazz, classes, slots))
+                mysql_lines += get_filled_mysql_table_templates(clazz, classes, slots)
 
         if output_type == "graphql":
             # Write generated graphql content to a file
@@ -1273,7 +1329,7 @@ with open("schema.yaml", "r") as stream:
             fh = os.path.join("mysql_templates", "gk_current.sql")
             with open(fh, 'r') as mysql_template:
                 mysql_content = mysql_template.read()
-                mysql_content = mysql_content.replace("@SCHEMA_CONTENT@", "\n".join(mysql_lines))
+                mysql_content = mysql_content.replace("@SCHEMA_CONTENT@", "\n\n".join(mysql_lines))
                 # Write generated mysql content to a file
                 fp = open(os.path.join(OUTPUT_DIR, "gk_current.sql"), 'w')
                 fp.write(mysql_content)
