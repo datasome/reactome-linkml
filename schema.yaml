@@ -526,6 +526,7 @@ classes:
     slot_usage:
       name:
         multivalued: false
+        range: AnnotationTextType
         annotations:
           constraint: NOMANUALEDIT
           category: all
@@ -536,6 +537,7 @@ classes:
           category: all
     attributes:
       class:
+        range: AnnotationTextType
         annotations:
           constraint: NOMANUALEDIT
       deletedInstanceDB_ID:
@@ -1393,6 +1395,7 @@ classes:
       node: true
     attributes:
       comment:
+        range: AnnotationTextType
         annotations:
           constraint: OPTIONAL
           addedField: false
@@ -1483,7 +1486,7 @@ classes:
           constraint: OPTIONAL
           addedField: false
       hasEHLD:
-        range: boolean
+        range: AnnotationTextType
         ifabsent: false
         annotations:
           constraint: OPTIONAL
@@ -1506,6 +1509,8 @@ classes:
         annotations:
           constraint: OPTIONAL
           type: "normalPathway"
+      lastUpdatedDate:
+        range: AnnotationTextType
 
   #### PathwayDiagram ####
   PathwayDiagram:
@@ -1731,6 +1736,7 @@ classes:
       suppress_warnings: "unused"
     attributes:
       label:
+        range: AnnotationTextType
         annotations:
           constraint: REQUIRED
           addedField: false
@@ -1931,6 +1937,7 @@ classes:
           constraint: MANDATORY
           addedField: false
       resourceIdentifier:
+        range: AnnotationTextType
         annotations:
           constraint: OPTIONAL
           addedField: false
@@ -2115,21 +2122,25 @@ classes:
       node: true
     attributes:
       abbreviation:
+        range: AnnotationTextType
         annotations:
           constraint: OPTIONAL
           addedField: false
       approvalSource:
         multivalued: true
+        range: AnnotationTextType
         annotations:
           constraint: OPTIONAL
           addedField: false
       activeDrugIds:
         multivalued: true
+        range: AnnotationTextType
         annotations:
           constraint: OPTIONAL
           addedField: false
       proDrugIds:
         multivalued: true
+        range: AnnotationTextType
         annotations:
           addedField: false
       approved:
@@ -2143,10 +2154,12 @@ classes:
           constraint: OPTIONAL
           addedField: false
       inn:
+        range: AnnotationTextType
         annotations:
           constraint: REQUIRED
           addedField: false
       type:
+        range: AnnotationTextType
         annotations:
           constraint: REQUIRED
           addedField: false
@@ -2317,6 +2330,7 @@ classes:
       suppress_warnings: "unused"
     attributes:
       abbreviation:
+        range: AnnotationTextType
         annotations:
           constraint: MANDATORY
           addedField: false
@@ -2355,6 +2369,11 @@ classes:
     slots:
       - identifier
       - identifierVersion
+    slot_usage:
+      identifier:
+        range: AnnotationTextType
+      identifierVersion:
+        range: AnnotationTextType
     attributes:
       historyStatus:
         multivalued: true
@@ -2446,6 +2465,7 @@ classes:
     attributes:
       action:
         multivalued: true
+        range: AnnotationTextType
         annotations:
           constraint: NOMANUALEDIT
           addedField: false
@@ -2478,6 +2498,7 @@ classes:
   #### Annotations classes - start ####
   AnnotationBytesType:
   AnnotationLongType:
+  AnnotationTextType:
   Annotations:
     attributes:
       abstract:

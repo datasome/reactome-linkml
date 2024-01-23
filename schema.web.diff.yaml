@@ -529,8 +529,11 @@ classes:
   #### Pathway ####
   Pathway:
     annotations:
+        removed_attributes: "lastUpdatedDate"
         removed_slots: "authored, compartment, edited, goBiologicalProcess"
     attributes:
+      hasEHLD:
+        range: boolean
       hasDiagram:
         range: boolean
         annotations:
