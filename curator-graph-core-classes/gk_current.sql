@@ -551,7 +551,7 @@ CREATE TABLE `DatabaseObject` (
     `modified_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
     `stableIdentifier` int unsigned DEFAULT NULL,
     `stableIdentifier_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-    `className` mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+    `_class` mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
     `DB_ID` int unsigned DEFAULT NULL,
     `DB_ID_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
     KEY `isLoaded` (`isLoaded`),
@@ -561,7 +561,7 @@ CREATE TABLE `DatabaseObject` (
     KEY `created` (`created`),
     KEY `modified` (`modified`),
     KEY `stableIdentifier` (`stableIdentifier`),
-    KEY `className` (`className`(10)),
+    KEY `_class` (`_class`(10)),
     KEY `DB_ID` (`DB_ID`),
     PRIMARY KEY (`DB_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
@@ -689,15 +689,15 @@ DROP TABLE IF EXISTS `_DeletedInstance`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `_DeletedInstance` (
     `DB_ID` int unsigned NOT NULL DEFAULT '0',
+    `class` mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
     `deletedInstanceDB_ID` int unsigned DEFAULT NULL,
     `deletedInstanceDB_ID_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
     `deletedStableIdentifier` int unsigned DEFAULT NULL,
     `deletedStableIdentifier_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-    `className` mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
     `name` mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+    KEY `class` (`class`(10)),
     KEY `deletedInstanceDB_ID` (`deletedInstanceDB_ID`),
     KEY `deletedStableIdentifier` (`deletedStableIdentifier`),
-    KEY `className` (`className`(10)),
     KEY `name` (`name`(10)),
     PRIMARY KEY (`DB_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
@@ -914,11 +914,9 @@ DROP TABLE IF EXISTS `EntitySet`;
 CREATE TABLE `EntitySet` (
     `DB_ID` int unsigned NOT NULL DEFAULT '0',
     `isOrdered` enum('TRUE','FALSE') CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-    `className` mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
     `compartment` int unsigned NOT NULL,
     `compartment_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
     KEY `isOrdered` (`isOrdered`),
-    KEY `className` (`className`(10)),
     KEY `compartment` (`compartment`),
     PRIMARY KEY (`DB_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
@@ -1482,10 +1480,8 @@ DROP TABLE IF EXISTS `GenomeEncodedEntity`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `GenomeEncodedEntity` (
     `DB_ID` int unsigned NOT NULL DEFAULT '0',
-    `className` mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
     `species` int unsigned NOT NULL,
     `species_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-    KEY `className` (`className`(10)),
     KEY `species` (`species`),
     PRIMARY KEY (`DB_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
@@ -2848,12 +2844,10 @@ CREATE TABLE `ReactionlikeEvent` (
     `catalystActivityReference_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
     `normalReaction` int unsigned DEFAULT NULL,
     `normalReaction_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-    `className` mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
     `isChimeric` enum('TRUE','FALSE') CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
     KEY `systematicName` (`systematicName`(10)),
     KEY `catalystActivityReference` (`catalystActivityReference`),
     KEY `normalReaction` (`normalReaction`),
-    KEY `className` (`className`(10)),
     KEY `isChimeric` (`isChimeric`),
     PRIMARY KEY (`DB_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
@@ -3304,11 +3298,9 @@ CREATE TABLE `SimpleEntity` (
     `DB_ID` int unsigned NOT NULL DEFAULT '0',
     `referenceEntity` int unsigned NOT NULL,
     `referenceEntity_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-    `className` mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
     `species` int unsigned DEFAULT NULL,
     `species_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
     KEY `referenceEntity` (`referenceEntity`),
-    KEY `className` (`className`(10)),
     KEY `species` (`species`),
     PRIMARY KEY (`DB_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;

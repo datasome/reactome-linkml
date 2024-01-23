@@ -104,16 +104,21 @@ classes:
     description: "Not available"
     annotations:
       removed_annotations: "constructor_parameter, property"
-      removed_slots: "DB_ID"
+      removed_slots: "DB_ID, _class"
       removed_attributes: "_displayName, _timestamp, stableIdentifier"
       constructor_parameter: "dbId"
       property: "dbId"
     slots:
       - dbId
+      - className
     slot_usage:
       dbId:
         annotations:
           protected: true
+      className:
+        ifabsent: "getClass().getSimpleName()"
+        annotations:
+          override: false
     attributes:
       displayName:
       stId:
@@ -136,23 +141,89 @@ classes:
   #### _Deleted ####
   _Deleted:
     annotations:
-      removed_class: true
+      renamed_to: Deleted
+
+  #### Deleted ####
+  Deleted:
+    description: "Deleted"
+    is_a: MetaDatabaseObject
+    annotations:
+      node: true
+      removed_attributes: "deletedInstanceDB_ID"
+    slots:
+      - explanation
+    attributes:
+      deletedInstanceDbId:
+        range: integer
+        multivalued: true
+        deprecated: true
+        annotations:
+          originName: deletedInstanceDB_ID
+      deletedInstance:
+        multivalued: true
+        range: DeletedInstance
+        annotations:
+          type: "deletedInstance"
+      replacementInstances:
+        multivalued: true
+        range: Deleteable
+        annotations:
+          type: "replacementInstances"
 
   #### DeletedControlledVocabulary ####
   DeletedControlledVocabulary:
     annotations:
-      removed_class: true
+      node: true
+    slots:
+      - explanation
 
   #### _DeletedInstance ####
   _DeletedInstance:
     annotations:
-      removed_class: true
+      renamed_to: DeletedInstance
+
+  #### DeletedInstance ####
+  DeletedInstance:
+    description: "DeletedInstance"
+    is_a: MetaDatabaseObject
+    annotations:
+      node: true
+      removed_attributes: "class, deletedInstanceDB_ID, deletedStableIdentifier"
+    slots:
+      - explanation
+    attributes:
+      clazz:
+        annotations:
+          originName: class
+      deletedInstanceDbId:
+        range: integer
+        annotations:
+          originName: deletedInstanceDB_ID
+      deletedStId:
+        annotations:
+          addedField: true
 
   #### Depolymerisation ####
   Depolymerisation:
     is_a: ReactionLikeEvent
     annotations:
       removed_slots: "authored, edited, goBiologicalProcess, literatureReference"
+
+  #### DirectedInteraction ####
+  DirectedInteraction:
+    is_a: Interaction
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    attributes:
+      source:
+        range: ReferenceEntity
+        annotations:
+          type: "source"
+      target:
+        range: ReferenceEntity
+        annotations:
+          type: "target"
 
   #### Drug ####
   Drug:
@@ -175,6 +246,11 @@ classes:
   EntitySet:
     annotations:
       removed_slots: "compartment"
+    slots:
+      - className
+    slot_usage:
+      className:
+        ifabsent: string(Set)
 
   #### EntityWithAccessionedSequence ####
   EntityWithAccessionedSequence:
@@ -261,6 +337,11 @@ classes:
   GenomeEncodedEntity:
     annotations:
       removed_slots: "compartment"
+    slots:
+      - className
+    slot_usage:
+      className:
+        ifabsent: string(Genes and Transcripts)
 
   #### GO_BiologicalProcess ####
   GO_BiologicalProcess:
@@ -671,6 +752,11 @@ classes:
   ReactionLikeEvent:
     annotations:
       removed_slots: "compartment"
+    slots:
+      - className
+    slot_usage:
+      className:
+        ifabsent: string(Reaction)
     attributes:
       input:
         annotations:
@@ -830,6 +916,11 @@ classes:
     is_a: PhysicalEntity
     annotations:
       removed_slots: "compartment"
+    slots:
+      - className
+    slot_usage:
+      className:
+        ifabsent: string(Chemical Compound)
     attributes:
       referenceType:
         annotations:
@@ -878,7 +969,27 @@ classes:
   #### _UpdateTracker ####
   _UpdateTracker:
     annotations:
-      removed_class: true
+      renamed_to: UpdateTracker
+
+  #### UpdateTracker ####
+  UpdateTracker:
+    description: "updateTracker"
+    is_a: MetaDatabaseObject
+    annotations:
+      node: true
+      removed_attributes: "_release"
+    attributes:
+      release:
+        range: Release
+        annotations:
+          originName: "_release"
+          type: "release"
+      updatedInstance:
+        range: Trackable
+        annotations:
+          allowed:
+    slots:
+      - explanation
 
   #### UndirectedInteraction ####
   UndirectedInteraction:
@@ -905,6 +1016,11 @@ slots:
     range: HasCompartment
     annotations:
       sorted_set: true
+  className:
+    annotations:
+      getter_only: true
+      reactome_schema_ignore: true
+      override: true
   dbId:
     range: AnnotationLongType
     annotations:
