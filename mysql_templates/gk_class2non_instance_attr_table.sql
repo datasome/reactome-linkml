@@ -4,8 +4,8 @@ DROP TABLE IF EXISTS `"@CLAZZ@_2_@ATTRIBUTE@`;
 CREATE TABLE `@CLAZZ@_2_@ATTRIBUTE@` (
   `DB_ID` int unsigned DEFAULT NULL,
   `@ATTRIBUTE@_rank` int unsigned DEFAULT NULL,
-  `@ATTRIBUTE@` @MYSQL_TYPE@ CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci,
+  `@ATTRIBUTE@` @MYSQL_TYPE@,
   KEY `DB_ID` (`DB_ID`),
-  KEY `@ATTRIBUTE@` (`@ATTRIBUTE@`(10))
+  KEY `@ATTRIBUTE@` (`@ATTRIBUTE@`@DISPLAY_WIDTH@)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;

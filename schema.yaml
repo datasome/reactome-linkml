@@ -413,20 +413,6 @@ classes:
         annotations:
           override: false
     attributes:
-      isLoaded:
-        range: boolean
-        ifabsent: false
-        annotations:
-          reactome_transient: true
-          transient: true
-          public: true
-      preventLazyLoading:
-        range: boolean
-        ifabsent: false
-        annotations:
-          reactome_transient: true
-          transient: true
-          public: true
       _displayName:
         annotations:
           constraint: NOMANUALEDIT
@@ -452,24 +438,6 @@ classes:
         annotations:
           constraint: NOMANUALEDIT
           type: "stableIdentifier"
-
-  #### DBInfo ####
-  DBInfo:
-    annotations:
-      node: true
-    slots:
-      - id
-    slot_usage:
-      id:
-        annotations:
-          generated_value: false
-          json_ignore: true
-    attributes:
-      name:
-      version:
-        range: integer
-      checksum:
-        range: AnnotationLongType
 
   #### DefinedSet ####
   DefinedSet:
@@ -512,6 +480,12 @@ classes:
         annotations:
           constraint: NOMANUALEDIT
           type: "replacementInstances"
+      replacementInstanceDB_IDs:
+        multivalued: true
+        range: AnnotationLongType
+        annotations:
+          constraint: NOMANUALEDIT
+          type: "replacementInstanceDB_IDs"
 
   #### DeletedControlledVocabulary ####
   DeletedControlledVocabulary:
@@ -768,8 +742,9 @@ classes:
           constraint: OPTIONAL
           addedField: false
       releaseDate:
+        range: AnnotationDateType
         annotations:
-          constraint: MANDATORY
+          constraint: OPTIONAL
           addedField: false
       releaseStatus:
         annotations:
@@ -812,6 +787,13 @@ classes:
         annotations:
           constraint: REQUIRED
           type: "reviewed"
+          direction: INCOMING
+      internalReviewed:
+        multivalued: true
+        range: InstanceEdit
+        annotations:
+          constraint: REQUIRED
+          type: "internalReviewed"
           direction: INCOMING
       negativePrecedingEvent:
         multivalued: true
@@ -1320,6 +1302,7 @@ classes:
       suppress_warnings: "unused"
     attributes:
       journal:
+        range: AnnotationTextType
         annotations:
           constraint: REQUIRED
           addedField: false
@@ -1351,11 +1334,13 @@ classes:
       node: true
     attributes:
       marker:
-        multivalued: true
         range: EntityWithAccessionedSequence
         annotations:
           constraint: MANDATORY
           type: "marker"
+      cell:
+        range: Cell
+        multivalued: true
 
   #### ModifiedNucleotide ####
   ModifiedNucleotide:
@@ -1482,6 +1467,7 @@ classes:
         multivalued: true
     attributes:
       doi:
+        range: AnnotationTextType
         annotations:
           constraint: OPTIONAL
           addedField: false
@@ -1527,6 +1513,7 @@ classes:
           constraint: REQUIRED
           addedField: false
       storedATXML:
+        range: AnnotationLongBlobType
         annotations:
           constraint: REQUIRED
           addedField: false
@@ -2096,7 +2083,6 @@ classes:
           constraint: OPTIONAL
           addedField: false
       isSequenceChanged:
-        range: boolean
         annotations:
           constraint: OPTIONAL
           addedField: false
@@ -2138,7 +2124,7 @@ classes:
         annotations:
           constraint: OPTIONAL
           addedField: false
-      proDrugIds:
+      prodrugIds:
         multivalued: true
         range: AnnotationTextType
         annotations:
@@ -2430,6 +2416,7 @@ classes:
           deprecated: true
           constraint: MANDATORY
       name:
+        range: AnnotationTextType
         annotations:
           category: any
     attributes:
@@ -2499,6 +2486,8 @@ classes:
   AnnotationBytesType:
   AnnotationLongType:
   AnnotationTextType:
+  AnnotationDateType:
+  AnnotationLongBlobType:
   Annotations:
     attributes:
       abstract:

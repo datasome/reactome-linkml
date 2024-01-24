@@ -129,14 +129,31 @@ classes:
         annotations:
           json_ignore: true
           transient: true
+      isLoaded:
+        range: boolean
+        ifabsent: false
+        annotations:
+          reactome_transient: true
+          transient: true
+          public: true
+      preventLazyLoading:
+        range: boolean
+        ifabsent: false
+        annotations:
+          reactome_transient: true
+          transient: true
+          public: true
 
   #### DBInfo ####
   DBInfo:
     is_a: Release
     annotations:
       node: true
-      removed_slots: "id"
-      removed_attributes: "version"
+    attributes:
+      name:
+      checksum:
+        range: AnnotationLongType
+
 
   #### _Deleted ####
   _Deleted:
@@ -149,7 +166,7 @@ classes:
     is_a: MetaDatabaseObject
     annotations:
       node: true
-      removed_attributes: "deletedInstanceDB_ID"
+      removed_attributes: "deletedInstanceDB_ID, replacementInstanceDB_IDs"
     slots:
       - explanation
     attributes:
@@ -267,7 +284,7 @@ classes:
   #### Event ####
   Event:
     annotations:
-      removed_attributes: "_doRelease"
+      removed_attributes: "_doRelease, internalReviewed"
       implements: "Trackable, Deletable"
     slots:
       - compartment
@@ -483,9 +500,8 @@ classes:
 
   #### MarkerReference ####
   MarkerReference:
-    attributes:
-      marker:
-        multivalued: false
+    annotations:
+      removed_attributes: "cell"
 
   #### MetaDatabaseObject ####
   MetaDatabaseObject:
@@ -811,11 +827,15 @@ classes:
   ReferenceSequence:
     annotations:
       removed_slots: "otherIdentifier"
+    attributes:
+      isSequenceChanged:
+        range: boolean
+
 
   #### ReferenceTherapeutic ####
   ReferenceTherapeutic:
     annotations:
-      removed_attributes: "activeDrugIds, proDrugIds, withdrawn"
+      removed_attributes: "activeDrugIds, prodrugIds, withdrawn"
 
   #### Regulation ####
   Regulation:

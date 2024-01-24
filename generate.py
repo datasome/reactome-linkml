@@ -88,7 +88,9 @@ RANGE_TO_MYSQL_TYPE = {
     "string" : "mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci",
     "integer" : "int unsigned",
     "AnnotationLongType" : "int unsigned",
+    "AnnotationDateType" : "date",
     "AnnotationTextType" : "text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci",
+    "AnnotationLongBlobType" : "longblob",
     "boolean" : "enum('TRUE','FALSE') CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci"
 }
 
@@ -471,7 +473,9 @@ def lower_case(attr: str) -> str:
 
 def is_class_name(range: str) -> bool:
     """ Returns true for e.g. Publication or _Release"""
-    return not range.startswith("Annotation") and (range[0].isupper() or (range.startswith("_") and range[1].isupper()))
+    return range is not None and \
+           not range.startswith("Annotation") and \
+           (range[0].isupper() or (range.startswith("_") and range[1].isupper()))
 
 def map_annotation_attributes_to_classes(annotations: dict, classes: dict) -> dict:
     """ Return map of attributes in annotations to their corresponding classes """
@@ -684,9 +688,11 @@ def get_java_type(attr_entry: dict, class_entry: dict, annotations_imports: set)
             java_type = "Long"
         elif attr_entry['range'] == "AnnotationBytesType":
             java_type = "byte[]"
-        elif attr_entry['range'] == "AnnotationTextType":
-            # AnnotationTextType is needed for generation of SQL Schema, but for java classes
-            # both "AnnotationTextType" and "string" translate to java_type = "String"
+        elif attr_entry['range'] == "AnnotationTextType" \
+                or attr_entry['range'] == "AnnotationDateType" \
+                or attr_entry['range'] == "AnnotationLongBlobType":
+            # The above annotation types are needed for generation of SQL Schema,
+            # but for java classes all translate to java_type = "String"
             java_type = "String"
         else:
             java_type = capitalize(attr_entry['range'])
@@ -1121,9 +1127,17 @@ def get_filled_mysql_table_template_for_multivalued_attr(clazz: str, attr: str, 
         ret = ret.replace("@ATTRIBUTE@", attr)
         # N.B. The following applies to gk_class2non_instance_attr_table.sql template only
         if range == "AnnotationTextType":
-            ret = ret.replace("@MYSQL_TYPE@", "text")
+            ret = ret.replace("@MYSQL_TYPE@", "text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci")
+            ret = ret.replace("@DISPLAY_WIDTH@", "(10)")
+        elif range == "AnnotationLongType":
+            ret = ret.replace("@MYSQL_TYPE@", "int DEFAULT NULL")
+            ret = ret.replace("@DISPLAY_WIDTH@", "")
+        elif range == "AnnotationDateType":
+            ret = ret.replace("@MYSQL_TYPE@", "date DEFAULT NULL")
+            ret = ret.replace("@DISPLAY_WIDTH@", "")
         else:
-            ret = ret.replace("@MYSQL_TYPE@", "mediumtext")
+            ret = ret.replace("@MYSQL_TYPE@", "mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci")
+            ret = ret.replace("@DISPLAY_WIDTH@", "(10)")
         return ret
 
 # The multivalued attribute's value is a primitive
@@ -1150,12 +1164,13 @@ def get_filled_mysql_table_templates(clazz: str, classes: dict, slots: dict) -> 
             attr_entry = attributes[attr]
             if attr in attributes and attributes[attr] is not None:
                 if 'multivalued' in attr_entry and attr_entry['multivalued'] is True:
+                    range = None
                     if 'range' in attr_entry:
                         range = attr_entry['range']
                         if attr in REGULAR_TO_NONREGULAR_ATTR_NAME_FOR_MYSQL:
                             # Switch to non-regular attribute name if that's what mysql is using
                             attr = REGULAR_TO_NONREGULAR_ATTR_NAME_FOR_MYSQL[attr]
-                        ret_tables.append(get_filled_mysql_table_template_for_multivalued_attr(clazz, attr, range))
+                    ret_tables.append(get_filled_mysql_table_template_for_multivalued_attr(clazz, attr, range))
                 else:
                     # attr is single-valued
                     # Get suffix: (NOT NULL or DEFAULT NULL)
@@ -1184,10 +1199,11 @@ def get_filled_mysql_table_templates(clazz: str, classes: dict, slots: dict) -> 
                             mysql_type = RANGE_TO_MYSQL_TYPE[range]
                             # TODO: The action below is because in gq_current.sql many (or all??) non-instance
                             # TODO: attributes are KEYs in table - confirm with Guanming
-                            if range == "string" or range == "AnnotationTextType":
-                                table_keys.append("{}KEY `{}` (`{}`(10)),".format(INDENT_1, attr, attr))
-                            else:
-                                table_keys.append("{}KEY `{}` (`{}`),".format(INDENT_1, attr, attr))
+                            if range != "AnnotationLongBlobType":
+                                if range == "string" or range == "AnnotationTextType":
+                                    table_keys.append("{}KEY `{}` (`{}`(10)),".format(INDENT_1, attr, attr))
+                                else:
+                                    table_keys.append("{}KEY `{}` (`{}`),".format(INDENT_1, attr, attr))
                     else:
                         # No 'range' in attr_entry
                         if attr in ['_timestamp', 'dateTime']:
