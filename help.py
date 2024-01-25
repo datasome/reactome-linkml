@@ -21,6 +21,11 @@ help_content['./compare_java.py'] = [
         "Compare generated classes to those in graph-core repo")
 ]
 
+help_content['./compare_mysql.py'] = [
+    ("./compare_sql.py gk_current.create_schema.sql curator-graph-core-classes/gk_current.sql",
+        "Compare generated SQL schema to that in gk_current.create_schema.sql"),
+]
+
 def print_help(script_name):
     print("\nThe following functionality is available:")
     for key in help_content:

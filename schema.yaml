@@ -26,7 +26,7 @@ classes:
       referenceSequence:
         range: ReferenceSequence
         annotations:
-          constraint: MANDATORY
+          constraint: REQUIRED
           category: all
           type: "referenceSequence"
 
@@ -99,7 +99,7 @@ classes:
       year:
         range: integer
         annotations:
-          constraint: MANDATORY
+          constraint: REQUIRED
           addedField: false
       chapterAuthors:
         multivalued: true
@@ -165,7 +165,7 @@ classes:
       physicalEntity:
         range: PhysicalEntity
         annotations:
-          constraint: MANDATORY
+          constraint: REQUIRED
           category: all
           type: "physicalEntity"
 
@@ -180,7 +180,7 @@ classes:
       catalystActivity:
         multivalued: false
         annotations:
-          constraint: MANDATORY
+          constraint: OPTIONAL
 
   #### Cell ####
   Cell:
@@ -194,9 +194,6 @@ classes:
     slot_usage:
       species:
         range: Taxon
-        annotations:
-          constraint: MANDATORY
-      tissue:
         annotations:
           constraint: MANDATORY
     attributes:
@@ -292,9 +289,6 @@ classes:
       - isChimeric
       - relatedSpecies
       - species
-    slot_usage:
-      compartment:
-        multivalued: false
     attributes:
       hasComponent:
         multivalued: true
@@ -360,6 +354,7 @@ classes:
           constraint: OPTIONAL
     attributes:
       secondCoordinate:
+        multivalued: true
         range: integer
         annotations:
           constraint: REQUIRED
@@ -419,7 +414,7 @@ classes:
           addedField: false
       _timestamp:
         annotations:
-          constraint: NOMANUALEDIT
+          constraint: MANDATORY
           addedField: false
       created:
         range: InstanceEdit
@@ -428,6 +423,7 @@ classes:
           type: "created"
           direction: INCOMING
       modified:
+        multivalued: true
         range: InstanceEdit
         annotations:
           constraint: NOMANUALEDIT
@@ -438,6 +434,27 @@ classes:
         annotations:
           constraint: NOMANUALEDIT
           type: "stableIdentifier"
+
+
+  #### DataModel ####
+  DataModel:
+    attributes:
+      thing:
+        range: AnnotationTextType
+        annotations:
+          constraint: MANDATORY
+      thing_class:
+        range: AnnotationThingClassEnum
+      property_name:
+        range: AnnotationTextType
+        annotations:
+          constraint: MANDATORY
+      property_value:
+        range: AnnotationTextType
+      property_value_type:
+        range: AnnotationPropertyValueTypeEnum
+      property_value_rank:
+        range: integer
 
   #### DefinedSet ####
   DefinedSet:
@@ -612,7 +629,7 @@ classes:
       diseaseEntity:
         range: PhysicalEntity
         annotations:
-          constraint: MANDATORY
+          constraint: REQUIRED
           category: all
           type: "diseaseEntity"
       normalEntity:
@@ -635,9 +652,6 @@ classes:
       - explanation
       - relatedSpecies
       - species
-    slot_usage:
-      compartment:
-        multivalued: false
     attributes:
       isOrdered:
         range: boolean
@@ -665,16 +679,9 @@ classes:
       - explanation
       - name
       - referenceEntity
-      - species
     slot_usage:
       name:
         annotations:
-          category: none
-      species:
-        range: Taxon
-        multivalued: false
-        annotations:
-          constraint: MANDATORY
           category: none
     attributes:
       endCoordinate:
@@ -1819,7 +1826,7 @@ classes:
           constraint: REQUIRED
       compartment:
         annotations:
-          constraint: OPTIONAL
+          constraint: REQUIRED
     attributes:
       systematicName:
         annotations:
@@ -2488,6 +2495,8 @@ classes:
   AnnotationTextType:
   AnnotationDateType:
   AnnotationLongBlobType:
+  AnnotationThingClassEnum:
+  AnnotationPropertyValueTypeEnum:
   Annotations:
     attributes:
       abstract:
@@ -2682,7 +2691,7 @@ slots:
     range: Compartment
     multivalued: true
     annotations:
-      constraint: MANDATORY
+      constraint: REQUIRED
       type: "compartment"
   DB_ID:
     range: AnnotationLongType
@@ -2786,12 +2795,12 @@ slots:
   referenceDatabase:
     range: ReferenceDatabase
     annotations:
-      constraint: MANDATORY
+      constraint: REQUIRED
       type: "referenceDatabase"
   referenceEntity:
     range: ReferenceSequence
     annotations:
-      constraint: MANDATORY
+      constraint: REQUIRED
       category: all
       type: "referenceEntity"
   relatedSpecies:

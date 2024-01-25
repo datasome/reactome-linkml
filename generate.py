@@ -89,6 +89,10 @@ RANGE_TO_MYSQL_TYPE = {
     "integer" : "int unsigned",
     "AnnotationLongType" : "int unsigned",
     "AnnotationDateType" : "date",
+    "AnnotationThingClassEnum": "enum('SchemaClass','SchemaClassAttribute','Schema') "
+                                "CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci",
+    "AnnotationPropertyValueTypeEnum" : "enum('INTEGER','SYMBOL','STRING','INSTANCE','SchemaClass','SchemaClassAttribute') "
+                                        "CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci",
     "AnnotationTextType" : "text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci",
     "AnnotationLongBlobType" : "longblob",
     "boolean" : "enum('TRUE','FALSE') CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci"
@@ -1129,11 +1133,24 @@ def get_filled_mysql_table_template_for_multivalued_attr(clazz: str, attr: str, 
         if range == "AnnotationTextType":
             ret = ret.replace("@MYSQL_TYPE@", "text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci")
             ret = ret.replace("@DISPLAY_WIDTH@", "(10)")
-        elif range == "AnnotationLongType":
+        elif range == "AnnotationLongType" or range == "integer":
             ret = ret.replace("@MYSQL_TYPE@", "int DEFAULT NULL")
             ret = ret.replace("@DISPLAY_WIDTH@", "")
         elif range == "AnnotationDateType":
             ret = ret.replace("@MYSQL_TYPE@", "date DEFAULT NULL")
+            ret = ret.replace("@DISPLAY_WIDTH@", "")
+        elif range == "AnnotationThingClassEnum":
+            ret = ret.replace("@MYSQL_TYPE@",
+                              "enum('SchemaClass','SchemaClassAttribute','Schema') "
+                              "CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci")
+            ret = ret.replace("@DISPLAY_WIDTH@", "")
+        elif range == "AnnotationPropertyValueTypeEnum":
+            ret = ret.replace("@MYSQL_TYPE@",
+                              "enum('INTEGER','SYMBOL','STRING','INSTANCE','SchemaClass','SchemaClassAttribute') "
+                              "CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci")
+            ret = ret.replace("@DISPLAY_WIDTH@", "")
+        elif range == "boolean":
+            ret = ret.replace("@MYSQL_TYPE@", "enum('TRUE','FALSE')")
             ret = ret.replace("@DISPLAY_WIDTH@", "")
         else:
             ret = ret.replace("@MYSQL_TYPE@", "mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci")
@@ -1149,6 +1166,8 @@ def get_filled_mysql_table_templates(clazz: str, classes: dict, slots: dict) -> 
     """
     ret_tables = []
     lines = []
+    if clazz != "DataModel":
+        lines.append("{}`DB_ID` int unsigned NOT NULL DEFAULT '0',".format(INDENT_1))
     class_entry = classes[clazz]
     table_keys = []
     fh = os.path.join("mysql_templates", "gk_table.sql")
@@ -1177,11 +1196,11 @@ def get_filled_mysql_table_templates(clazz: str, classes: dict, slots: dict) -> 
                     if 'annotations' in attr_entry:
                         if 'constraint' in attr_entry['annotations'] and \
                             attr_entry['annotations']['constraint'] == 'MANDATORY':
-                            suffix = "NOT NULL"
+                            suffix = " NOT NULL"
                         else:
-                            suffix = "DEFAULT NULL"
+                            suffix = " DEFAULT NULL"
                     else:
-                        suffix = "DEFAULT NULL"
+                        suffix = " DEFAULT NULL"
                     additional_clazz_attribute = None
                     if attr in REGULAR_TO_NONREGULAR_ATTR_NAME_FOR_MYSQL:
                         # Switch to non-regular attribute name if that's what mysql is using
@@ -1196,28 +1215,36 @@ def get_filled_mysql_table_templates(clazz: str, classes: dict, slots: dict) -> 
                             table_keys.append("{}KEY `{}` (`{}`),".format(INDENT_1, attr, attr))
                             mysql_type = RANGE_TO_MYSQL_TYPE["integer"]
                         else:
+                            # The single-valued attribute's value is primitive
                             mysql_type = RANGE_TO_MYSQL_TYPE[range]
                             # TODO: The action below is because in gq_current.sql many (or all??) non-instance
                             # TODO: attributes are KEYs in table - confirm with Guanming
-                            if range != "AnnotationLongBlobType":
-                                if range == "string" or range == "AnnotationTextType":
-                                    table_keys.append("{}KEY `{}` (`{}`(10)),".format(INDENT_1, attr, attr))
-                                else:
-                                    table_keys.append("{}KEY `{}` (`{}`),".format(INDENT_1, attr, attr))
+                            if clazz != "DataModel" and (clazz != "DatabaseObject" or attr != "DB_ID"):
+                                if range != "AnnotationLongBlobType":
+                                    if range == "string" or range == "AnnotationTextType":
+                                        table_keys.append("{}KEY `{}` (`{}`(10)),".format(INDENT_1, attr, attr))
+                                    else:
+                                        table_keys.append("{}KEY `{}` (`{}`),".format(INDENT_1, attr, attr))
                     else:
                         # No 'range' in attr_entry
                         if attr in ['_timestamp', 'dateTime']:
                             mysql_type = 'timestamp'
-                            table_keys.append("{}KEY `{}` (`{}`),".format(INDENT_1, attr, attr))
+                            suffix += " DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+                            if clazz != "DataModel":
+                                table_keys.append("{}KEY `{}` (`{}`),".format(INDENT_1, attr, attr))
                         else:
                             if attr == "_class":
                                 mysql_type = CLAZZ_TO_ATTRIBUTE_TO_MYSQL_TYPE["default"]
-                                table_keys.append("{}KEY `{}` (`{}`),".format(INDENT_1, attr, attr))
+                                if clazz != "DataModel":
+                                    table_keys.append("{}KEY `{}` (`{}`),".format(INDENT_1, attr, attr))
                             else:
                                 mysql_type = RANGE_TO_MYSQL_TYPE['string']
-                                table_keys.append("{}KEY `{}` (`{}`(10)),".format(INDENT_1, attr, attr))
+                                if clazz != "DataModel":
+                                    table_keys.append("{}KEY `{}` (`{}`(10)),".format(INDENT_1, attr, attr))
 
-                    lines.append("{}`{}` {} {},".format(INDENT_1, attr, mysql_type, suffix))
+                    if 'text' in mysql_type:
+                        suffix = ""
+                    lines.append("{}`{}` {}{},".format(INDENT_1, attr, mysql_type, suffix))
                     if additional_clazz_attribute:
                         lines.append(additional_clazz_attribute)
             else:
@@ -1225,8 +1252,10 @@ def get_filled_mysql_table_templates(clazz: str, classes: dict, slots: dict) -> 
                 range = "string"
                 suffix = "DEFAULT NULL"
                 mysql_type = RANGE_TO_MYSQL_TYPE[range]
-                lines.append("{}`{}` {} {},".format(INDENT_1, attr, mysql_type, suffix))
+                lines.append("{}`{}` {}{},".format(INDENT_1, attr, mysql_type, suffix))
         lines += table_keys
+        if clazz != "DataModel":
+            lines.append("{}PRIMARY KEY (`DB_ID`)".format(INDENT_1))
         ret_table = ret_table.replace("@TABLE_CONTENT@", "\n".join(lines))
         # Remove any empty lines
         ret_table = "\n".join([s for s in ret_table.split("\n") if s])
