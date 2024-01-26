@@ -126,19 +126,6 @@ CREATE TABLE `CandidateSet_2_hasCandidate` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
-DROP TABLE IF EXISTS `CandidateSet_2_hasMember`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `CandidateSet_2_hasMember` (
-  `DB_ID` int unsigned DEFAULT NULL,
-  `hasMember_rank` int unsigned DEFAULT NULL,
-  `hasMember` int unsigned DEFAULT NULL,
-  `hasMember_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  KEY `DB_ID` (`DB_ID`),
-  KEY `hasMember` (`hasMember`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
 --
 -- Table structure for table `CandidateSet`
 --
@@ -236,19 +223,6 @@ CREATE TABLE `Cell_2_proteinMarker` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
-DROP TABLE IF EXISTS `Cell_2_cellType`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Cell_2_cellType` (
-  `DB_ID` int unsigned DEFAULT NULL,
-  `cellType_rank` int unsigned DEFAULT NULL,
-  `cellType` int unsigned DEFAULT NULL,
-  `cellType_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  KEY `DB_ID` (`DB_ID`),
-  KEY `cellType` (`cellType`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
 DROP TABLE IF EXISTS `Cell_2_species`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -280,32 +254,6 @@ CREATE TABLE `Cell` (
     KEY `tissueLayer` (`tissueLayer`),
     KEY `tissue` (`tissue`),
     PRIMARY KEY (`DB_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-DROP TABLE IF EXISTS `CellDevelopmentStep_2_requiredInputComponent`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `CellDevelopmentStep_2_requiredInputComponent` (
-  `DB_ID` int unsigned DEFAULT NULL,
-  `requiredInputComponent_rank` int unsigned DEFAULT NULL,
-  `requiredInputComponent` int unsigned DEFAULT NULL,
-  `requiredInputComponent_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  KEY `DB_ID` (`DB_ID`),
-  KEY `requiredInputComponent` (`requiredInputComponent`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-DROP TABLE IF EXISTS `CellDevelopmentStep_2_catalystActivity`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `CellDevelopmentStep_2_catalystActivity` (
-  `DB_ID` int unsigned DEFAULT NULL,
-  `catalystActivity_rank` int unsigned DEFAULT NULL,
-  `catalystActivity` int unsigned DEFAULT NULL,
-  `catalystActivity_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  KEY `DB_ID` (`DB_ID`),
-  KEY `catalystActivity` (`catalystActivity`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -756,45 +704,6 @@ CREATE TABLE `_DeletedInstance` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
-DROP TABLE IF EXISTS `Depolymerisation_2_authored`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Depolymerisation_2_authored` (
-  `DB_ID` int unsigned DEFAULT NULL,
-  `authored_rank` int unsigned DEFAULT NULL,
-  `authored` int unsigned DEFAULT NULL,
-  `authored_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  KEY `DB_ID` (`DB_ID`),
-  KEY `authored` (`authored`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-DROP TABLE IF EXISTS `Depolymerisation_2_edited`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Depolymerisation_2_edited` (
-  `DB_ID` int unsigned DEFAULT NULL,
-  `edited_rank` int unsigned DEFAULT NULL,
-  `edited` int unsigned DEFAULT NULL,
-  `edited_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  KEY `DB_ID` (`DB_ID`),
-  KEY `edited` (`edited`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-DROP TABLE IF EXISTS `Depolymerisation_2_literatureReference`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Depolymerisation_2_literatureReference` (
-  `DB_ID` int unsigned DEFAULT NULL,
-  `literatureReference_rank` int unsigned DEFAULT NULL,
-  `literatureReference` int unsigned DEFAULT NULL,
-  `literatureReference_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  KEY `DB_ID` (`DB_ID`),
-  KEY `literatureReference` (`literatureReference`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
 --
 -- Table structure for table `Depolymerisation`
 --
@@ -803,9 +712,6 @@ DROP TABLE IF EXISTS `Depolymerisation`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Depolymerisation` (
     `DB_ID` int unsigned NOT NULL DEFAULT '0',
-    `goBiologicalProcess` int unsigned DEFAULT NULL,
-    `goBiologicalProcess_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-    KEY `goBiologicalProcess` (`goBiologicalProcess`),
     PRIMARY KEY (`DB_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -998,18 +904,6 @@ CREATE TABLE `EntityWithAccessionedSequence_2_hasModifiedResidue` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
-DROP TABLE IF EXISTS `"EntityWithAccessionedSequence_2_name`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `EntityWithAccessionedSequence_2_name` (
-  `DB_ID` int unsigned DEFAULT NULL,
-  `name_rank` int unsigned DEFAULT NULL,
-  `name` mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci,
-  KEY `DB_ID` (`DB_ID`),
-  KEY `name` (`name`(10))
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
 --
 -- Table structure for table `EntityWithAccessionedSequence`
 --
@@ -1117,6 +1011,19 @@ CREATE TABLE `Event_2_negativePrecedingEvent` (
   `negativePrecedingEvent_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
   KEY `DB_ID` (`DB_ID`),
   KEY `negativePrecedingEvent` (`negativePrecedingEvent`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+DROP TABLE IF EXISTS `Event_2_structureModified`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Event_2_structureModified` (
+  `DB_ID` int unsigned DEFAULT NULL,
+  `structureModified_rank` int unsigned DEFAULT NULL,
+  `structureModified` int unsigned DEFAULT NULL,
+  `structureModified_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  KEY `DB_ID` (`DB_ID`),
+  KEY `structureModified` (`structureModified`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1262,6 +1169,10 @@ CREATE TABLE `Event` (
     `releaseStatus` mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci,
     `evidenceType` int unsigned DEFAULT NULL,
     `evidenceType_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+    `reviewStatus` int unsigned DEFAULT NULL,
+    `reviewStatus_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+    `previousReviewStatus` int unsigned DEFAULT NULL,
+    `previousReviewStatus_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
     `definition` mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci,
     `goBiologicalProcess` int unsigned DEFAULT NULL,
     `goBiologicalProcess_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
@@ -1269,34 +1180,11 @@ CREATE TABLE `Event` (
     KEY `releaseDate` (`releaseDate`),
     KEY `releaseStatus` (`releaseStatus`(10)),
     KEY `evidenceType` (`evidenceType`),
+    KEY `reviewStatus` (`reviewStatus`),
+    KEY `previousReviewStatus` (`previousReviewStatus`),
     KEY `definition` (`definition`(10)),
     KEY `goBiologicalProcess` (`goBiologicalProcess`),
     PRIMARY KEY (`DB_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-DROP TABLE IF EXISTS `EvidenceType_2_instanceOf`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `EvidenceType_2_instanceOf` (
-  `DB_ID` int unsigned DEFAULT NULL,
-  `instanceOf_rank` int unsigned DEFAULT NULL,
-  `instanceOf` int unsigned DEFAULT NULL,
-  `instanceOf_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  KEY `DB_ID` (`DB_ID`),
-  KEY `instanceOf` (`instanceOf`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-DROP TABLE IF EXISTS `"EvidenceType_2_name`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `EvidenceType_2_name` (
-  `DB_ID` int unsigned DEFAULT NULL,
-  `name_rank` int unsigned DEFAULT NULL,
-  `name` mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci,
-  KEY `DB_ID` (`DB_ID`),
-  KEY `name` (`name`(10))
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -1308,8 +1196,6 @@ DROP TABLE IF EXISTS `EvidenceType`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `EvidenceType` (
     `DB_ID` int unsigned NOT NULL DEFAULT '0',
-    `definition` mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci,
-    KEY `definition` (`definition`(10)),
     PRIMARY KEY (`DB_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1370,71 +1256,6 @@ CREATE TABLE `ExternalOntology` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
-DROP TABLE IF EXISTS `FailedReaction_2_output`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `FailedReaction_2_output` (
-  `DB_ID` int unsigned DEFAULT NULL,
-  `output_rank` int unsigned DEFAULT NULL,
-  `output` int unsigned DEFAULT NULL,
-  `output_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  KEY `DB_ID` (`DB_ID`),
-  KEY `output` (`output`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-DROP TABLE IF EXISTS `FailedReaction_2_authored`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `FailedReaction_2_authored` (
-  `DB_ID` int unsigned DEFAULT NULL,
-  `authored_rank` int unsigned DEFAULT NULL,
-  `authored` int unsigned DEFAULT NULL,
-  `authored_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  KEY `DB_ID` (`DB_ID`),
-  KEY `authored` (`authored`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-DROP TABLE IF EXISTS `FailedReaction_2_edited`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `FailedReaction_2_edited` (
-  `DB_ID` int unsigned DEFAULT NULL,
-  `edited_rank` int unsigned DEFAULT NULL,
-  `edited` int unsigned DEFAULT NULL,
-  `edited_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  KEY `DB_ID` (`DB_ID`),
-  KEY `edited` (`edited`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-DROP TABLE IF EXISTS `FailedReaction_2_catalystActivity`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `FailedReaction_2_catalystActivity` (
-  `DB_ID` int unsigned DEFAULT NULL,
-  `catalystActivity_rank` int unsigned DEFAULT NULL,
-  `catalystActivity` int unsigned DEFAULT NULL,
-  `catalystActivity_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  KEY `DB_ID` (`DB_ID`),
-  KEY `catalystActivity` (`catalystActivity`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-DROP TABLE IF EXISTS `FailedReaction_2_literatureReference`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `FailedReaction_2_literatureReference` (
-  `DB_ID` int unsigned DEFAULT NULL,
-  `literatureReference_rank` int unsigned DEFAULT NULL,
-  `literatureReference` int unsigned DEFAULT NULL,
-  `literatureReference_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  KEY `DB_ID` (`DB_ID`),
-  KEY `literatureReference` (`literatureReference`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
 --
 -- Table structure for table `FailedReaction`
 --
@@ -1443,12 +1264,6 @@ DROP TABLE IF EXISTS `FailedReaction`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `FailedReaction` (
     `DB_ID` int unsigned NOT NULL DEFAULT '0',
-    `normalReaction` int unsigned NOT NULL,
-    `normalReaction_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-    `goBiologicalProcess` int unsigned DEFAULT NULL,
-    `goBiologicalProcess_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-    KEY `normalReaction` (`normalReaction`),
-    KEY `goBiologicalProcess` (`goBiologicalProcess`),
     PRIMARY KEY (`DB_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1556,9 +1371,9 @@ DROP TABLE IF EXISTS `FunctionalStatus`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `FunctionalStatus` (
     `DB_ID` int unsigned NOT NULL DEFAULT '0',
-    `functionalStatusType` int unsigned NOT NULL,
+    `functionalStatusType` int unsigned DEFAULT NULL,
     `functionalStatusType_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-    `structuralVariant` int unsigned NOT NULL,
+    `structuralVariant` int unsigned DEFAULT NULL,
     `structuralVariant_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
     KEY `functionalStatusType` (`functionalStatusType`),
     KEY `structuralVariant` (`structuralVariant`),
@@ -1625,7 +1440,7 @@ DROP TABLE IF EXISTS `GenomeEncodedEntity`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `GenomeEncodedEntity` (
     `DB_ID` int unsigned NOT NULL DEFAULT '0',
-    `species` int unsigned NOT NULL,
+    `species` int unsigned DEFAULT NULL,
     `species_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
     KEY `species` (`species`),
     PRIMARY KEY (`DB_ID`)
@@ -1746,6 +1561,18 @@ CREATE TABLE `GO_CellularComponent` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+DROP TABLE IF EXISTS `"GO_MolecularFunction_2_ecNumber`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `GO_MolecularFunction_2_ecNumber` (
+  `DB_ID` int unsigned DEFAULT NULL,
+  `ecNumber_rank` int unsigned DEFAULT NULL,
+  `ecNumber` mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci,
+  KEY `DB_ID` (`DB_ID`),
+  KEY `ecNumber` (`ecNumber`(10))
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
 DROP TABLE IF EXISTS `"GO_MolecularFunction_2_name`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -1766,12 +1593,10 @@ DROP TABLE IF EXISTS `GO_MolecularFunction`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `GO_MolecularFunction` (
     `DB_ID` int unsigned NOT NULL DEFAULT '0',
-    `ecNumber` mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci,
     `accession` mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci,
     `definition` mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci,
     `referenceDatabase` int unsigned DEFAULT NULL,
     `referenceDatabase_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-    KEY `ecNumber` (`ecNumber`(10)),
     KEY `accession` (`accession`(10)),
     KEY `definition` (`definition`(10)),
     KEY `referenceDatabase` (`referenceDatabase`),
@@ -1787,173 +1612,9 @@ DROP TABLE IF EXISTS `GroupModifiedResidue`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `GroupModifiedResidue` (
     `DB_ID` int unsigned NOT NULL DEFAULT '0',
-    `modification` int unsigned NOT NULL,
+    `modification` int unsigned DEFAULT NULL,
     `modification_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
     KEY `modification` (`modification`),
-    PRIMARY KEY (`DB_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `HasCandidate`
---
-DROP TABLE IF EXISTS `HasCandidate`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `HasCandidate` (
-    `DB_ID` int unsigned NOT NULL DEFAULT '0',
-    `id` int unsigned DEFAULT NULL,
-    `order` int unsigned DEFAULT NULL,
-    `physicalEntity` int unsigned DEFAULT NULL,
-    `physicalEntity_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-    `stoichiometry` int unsigned DEFAULT NULL,
-    KEY `id` (`id`),
-    KEY `order` (`order`),
-    KEY `physicalEntity` (`physicalEntity`),
-    KEY `stoichiometry` (`stoichiometry`),
-    PRIMARY KEY (`DB_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `HasCompartment`
---
-DROP TABLE IF EXISTS `HasCompartment`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `HasCompartment` (
-    `DB_ID` int unsigned NOT NULL DEFAULT '0',
-    `compartment` int unsigned DEFAULT NULL,
-    `compartment_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-    `id` int unsigned DEFAULT NULL,
-    `order` int unsigned DEFAULT NULL,
-    KEY `compartment` (`compartment`),
-    KEY `id` (`id`),
-    KEY `order` (`order`),
-    PRIMARY KEY (`DB_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `HasComponent`
---
-DROP TABLE IF EXISTS `HasComponent`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `HasComponent` (
-    `DB_ID` int unsigned NOT NULL DEFAULT '0',
-    `id` int unsigned DEFAULT NULL,
-    `order` int unsigned DEFAULT NULL,
-    `physicalEntity` int unsigned DEFAULT NULL,
-    `physicalEntity_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-    `stoichiometry` int unsigned DEFAULT NULL,
-    KEY `id` (`id`),
-    KEY `order` (`order`),
-    KEY `physicalEntity` (`physicalEntity`),
-    KEY `stoichiometry` (`stoichiometry`),
-    PRIMARY KEY (`DB_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `HasEncapsulatedEvent`
---
-DROP TABLE IF EXISTS `HasEncapsulatedEvent`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `HasEncapsulatedEvent` (
-    `DB_ID` int unsigned NOT NULL DEFAULT '0',
-    `event` int unsigned DEFAULT NULL,
-    `event_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-    `id` int unsigned DEFAULT NULL,
-    `order` int unsigned DEFAULT NULL,
-    KEY `event` (`event`),
-    KEY `id` (`id`),
-    KEY `order` (`order`),
-    PRIMARY KEY (`DB_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `HasEvent`
---
-DROP TABLE IF EXISTS `HasEvent`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `HasEvent` (
-    `DB_ID` int unsigned NOT NULL DEFAULT '0',
-    `event` int unsigned DEFAULT NULL,
-    `event_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-    `id` int unsigned DEFAULT NULL,
-    `order` int unsigned DEFAULT NULL,
-    `stoichiometry` int unsigned DEFAULT NULL,
-    KEY `event` (`event`),
-    KEY `id` (`id`),
-    KEY `order` (`order`),
-    KEY `stoichiometry` (`stoichiometry`),
-    PRIMARY KEY (`DB_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `HasMember`
---
-DROP TABLE IF EXISTS `HasMember`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `HasMember` (
-    `DB_ID` int unsigned NOT NULL DEFAULT '0',
-    `id` int unsigned DEFAULT NULL,
-    `order` int unsigned DEFAULT NULL,
-    `physicalEntity` int unsigned DEFAULT NULL,
-    `physicalEntity_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-    `stoichiometry` int unsigned DEFAULT NULL,
-    KEY `id` (`id`),
-    KEY `order` (`order`),
-    KEY `physicalEntity` (`physicalEntity`),
-    KEY `stoichiometry` (`stoichiometry`),
-    PRIMARY KEY (`DB_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `HasModifiedResidue`
---
-DROP TABLE IF EXISTS `HasModifiedResidue`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `HasModifiedResidue` (
-    `DB_ID` int unsigned NOT NULL DEFAULT '0',
-    `abstractModifiedResidue` int unsigned DEFAULT NULL,
-    `abstractModifiedResidue_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-    `id` int unsigned DEFAULT NULL,
-    `order` int unsigned DEFAULT NULL,
-    `stoichiometry` int unsigned DEFAULT NULL,
-    KEY `abstractModifiedResidue` (`abstractModifiedResidue`),
-    KEY `id` (`id`),
-    KEY `order` (`order`),
-    KEY `stoichiometry` (`stoichiometry`),
-    PRIMARY KEY (`DB_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `Input`
---
-DROP TABLE IF EXISTS `Input`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Input` (
-    `DB_ID` int unsigned NOT NULL DEFAULT '0',
-    `id` int unsigned DEFAULT NULL,
-    `order` int unsigned DEFAULT NULL,
-    `physicalEntity` int unsigned DEFAULT NULL,
-    `physicalEntity_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-    `stoichiometry` int unsigned DEFAULT NULL,
-    KEY `id` (`id`),
-    KEY `order` (`order`),
-    KEY `physicalEntity` (`physicalEntity`),
-    KEY `stoichiometry` (`stoichiometry`),
     PRIMARY KEY (`DB_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1979,7 +1640,7 @@ DROP TABLE IF EXISTS `InstanceEdit`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `InstanceEdit` (
     `DB_ID` int unsigned NOT NULL DEFAULT '0',
-    `dateTime` timestamp DEFAULT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `dateTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `note` mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci,
     `_applyToAllEditedInstances` mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci,
     KEY `dateTime` (`dateTime`),
@@ -2107,7 +1768,7 @@ DROP TABLE IF EXISTS `MarkerReference`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `MarkerReference` (
     `DB_ID` int unsigned NOT NULL DEFAULT '0',
-    `marker` int unsigned NOT NULL,
+    `marker` int unsigned DEFAULT NULL,
     `marker_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
     KEY `marker` (`marker`),
     PRIMARY KEY (`DB_ID`)
@@ -2123,7 +1784,7 @@ DROP TABLE IF EXISTS `ModifiedNucleotide`;
 CREATE TABLE `ModifiedNucleotide` (
     `DB_ID` int unsigned NOT NULL DEFAULT '0',
     `coordinate` int unsigned NOT NULL,
-    `modification` int unsigned NOT NULL,
+    `modification` int unsigned DEFAULT NULL,
     `modification_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
     KEY `coordinate` (`coordinate`),
     KEY `modification` (`modification`),
@@ -2221,6 +1882,17 @@ CREATE TABLE `NonsenseMutation` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Table structure for table `Ontology`
+--
+DROP TABLE IF EXISTS `Ontology`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Ontology` (
+    `ontology` longblob,
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
 DROP TABLE IF EXISTS `OtherEntity_2_compartment`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -2246,27 +1918,6 @@ CREATE TABLE `OtherEntity` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
---
--- Table structure for table `Output`
---
-DROP TABLE IF EXISTS `Output`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Output` (
-    `DB_ID` int unsigned NOT NULL DEFAULT '0',
-    `id` int unsigned DEFAULT NULL,
-    `order` int unsigned DEFAULT NULL,
-    `physicalEntity` int unsigned DEFAULT NULL,
-    `physicalEntity_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-    `stoichiometry` int unsigned DEFAULT NULL,
-    KEY `id` (`id`),
-    KEY `order` (`order`),
-    KEY `physicalEntity` (`physicalEntity`),
-    KEY `stoichiometry` (`stoichiometry`),
-    PRIMARY KEY (`DB_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
 DROP TABLE IF EXISTS `Pathway_2_hasEvent`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -2280,19 +1931,6 @@ CREATE TABLE `Pathway_2_hasEvent` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
-DROP TABLE IF EXISTS `Pathway_2_authored`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Pathway_2_authored` (
-  `DB_ID` int unsigned DEFAULT NULL,
-  `authored_rank` int unsigned DEFAULT NULL,
-  `authored` int unsigned DEFAULT NULL,
-  `authored_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  KEY `DB_ID` (`DB_ID`),
-  KEY `authored` (`authored`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
 DROP TABLE IF EXISTS `Pathway_2_compartment`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -2303,19 +1941,6 @@ CREATE TABLE `Pathway_2_compartment` (
   `compartment_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
   KEY `DB_ID` (`DB_ID`),
   KEY `compartment` (`compartment`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-DROP TABLE IF EXISTS `Pathway_2_edited`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Pathway_2_edited` (
-  `DB_ID` int unsigned DEFAULT NULL,
-  `edited_rank` int unsigned DEFAULT NULL,
-  `edited` int unsigned DEFAULT NULL,
-  `edited_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  KEY `DB_ID` (`DB_ID`),
-  KEY `edited` (`edited`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -2333,14 +1958,11 @@ CREATE TABLE `Pathway` (
     `normalPathway` int unsigned DEFAULT NULL,
     `normalPathway_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
     `lastUpdatedDate` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci,
-    `goBiologicalProcess` int unsigned DEFAULT NULL,
-    `goBiologicalProcess_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
     KEY `doi` (`doi`(10)),
     KEY `hasEHLD` (`hasEHLD`(10)),
     KEY `isCanonical` (`isCanonical`),
     KEY `normalPathway` (`normalPathway`),
     KEY `lastUpdatedDate` (`lastUpdatedDate`(10)),
-    KEY `goBiologicalProcess` (`goBiologicalProcess`),
     PRIMARY KEY (`DB_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2368,7 +1990,7 @@ CREATE TABLE `PathwayDiagram` (
     `DB_ID` int unsigned NOT NULL DEFAULT '0',
     `width` int unsigned DEFAULT NULL,
     `height` int unsigned DEFAULT NULL,
-    `storedATXML` longblob DEFAULT NULL,
+    `storedATXML` longblob,
     KEY `width` (`width`),
     KEY `height` (`height`),
     PRIMARY KEY (`DB_ID`)
@@ -2668,45 +2290,6 @@ CREATE TABLE `Polymer` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
-DROP TABLE IF EXISTS `Polymerisation_2_authored`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Polymerisation_2_authored` (
-  `DB_ID` int unsigned DEFAULT NULL,
-  `authored_rank` int unsigned DEFAULT NULL,
-  `authored` int unsigned DEFAULT NULL,
-  `authored_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  KEY `DB_ID` (`DB_ID`),
-  KEY `authored` (`authored`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-DROP TABLE IF EXISTS `Polymerisation_2_edited`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Polymerisation_2_edited` (
-  `DB_ID` int unsigned DEFAULT NULL,
-  `edited_rank` int unsigned DEFAULT NULL,
-  `edited` int unsigned DEFAULT NULL,
-  `edited_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  KEY `DB_ID` (`DB_ID`),
-  KEY `edited` (`edited`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-DROP TABLE IF EXISTS `Polymerisation_2_literatureReference`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Polymerisation_2_literatureReference` (
-  `DB_ID` int unsigned DEFAULT NULL,
-  `literatureReference_rank` int unsigned DEFAULT NULL,
-  `literatureReference` int unsigned DEFAULT NULL,
-  `literatureReference_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  KEY `DB_ID` (`DB_ID`),
-  KEY `literatureReference` (`literatureReference`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
 --
 -- Table structure for table `Polymerisation`
 --
@@ -2715,9 +2298,6 @@ DROP TABLE IF EXISTS `Polymerisation`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Polymerisation` (
     `DB_ID` int unsigned NOT NULL DEFAULT '0',
-    `goBiologicalProcess` int unsigned DEFAULT NULL,
-    `goBiologicalProcess_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-    KEY `goBiologicalProcess` (`goBiologicalProcess`),
     PRIMARY KEY (`DB_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2800,64 +2380,6 @@ CREATE TABLE `Publication` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `PublicationAuthor`
---
-DROP TABLE IF EXISTS `PublicationAuthor`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `PublicationAuthor` (
-    `DB_ID` int unsigned NOT NULL DEFAULT '0',
-    `author` int unsigned DEFAULT NULL,
-    `author_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-    `id` int unsigned DEFAULT NULL,
-    `order` int unsigned DEFAULT NULL,
-    KEY `author` (`author`),
-    KEY `id` (`id`),
-    KEY `order` (`order`),
-    PRIMARY KEY (`DB_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-DROP TABLE IF EXISTS `Reaction_2_authored`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Reaction_2_authored` (
-  `DB_ID` int unsigned DEFAULT NULL,
-  `authored_rank` int unsigned DEFAULT NULL,
-  `authored` int unsigned DEFAULT NULL,
-  `authored_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  KEY `DB_ID` (`DB_ID`),
-  KEY `authored` (`authored`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-DROP TABLE IF EXISTS `Reaction_2_edited`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Reaction_2_edited` (
-  `DB_ID` int unsigned DEFAULT NULL,
-  `edited_rank` int unsigned DEFAULT NULL,
-  `edited` int unsigned DEFAULT NULL,
-  `edited_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  KEY `DB_ID` (`DB_ID`),
-  KEY `edited` (`edited`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-DROP TABLE IF EXISTS `Reaction_2_literatureReference`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Reaction_2_literatureReference` (
-  `DB_ID` int unsigned DEFAULT NULL,
-  `literatureReference_rank` int unsigned DEFAULT NULL,
-  `literatureReference` int unsigned DEFAULT NULL,
-  `literatureReference_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  KEY `DB_ID` (`DB_ID`),
-  KEY `literatureReference` (`literatureReference`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `Reaction`
 --
 DROP TABLE IF EXISTS `Reaction`;
@@ -2867,10 +2389,7 @@ CREATE TABLE `Reaction` (
     `DB_ID` int unsigned NOT NULL DEFAULT '0',
     `reverseReaction` int unsigned DEFAULT NULL,
     `reverseReaction_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-    `goBiologicalProcess` int unsigned DEFAULT NULL,
-    `goBiologicalProcess_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
     KEY `reverseReaction` (`reverseReaction`),
-    KEY `goBiologicalProcess` (`goBiologicalProcess`),
     PRIMARY KEY (`DB_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -3200,30 +2719,6 @@ CREATE TABLE `ReferenceGeneProduct` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
-DROP TABLE IF EXISTS `"ReferenceGroup_2_otherIdentifier`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ReferenceGroup_2_otherIdentifier` (
-  `DB_ID` int unsigned DEFAULT NULL,
-  `otherIdentifier_rank` int unsigned DEFAULT NULL,
-  `otherIdentifier` mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci,
-  KEY `DB_ID` (`DB_ID`),
-  KEY `otherIdentifier` (`otherIdentifier`(10))
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-DROP TABLE IF EXISTS `"ReferenceGroup_2_name`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ReferenceGroup_2_name` (
-  `DB_ID` int unsigned DEFAULT NULL,
-  `name_rank` int unsigned DEFAULT NULL,
-  `name` mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci,
-  KEY `DB_ID` (`DB_ID`),
-  KEY `name` (`name`(10))
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
 --
 -- Table structure for table `ReferenceGroup`
 --
@@ -3262,30 +2757,6 @@ CREATE TABLE `ReferenceIsoform` (
     `variantIdentifier` mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci,
     KEY `variantIdentifier` (`variantIdentifier`(10)),
     PRIMARY KEY (`DB_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-DROP TABLE IF EXISTS `"ReferenceMolecule_2_name`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ReferenceMolecule_2_name` (
-  `DB_ID` int unsigned DEFAULT NULL,
-  `name_rank` int unsigned DEFAULT NULL,
-  `name` mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci,
-  KEY `DB_ID` (`DB_ID`),
-  KEY `name` (`name`(10))
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
-DROP TABLE IF EXISTS `"ReferenceMolecule_2_otherIdentifier`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ReferenceMolecule_2_otherIdentifier` (
-  `DB_ID` int unsigned DEFAULT NULL,
-  `otherIdentifier_rank` int unsigned DEFAULT NULL,
-  `otherIdentifier` mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci,
-  KEY `DB_ID` (`DB_ID`),
-  KEY `otherIdentifier` (`otherIdentifier`(10))
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3388,18 +2859,6 @@ CREATE TABLE `ReferenceSequence_2_secondaryIdentifier` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
-DROP TABLE IF EXISTS `"ReferenceSequence_2_otherIdentifier`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ReferenceSequence_2_otherIdentifier` (
-  `DB_ID` int unsigned DEFAULT NULL,
-  `otherIdentifier_rank` int unsigned DEFAULT NULL,
-  `otherIdentifier` mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci,
-  KEY `DB_ID` (`DB_ID`),
-  KEY `otherIdentifier` (`otherIdentifier`(10))
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
 --
 -- Table structure for table `ReferenceSequence`
 --
@@ -3411,7 +2870,7 @@ CREATE TABLE `ReferenceSequence` (
     `checksum` mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci,
     `isSequenceChanged` mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci,
     `sequenceLength` int unsigned DEFAULT NULL,
-    `species` int unsigned NOT NULL,
+    `species` int unsigned DEFAULT NULL,
     `species_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
     KEY `checksum` (`checksum`(10)),
     KEY `isSequenceChanged` (`isSequenceChanged`(10)),
@@ -3466,7 +2925,7 @@ DROP TABLE IF EXISTS `ReferenceTherapeutic`;
 CREATE TABLE `ReferenceTherapeutic` (
     `DB_ID` int unsigned NOT NULL DEFAULT '0',
     `abbreviation` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci,
-    `approved` enum('TRUE','FALSE') CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
+    `approved` enum('TRUE','FALSE') CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
     `withdrawn` enum('TRUE','FALSE') CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
     `inn` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci,
     `type` text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci,
@@ -3492,19 +2951,6 @@ CREATE TABLE `Regulation_2_activeUnit` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
-DROP TABLE IF EXISTS `Regulation_2_summation`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Regulation_2_summation` (
-  `DB_ID` int unsigned DEFAULT NULL,
-  `summation_rank` int unsigned DEFAULT NULL,
-  `summation` int unsigned DEFAULT NULL,
-  `summation_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  KEY `DB_ID` (`DB_ID`),
-  KEY `summation` (`summation`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
 --
 -- Table structure for table `Regulation`
 --
@@ -3515,7 +2961,7 @@ CREATE TABLE `Regulation` (
     `DB_ID` int unsigned NOT NULL DEFAULT '0',
     `activity` int unsigned DEFAULT NULL,
     `activity_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-    `regulator` int unsigned NOT NULL,
+    `regulator` int unsigned DEFAULT NULL,
     `regulator_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
     `goBiologicalProcess` int unsigned DEFAULT NULL,
     `goBiologicalProcess_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
@@ -3534,7 +2980,7 @@ DROP TABLE IF EXISTS `RegulationReference`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `RegulationReference` (
     `DB_ID` int unsigned NOT NULL DEFAULT '0',
-    `regulation` int unsigned NOT NULL,
+    `regulation` int unsigned DEFAULT NULL,
     `regulation_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
     KEY `regulation` (`regulation`),
     PRIMARY KEY (`DB_ID`)
@@ -3585,54 +3031,24 @@ CREATE TABLE `_Release` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `RepeatedUnit`
---
-DROP TABLE IF EXISTS `RepeatedUnit`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `RepeatedUnit` (
-    `DB_ID` int unsigned NOT NULL DEFAULT '0',
-    `id` int unsigned DEFAULT NULL,
-    `order` int unsigned DEFAULT NULL,
-    `physicalEntity` int unsigned DEFAULT NULL,
-    `physicalEntity_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-    `stoichiometry` int unsigned DEFAULT NULL,
-    KEY `id` (`id`),
-    KEY `order` (`order`),
-    KEY `physicalEntity` (`physicalEntity`),
-    KEY `stoichiometry` (`stoichiometry`),
-    PRIMARY KEY (`DB_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `RepresentedPathway`
---
-DROP TABLE IF EXISTS `RepresentedPathway`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `RepresentedPathway` (
-    `DB_ID` int unsigned NOT NULL DEFAULT '0',
-    `pathway` int unsigned DEFAULT NULL,
-    `pathway_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-    `id` int unsigned DEFAULT NULL,
-    `order` int unsigned DEFAULT NULL,
-    `stoichiometry` int unsigned DEFAULT NULL,
-    KEY `pathway` (`pathway`),
-    KEY `id` (`id`),
-    KEY `order` (`order`),
-    KEY `stoichiometry` (`stoichiometry`),
-    PRIMARY KEY (`DB_ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `Requirement`
 --
 DROP TABLE IF EXISTS `Requirement`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Requirement` (
+    `DB_ID` int unsigned NOT NULL DEFAULT '0',
+    PRIMARY KEY (`DB_ID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `ReviewStatus`
+--
+DROP TABLE IF EXISTS `ReviewStatus`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ReviewStatus` (
     `DB_ID` int unsigned NOT NULL DEFAULT '0',
     PRIMARY KEY (`DB_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
@@ -3658,8 +3074,6 @@ DROP TABLE IF EXISTS `SequenceOntology`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `SequenceOntology` (
     `DB_ID` int unsigned NOT NULL DEFAULT '0',
-    `identifier` mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci,
-    KEY `identifier` (`identifier`(10)),
     PRIMARY KEY (`DB_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -3685,7 +3099,7 @@ DROP TABLE IF EXISTS `SimpleEntity`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `SimpleEntity` (
     `DB_ID` int unsigned NOT NULL DEFAULT '0',
-    `referenceEntity` int unsigned NOT NULL,
+    `referenceEntity` int unsigned DEFAULT NULL,
     `referenceEntity_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
     `species` int unsigned DEFAULT NULL,
     `species_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
@@ -3782,8 +3196,7 @@ DROP TABLE IF EXISTS `StableIdentifierReleaseStatus`;
 CREATE TABLE `StableIdentifierReleaseStatus` (
     `DB_ID` int unsigned NOT NULL DEFAULT '0',
     `releaseNumber` int unsigned DEFAULT NULL,
-    `status` int unsigned DEFAULT NULL,
-    `status_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+    `status` enum('EXISTS','CREATED','INCREMENTED','REPLACEMENT','ORTHO') CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
     KEY `releaseNumber` (`releaseNumber`),
     KEY `status` (`status`),
     PRIMARY KEY (`DB_ID`)
@@ -3878,7 +3291,7 @@ DROP TABLE IF EXISTS `TranslationalModification`;
 CREATE TABLE `TranslationalModification` (
     `DB_ID` int unsigned NOT NULL DEFAULT '0',
     `coordinate` int unsigned DEFAULT NULL,
-    `psiMod` int unsigned NOT NULL,
+    `psiMod` int unsigned DEFAULT NULL,
     `psiMod_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
     KEY `coordinate` (`coordinate`),
     KEY `psiMod` (`psiMod`),
@@ -3898,19 +3311,6 @@ CREATE TABLE `_UpdateTracker_2_action` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
-DROP TABLE IF EXISTS `_UpdateTracker_2_updatedInstance`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `_UpdateTracker_2_updatedInstance` (
-  `DB_ID` int unsigned DEFAULT NULL,
-  `updatedInstance_rank` int unsigned DEFAULT NULL,
-  `updatedInstance` int unsigned DEFAULT NULL,
-  `updatedInstance_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  KEY `DB_ID` (`DB_ID`),
-  KEY `updatedInstance` (`updatedInstance`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
 --
 -- Table structure for table `_UpdateTracker`
 --
@@ -3921,7 +3321,10 @@ CREATE TABLE `_UpdateTracker` (
     `DB_ID` int unsigned NOT NULL DEFAULT '0',
     `_release` int unsigned DEFAULT NULL,
     `_release_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+    `updatedInstance` int unsigned DEFAULT NULL,
+    `updatedInstance_class` varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
     KEY `_release` (`_release`),
+    KEY `updatedInstance` (`updatedInstance`),
     PRIMARY KEY (`DB_ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;

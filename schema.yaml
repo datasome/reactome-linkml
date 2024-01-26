@@ -131,14 +131,6 @@ classes:
           category: all
           type: "hasCandidate"
           sorted_set: true
-      hasMember:
-        multivalued: true
-        range: HasMember
-        annotations:
-          constraint: REQUIRED
-          category: all
-          type: "hasMember"
-          sorted_set: true
 
   #### CatalystActivity ####
   CatalystActivity:
@@ -188,7 +180,6 @@ classes:
     annotations:
       node: true
     slots:
-      - cellType
       - species
       - tissue
     slot_usage:
@@ -233,16 +224,7 @@ classes:
     annotations:
       node: true
     slots:
-      - catalystActivity
       - tissue
-    attributes:
-      requiredInputComponent:
-        multivalued: true
-        range: PhysicalEntity
-        annotations:
-          constraint: REQUIRED
-          type: "requiredInputComponent"
-          set: true
 
   #### CellLineagePath ####
   CellLineagePath:
@@ -550,22 +532,6 @@ classes:
     annotations:
       node: true
       suppress_warnings: "unused"
-    slots:
-      - authored
-      - edited
-      - goBiologicalProcess
-      - literatureReference
-    slot_usage:
-      authored:
-        multivalued: true
-        annotations:
-          constraint: REQUIRED
-      edited:
-        annotations:
-          constraint: REQUIRED
-      literatureReference:
-        annotations:
-          constraint: REQUIRED
 
   #### Disease ####
   Disease:
@@ -677,12 +643,7 @@ classes:
       suppress_warnings: "unused"
     slots:
       - explanation
-      - name
       - referenceEntity
-    slot_usage:
-      name:
-        annotations:
-          category: none
     attributes:
       endCoordinate:
         range: integer
@@ -808,27 +769,27 @@ classes:
         annotations:
           constraint: OPTIONAL
           type: "negativePrecedingEvent"
+      reviewStatus:
+        range: ReviewStatus
+        annotations:
+          type: "reviewStatus"
+      previousReviewStatus:
+        range: ReviewStatus
+        annotations:
+          type: "previousReviewStatus"
+      structureModified:
+        multivalued: true
+        range: InstanceEdit
+        annotations:
+          type: "structureModified"
+          direction: INCOMING
 
   #### EvidenceType ####
   EvidenceType:
-    is_a: DatabaseObject
+    is_a: ExternalOntology
     annotations:
       node: true
       suppress_warnings: "unused"
-    slots:
-      - definition
-      - name
-    slot_usage:
-      name:
-        annotations:
-          category: any
-    attributes:
-      instanceOf:
-        multivalued: true
-        range: EvidenceType
-        annotations:
-          constraint: OPTIONAL
-          type: "instanceOf"
 
   #### ExternalOntology ####
   ExternalOntology:
@@ -868,39 +829,7 @@ classes:
       node: true
       suppress_warnings: "unused"
     slots:
-      - authored
-      - edited
       - explanation
-      - catalystActivity
-      - goBiologicalProcess
-      - literatureReference
-    slot_usage:
-      authored:
-        multivalued: true
-        annotations:
-          constraint: REQUIRED
-      edited:
-        annotations:
-          constraint: REQUIRED
-      literatureReference:
-        annotations:
-          constraint: REQUIRED
-    attributes:
-      normalReaction:
-        range: ReactionlikeEvent
-        annotations:
-          constraint: MANDATORY
-          type: "normalReaction"
-      output:
-        multivalued: true
-        range: Output
-        annotations:
-          constraint: NOMANUALEDIT
-          category: all
-          type: "output"
-          set: true
-          no_list_setter: true
-          include_default_setter: true
 
   #### Figure ####
   Figure:
@@ -989,13 +918,13 @@ classes:
       functionalStatusType:
         range: FunctionalStatusType
         annotations:
-          constraint: MANDATORY
+          constraint: REQUIRED
           category: all
           type: "functionalStatusType"
       structuralVariant:
         range: SequenceOntology
         annotations:
-          constraint: MANDATORY
+          constraint: REQUIRED
           category: all
           type: "structuralVariant"
 
@@ -1041,7 +970,6 @@ classes:
         range: Taxon
         multivalued: false
         annotations:
-          constraint: MANDATORY
           category: all
 
   #### GO_BiologicalProcess ####
@@ -1111,6 +1039,7 @@ classes:
       - referenceDatabase
     attributes:
       ecNumber:
+        multivalued: true
         annotations:
           constraint: OPTIONAL
           addedField: false
@@ -1245,6 +1174,7 @@ classes:
       dateTime:
         annotations:
           addedField: false
+          constraint: MANDATORY
       note:
         annotations:
           addedField: false
@@ -1343,7 +1273,7 @@ classes:
       marker:
         range: EntityWithAccessionedSequence
         annotations:
-          constraint: MANDATORY
+          constraint: REQUIRED
           type: "marker"
       cell:
         range: Cell
@@ -1426,6 +1356,17 @@ classes:
     annotations:
       node: true
 
+  #### Ontology ####
+  Ontology:
+    is_a: DatabaseObject
+    annotations:
+      deprecated: true
+      node: true
+      suppress_warnings: "unused"
+      constructor_parameter: "ontology"
+    slots:
+      - ontology
+
   #### OtherEntity ####
   OtherEntity:
     description: "Entities that we are unable or unwilling to describe in chemical detail and cannot be put in any other class. Can be used to represent complex structures in the cell that take part in a reaction but which we cannot or do not want to define molecularly, e.g. cell membrane, Holliday structure"
@@ -1461,17 +1402,12 @@ classes:
       node: true
       suppress_warnings: "unused"
     slots:
-      - authored
       - compartment
-      - edited
       - explanation
-      - goBiologicalProcess
     slot_usage:
       compartment:
         annotations:
           constraint: REQUIRED
-      authored:
-        multivalued: true
     attributes:
       doi:
         range: AnnotationTextType
@@ -1678,22 +1614,7 @@ classes:
       node: true
       suppress_warnings: "unused"
     slots:
-      - authored
-      - edited
       - explanation
-      - goBiologicalProcess
-      - literatureReference
-    slot_usage:
-      authored:
-        multivalued: true
-        annotations:
-          constraint: REQUIRED
-      edited:
-        annotations:
-          constraint: REQUIRED
-      literatureReference:
-        annotations:
-          constraint: REQUIRED
 
   #### PositiveGeneExpressionRegulation ####
   PositiveGeneExpressionRegulation:
@@ -1784,22 +1705,7 @@ classes:
       node: true
       suppress_warnings: "unused"
     slots:
-      - authored
-      - edited
       - explanation
-      - goBiologicalProcess
-      - literatureReference
-    slot_usage:
-      authored:
-        multivalued: true
-        annotations:
-          constraint: REQUIRED
-      edited:
-        annotations:
-          constraint: REQUIRED
-      literatureReference:
-        annotations:
-          constraint: REQUIRED
     attributes:
       reverseReaction:
         range: Reaction
@@ -2005,9 +1911,7 @@ classes:
       node: true
       suppress_warnings: "unused"
     slots:
-      - otherIdentifier
       - formula
-      - name
 
   #### ReferenceIsoform ####
   ReferenceIsoform:
@@ -2036,8 +1940,6 @@ classes:
       suppress_warnings: "unused"
     slots:
       - formula
-      - name
-      - otherIdentifier
 
   #### ReferenceRNASequence ####
   ReferenceRNASequence:
@@ -2061,13 +1963,11 @@ classes:
       node: true
       suppress_warnings: "unused"
     slots:
-      - otherIdentifier
       - species
     slot_usage:
       species:
         multivalued: false
         annotations:
-          constraint: MANDATORY
           category: all
     attributes:
       checksum:
@@ -2139,7 +2039,7 @@ classes:
       approved:
         range: boolean
         annotations:
-          constraint: MANDATORY
+          constraint: REQUIRED
           addedField: false
       withdrawn:
         range: boolean
@@ -2166,7 +2066,6 @@ classes:
       suppress_warnings: "unused"
     slots:
       - goBiologicalProcess
-      - summation
     attributes:
       activeUnit:
         multivalued: true
@@ -2186,7 +2085,7 @@ classes:
       regulator:
         range: PhysicalEntity
         annotations:
-          constraint: MANDATORY
+          constraint: REQUIRED
           category: all
           type: "regulator"
 
@@ -2199,7 +2098,7 @@ classes:
       regulation:
         range: Regulation
         annotations:
-          constraint: MANDATORY
+          constraint: REQUIRED
           category: all
           type: "regulation"
 
@@ -2266,6 +2165,12 @@ classes:
     slots:
       - explanation
 
+  #### ReviewStatus ####
+  ReviewStatus:
+    is_a: ControlledVocabulary
+    annotations:
+      node: true
+
   #### RNADrug ####
   RNADrug:
     is_a: Drug
@@ -2279,13 +2184,6 @@ classes:
     annotations:
       node: true
       suppress_warnings: "unused"
-    slots:
-      - identifier
-    slot_usage:
-      identifier:
-        annotations:
-          constraint: MANDATORY
-          category: all
 
   #### SimpleEntity ####
   SimpleEntity:
@@ -2311,7 +2209,7 @@ classes:
       referenceEntity:
         range: ReferenceMolecule
         annotations:
-          constraint: MANDATORY
+          constraint: REQUIRED
           category: all
           type: "referenceEntity"
 
@@ -2387,7 +2285,7 @@ classes:
           addedField: false
           category: all
       status:
-        range: ReleaseStatus
+        range: ReleaseStatusEnum
         annotations:
           addedField: false
           category: all
@@ -2469,7 +2367,6 @@ classes:
           constraint: NOMANUALEDIT
           type: "_release"
       updatedInstance:
-        multivalued: true
         range: DatabaseObject
         annotations:
           constraint: NOMANUALEDIT
@@ -2495,8 +2392,6 @@ classes:
   AnnotationTextType:
   AnnotationDateType:
   AnnotationLongBlobType:
-  AnnotationThingClassEnum:
-  AnnotationPropertyValueTypeEnum:
   Annotations:
     attributes:
       abstract:
@@ -2592,12 +2487,12 @@ classes:
   ReactomeConstraint:
     attributes:
       constraint:
-        range: ReactomeConstraintValues
+        range: ReactomeConstraintEnum
 
   ReactomeInstanceDefiningValue:
     attributes:
       category:
-        range: CategoryValues
+        range: CategoryEnum
 
   ReactomeProperty:
     attributes:
@@ -2615,33 +2510,46 @@ classes:
   Relationship:
     attributes:
         type:
-        direction: RelationshipDirectionValues
+        direction: RelationshipDirectionEnum
   #### Annotations classes - end ####
 
 #### Enumerations ####
 enums:
-  ReactomeConstraintValues:
+  ReactomeConstraintEnum:
     permissible_values:
-      NOMANUALEDIT:
-      MANDATORY:
-      OPTIONAL:
-      REQUIRED:
-  RelationshipDirectionValues:
+      NOMANUALEDIT
+      MANDATORY
+      OPTIONAL
+      REQUIRED
+  RelationshipDirectionEnum:
     permissible_values:
-      INCOMING:
-      OUTGOING:
-  ReleaseStatusValues:
+      INCOMING
+      OUTGOING
+  ReleaseStatusEnum:
     permissible_values:
-      EXISTS:
-      CREATED:
-      INCREMENTED:
-      REPLACED:
-      ORTHO:
-  CategoryValues:
+      EXISTS
+      CREATED
+      INCREMENTED
+      REPLACEMENT
+      ORTHO
+  CategoryEnum:
      permissible_values:
-       none:
-       any:
-       all:
+       none
+       any
+       all
+  AnnotationThingClassEnum:
+    permissible_values:
+      SchemaClass
+      SchemaClassAttribute
+      Schema
+  AnnotationPropertyValueTypeEnum:
+    permissible_values:
+      INTEGER
+      SYMBOL
+      STRING
+      INSTANCE
+      SchemaClass
+      SchemaClassAttribute
 
 #### Slots ####
 slots:
@@ -2766,7 +2674,7 @@ slots:
   modification:
     range: DatabaseObject
     annotations:
-      constraint: MANDATORY
+      constraint: REQUIRED
       category: all
       type: "modification"
       allowed: "{EntitySet.class, Polymer.class, ReferenceMolecule.class, ReferenceGroup.class}"
@@ -2775,6 +2683,8 @@ slots:
     annotations:
       constraint: MANDATORY
       addedField: false
+  ontology:
+    range: AnnotationLongBlobType
   order:
     range: integer
   otherIdentifier:
@@ -2789,7 +2699,7 @@ slots:
   psiMod:
     range: PsiMod
     annotations:
-      constraint: MANDATORY
+      constraint: REQUIRED
       category: all
       type: "psiMod"
   referenceDatabase:

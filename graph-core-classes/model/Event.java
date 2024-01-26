@@ -74,6 +74,9 @@ public abstract class Event extends DatabaseObject implements Trackable, Deletab
     @Relationship(type = "precedingEvent")
     private List<Event> precedingEvent;
 
+    @Relationship(type = "previousReviewStatus")
+    private ReviewStatus previousReviewStatus;
+
     @Relationship(type = "relatedSpecies")
     private List<Species> relatedSpecies;
 
@@ -82,6 +85,9 @@ public abstract class Event extends DatabaseObject implements Trackable, Deletab
 
     @ReactomeProperty
     private String releaseStatus;
+
+    @Relationship(type = "reviewStatus")
+    private ReviewStatus reviewStatus;
 
     @Relationship(type = "reviewed", direction = Relationship.Direction.INCOMING)
     private List<InstanceEdit> reviewed;
@@ -94,6 +100,9 @@ public abstract class Event extends DatabaseObject implements Trackable, Deletab
 
     @ReactomeProperty(addedField = true)
     private String speciesName;
+
+    @Relationship(type = "structureModified", direction = Relationship.Direction.INCOMING)
+    private List<InstanceEdit> structureModified;
 
     @Relationship(type = "summation")
     private List<Summation> summation;
@@ -235,6 +244,12 @@ public abstract class Event extends DatabaseObject implements Trackable, Deletab
         this.precedingEvent = precedingEvent;
     }
 
+    public ReviewStatus getPreviousReviewStatus() { return previousReviewStatus; }
+
+    public void setPreviousReviewStatus(ReviewStatus previousReviewStatus) {
+        this.previousReviewStatus = previousReviewStatus;
+    }
+
     public List<Species> getRelatedSpecies() { return relatedSpecies; }
 
     public void setRelatedSpecies(List<Species> relatedSpecies) {
@@ -251,6 +266,12 @@ public abstract class Event extends DatabaseObject implements Trackable, Deletab
 
     public void setReleaseStatus(String releaseStatus) {
         this.releaseStatus = releaseStatus;
+    }
+
+    public ReviewStatus getReviewStatus() { return reviewStatus; }
+
+    public void setReviewStatus(ReviewStatus reviewStatus) {
+        this.reviewStatus = reviewStatus;
     }
 
     public List<InstanceEdit> getReviewed() { return reviewed; }
@@ -276,6 +297,12 @@ public abstract class Event extends DatabaseObject implements Trackable, Deletab
 
     public void setSpeciesName(String speciesName) {
         this.speciesName = speciesName;
+    }
+
+    public List<InstanceEdit> getStructureModified() { return structureModified; }
+
+    public void setStructureModified(List<InstanceEdit> structureModified) {
+        this.structureModified = structureModified;
     }
 
     public List<Summation> getSummation() { return summation; }

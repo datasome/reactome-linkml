@@ -89,10 +89,6 @@ RANGE_TO_MYSQL_TYPE = {
     "integer" : "int unsigned",
     "AnnotationLongType" : "int unsigned",
     "AnnotationDateType" : "date",
-    "AnnotationThingClassEnum": "enum('SchemaClass','SchemaClassAttribute','Schema') "
-                                "CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci",
-    "AnnotationPropertyValueTypeEnum" : "enum('INTEGER','SYMBOL','STRING','INSTANCE','SchemaClass','SchemaClassAttribute') "
-                                        "CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci",
     "AnnotationTextType" : "text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci",
     "AnnotationLongBlobType" : "longblob",
     "boolean" : "enum('TRUE','FALSE') CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci"
@@ -119,6 +115,17 @@ CLAZZ_TO_ATTRIBUTE_TO_MYSQL_TYPE = {
 REGULAR_TO_NONREGULAR_ATTR_NAME_FOR_MYSQL = {
     "rnaMarker" : "RNAMarker"
 }
+
+def get_mysql_type_for_range(range: str, enums: dict) -> str:
+    ret = None
+    if range in RANGE_TO_MYSQL_TYPE:
+        ret = RANGE_TO_MYSQL_TYPE[range]
+    elif range.endswith("Enum"):
+        if range in enums:
+            enum_values = enums[range]["permissible_values"]
+            ret = "enum({}{}{}) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci"\
+                .format("'",enum_values.replace(" ", "','"), "'")
+    return ret
 
 def remove_curator_only_annotations(classes: dict, slots: dict) -> (dict, dict):
     """Remove all constraint and category annotations as they are not used in web schema"""
@@ -479,6 +486,7 @@ def is_class_name(range: str) -> bool:
     """ Returns true for e.g. Publication or _Release"""
     return range is not None and \
            not range.startswith("Annotation") and \
+           not range.endswith("Enum") and \
            (range[0].isupper() or (range.startswith("_") and range[1].isupper()))
 
 def map_annotation_attributes_to_classes(annotations: dict, classes: dict) -> dict:
@@ -690,11 +698,11 @@ def get_java_type(attr_entry: dict, class_entry: dict, annotations_imports: set)
     if 'range' in attr_entry:
         if attr_entry['range'] == "AnnotationLongType":
             java_type = "Long"
-        elif attr_entry['range'] == "AnnotationBytesType":
+        elif attr_entry['range'] == "AnnotationBytesType" \
+                or attr_entry['range'] == "AnnotationLongBlobType":
             java_type = "byte[]"
         elif attr_entry['range'] == "AnnotationTextType" \
-                or attr_entry['range'] == "AnnotationDateType" \
-                or attr_entry['range'] == "AnnotationLongBlobType":
+                or attr_entry['range'] == "AnnotationDateType":
             # The above annotation types are needed for generation of SQL Schema,
             # but for java classes all translate to java_type = "String"
             java_type = "String"
@@ -956,7 +964,7 @@ def get_parameterized_constructor(clazz: str, slots: dict, class_entry: dict, ot
             range = slot['range']
             if range == "AnnotationLongType":
                 java_type = "Long"
-            elif range == "AnnotationBytesType":
+            elif range == "AnnotationBytesType" or range == "AnnotationLongBlobType":
                 java_type = "byte[]"
             else:
                 java_type = capitalize(range)
@@ -971,7 +979,7 @@ def get_parameterized_constructor(clazz: str, slots: dict, class_entry: dict, ot
 
 def is_annotation(clazz: str) -> bool:
     """ Return true if clazz is an annotation class (i.e. should not be output as .java class)"""
-    return clazz.startswith("Annotation") or clazz in CLASS_TO_PACKAGE_NAME
+    return clazz.startswith("Annotation") or clazz.endswith("Enum") or clazz in CLASS_TO_PACKAGE_NAME
 
 
 def find(file_name: str, path: str) -> str:
@@ -1116,7 +1124,7 @@ def inherit_attributes_slots(class_entry: dict, attributes: dict, classes: dict)
             if attr not in attributes:
                 attributes[attr] = parent_class_attributes[attr]
 
-def get_filled_mysql_table_template_for_multivalued_attr(clazz: str, attr: str, range: range) -> str:
+def get_filled_mysql_table_template_for_multivalued_attr(clazz: str, attr: str, range: range, enums: dict) -> str:
     if is_class_name(range):
         # The multivalued attribute's value is an instance
         template_file_name = "gk_class2instance_attr_table.sql"
@@ -1139,16 +1147,6 @@ def get_filled_mysql_table_template_for_multivalued_attr(clazz: str, attr: str, 
         elif range == "AnnotationDateType":
             ret = ret.replace("@MYSQL_TYPE@", "date DEFAULT NULL")
             ret = ret.replace("@DISPLAY_WIDTH@", "")
-        elif range == "AnnotationThingClassEnum":
-            ret = ret.replace("@MYSQL_TYPE@",
-                              "enum('SchemaClass','SchemaClassAttribute','Schema') "
-                              "CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci")
-            ret = ret.replace("@DISPLAY_WIDTH@", "")
-        elif range == "AnnotationPropertyValueTypeEnum":
-            ret = ret.replace("@MYSQL_TYPE@",
-                              "enum('INTEGER','SYMBOL','STRING','INSTANCE','SchemaClass','SchemaClassAttribute') "
-                              "CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci")
-            ret = ret.replace("@DISPLAY_WIDTH@", "")
         elif range == "boolean":
             ret = ret.replace("@MYSQL_TYPE@", "enum('TRUE','FALSE')")
             ret = ret.replace("@DISPLAY_WIDTH@", "")
@@ -1159,14 +1157,14 @@ def get_filled_mysql_table_template_for_multivalued_attr(clazz: str, attr: str, 
 
 # The multivalued attribute's value is a primitive
 
-def get_filled_mysql_table_templates(clazz: str, classes: dict, slots: dict) -> list:
+def get_filled_mysql_table_templates(clazz: str, classes: dict, slots: dict, enums: dict) -> list:
     """Generate mysql representation of clazz, by filling the table mysql template.
        The method returns a list of string table entries, one of which corresponds to clazz
        and the remaining ones correspond to tables encoding multivalued (Instance or primitive) attributes
     """
     ret_tables = []
     lines = []
-    if clazz != "DataModel":
+    if clazz not in ["DataModel", "Ontology"]:
         lines.append("{}`DB_ID` int unsigned NOT NULL DEFAULT '0',".format(INDENT_1))
     class_entry = classes[clazz]
     table_keys = []
@@ -1189,7 +1187,7 @@ def get_filled_mysql_table_templates(clazz: str, classes: dict, slots: dict) -> 
                         if attr in REGULAR_TO_NONREGULAR_ATTR_NAME_FOR_MYSQL:
                             # Switch to non-regular attribute name if that's what mysql is using
                             attr = REGULAR_TO_NONREGULAR_ATTR_NAME_FOR_MYSQL[attr]
-                    ret_tables.append(get_filled_mysql_table_template_for_multivalued_attr(clazz, attr, range))
+                    ret_tables.append(get_filled_mysql_table_template_for_multivalued_attr(clazz, attr, range, enums))
                 else:
                     # attr is single-valued
                     # Get suffix: (NOT NULL or DEFAULT NULL)
@@ -1213,10 +1211,10 @@ def get_filled_mysql_table_templates(clazz: str, classes: dict, slots: dict) -> 
                                 "{}`{}` {} {},".format(INDENT_1, "{}_class".format(attr), \
                                                        CLAZZ_TO_ATTRIBUTE_TO_MYSQL_TYPE["default"], "DEFAULT NULL")
                             table_keys.append("{}KEY `{}` (`{}`),".format(INDENT_1, attr, attr))
-                            mysql_type = RANGE_TO_MYSQL_TYPE["integer"]
+                            mysql_type = get_mysql_type_for_range("integer", enums)
                         else:
                             # The single-valued attribute's value is primitive
-                            mysql_type = RANGE_TO_MYSQL_TYPE[range]
+                            mysql_type = get_mysql_type_for_range(range, enums)
                             # TODO: The action below is because in gq_current.sql many (or all??) non-instance
                             # TODO: attributes are KEYs in table - confirm with Guanming
                             if clazz != "DataModel" and (clazz != "DatabaseObject" or attr != "DB_ID"):
@@ -1238,11 +1236,11 @@ def get_filled_mysql_table_templates(clazz: str, classes: dict, slots: dict) -> 
                                 if clazz != "DataModel":
                                     table_keys.append("{}KEY `{}` (`{}`),".format(INDENT_1, attr, attr))
                             else:
-                                mysql_type = RANGE_TO_MYSQL_TYPE['string']
+                                mysql_type = mysql_type = get_mysql_type_for_range("string", enums)
                                 if clazz != "DataModel":
                                     table_keys.append("{}KEY `{}` (`{}`(10)),".format(INDENT_1, attr, attr))
 
-                    if 'text' in mysql_type:
+                    if 'text' in mysql_type or mysql_type == 'longblob':
                         suffix = ""
                     lines.append("{}`{}` {}{},".format(INDENT_1, attr, mysql_type, suffix))
                     if additional_clazz_attribute:
@@ -1251,10 +1249,10 @@ def get_filled_mysql_table_templates(clazz: str, classes: dict, slots: dict) -> 
                 # e.g. name in DBInfo - a simple string with no annotations
                 range = "string"
                 suffix = "DEFAULT NULL"
-                mysql_type = RANGE_TO_MYSQL_TYPE[range]
+                mysql_type = mysql_type = get_mysql_type_for_range(range, enums)
                 lines.append("{}`{}` {}{},".format(INDENT_1, attr, mysql_type, suffix))
         lines += table_keys
-        if clazz != "DataModel":
+        if clazz not in ["DataModel", "Ontology"]:
             lines.append("{}PRIMARY KEY (`DB_ID`)".format(INDENT_1))
         ret_table = ret_table.replace("@TABLE_CONTENT@", "\n".join(lines))
         # Remove any empty lines
@@ -1352,6 +1350,7 @@ with open("schema.yaml", "r") as stream:
                 print("ERROR: Failed to generate schema.web.yaml")
                 sys.exit(1)
         classes = data['classes']
+        enums = data['enums']
         slots = data['slots']
         annotations = classes['Annotations']['attributes']
         annot_attr2class = map_annotation_attributes_to_classes(annotations, classes)
@@ -1380,7 +1379,9 @@ with open("schema.yaml", "r") as stream:
                 with open("schema.web.yaml", "w") as outf:
                     yaml.dump(aux, outf, default_flow_style=False)
             elif output_type == "mysql":
-                mysql_lines += get_filled_mysql_table_templates(clazz, classes, slots)
+                if not is_class_relationship(classes[clazz]):
+                    # Don't output relationship classes into mysql
+                    mysql_lines += get_filled_mysql_table_templates(clazz, classes, slots, enums)
 
         if output_type == "graphql":
             # Write generated graphql content to a file

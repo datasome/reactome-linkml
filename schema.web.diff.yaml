@@ -16,11 +16,6 @@ classes:
     annotations:
       removed_attributes: "chapterAuthors"
 
-  #### CandidateSet ####
-  CandidateSet:
-    annotations:
-      removed_attributes: "hasMember"
-
   #### CatalystActivity ####
   CatalystActivity:
     slots:
@@ -38,8 +33,6 @@ classes:
   #### Cell ####
   Cell:
     is_a: PhysicalEntity
-    annotations:
-      removed_slots: "cellType"
     attributes:
       rnaMarker:
         annotations:
@@ -53,9 +46,6 @@ classes:
   #### CellDevelopmentStep ####
   CellDevelopmentStep:
     is_a: ReactionLikeEvent
-    annotations:
-      removed_slots: "catalystActivity"
-      removed_attributes: "requiredInputComponent"
 
   #### CellLineagePath ####
   CellLineagePath:
@@ -232,8 +222,6 @@ classes:
   #### Depolymerisation ####
   Depolymerisation:
     is_a: ReactionLikeEvent
-    annotations:
-      removed_slots: "authored, edited, goBiologicalProcess, literatureReference"
 
   #### DirectedInteraction ####
   DirectedInteraction:
@@ -282,8 +270,6 @@ classes:
   EntityWithAccessionedSequence:
     description: "A protein, RNA, or DNA molecule or fragment thereof in a specified cellular compartment and specific post-translational state. Must be linked to an external database reference, given as the value of referenceSequence. An EWAS typically corresponds to the entire protein or polynucleotide described in the external database. Fragments are defined by setting the first and last residue using the numbering scheme of the external database, entered as startCoordinate and endCoordinate values. Values of 1 and -1 respectively indicate that the true start and end are unconfirmed. EWAS instances are specific to a subcellular compartment; if the same molecule is found in two cellular components it will have two EWASes. EWAS instances by default define an unmodified protein sequence, any post-translational modification (PTM), such as phosphorylation, requires a new EWAS instance. The location and type of any PTM are defined in the hasModifiedResidue slot"
     is_a: GenomeEncodedEntity
-    annotations:
-      removed_slots: "name"
     slots:
       - className
     slot_usage:
@@ -333,13 +319,6 @@ classes:
           # TBC - Shouldn't the type be "orthologousEvent" ?
           type: "inferredTo"
 
-  #### EvidenceType ####
-  EvidenceType:
-    is_a: ExternalOntology
-    annotations:
-      removed_slots: "definition, name"
-      removed_attributes: "instanceOf"
-
   #### ExternalOntology ####
   ExternalOntology:
     attributes:
@@ -350,9 +329,6 @@ classes:
   #### FailedReaction ####
   FailedReaction:
     is_a: ReactionLikeEvent
-    annotations:
-      removed_slots: "authored, edited, catalystActivity, goBiologicalProcess, literatureReference"
-      removed_attributes: "normalReaction, output"
 
   #### FrontPage ####
   FrontPage:
@@ -386,6 +362,9 @@ classes:
     is_a: GO_Term
     annotations:
       removed_slots: "accession, definition, name, referenceDatabase"
+    attributes:
+      ecNumber:
+        multivalued: false
 
   #### GO_Term ####
   GO_Term:
@@ -520,17 +499,6 @@ classes:
       node: true
       no_default_constructor: true
 
-  #### Ontology ####
-  Ontology:
-    is_a: DatabaseObject
-    annotations:
-      deprecated: true
-      node: true
-      suppress_warnings: "unused"
-      constructor_parameter: "ontology"
-    slots:
-      - ontology
-
   #### OtherEntity ####
   OtherEntity:
     annotations:
@@ -555,7 +523,7 @@ classes:
   Pathway:
     annotations:
         removed_attributes: "lastUpdatedDate"
-        removed_slots: "authored, compartment, edited, goBiologicalProcess"
+        removed_slots: "compartment"
     attributes:
       hasEHLD:
         range: boolean
@@ -738,8 +706,6 @@ classes:
   #### Polymerisation ####
   Polymerisation:
     is_a: ReactionLikeEvent
-    annotations:
-      removed_slots: "authored, edited, goBiologicalProcess, literatureReference"
 
   #### Publication ####
   Publication:
@@ -768,8 +734,6 @@ classes:
   #### Reaction ####
   Reaction:
     is_a: ReactionLikeEvent
-    annotations:
-      removed_slots: "authored, edited, goBiologicalProcess, literatureReference"
 
   #### ReactionlikeEvent ####
   ReactionlikeEvent:
@@ -815,15 +779,8 @@ classes:
     annotations:
       removed_attributes: "_chainChangeLog"
 
-  #### ReferenceGroup ####
-  ReferenceGroup:
-    annotations:
-      removed_slots: "otherIdentifier, name"
-
   #### ReferenceMolecule ####
   ReferenceMolecule:
-    annotations:
-      removed_slots: "name, otherIdentifier"
     attributes:
       trivial:
         range: boolean
@@ -834,8 +791,6 @@ classes:
 
   #### ReferenceSequence ####
   ReferenceSequence:
-    annotations:
-      removed_slots: "otherIdentifier"
     attributes:
       isSequenceChanged:
         range: boolean
@@ -849,7 +804,6 @@ classes:
   #### Regulation ####
   Regulation:
     annotations:
-      removed_slots: "summation"
       implements: "Deletable"
     slots:
       - authored
@@ -931,17 +885,6 @@ classes:
         annotations:
           target_node: true
 
-  #### ReviewStatus ####
-  ReviewStatus:
-    is_a: ControlledVocabulary
-    annotations:
-      node: true
-
-  #### SequenceOntology ####
-  SequenceOntology:
-    annotations:
-      removed_slots: "identifier"
-
   #### SimpleEntity ####
   SimpleEntity:
     description: "A chemical species not encoded directly or indirectly in the genome, typically small molecules such as ATP or ethanol. The detailed structure of a simpleEntity is specified by linking it to details of the molecule in the ChEBI or KEGG databases via the referenceEntity slot. Use of KEGG is deprecated"
@@ -1017,6 +960,7 @@ classes:
           originName: "_release"
           type: "release"
       updatedInstance:
+        multivalued: true
         range: Trackable
         annotations:
           allowed:
@@ -1060,5 +1004,4 @@ slots:
   modification:
     annotations:
       allowed:
-  ontology:
-    range: AnnotationBytesType
+
