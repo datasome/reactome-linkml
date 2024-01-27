@@ -437,6 +437,7 @@ classes:
         range: AnnotationPropertyValueTypeEnum
       property_value_rank:
         range: integer
+        ifabsent: 0
 
   #### DefinedSet ####
   DefinedSet:

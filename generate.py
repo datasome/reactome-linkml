@@ -85,13 +85,13 @@ JAVA_INTERFACES_IN_MODEL = ["Trackable", "Deletable"]
 
 # Mapping of range to MySQL types
 RANGE_TO_MYSQL_TYPE = {
-    "string" : "mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci",
-    "integer" : "int unsigned",
-    "AnnotationLongType" : "int unsigned",
+    "string" : "mediumtext COLLATE utf8_unicode_ci",
+    "integer" : "int(10) unsigned",
+    "AnnotationLongType" : "int(10) unsigned",
     "AnnotationDateType" : "date",
-    "AnnotationTextType" : "text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci",
+    "AnnotationTextType" : "text COLLATE utf8_unicode_ci",
     "AnnotationLongBlobType" : "longblob",
-    "boolean" : "enum('TRUE','FALSE') CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci"
+    "boolean" : "enum('TRUE','FALSE') COLLATE utf8_unicode_ci"
 }
 
 # Bespoke class-attribute to MySQL type mappings
@@ -101,13 +101,8 @@ CLAZZ_TO_ATTRIBUTE_TO_MYSQL_TYPE = {
     "InstanceEdit" : { "dateTime" : "timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP" },
     "PathwayDiagram" : { "storedATXML" : "longblob" },
     "Ontology" : { "ontology" : "longblob" },
-    "Person" : {
-        "initial" : "varchar(10) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL",
-        "surname" : "varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL"
-    },
-    "LiteratureReference" : {"journal" : "varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci"},
     # Default is used for single-valued Instance attributes
-    "default": "varchar(64) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci"
+    "default": "varchar(64) COLLATE utf8_unicode_ci"
 }
 
 # Some attributes' name have been regularized for curator and web classes, but not for mysql - hence
@@ -123,7 +118,7 @@ def get_mysql_type_for_range(range: str, enums: dict) -> str:
     elif range.endswith("Enum"):
         if range in enums:
             enum_values = enums[range]["permissible_values"]
-            ret = "enum({}{}{}) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci"\
+            ret = "enum({}{}{}) COLLATE utf8_unicode_ci"\
                 .format("'",enum_values.replace(" ", "','"), "'")
     return ret
 
@@ -1139,10 +1134,10 @@ def get_filled_mysql_table_template_for_multivalued_attr(clazz: str, attr: str, 
         ret = ret.replace("@ATTRIBUTE@", attr)
         # N.B. The following applies to gk_class2non_instance_attr_table.sql template only
         if range == "AnnotationTextType":
-            ret = ret.replace("@MYSQL_TYPE@", "text CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci")
+            ret = ret.replace("@MYSQL_TYPE@", "text COLLATE utf8_unicode_ci")
             ret = ret.replace("@DISPLAY_WIDTH@", "(10)")
         elif range == "AnnotationLongType" or range == "integer":
-            ret = ret.replace("@MYSQL_TYPE@", "int DEFAULT NULL")
+            ret = ret.replace("@MYSQL_TYPE@", "int(10) DEFAULT NULL")
             ret = ret.replace("@DISPLAY_WIDTH@", "")
         elif range == "AnnotationDateType":
             ret = ret.replace("@MYSQL_TYPE@", "date DEFAULT NULL")
@@ -1151,7 +1146,7 @@ def get_filled_mysql_table_template_for_multivalued_attr(clazz: str, attr: str, 
             ret = ret.replace("@MYSQL_TYPE@", "enum('TRUE','FALSE')")
             ret = ret.replace("@DISPLAY_WIDTH@", "")
         else:
-            ret = ret.replace("@MYSQL_TYPE@", "mediumtext CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci")
+            ret = ret.replace("@MYSQL_TYPE@", "mediumtext COLLATE utf8_unicode_ci")
             ret = ret.replace("@DISPLAY_WIDTH@", "(10)")
         return ret
 
@@ -1165,7 +1160,7 @@ def get_filled_mysql_table_templates(clazz: str, classes: dict, slots: dict, enu
     ret_tables = []
     lines = []
     if clazz not in ["DataModel", "Ontology"]:
-        lines.append("{}`DB_ID` int unsigned NOT NULL DEFAULT '0',".format(INDENT_1))
+        lines.append("{}`DB_ID` int(10) unsigned NOT NULL DEFAULT '0',".format(INDENT_1))
     class_entry = classes[clazz]
     table_keys = []
     fh = os.path.join("mysql_templates", "gk_table.sql")
@@ -1190,15 +1185,21 @@ def get_filled_mysql_table_templates(clazz: str, classes: dict, slots: dict, enu
                     ret_tables.append(get_filled_mysql_table_template_for_multivalued_attr(clazz, attr, range, enums))
                 else:
                     # attr is single-valued
-                    # Get suffix: (NOT NULL or DEFAULT NULL)
-                    if 'annotations' in attr_entry:
-                        if 'constraint' in attr_entry['annotations'] and \
-                            attr_entry['annotations']['constraint'] == 'MANDATORY':
-                            suffix = " NOT NULL"
+                    if 'ifabsent' in attr_entry and attr_entry['ifabsent'] is not None:
+                        if isinstance(attr_entry['ifabsent'], int):
+                            # For now restrict it to just an int default
+                            # e.g. property_value_rank in DataModel
+                            suffix = " DEFAULT '{}'".format(attr_entry['ifabsent'])
+                    else:
+                        # Get suffix: (NOT NULL or DEFAULT NULL)
+                        if 'annotations' in attr_entry:
+                            if 'constraint' in attr_entry['annotations'] and \
+                                attr_entry['annotations']['constraint'] == 'MANDATORY':
+                                suffix = " NOT NULL"
+                            else:
+                                suffix = " DEFAULT NULL"
                         else:
                             suffix = " DEFAULT NULL"
-                    else:
-                        suffix = " DEFAULT NULL"
                     additional_clazz_attribute = None
                     if attr in REGULAR_TO_NONREGULAR_ATTR_NAME_FOR_MYSQL:
                         # Switch to non-regular attribute name if that's what mysql is using
@@ -1249,7 +1250,7 @@ def get_filled_mysql_table_templates(clazz: str, classes: dict, slots: dict, enu
                 # e.g. name in DBInfo - a simple string with no annotations
                 range = "string"
                 suffix = "DEFAULT NULL"
-                mysql_type = mysql_type = get_mysql_type_for_range(range, enums)
+                mysql_type = get_mysql_type_for_range(range, enums)
                 lines.append("{}`{}` {}{},".format(INDENT_1, attr, mysql_type, suffix))
         lines += table_keys
         if clazz not in ["DataModel", "Ontology"]:
@@ -1393,12 +1394,12 @@ with open("schema.yaml", "r") as stream:
             fp.close()
 
         elif output_type == "mysql":
-            fh = os.path.join("mysql_templates", "gk_current.sql")
+            fh = os.path.join("mysql_templates", "gk_central.sql")
             with open(fh, 'r') as mysql_template:
                 mysql_content = mysql_template.read()
                 mysql_content = mysql_content.replace("@SCHEMA_CONTENT@", "\n\n".join(mysql_lines))
                 # Write generated mysql content to a file
-                fp = open(os.path.join(OUTPUT_DIR, "gk_current.sql"), 'w')
+                fp = open(os.path.join(OUTPUT_DIR, "gk_central.sql"), 'w')
                 fp.write(mysql_content)
                 fp.close()
 
