@@ -111,9 +111,14 @@ REGULAR_TO_NONREGULAR_ATTR_NAME_FOR_MYSQL = {
     "rnaMarker" : "RNAMarker"
 }
 
-def get_mysql_type_for_range(range: str, enums: dict) -> str:
+def get_mysql_type_for_range(range: str, enums: dict, attr_entry: dict) -> str:
     ret = None
-    if range in RANGE_TO_MYSQL_TYPE:
+    if 'annotations' in attr_entry and \
+        'mysql_signed_int_type' in attr_entry['annotations'] and \
+        attr_entry['annotations']['mysql_signed_int_type'] is True:
+        # A number of fields need to stay as int(10) instead of int(10) unsigned
+        ret = "int(10)"
+    elif range in RANGE_TO_MYSQL_TYPE:
         ret = RANGE_TO_MYSQL_TYPE[range]
     elif range.endswith("Enum"):
         if range in enums:
@@ -1160,16 +1165,26 @@ def get_filled_mysql_table_templates(clazz: str, classes: dict, slots: dict, enu
     ret_tables = []
     lines = []
     if clazz not in ["DataModel", "Ontology"]:
-        lines.append("{}`DB_ID` int(10) unsigned NOT NULL DEFAULT '0',".format(INDENT_1))
+        if clazz != "DatabaseObject":
+            lines.append("{}`DB_ID` int(10) unsigned NOT NULL DEFAULT '0',".format(INDENT_1))
+        else:
+            # N.B. Guanming wants DB_ID in DatabaseObject to remain just 'int '(while it is 'int unsigned' in
+            # other tables)
+            lines.append("{}`DB_ID` int(10) NOT NULL AUTO_INCREMENT,".format(INDENT_1))
     class_entry = classes[clazz]
     table_keys = []
     fh = os.path.join("mysql_templates", "gk_table.sql")
     with open(fh, 'r') as mysql_table_template:
         ret_table = mysql_table_template.read()
         ret_table = ret_table.replace("@TABLE_NAME@", clazz)
+        if clazz == "DatabaseObject":
+            auto_increment = "AUTO_INCREMENT=9859833 "
+        else:
+            auto_increment = ""
+        ret_table = ret_table.replace("@AUTO_INCREMENT@", auto_increment)
         attributes = get_attr_slot_entries(class_entry, slots)
         for attr in attributes:
-            if attr == "explanation":
+            if attr == "explanation" or (clazz == "DatabaseObject" and attr == "DB_ID"):
                 # Don't output explanation attribute into mysql
                 continue
             # DEBUG: print(clazz, attr, attributes, attributes[attr])
@@ -1212,10 +1227,10 @@ def get_filled_mysql_table_templates(clazz: str, classes: dict, slots: dict, enu
                                 "{}`{}` {} {},".format(INDENT_1, "{}_class".format(attr), \
                                                        CLAZZ_TO_ATTRIBUTE_TO_MYSQL_TYPE["default"], "DEFAULT NULL")
                             table_keys.append("{}KEY `{}` (`{}`),".format(INDENT_1, attr, attr))
-                            mysql_type = get_mysql_type_for_range("integer", enums)
+                            mysql_type = get_mysql_type_for_range("integer", enums, attr_entry)
                         else:
                             # The single-valued attribute's value is primitive
-                            mysql_type = get_mysql_type_for_range(range, enums)
+                            mysql_type = get_mysql_type_for_range(range, enums, attr_entry)
                             # TODO: The action below is because in gq_current.sql many (or all??) non-instance
                             # TODO: attributes are KEYs in table - confirm with Guanming
                             if clazz != "DataModel" and (clazz != "DatabaseObject" or attr != "DB_ID"):
@@ -1237,7 +1252,7 @@ def get_filled_mysql_table_templates(clazz: str, classes: dict, slots: dict, enu
                                 if clazz != "DataModel":
                                     table_keys.append("{}KEY `{}` (`{}`),".format(INDENT_1, attr, attr))
                             else:
-                                mysql_type = mysql_type = get_mysql_type_for_range("string", enums)
+                                mysql_type = get_mysql_type_for_range("string", enums, attr_entry)
                                 if clazz != "DataModel":
                                     table_keys.append("{}KEY `{}` (`{}`(10)),".format(INDENT_1, attr, attr))
 
@@ -1250,7 +1265,7 @@ def get_filled_mysql_table_templates(clazz: str, classes: dict, slots: dict, enu
                 # e.g. name in DBInfo - a simple string with no annotations
                 range = "string"
                 suffix = "DEFAULT NULL"
-                mysql_type = get_mysql_type_for_range(range, enums)
+                mysql_type = get_mysql_type_for_range(range, enums, attr_entry)
                 lines.append("{}`{}` {}{},".format(INDENT_1, attr, mysql_type, suffix))
         lines += table_keys
         if clazz not in ["DataModel", "Ontology"]:

@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS `"@CLAZZ@_2_@ATTRIBUTE@`;
+DROP TABLE IF EXISTS `@CLAZZ@_2_@ATTRIBUTE@`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `@CLAZZ@_2_@ATTRIBUTE@` (

@@ -101,6 +101,7 @@ classes:
         annotations:
           constraint: REQUIRED
           addedField: false
+          mysql_signed_int_type: true
       chapterAuthors:
         multivalued: true
         range: Person
@@ -557,14 +558,6 @@ classes:
           category: all
       referenceEntity:
         range: ReferenceTherapeutic
-    attributes:
-      disease:
-        multivalued: true
-        range: Disease
-        annotations:
-          constraint: MANDATORY
-          category: all
-          type: "disease"
 
   #### DrugActionType ####
   DrugActionType:
@@ -652,12 +645,14 @@ classes:
           constraint: REQUIRED
           category: all
           addedField: false
+          mysql_signed_int_type: true
       startCoordinate:
         range: integer
         annotations:
           constraint: REQUIRED
           category: all
           addedField: false
+          mysql_signed_int_type: true
       hasModifiedResidue:
         multivalued: true
         range: HasModifiedResidue
@@ -861,6 +856,10 @@ classes:
       suppress_warnings: "unused"
     slots:
       - coordinate
+    slot_usage:
+      coordinate:
+        annotations:
+          mysql_signed_int_type: true
 
   #### FragmentModification ####
   FragmentModification:
@@ -873,15 +872,17 @@ classes:
       endPositionInReferenceSequence:
         range: integer
         annotations:
-          constraint: MANDATORY
+          constraint: REQUIRED
           category: all
           addedField: false
+          mysql_signed_int_type: true
       startPositionInReferenceSequence:
         range: integer
         annotations:
-          constraint: MANDATORY
+          constraint: REQUIRED
           category: all
           addedField: false
+          mysql_signed_int_type: true
 
   #### FragmentReplacedModification ####
   FragmentReplacedModification:
@@ -1254,16 +1255,19 @@ classes:
           constraint: REQUIRED
           category: all
           addedField: false
+          mysql_signed_int_type: true
       volume:
         range: integer
         annotations:
           constraint: OPTIONAL
           addedField: false
+          mysql_signed_int_type: true
       year:
         range: integer
         annotations:
-          constraint: MANDATORY
+          constraint: REQUIRED
           addedField: false
+          mysql_signed_int_type: true
 
   #### MarkerReference ####
   MarkerReference:
@@ -1291,7 +1295,7 @@ classes:
     slot_usage:
       coordinate:
         annotations:
-          constraint: MANDATORY
+          mysql_signed_int_type: true
 
   #### ModifiedResidue ####
   ModifiedResidue:
@@ -1451,11 +1455,13 @@ classes:
         annotations:
           constraint: REQUIRED
           addedField: false
+          mysql_signed_int_type: true
       height:
         range: integer
         annotations:
           constraint: REQUIRED
           addedField: false
+          mysql_signed_int_type: true
       storedATXML:
         range: AnnotationLongBlobType
         annotations:
@@ -1592,11 +1598,13 @@ classes:
         annotations:
           constraint: OPTIONAL
           addedField: false
+          mysql_signed_int_type: true
       minUnitCount:
         range: integer
         annotations:
           constraint: OPTIONAL
           addedField: false
+          mysql_signed_int_type: true
       repeatedUnit:
         multivalued: true
         range: RepeatedUnit
@@ -2008,6 +2016,7 @@ classes:
         range: integer
         annotations:
           addedField: false
+          mysql_signed_int_type: true
 
   #### ReferenceTherapeutic ####
   ReferenceTherapeutic:
@@ -2115,6 +2124,9 @@ classes:
     slot_usage:
       psiMod:
         multivalued: true
+      coordinate:
+        annotations:
+          mysql_signed_int_type: true
 
   #### _Release ####
   _Release:
@@ -2123,8 +2135,9 @@ classes:
       releaseNumber:
         range: integer
         annotations:
-          constraint: MANDATORY
+          constraint: REQUIRED
           addedField: false
+          mysql_signed_int_type: true
       releaseDate:
         annotations:
           constraint: MANDATORY
@@ -2285,6 +2298,7 @@ classes:
         annotations:
           addedField: false
           category: all
+          mysql_signed_int_type: true
       status:
         range: ReleaseStatusEnum
         annotations:
@@ -2351,6 +2365,10 @@ classes:
     slots:
       - coordinate
       - psiMod
+    slot_usage:
+      coordinate:
+        annotations:
+          mysql_signed_int_type: true
 
   #### _UpdateTracker ####
   _UpdateTracker:
