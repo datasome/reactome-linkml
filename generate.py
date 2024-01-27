@@ -46,6 +46,8 @@ OTHER_ANNOTATIONS = ['abstract', 'implements', 'set', 'sorted_set', 'getter_only
                      'no_default_getter', 'no_list_getter_setter', 'no_list_setter',
                      'include_stoichiometry', 'no_default_constructor', 'protected', 'public']
 
+CURATION_ONLY_ANNOTATIONS = ['category', 'constraint', 'mysql_signed_int_type']
+
 # Indentation used in generated java classes
 INDENT_0 = ""
 INDENT_1 = INDENT_0 + "    "
@@ -132,7 +134,7 @@ def remove_curator_only_annotations(classes: dict, slots: dict) -> (dict, dict):
     for slot in slots:
         slot_entry = slots[slot]
         if 'annotations' in slot_entry:
-            for key in ['category', 'constraint']:
+            for key in CURATION_ONLY_ANNOTATIONS:
                 if key in slot_entry['annotations']:
                     slot_entry['annotations'].pop(key)
     for clazz in classes:
@@ -143,14 +145,14 @@ def remove_curator_only_annotations(classes: dict, slots: dict) -> (dict, dict):
             for attr in class_entry['attributes']:
                 attr_entry = class_entry['attributes'][attr]
                 if attr_entry and 'annotations' in attr_entry:
-                    for key in ['category', 'constraint']:
+                    for key in CURATION_ONLY_ANNOTATIONS:
                         if key in attr_entry['annotations']:
                             attr_entry['annotations'].pop(key)
         if 'slot_usage' in class_entry:
             for slot in class_entry['slot_usage']:
                 slot_entry = class_entry['slot_usage'][slot]
                 if slot_entry and 'annotations' in slot_entry:
-                    for key in ['category', 'constraint']:
+                    for key in CURATION_ONLY_ANNOTATIONS:
                         if key in slot_entry['annotations']:
                             slot_entry['annotations'].pop(key)
     return classes, slots

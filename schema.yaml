@@ -2696,7 +2696,7 @@ slots:
       constraint: REQUIRED
       category: all
       type: "modification"
-      allowed: "{EntitySet.class, Polymer.class, ReferenceMolecule.class, ReferenceGroup.class}"
+      allowed: "{EntitySet.class, Polymer.class, ReferenceGroup.class}"
   name:
     multivalued: true
     annotations:
