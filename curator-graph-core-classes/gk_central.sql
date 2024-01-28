@@ -62,6 +62,58 @@ CREATE TABLE `Anatomy` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+DROP TABLE IF EXISTS `BlackBoxEvent_2_authored`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `BlackBoxEvent_2_authored` (
+  `DB_ID` int(10) unsigned DEFAULT NULL,
+  `authored_rank` int(10) unsigned DEFAULT NULL,
+  `authored` int(10) unsigned DEFAULT NULL,
+  `authored_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
+  KEY `DB_ID` (`DB_ID`),
+  KEY `authored` (`authored`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+DROP TABLE IF EXISTS `BlackBoxEvent_2_edited`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `BlackBoxEvent_2_edited` (
+  `DB_ID` int(10) unsigned DEFAULT NULL,
+  `edited_rank` int(10) unsigned DEFAULT NULL,
+  `edited` int(10) unsigned DEFAULT NULL,
+  `edited_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
+  KEY `DB_ID` (`DB_ID`),
+  KEY `edited` (`edited`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+DROP TABLE IF EXISTS `BlackBoxEvent_2_catalystActivity`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `BlackBoxEvent_2_catalystActivity` (
+  `DB_ID` int(10) unsigned DEFAULT NULL,
+  `catalystActivity_rank` int(10) unsigned DEFAULT NULL,
+  `catalystActivity` int(10) unsigned DEFAULT NULL,
+  `catalystActivity_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
+  KEY `DB_ID` (`DB_ID`),
+  KEY `catalystActivity` (`catalystActivity`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+DROP TABLE IF EXISTS `BlackBoxEvent_2_literatureReference`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `BlackBoxEvent_2_literatureReference` (
+  `DB_ID` int(10) unsigned DEFAULT NULL,
+  `literatureReference_rank` int(10) unsigned DEFAULT NULL,
+  `literatureReference` int(10) unsigned DEFAULT NULL,
+  `literatureReference_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
+  KEY `DB_ID` (`DB_ID`),
+  KEY `literatureReference` (`literatureReference`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
 --
 -- Table structure for table `BlackBoxEvent`
 --
@@ -72,7 +124,12 @@ CREATE TABLE `BlackBoxEvent` (
     `DB_ID` int(10) unsigned NOT NULL DEFAULT '0',
     `templateEvent` int(10) unsigned DEFAULT NULL,
     `templateEvent_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
+    `releaseDate` date NOT NULL,
+    `goBiologicalProcess` int(10) unsigned DEFAULT NULL,
+    `goBiologicalProcess_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
     KEY `templateEvent` (`templateEvent`),
+    KEY `releaseDate` (`releaseDate`),
+    KEY `goBiologicalProcess` (`goBiologicalProcess`),
     PRIMARY KEY (`DB_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
