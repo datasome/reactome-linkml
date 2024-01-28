@@ -641,6 +641,7 @@ classes:
     attributes:
       endCoordinate:
         range: integer
+        ifabsent: -1
         annotations:
           constraint: REQUIRED
           category: all
@@ -648,6 +649,7 @@ classes:
           mysql_signed_int_type: true
       startCoordinate:
         range: integer
+        ifabsent: 1
         annotations:
           constraint: REQUIRED
           category: all
@@ -745,6 +747,7 @@ classes:
           constraint: OPTIONAL
           type: "orthologousEvent"
           set: true
+          mysql_inverse_slot: true
       reviewed:
         multivalued: true
         range: InstanceEdit
@@ -1721,6 +1724,7 @@ classes:
         annotations:
           constraint: OPTIONAL
           type: "reverseReaction"
+          mysql_inverse_slot: true
 
   #### ReactionlikeEvent ####
   ReactionlikeEvent:
@@ -2681,6 +2685,7 @@ slots:
       addedField: false
   isChimeric:
     range: boolean
+    ifabsent: false
     annotations:
       constraint: OPTIONAL
       addedField: false

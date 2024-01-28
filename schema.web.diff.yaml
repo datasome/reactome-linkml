@@ -61,6 +61,9 @@ classes:
   Complex:
     annotations:
       removed_slots: "compartment"
+    slot_usage:
+      isChimeric:
+        ifabsent:
     attributes:
       hasComponent:
         annotations:
@@ -748,6 +751,8 @@ classes:
     slot_usage:
       className:
         ifabsent: string(Reaction)
+      isChimeric:
+        ifabsent:
     attributes:
       input:
         annotations:

@@ -2,10 +2,14 @@
 
 import yaml
 import os
+import re
 from re import sub, findall, search
 from help import print_help
 import copy
 import sys
+from datetime import datetime
+import pytz
+import pprint
 
 web_schema_diff_file_name = None
 output_type = None
@@ -46,7 +50,14 @@ OTHER_ANNOTATIONS = ['abstract', 'implements', 'set', 'sorted_set', 'getter_only
                      'no_default_getter', 'no_list_getter_setter', 'no_list_setter',
                      'include_stoichiometry', 'no_default_constructor', 'protected', 'public']
 
-CURATION_ONLY_ANNOTATIONS = ['category', 'constraint', 'mysql_signed_int_type']
+NOW_TIMESTAMP = datetime.now(pytz.utc).strftime('%A, %d %B %Y %I:%M%p %Z%z')
+DATAMODEL_SCHEMA_ROWS = \
+    "('Schema','Schema','_timestamp',{},'STRING',0),".format(NOW_TIMESTAMP) + \
+    "('Schema','Schema','pins_file_stub',NULL,'STRING',0)," + \
+    "('Schema','Schema','pont_file_content',NULL,'STRING',0)," + \
+    "('Schema','Schema','pprj_file_content',NULL,'STRING',0),"
+
+CURATION_ONLY_ANNOTATIONS = ['category', 'constraint', 'mysql_signed_int_type',"mysql_inverse_slot"]
 
 # Indentation used in generated java classes
 INDENT_0 = ""
@@ -112,6 +123,40 @@ CLAZZ_TO_ATTRIBUTE_TO_MYSQL_TYPE = {
 REGULAR_TO_NONREGULAR_ATTR_NAME_FOR_MYSQL = {
     "rnaMarker" : "RNAMarker"
 }
+
+def get_type_for_datamodel(range: str, enums: dict, attr_entry: dict) -> str:
+    ret = None
+    if is_class_name(range):
+        ret = "db_instance_type"
+    elif 'annotations' in attr_entry and \
+        'mysql_signed_int_type' in attr_entry['annotations'] and \
+        attr_entry['annotations']['mysql_signed_int_type'] is True:
+        ret = "db_integer_type"
+    elif range == "integer":
+        ret = "db_integer_type"
+    elif range == "AnnotationLongType":
+        ret = "db_long_type"
+    elif range.endswith("Enum"):
+        ret = "db_enum_type"
+    return ret
+
+def get_db_col_type_for_datamodel(attr: str, attr_entry: dict, enums: dict):
+    ret = None
+    if attr in ['_timestamp', 'dateTime']:
+        ret = "timestamp"
+    elif 'range' in attr_entry:
+        range = attr_entry['range']
+        if range == "AnnotationDateType":
+            ret = "date"
+        elif range == "boolean":
+            ret = "ENUM(\\'TRUE\\',\\'FALSE\\')"
+        elif range == "AnnotationLongBlobType":
+            ret = "longblob"
+        elif range.endswith("Enum"):
+            enum_values = enums[range]["permissible_values"]
+            ret = "ENUM({}{}{})" \
+                .format("\\'", enum_values.replace(" ", "\\',\\'"), "\\'")
+    return ret
 
 def get_mysql_type_for_range(range: str, enums: dict, attr_entry: dict) -> str:
     ret = None
@@ -1159,13 +1204,15 @@ def get_filled_mysql_table_template_for_multivalued_attr(clazz: str, attr: str, 
 
 # The multivalued attribute's value is a primitive
 
-def get_filled_mysql_table_templates(clazz: str, classes: dict, slots: dict, enums: dict) -> list:
+def get_filled_mysql_table_templates(clazz: str, classes: dict, slots: dict,
+                                     enums: dict, single_attributes_in_datamodel: set) -> (list, str):
     """Generate mysql representation of clazz, by filling the table mysql template.
        The method returns a list of string table entries, one of which corresponds to clazz
        and the remaining ones correspond to tables encoding multivalued (Instance or primitive) attributes
     """
     ret_tables = []
     lines = []
+    schemaclassattribute_rows_str = ""
     if clazz not in ["DataModel", "Ontology"]:
         if clazz != "DatabaseObject":
             lines.append("{}`DB_ID` int(10) unsigned NOT NULL DEFAULT '0',".format(INDENT_1))
@@ -1186,8 +1233,12 @@ def get_filled_mysql_table_templates(clazz: str, classes: dict, slots: dict, enu
         ret_table = ret_table.replace("@AUTO_INCREMENT@", auto_increment)
         attributes = get_attr_slot_entries(class_entry, slots)
         for attr in attributes:
+            if attr != "explanation" and attr != "_class":
+                schemaclassattribute_rows_str += \
+                    get_schemaclassattribute_rows_for_datamodel(
+                        clazz, attr, attributes[attr], enums, single_attributes_in_datamodel)
             if attr == "explanation" or (clazz == "DatabaseObject" and attr == "DB_ID"):
-                # Don't output explanation attribute into mysql
+                # Don't output the above attributes into mysql schema
                 continue
             # DEBUG: print(clazz, attr, attributes, attributes[attr])
             attr_entry = attributes[attr]
@@ -1277,7 +1328,7 @@ def get_filled_mysql_table_templates(clazz: str, classes: dict, slots: dict, enu
         ret_table = "\n".join([s for s in ret_table.split("\n") if s])
         ret_tables.append(ret_table)
 
-    return ret_tables
+    return (ret_tables, schemaclassattribute_rows_str)
 
 def generate_graphql(clazz: str, classes: dict, slots: dict):
     """Generate grqphql representation of clazz"""
@@ -1357,6 +1408,123 @@ def generate_graphql(clazz: str, classes: dict, slots: dict):
     lines += ["}", "", ""]
     return lines
 
+def get_schemaclass_rows_for_datamodel(clazz: str, class_entry: dict) -> str:
+    ret = ""
+    if clazz != "DataModel":
+        if clazz != "DatabaseObject":
+            superclass = class_entry['is_a']
+            ret += "('{}','SchemaClass','super_classes','{}','SchemaClass',0),".format(clazz, superclass)
+
+        if 'annotations' in class_entry and \
+                'abstract' in class_entry['annotations'] and \
+                class_entry['annotations']['abstract'] is True:
+            ret += "('{}','SchemaClass','abstract','TRUE','SYMBOL',0),".format(clazz)
+        else:
+            ret += "('{}','SchemaClass','abstract',NULL,'SYMBOL',0),".format(clazz)
+        ret += "('{}','SchemaClass','name','{}','STRING',0),".format(clazz, clazz)
+    return ret
+
+def append_to_schemaclassattribute_rows_for_datamodel(clazz: str, attr: str, property_name: str, property_value: str,
+                                                      property_value_type: str, property_value_rank: int, ret: str,
+                                                      single_attributes_in_datamodel: set):
+    if property_name != "inverse_slots":
+        thing = "{}:{}".format(clazz, attr)
+        if property_value is None:
+            ret += "({},'SchemaClassAttribute','{}',NULL,'{}',{}),"\
+                .format(thing, property_name, property_value_type, property_value_rank)
+        else:
+            ret += "({},'SchemaClassAttribute','{}','{}','{}','{}'),"\
+                .format(thing, property_name, property_value, property_value_type, property_value_rank)
+    if attr not in single_attributes_in_datamodel:
+        thing = attr
+        if property_name not in ['class', 'category', 'value_defines_instance']:
+            if property_value is None:
+                ret += "({},'SchemaClassAttribute','{}',NULL,'{}',{}),"\
+                    .format(thing, property_name, property_value_type, property_value_rank)
+            else:
+                ret += "({},'SchemaClassAttribute','{}','{}','{}',{}),"\
+                    .format(thing, property_name, property_value, property_value_type, property_value_rank)
+    return ret
+
+
+def get_schemaclassattribute_rows_for_datamodel(clazz: str, attr: str,
+                                                attr_entry: str, enums: dict,
+                                                single_attributes_in_datamodel: set) -> str:
+    ret = ""
+
+    ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'class', clazz,
+                                                            'SchemaClass', 0, ret, single_attributes_in_datamodel)
+    ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'name', attr,
+                                                            'STRING', 0, ret, single_attributes_in_datamodel)
+    ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'max_cardinality', None,
+                                                            'INTEGER', 0, ret, single_attributes_in_datamodel)
+    if 'range' not in attr_entry:
+        type = "db_string_type"
+    else:
+        type = get_type_for_datamodel(attr_entry['range'], enums, attr_entry)
+    ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'type', type,
+                                                            'STRING', 0, ret, single_attributes_in_datamodel)
+
+    if 'ifabsent' in attr_entry:
+        default = attr_entry['ifabsent']
+        ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'default', str(default).upper(),
+                                                                'STRING', 0, ret, single_attributes_in_datamodel)
+
+    db_col_type = get_db_col_type_for_datamodel(attr, attr_entry, enums)
+    ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'db_col_type', db_col_type,
+                                                            'STRING', 0, ret, single_attributes_in_datamodel)
+
+    if 'annotations' in attr_entry:
+        if 'constraint' in attr_entry['annotations']:
+            constraint = attr_entry['annotations']['constraint']
+            ret += "({},'SchemaClassAttribute','category',{},'SYMBOL',0),".format(clazz, constraint)
+            if 'multivalued' in attr_entry and attr_entry['multivalued'] is True:
+                ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'min_cardinality', None, 'INTEGER',
+                                                                        0, ret, single_attributes_in_datamodel)
+                ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'multiple', 'TRUE',
+                                                                        'SYMBOL', 0, ret, single_attributes_in_datamodel)
+            else:
+                ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'multiple', None,
+                                                                        'SYMBOL', 0, ret, single_attributes_in_datamodel)
+                if constraint == "MANDATORY":
+                    ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'min_cardinality', 1,
+                                                                            'INTEGER', 0,ret, single_attributes_in_datamodel)
+        else:
+            if 'multivalued' in attr_entry and attr_entry['multivalued'] is True:
+                ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'min_cardinality', None,
+                                                                        'INTEGER', 0, ret, single_attributes_in_datamodel)
+                ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'multiple', 'TRUE',
+                                                                        'SYMBOL', 0, ret, single_attributes_in_datamodel)
+            else:
+                ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'multiple', None,
+                                                                        'SYMBOL', 0, ret, single_attributes_in_datamodel)
+        if 'allowed' in attr_entry['annotations']:
+            allowed_classes = attr_entry['annotations']['allowed']
+            rank = 0
+            for allowed_class in allowed_classes.split(", "):
+                allowed_class = re.sub(r"{|}|\.class", "", allowed_class)
+                ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'allowed_classes', allowed_class,
+                                                                        'SchemaClass', rank, ret,
+                                                                        single_attributes_in_datamodel)
+                rank += 1
+
+        if 'category' in attr_entry['annotations']:
+            category = attr_entry['annotations']['category']
+            if category == 'all':
+                ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'value_defines_instance', category,
+                                                                        'SYMBOL', 0, ret,
+                                                                        single_attributes_in_datamodel)
+        if 'mysql_inverse_slot' in attr_entry['annotations']:
+            is_inverse_slot = attr_entry['annotations']['mysql_inverse_slot']
+            if is_inverse_slot is True:
+                ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'inverse_slots', attr,
+                                                                        'SchemaClassAttribute', 0, ret,
+                                                                        single_attributes_in_datamodel)
+
+
+
+    single_attributes_in_datamodel.add(attr)
+    return ret
 
 # Main program body
 with open("schema.yaml", "r") as stream:
@@ -1374,6 +1542,10 @@ with open("schema.yaml", "r") as stream:
         annot_attr2class = map_annotation_attributes_to_classes(annotations, classes)
         graphql_lines = []
         mysql_lines = []
+        datamodel_entries_str = ""
+        # single_attributes_in_datamodel is used to prevent the same attribute without a class qualifier
+        # being included more than once in datamodel_entries_str
+        single_attributes_in_datamodel = set()
         for clazz in classes:
             if is_annotation(clazz):
                 # Don't output annotation classes into .java file
@@ -1399,7 +1571,11 @@ with open("schema.yaml", "r") as stream:
             elif output_type == "mysql":
                 if not is_class_relationship(classes[clazz]):
                     # Don't output relationship classes into mysql
-                    mysql_lines += get_filled_mysql_table_templates(clazz, classes, slots, enums)
+                    (mysql_content, schemaclassattribute_rows_str) = \
+                        get_filled_mysql_table_templates(clazz, classes, slots, enums, single_attributes_in_datamodel)
+                    mysql_lines += mysql_content
+                    datamodel_entries_str += get_schemaclass_rows_for_datamodel(clazz, classes[clazz])
+                    datamodel_entries_str += schemaclassattribute_rows_str
 
         if output_type == "graphql":
             # Write generated graphql content to a file
@@ -1420,6 +1596,8 @@ with open("schema.yaml", "r") as stream:
                 fp.write(mysql_content)
                 fp.close()
 
+            print("INSERT INTO `DataModel` VALUES {}{};".format(DATAMODEL_SCHEMA_ROWS,
+                                                                re.sub(r",$","", datamodel_entries_str)))
 
     except yaml.YAMLError as exc:
         print(exc)

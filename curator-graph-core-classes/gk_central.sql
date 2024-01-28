@@ -410,7 +410,7 @@ DROP TABLE IF EXISTS `Complex`;
 CREATE TABLE `Complex` (
     `DB_ID` int(10) unsigned NOT NULL DEFAULT '0',
     `stoichiometryKnown` enum('TRUE','FALSE') COLLATE utf8_unicode_ci DEFAULT NULL,
-    `isChimeric` enum('TRUE','FALSE') COLLATE utf8_unicode_ci DEFAULT NULL,
+    `isChimeric` enum('TRUE','FALSE') COLLATE utf8_unicode_ci DEFAULT 'False',
     KEY `stoichiometryKnown` (`stoichiometryKnown`),
     KEY `isChimeric` (`isChimeric`),
     PRIMARY KEY (`DB_ID`)
@@ -898,8 +898,8 @@ DROP TABLE IF EXISTS `EntityWithAccessionedSequence`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `EntityWithAccessionedSequence` (
     `DB_ID` int(10) unsigned NOT NULL DEFAULT '0',
-    `endCoordinate` int(10) DEFAULT NULL,
-    `startCoordinate` int(10) DEFAULT NULL,
+    `endCoordinate` int(10) DEFAULT '-1',
+    `startCoordinate` int(10) DEFAULT '1',
     `referenceEntity` int(10) unsigned DEFAULT NULL,
     `referenceEntity_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
     KEY `endCoordinate` (`endCoordinate`),
@@ -2536,7 +2536,7 @@ CREATE TABLE `ReactionlikeEvent` (
     `catalystActivityReference_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
     `normalReaction` int(10) unsigned DEFAULT NULL,
     `normalReaction_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
-    `isChimeric` enum('TRUE','FALSE') COLLATE utf8_unicode_ci DEFAULT NULL,
+    `isChimeric` enum('TRUE','FALSE') COLLATE utf8_unicode_ci DEFAULT 'False',
     KEY `systematicName` (`systematicName`(10)),
     KEY `catalystActivityReference` (`catalystActivityReference`),
     KEY `normalReaction` (`normalReaction`),
