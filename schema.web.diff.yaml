@@ -277,6 +277,11 @@ classes:
     slot_usage:
       className:
         ifabsent: "switch (referenceType) { \n          case (\"ReferenceGeneProduct\"):\n            return \"Protein\";\n           case (\"ReferenceDNASequence\"):\n            return \"DNA Sequence\";\n           case (\"ReferenceRNASequence\"):\n            return \"RNA Sequence\";\n           default:\n            return super.getClassName();\n        }"
+    attributes:
+        endCoordinate:
+          ifabsent:
+        startCoordinate:
+          ifabsent:
 
   #### Event ####
   Event:
