@@ -11,13 +11,17 @@ classes:
     description: "Shortcut reactions that make the connection between input and output, but don't provide complete mechanistic detail. Used for reactions that do not balance, or complicated processes for which we either don't know all the details, or we choose not to represent every step. (e.g. degradation of a protein)"
     is_a: ReactionLikeEvent
     annotations:
-      removed_slots: "authored, edited, catalystActivity, goBiologicalProcess, literatureReference"
-      removed_attributes: "releaseDate"
+      removed_slots: "authored, edited, catalystActivity, goBiologicalProcess, literatureReference, input, releaseDate"
 
   #### Book ####
   Book:
     annotations:
       removed_attributes: "chapterAuthors"
+
+  #### CandidateSet ####
+  CandidateSet:
+    annotations:
+      removed_slots: "hasMember"
 
   #### CatalystActivity ####
   CatalystActivity:
@@ -36,9 +40,19 @@ classes:
   #### Cell ####
   Cell:
     is_a: PhysicalEntity
+    annotations:
+      removed_attributes: "RNAMarker"
+    slot_usage:
+      species:
+        range: Taxon
+        annotations:
+          allowed:
     attributes:
       rnaMarker:
+        multivalued: true
+        range: EntityWithAccessionedSequence
         annotations:
+          type: "rnaMarker"
           json_getter@getter: "rnaMarker"
           originName: "RNAMarker"
       proteinMarker:
@@ -49,16 +63,25 @@ classes:
   #### CellDevelopmentStep ####
   CellDevelopmentStep:
     is_a: ReactionLikeEvent
+    annotations:
+      removed_slots: "input, output, catalystActivity"
 
   #### CellLineagePath ####
   CellLineagePath:
     description: "A collection of related Events. These events are mostly CellDevelopmentStep. This is used to describe tissues and cell differentiation"
+    annotations:
+      removed_slots: "hasEvent"
     slots:
       - explanation
     slot_usage:
       explanation:
         annotations:
           override: true
+
+  #### CellType ####
+  CellType:
+    annotations:
+      removed_slots: "instanceOf"
 
   #### Complex ####
   Complex:
@@ -159,6 +182,10 @@ classes:
       checksum:
         range: AnnotationLongType
 
+  #### DefinedSet ####
+  DefinedSet:
+    annotations:
+      removed_slots: "hasMember"
 
   #### _Deleted ####
   _Deleted:
@@ -228,6 +255,8 @@ classes:
   #### Depolymerisation ####
   Depolymerisation:
     is_a: ReactionLikeEvent
+    annotations:
+      removed_slots: "catalystActivity, authored, edited, goBiologicalProcess, literatureReference, releaseDate, requiredInputComponent"
 
   #### DirectedInteraction ####
   DirectedInteraction:
@@ -245,11 +274,16 @@ classes:
         annotations:
           type: "target"
 
+  #### Disease ####
+  Disease:
+    annotations:
+      removed_slots: "instanceOf"
+
   #### Drug ####
   Drug:
     is_a: PhysicalEntity
     annotations:
-      removed_slots: "compartment"
+      removed_slots: "compartment, disease"
 
   #### DrugType ####
   DrugType:
@@ -275,6 +309,8 @@ classes:
   EntityWithAccessionedSequence:
     description: "A protein, RNA, or DNA molecule or fragment thereof in a specified cellular compartment and specific post-translational state. Must be linked to an external database reference, given as the value of referenceSequence. An EWAS typically corresponds to the entire protein or polynucleotide described in the external database. Fragments are defined by setting the first and last residue using the numbering scheme of the external database, entered as startCoordinate and endCoordinate values. Values of 1 and -1 respectively indicate that the true start and end are unconfirmed. EWAS instances are specific to a subcellular compartment; if the same molecule is found in two cellular components it will have two EWASes. EWAS instances by default define an unmodified protein sequence, any post-translational modification (PTM), such as phosphorylation, requires a new EWAS instance. The location and type of any PTM are defined in the hasModifiedResidue slot"
     is_a: GenomeEncodedEntity
+    annotations:
+      removed_slots: "name, species"
     slots:
       - className
     slot_usage:
@@ -339,6 +375,8 @@ classes:
   #### FailedReaction ####
   FailedReaction:
     is_a: ReactionLikeEvent
+    annotations:
+      removed_slots: "catalystActivity"
 
   #### FrontPage ####
   FrontPage:
@@ -354,6 +392,11 @@ classes:
     slot_usage:
       className:
         ifabsent: string(Genes and Transcripts)
+      species:
+        range: Taxon
+        multivalued: false
+        annotations:
+          allowed:
 
   #### GO_BiologicalProcess ####
   GO_BiologicalProcess:
@@ -508,6 +551,12 @@ classes:
       abstract: true
       node: true
       no_default_constructor: true
+
+  #### ModifiedNucleotide ####
+  ModifiedNucleotide:
+    slot_usage:
+      modification:
+          allowed:
 
   #### OtherEntity ####
   OtherEntity:
@@ -716,6 +765,8 @@ classes:
   #### Polymerisation ####
   Polymerisation:
     is_a: ReactionLikeEvent
+    annotations:
+      removed_slots: "catalystActivity"
 
   #### Publication ####
   Publication:
@@ -744,6 +795,8 @@ classes:
   #### Reaction ####
   Reaction:
     is_a: ReactionLikeEvent
+    annotations:
+      removed_slots: "catalystActivity"
 
   #### ReactionlikeEvent ####
   ReactionlikeEvent:
@@ -761,7 +814,6 @@ classes:
         ifabsent: string(Reaction)
       isChimeric:
         ifabsent:
-    attributes:
       input:
         annotations:
           include_fetch: true
@@ -769,6 +821,7 @@ classes:
         annotations:
           include_fetch: true
           include_default_setter: true
+    attributes:
       normalReaction:
         range: ReactionLikeEvent
 

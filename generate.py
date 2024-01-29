@@ -136,8 +136,19 @@ def get_type_for_datamodel(range: str, enums: dict, attr_entry: dict) -> str:
         ret = "db_integer_type"
     elif range == "AnnotationLongType":
         ret = "db_long_type"
-    elif range.endswith("Enum"):
+    elif range.endswith("Enum") or range == "boolean":
         ret = "db_enum_type"
+    return ret
+
+def get_property_value_type_from_type(type: str) -> str:
+    ret = None
+    if type == "db_string_type":
+        ret = 'STRING'
+    else:
+        if type == "db_integer_type" or type == "db_long_type":
+            ret = 'INTEGER'
+        elif type == "db_enum_type":
+            ret = 'SYMBOL'
     return ret
 
 def get_db_col_type_for_datamodel(attr: str, attr_entry: dict, enums: dict):
@@ -1242,7 +1253,7 @@ def get_filled_mysql_table_templates(clazz: str, classes: dict, slots: dict,
             if attr != "explanation" and attr != "_class":
                 schemaclassattribute_rows_str += \
                     get_schemaclassattribute_rows_for_datamodel(
-                        clazz, attr, attributes_for_datamodel[attr], enums, single_attributes_in_datamodel)
+                        clazz, attr, classes, slots, attributes_for_datamodel[attr], enums, single_attributes_in_datamodel)
         for attr in attributes:
             if attr == "explanation" or (clazz == "DatabaseObject" and attr == "DB_ID"):
                 # Don't output the above attributes into mysql schema
@@ -1250,6 +1261,7 @@ def get_filled_mysql_table_templates(clazz: str, classes: dict, slots: dict,
             # DEBUG: print(clazz, attr, attributes, attributes[attr])
             attr_entry = attributes[attr]
             if attr in attributes and attributes[attr] is not None:
+                # TODO: skip attributes/slots that I had to introduce to add class-specific constraints for DataModel
                 if 'multivalued' in attr_entry and attr_entry['multivalued'] is True:
                     range = None
                     if 'range' in attr_entry:
@@ -1454,7 +1466,7 @@ def append_to_schemaclassattribute_rows_for_datamodel(clazz: str, attr: str, pro
     return ret
 
 
-def get_schemaclassattribute_rows_for_datamodel(clazz: str, attr: str,
+def get_schemaclassattribute_rows_for_datamodel(clazz: str, attr: str, classes: dict, slots: dict,
                                                 attr_entry: str, enums: dict,
                                                 single_attributes_in_datamodel: set) -> str:
     ret = ""
@@ -1465,24 +1477,27 @@ def get_schemaclassattribute_rows_for_datamodel(clazz: str, attr: str,
                                                             'STRING', 0, ret, single_attributes_in_datamodel)
     ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'max_cardinality', None,
                                                             'INTEGER', 0, ret, single_attributes_in_datamodel)
+
     if 'range' not in attr_entry:
         type = "db_string_type"
     else:
         type = get_type_for_datamodel(attr_entry['range'], enums, attr_entry)
     ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'type', type,
                                                             'STRING', 0, ret, single_attributes_in_datamodel)
-
     if 'ifabsent' in attr_entry:
+        property_value_type_for_default = get_property_value_type_from_type(type)
         default = attr_entry['ifabsent']
-        ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'default', str(default).upper(),
-                                                                'STRING', 0, ret, single_attributes_in_datamodel)
+        ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'default',
+                                                                str(default).upper(),
+                                                                property_value_type_for_default,
+                                                                0, ret, single_attributes_in_datamodel)
 
     db_col_type = get_db_col_type_for_datamodel(attr, attr_entry, enums)
     ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'db_col_type', db_col_type,
                                                             'STRING', 0, ret, single_attributes_in_datamodel)
 
     if 'annotations' in attr_entry:
-        if 'constraint' in attr_entry['annotations']:
+        if 'constraint' in attr_entry['annotations'] and attr_entry['annotations']['constraint'] is not None:
             constraint = attr_entry['annotations']['constraint']
             ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'category', constraint,
                                                                     'SYMBOL', 0, ret, single_attributes_in_datamodel)
@@ -1508,6 +1523,9 @@ def get_schemaclassattribute_rows_for_datamodel(clazz: str, attr: str,
                 ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'multiple', 'TRUE',
                                                                         'SYMBOL', 0, ret, single_attributes_in_datamodel)
             else:
+                ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'min_cardinality', 0,
+                                                                        'INTEGER', 0, ret,
+                                                                        single_attributes_in_datamodel)
                 ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'multiple', None,
                                                                         'SYMBOL', 0, ret, single_attributes_in_datamodel)
         if 'allowed' in attr_entry['annotations']:
@@ -1520,7 +1538,15 @@ def get_schemaclassattribute_rows_for_datamodel(clazz: str, attr: str,
                                                                         single_attributes_in_datamodel)
                 rank += 1
         elif 'range' in attr_entry and is_class_name(attr_entry['range']):
-            ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'allowed_classes', attr_entry['range'],
+            allowed_class = attr_entry['range']
+            # If attr_entry['range'] is a relationship class, use the class stored inside it as allowed_class instead
+            allowed_class_entry = classes[allowed_class]
+            if is_class_relationship(allowed_class_entry):
+                # Retrieve all slots and attributes from class_entry
+                attributes = get_attr_slot_entries(allowed_class_entry, slots)
+                allowed_class_attr = list(set(attributes.keys()).difference({'id','order','stoichiometry'}))[0]
+                allowed_class = attributes[allowed_class_attr]['range']
+            ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'allowed_classes', allowed_class,
                                                                     'SchemaClass', 0, ret,
                                                                     single_attributes_in_datamodel)
 
@@ -1528,6 +1554,10 @@ def get_schemaclassattribute_rows_for_datamodel(clazz: str, attr: str,
             category = attr_entry['annotations']['category']
             if category is not None:
                 ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'value_defines_instance', category,
+                                                                        'SYMBOL', 0, ret,
+                                                                        single_attributes_in_datamodel)
+            else:
+                ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'value_defines_instance', None,
                                                                         'SYMBOL', 0, ret,
                                                                         single_attributes_in_datamodel)
         if 'mysql_inverse_slot' in attr_entry['annotations']:
