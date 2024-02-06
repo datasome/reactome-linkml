@@ -108,7 +108,7 @@ RANGE_TO_MYSQL_TYPE = {
 }
 
 # Bespoke class-attribute to MySQL type mappings
-# TODO: N.B. gk_current.sql contains table: Ontology and DataModel, but they're not shown on
+# TODO: N.B. gk_central.sql contains table: Ontology and DataModel, but they're not shown on
 # https://curator.reactome.org/cgi-bin/classbrowser?DB=gk_central&CLASS=AbstractModifiedResidue
 CLAZZ_TO_ATTRIBUTE_TO_MYSQL_TYPE = {
     "InstanceEdit" : { "dateTime" : "timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP" },
@@ -154,7 +154,7 @@ def get_property_value_type_from_type(type: str) -> str:
 def get_db_col_type_for_datamodel(attr: str, attr_entry: dict, enums: dict):
     ret = None
     if attr in ['_timestamp', 'dateTime']:
-        ret = "timestamp"
+        ret = "TIMESTAMP"
     elif 'range' in attr_entry:
         range = attr_entry['range']
         if range == "AnnotationDateType":
@@ -162,7 +162,7 @@ def get_db_col_type_for_datamodel(attr: str, attr_entry: dict, enums: dict):
         elif range == "boolean":
             ret = "ENUM(\\'TRUE\\',\\'FALSE\\')"
         elif range == "AnnotationLongBlobType":
-            ret = "longblob"
+            ret = "LONGBLOB"
         elif range.endswith("Enum"):
             enum_values = enums[range]["permissible_values"]
             ret = "ENUM({}{}{})" \
@@ -269,14 +269,14 @@ def override_class_slots(class_entry: dict, diff_class_slots: dict, diff_class_s
                         diff_class_slot_usage_annots = diff_class_slot_usage[slot]['annotations']
                         if 'removed_annotations' in diff_class_slot_usage_annots:
                             for annot in diff_class_slot_usage_annots['removed_annotations'].split(","):
-                                class_slots['slot_usage'][slot]['annotations'].pop(annot.strip())
+                                class_entry['slot_usage'][slot]['annotations'].pop(annot.strip())
                         for annot in diff_class_slot_usage_annots:
                             if annot != 'removed_annotations':
-                                class_slots['slot_usage'][slot]['annotations'][annot] = \
+                                class_entry['slot_usage'][slot]['annotations'][annot] = \
                                     diff_class_slot_usage_annots[annot]
-                    for key in diff_class_slots['slot_usage'][slot]:
+                    for key in diff_class_slot_usage[slot]:
                         if key != 'annotations':
-                            class_slots['slot_usage'][slot][key] = diff_class_slot_usage[slot][key]
+                            class_entry['slot_usage'][slot][key] = diff_class_slot_usage[slot][key]
     for slot in diff_class_slots:
         # Add any web schema-only slots to class_slots
         if 'slots' not in class_entry:
@@ -1261,7 +1261,6 @@ def get_filled_mysql_table_templates(clazz: str, classes: dict, slots: dict,
             # DEBUG: print(clazz, attr, attributes, attributes[attr])
             attr_entry = attributes[attr]
             if attr in attributes and attributes[attr] is not None:
-                # TODO: skip attributes/slots that I had to introduce to add class-specific constraints for DataModel
                 if 'multivalued' in attr_entry and attr_entry['multivalued'] is True:
                     range = None
                     if 'range' in attr_entry:
@@ -1279,12 +1278,8 @@ def get_filled_mysql_table_templates(clazz: str, classes: dict, slots: dict,
                             suffix = " DEFAULT '{}'".format(attr_entry['ifabsent'])
                     else:
                         # Get suffix: (NOT NULL or DEFAULT NULL)
-                        if 'annotations' in attr_entry:
-                            if 'constraint' in attr_entry['annotations'] and \
-                                attr_entry['annotations']['constraint'] == 'MANDATORY':
-                                suffix = " NOT NULL"
-                            else:
-                                suffix = " DEFAULT NULL"
+                        if attr in ['_timestamp', 'dateTime']:
+                            suffix = " NOT NULL"
                         else:
                             suffix = " DEFAULT NULL"
                     additional_clazz_attribute = None
@@ -1496,38 +1491,38 @@ def get_schemaclassattribute_rows_for_datamodel(clazz: str, attr: str, classes: 
     ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'db_col_type', db_col_type,
                                                             'STRING', 0, ret, single_attributes_in_datamodel)
 
+    # NB. According to Guanming, properties 'min_cardinality' and 'max_cardinality' are not used in Reactome
+    # applications and has advised that they are set to 0
+    for property_name in ['min_cardinality', 'max_cardinality']:
+        ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, property_name, 0,
+                                                                'INTEGER', 0, ret,
+                                                                single_attributes_in_datamodel)
+
+    if 'multivalued' in attr_entry and attr_entry['multivalued'] is True:
+        ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'multiple', 'TRUE',
+                                                                'SYMBOL', 0, ret, single_attributes_in_datamodel)
+    else:
+        ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'multiple', None,
+                                                                'SYMBOL', 0, ret, single_attributes_in_datamodel)
+
+    if 'range' in attr_entry and is_class_name(attr_entry['range']):
+        allowed_class = attr_entry['range']
+        # If attr_entry['range'] is a relationship class, use the class stored inside it as allowed_class instead
+        allowed_class_entry = classes[allowed_class]
+        if is_class_relationship(allowed_class_entry):
+            # Retrieve all slots and attributes from class_entry
+            attributes = get_attr_slot_entries(allowed_class_entry, slots)
+            allowed_class_attr = list(set(attributes.keys()).difference({'id', 'order', 'stoichiometry'}))[0]
+            allowed_class = attributes[allowed_class_attr]['range']
+        ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'allowed_classes', allowed_class,
+                                                                'SchemaClass', 0, ret,
+                                                                single_attributes_in_datamodel)
+
     if 'annotations' in attr_entry:
         if 'constraint' in attr_entry['annotations'] and attr_entry['annotations']['constraint'] is not None:
             constraint = attr_entry['annotations']['constraint']
             ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'category', constraint,
                                                                     'SYMBOL', 0, ret, single_attributes_in_datamodel)
-            if 'multivalued' in attr_entry and attr_entry['multivalued'] is True:
-                ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'min_cardinality', None, 'INTEGER',
-                                                                        0, ret, single_attributes_in_datamodel)
-                ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'multiple', 'TRUE',
-                                                                        'SYMBOL', 0, ret, single_attributes_in_datamodel)
-            else:
-                ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'multiple', None,
-                                                                        'SYMBOL', 0, ret, single_attributes_in_datamodel)
-                if constraint in ['MANDATORY']:
-                    ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'min_cardinality', 1,
-                                                                            'INTEGER', 0,ret, single_attributes_in_datamodel)
-                else:
-                    ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'min_cardinality', 0,
-                                                                            'INTEGER', 0, ret,
-                                                                            single_attributes_in_datamodel)
-        else:
-            if 'multivalued' in attr_entry and attr_entry['multivalued'] is True:
-                ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'min_cardinality', None,
-                                                                        'INTEGER', 0, ret, single_attributes_in_datamodel)
-                ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'multiple', 'TRUE',
-                                                                        'SYMBOL', 0, ret, single_attributes_in_datamodel)
-            else:
-                ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'min_cardinality', 0,
-                                                                        'INTEGER', 0, ret,
-                                                                        single_attributes_in_datamodel)
-                ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'multiple', None,
-                                                                        'SYMBOL', 0, ret, single_attributes_in_datamodel)
         if 'allowed' in attr_entry['annotations']:
             allowed_classes = attr_entry['annotations']['allowed']
             rank = 0
@@ -1537,18 +1532,6 @@ def get_schemaclassattribute_rows_for_datamodel(clazz: str, attr: str, classes: 
                                                                         'SchemaClass', rank, ret,
                                                                         single_attributes_in_datamodel)
                 rank += 1
-        elif 'range' in attr_entry and is_class_name(attr_entry['range']):
-            allowed_class = attr_entry['range']
-            # If attr_entry['range'] is a relationship class, use the class stored inside it as allowed_class instead
-            allowed_class_entry = classes[allowed_class]
-            if is_class_relationship(allowed_class_entry):
-                # Retrieve all slots and attributes from class_entry
-                attributes = get_attr_slot_entries(allowed_class_entry, slots)
-                allowed_class_attr = list(set(attributes.keys()).difference({'id','order','stoichiometry'}))[0]
-                allowed_class = attributes[allowed_class_attr]['range']
-            ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'allowed_classes', allowed_class,
-                                                                    'SchemaClass', 0, ret,
-                                                                    single_attributes_in_datamodel)
 
         if 'category' in attr_entry['annotations']:
             category = attr_entry['annotations']['category']
@@ -1566,8 +1549,6 @@ def get_schemaclassattribute_rows_for_datamodel(clazz: str, attr: str, classes: 
                 ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'inverse_slots', attr,
                                                                         'SchemaClassAttribute', 0, ret,
                                                                         single_attributes_in_datamodel)
-
-
 
     single_attributes_in_datamodel.add(attr)
     return ret

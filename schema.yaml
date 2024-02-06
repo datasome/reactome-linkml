@@ -26,7 +26,7 @@ classes:
       referenceSequence:
         range: ReferenceSequence
         annotations:
-          constraint: REQUIRED
+          constraint: MANDATORY
           category: all
           type: "referenceSequence"
 
@@ -70,7 +70,9 @@ classes:
       - goBiologicalProcess
       - literatureReference
       - input
+      - output
       - releaseDate
+      - requiredInputComponent
     slot_usage:
       explanation:
         annotations:
@@ -88,10 +90,16 @@ classes:
       input:
         annotations:
           constraint: REQUIRED
+      output:
+        annotations:
+          constraint: REQUIRED
       releaseDate:
         range: AnnotationDateType
         annotations:
           constraint: MANDATORY
+      requiredInputComponent:
+        annotations:
+          constraint: OPTIONAL
     attributes:
       templateEvent:
         range: Event
@@ -808,7 +816,7 @@ classes:
           constraint: NOMANUALEDIT
       name:
         annotations:
-          category: none
+          category:
       species:
         annotations:
           constraint: MANDATORY
@@ -818,7 +826,7 @@ classes:
       releaseDate:
         range: AnnotationDateType
         annotations:
-          constraint: OPTIONAL
+          constraint: MANDATORY
     attributes:
       _doRelease:
         range: boolean
@@ -872,7 +880,7 @@ classes:
         multivalued: true
         range: InstanceEdit
         annotations:
-          constraint: REQUIRED
+          constraint: OPTIONAL
           type: "internalReviewed"
           direction: INCOMING
       negativePrecedingEvent:
@@ -885,16 +893,19 @@ classes:
         range: ReviewStatus
         annotations:
           type: "reviewStatus"
+          constraint: OPTIONAL
       previousReviewStatus:
         range: ReviewStatus
         annotations:
           type: "previousReviewStatus"
+          constraint: OPTIONAL
       structureModified:
         multivalued: true
         range: InstanceEdit
         annotations:
           type: "structureModified"
           direction: INCOMING
+          constraint: NOMANUALEDIT
 
   #### EvidenceType ####
   EvidenceType:
@@ -902,6 +913,17 @@ classes:
     annotations:
       node: true
       suppress_warnings: "unused"
+    slots:
+      - instanceOf
+      - name
+    slot_usage:
+      instanceOf:
+        range: ExternalOntology
+        annotations:
+          allowed: "{EvidenceType.class}"
+      name:
+        annotations:
+          category: any
 
   #### ExternalOntology ####
   ExternalOntology:
@@ -942,6 +964,36 @@ classes:
     slots:
       - explanation
       - catalystActivity
+      - authored
+      - edited
+      - goBiologicalProcess
+      - literatureReference
+      - normalReaction
+      - output
+      - requiredInputComponent
+    slot_usage:
+      authored:
+        multivalued: true
+        annotations:
+          constraint: REQUIRED
+      edited:
+        annotations:
+          constraint: REQUIRED
+      goBiologicalProcess:
+        annotations:
+          constraint: OPTIONAL
+      literatureReference:
+        annotations:
+          constraint: REQUIRED
+      normalReaction:
+        annotations:
+          constraint: MANDATORY
+      output:
+        annotations:
+          constraint: NOMANUALEDIT
+      requiredInputComponent:
+        annotations:
+          constraint: OPTIONAL
 
   #### Figure ####
   Figure:
@@ -988,14 +1040,14 @@ classes:
       endPositionInReferenceSequence:
         range: integer
         annotations:
-          constraint: REQUIRED
+          constraint: MANDATORY
           category: all
           addedField: false
           mysql_signed_int_type: true
       startPositionInReferenceSequence:
         range: integer
         annotations:
-          constraint: REQUIRED
+          constraint: MANDATORY
           category: all
           addedField: false
           mysql_signed_int_type: true
@@ -1036,13 +1088,13 @@ classes:
       functionalStatusType:
         range: FunctionalStatusType
         annotations:
-          constraint: REQUIRED
+          constraint: MANDATORY
           category: all
           type: "functionalStatusType"
       structuralVariant:
         range: SequenceOntology
         annotations:
-          constraint: REQUIRED
+          constraint: MANDATORY
           category: all
           type: "structuralVariant"
 
@@ -1089,7 +1141,8 @@ classes:
         multivalued: false
         annotations:
           category: all
-          allowed: "{Species.class, Taxon.class}"
+          allowed: "{Taxon.class, Species.class}"
+          constraint: MANDATORY
 
   #### GO_BiologicalProcess ####
   GO_BiologicalProcess:
@@ -1171,8 +1224,13 @@ classes:
       suppress_warnings: "unused"
     slots:
       - modification
+      - psiMod
     slot_usage:
       modification:
+        annotations:
+          constraint: MANDATORY
+          allowed: "{Polymer.class, EntitySet.class, ReferenceGroup.class}"
+      psiMod:
         annotations:
           constraint: MANDATORY
 
@@ -1386,7 +1444,7 @@ classes:
       year:
         range: integer
         annotations:
-          constraint: REQUIRED
+          constraint: MANDATORY
           addedField: false
           mysql_signed_int_type: true
 
@@ -1399,11 +1457,13 @@ classes:
       marker:
         range: EntityWithAccessionedSequence
         annotations:
-          constraint: REQUIRED
+          constraint: MANDATORY
           type: "marker"
       cell:
         range: Cell
         multivalued: true
+        annotations:
+          constraint: MANDATORY
 
   #### ModifiedNucleotide ####
   ModifiedNucleotide:
@@ -1417,6 +1477,7 @@ classes:
       coordinate:
         annotations:
           mysql_signed_int_type: true
+          constraint: MANDATORY
       modification:
         annotations:
           constraint: MANDATORY
@@ -1429,6 +1490,12 @@ classes:
       constructor_parameter: "dbId"
       node: true
       suppress_warnings: "unused"
+    slots:
+      - psiMod
+    slot_usage:
+      psiMod:
+        annotations:
+          constraint: MANDATORY
 
   #### NegativeGeneExpressionRegulation ####
   NegativeGeneExpressionRegulation:
@@ -1479,6 +1546,11 @@ classes:
       suppress_warnings: "unused"
     slots:
       - explanation
+      - regulator
+    slot_usage:
+      regulator:
+        annotations:
+          constraint: MANDATORY
 
   #### NonsenseMutation ####
   NonsenseMutation:
@@ -1532,13 +1604,26 @@ classes:
       node: true
       suppress_warnings: "unused"
     slots:
+      - authored
       - compartment
+      - edited
       - explanation
+      - goBiologicalProcess
       - hasEvent
     slot_usage:
+      authored:
+        multivalued: true
+        annotations:
+          constraint: REQUIRED
       compartment:
         annotations:
           constraint: REQUIRED
+      edited:
+        annotations:
+          constraint: REQUIRED
+      goBiologicalProcess:
+        annotations:
+          constraint: OPTIONAL
     attributes:
       doi:
         range: AnnotationTextType
@@ -1563,6 +1648,8 @@ classes:
           type: "normalPathway"
       lastUpdatedDate:
         range: AnnotationTextType
+        annotations:
+          constraint: REQUIRED
 
   #### PathwayDiagram ####
   PathwayDiagram:
@@ -1660,6 +1747,9 @@ classes:
       name:
         annotations:
           category: any
+      cellType:
+        annotations:
+          constraint: OPTIONAL
     attributes:
       systematicName:
         annotations:
@@ -1737,10 +1827,36 @@ classes:
     slots:
       - explanation
       - catalystActivity
+      - authored
+      - edited
+      - goBiologicalProcess
+      - literatureReference
+      - releaseDate
+      - requiredInputComponent
     slot_usage:
       catalystActivity:
         annotations:
           constraint: REQUIRED
+      authored:
+        multivalued: true
+        annotations:
+          constraint: REQUIRED
+      edited:
+        annotations:
+          constraint: REQUIRED
+      goBiologicalProcess:
+        annotations:
+          constraint: OPTIONAL
+      literatureReference:
+        annotations:
+          constraint: REQUIRED
+      releaseDate:
+        range: AnnotationDateType
+        annotations:
+          constraint: MANDATORY
+      requiredInputComponent:
+        annotations:
+          constraint: OPTIONAL
 
   #### PositiveGeneExpressionRegulation ####
   PositiveGeneExpressionRegulation:
@@ -1860,6 +1976,7 @@ classes:
       - output
       - isChimeric
       - entityOnOtherCell
+      - normalReaction
       - requiredInputComponent
     slot_usage:
       catalystActivity:
@@ -1885,11 +2002,6 @@ classes:
           constraint: OPTIONAL
           category: all
           type: "entityFunctionalStatus"
-      normalReaction:
-        range: ReactionlikeEvent
-        annotations:
-          constraint: OPTIONAL
-          type: "normalReaction"
       regulatedBy:
         multivalued: true
         range: Regulation
@@ -2176,6 +2288,7 @@ classes:
       suppress_warnings: "unused"
     slots:
       - goBiologicalProcess
+      - regulator
     attributes:
       activeUnit:
         multivalued: true
@@ -2192,12 +2305,6 @@ classes:
           category: all
           type: "activity"
           addedField: false
-      regulator:
-        range: PhysicalEntity
-        annotations:
-          constraint: REQUIRED
-          category: all
-          type: "regulator"
 
   #### RegulationReference ####
   RegulationReference:
@@ -2224,6 +2331,8 @@ classes:
     slot_usage:
       psiMod:
         multivalued: true
+        annotations:
+          constraint: MANDATORY
       coordinate:
         annotations:
           mysql_signed_int_type: true
@@ -2852,6 +2961,11 @@ slots:
     annotations:
       constraint: MANDATORY
       addedField: false
+  normalReaction:
+    range: ReactionlikeEvent
+    annotations:
+      constraint: OPTIONAL
+      type: "normalReaction"
   ontology:
     range: AnnotationLongBlobType
   order:
@@ -2882,6 +2996,12 @@ slots:
       constraint: REQUIRED
       category: all
       type: "referenceEntity"
+  regulator:
+    range: PhysicalEntity
+    annotations:
+      constraint: REQUIRED
+      category: all
+      type: "regulator"
   relatedSpecies:
     multivalued: true
     range: Species

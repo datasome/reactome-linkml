@@ -11,7 +11,7 @@ classes:
     description: "Shortcut reactions that make the connection between input and output, but don't provide complete mechanistic detail. Used for reactions that do not balance, or complicated processes for which we either don't know all the details, or we choose not to represent every step. (e.g. degradation of a protein)"
     is_a: ReactionLikeEvent
     annotations:
-      removed_slots: "authored, edited, catalystActivity, goBiologicalProcess, literatureReference, input, releaseDate"
+      removed_slots: "authored, edited, catalystActivity, goBiologicalProcess, literatureReference, input, output, releaseDate, requiredInputComponent"
 
   #### Book ####
   Book:
@@ -365,6 +365,11 @@ classes:
           # TBC - Shouldn't the type be "orthologousEvent" ?
           type: "inferredTo"
 
+  #### EvidenceType ####
+  EvidenceType:
+    annotations:
+      removed_slots: "instanceOf, name"
+
   #### ExternalOntology ####
   ExternalOntology:
     attributes:
@@ -376,7 +381,7 @@ classes:
   FailedReaction:
     is_a: ReactionLikeEvent
     annotations:
-      removed_slots: "catalystActivity"
+      removed_slots: "catalystActivity, authored, edited, goBiologicalProcess, literatureReference, normalReaction, output, requiredInputComponent"
 
   #### FrontPage ####
   FrontPage:
@@ -442,10 +447,8 @@ classes:
 
   #### GroupModifiedResidue ####
   GroupModifiedResidue:
-    slot_usage:
-      modification:
-        annotations:
-          allowed: "{EntitySet.class, Polymer.class, ReferenceGroup.class}"
+    annotations:
+      removed_slots: "psiMod"
 
   #### HasComponentForComplex ####
   HasComponentForComplex:
@@ -558,6 +561,16 @@ classes:
       modification:
           allowed:
 
+  #### ModifiedResidue ####
+  ModifiedResidue:
+    annotations:
+      removed_slots: "psiMod"
+
+  #### NegativeRegulation ####
+  NegativeRegulation:
+    annotations:
+      removed_slots: "regulator"
+
   #### OtherEntity ####
   OtherEntity:
     annotations:
@@ -582,7 +595,7 @@ classes:
   Pathway:
     annotations:
         removed_attributes: "lastUpdatedDate"
-        removed_slots: "compartment"
+        removed_slots: "compartment, authored, edited, goBiologicalProcess"
     attributes:
       hasEHLD:
         range: boolean
@@ -766,7 +779,7 @@ classes:
   Polymerisation:
     is_a: ReactionLikeEvent
     annotations:
-      removed_slots: "catalystActivity"
+      removed_slots: "catalystActivity, authored, edited, goBiologicalProcess, literatureReference, releaseDate, requiredInputComponent"
 
   #### Publication ####
   Publication:
@@ -806,7 +819,7 @@ classes:
   #### ReactionLikeEvent ####
   ReactionLikeEvent:
     annotations:
-      removed_slots: "compartment"
+      removed_slots: "compartment, normalReaction"
     slots:
       - className
     slot_usage:
@@ -824,6 +837,8 @@ classes:
     attributes:
       normalReaction:
         range: ReactionLikeEvent
+        annotations:
+          type: "normalReaction"
 
   #### ReferenceEntity ####
   ReferenceEntity:

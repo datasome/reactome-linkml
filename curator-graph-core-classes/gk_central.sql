@@ -127,6 +127,32 @@ CREATE TABLE `BlackBoxEvent_2_input` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+DROP TABLE IF EXISTS `BlackBoxEvent_2_output`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `BlackBoxEvent_2_output` (
+  `DB_ID` int(10) unsigned DEFAULT NULL,
+  `output_rank` int(10) unsigned DEFAULT NULL,
+  `output` int(10) unsigned DEFAULT NULL,
+  `output_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
+  KEY `DB_ID` (`DB_ID`),
+  KEY `output` (`output`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+DROP TABLE IF EXISTS `BlackBoxEvent_2_requiredInputComponent`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `BlackBoxEvent_2_requiredInputComponent` (
+  `DB_ID` int(10) unsigned DEFAULT NULL,
+  `requiredInputComponent_rank` int(10) unsigned DEFAULT NULL,
+  `requiredInputComponent` int(10) unsigned DEFAULT NULL,
+  `requiredInputComponent_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
+  KEY `DB_ID` (`DB_ID`),
+  KEY `requiredInputComponent` (`requiredInputComponent`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
 --
 -- Table structure for table `BlackBoxEvent`
 --
@@ -139,7 +165,7 @@ CREATE TABLE `BlackBoxEvent` (
     `templateEvent_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
     `goBiologicalProcess` int(10) unsigned DEFAULT NULL,
     `goBiologicalProcess_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
-    `releaseDate` date NOT NULL,
+    `releaseDate` date DEFAULT NULL,
     KEY `templateEvent` (`templateEvent`),
     KEY `goBiologicalProcess` (`goBiologicalProcess`),
     KEY `releaseDate` (`releaseDate`),
@@ -171,7 +197,7 @@ CREATE TABLE `Book` (
     `ISBN` mediumtext COLLATE utf8_unicode_ci,
     `chapterTitle` mediumtext COLLATE utf8_unicode_ci,
     `pages` mediumtext COLLATE utf8_unicode_ci,
-    `year` int(10) NOT NULL,
+    `year` int(10) DEFAULT NULL,
     `publisher` int(10) unsigned DEFAULT NULL,
     `publisher_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
     KEY `ISBN` (`ISBN`(10)),
@@ -244,7 +270,7 @@ CREATE TABLE `CatalystActivity` (
     `DB_ID` int(10) unsigned NOT NULL DEFAULT '0',
     `activity` int(10) unsigned DEFAULT NULL,
     `activity_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
-    `physicalEntity` int(10) unsigned NOT NULL,
+    `physicalEntity` int(10) unsigned DEFAULT NULL,
     `physicalEntity_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
     KEY `activity` (`activity`),
     KEY `physicalEntity` (`physicalEntity`),
@@ -260,7 +286,7 @@ DROP TABLE IF EXISTS `CatalystActivityReference`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `CatalystActivityReference` (
     `DB_ID` int(10) unsigned NOT NULL DEFAULT '0',
-    `catalystActivity` int(10) unsigned NOT NULL,
+    `catalystActivity` int(10) unsigned DEFAULT NULL,
     `catalystActivity_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
     KEY `catalystActivity` (`catalystActivity`),
     PRIMARY KEY (`DB_ID`)
@@ -331,7 +357,7 @@ CREATE TABLE `Cell` (
     `organ_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
     `tissueLayer` int(10) unsigned DEFAULT NULL,
     `tissueLayer_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
-    `tissue` int(10) unsigned NOT NULL,
+    `tissue` int(10) unsigned DEFAULT NULL,
     `tissue_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
     KEY `organ` (`organ`),
     KEY `tissueLayer` (`tissueLayer`),
@@ -363,9 +389,9 @@ CREATE TABLE `CellDevelopmentStep` (
     `DB_ID` int(10) unsigned NOT NULL DEFAULT '0',
     `tissue` int(10) unsigned DEFAULT NULL,
     `tissue_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
-    `input` int(10) unsigned NOT NULL,
+    `input` int(10) unsigned DEFAULT NULL,
     `input_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
-    `output` int(10) unsigned NOT NULL,
+    `output` int(10) unsigned DEFAULT NULL,
     `output_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
     KEY `tissue` (`tissue`),
     KEY `input` (`input`),
@@ -645,7 +671,7 @@ DROP TABLE IF EXISTS `DatabaseIdentifier`;
 CREATE TABLE `DatabaseIdentifier` (
     `DB_ID` int(10) unsigned NOT NULL DEFAULT '0',
     `identifier` mediumtext COLLATE utf8_unicode_ci,
-    `referenceDatabase` int(10) unsigned NOT NULL,
+    `referenceDatabase` int(10) unsigned DEFAULT NULL,
     `referenceDatabase_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
     KEY `identifier` (`identifier`(10)),
     KEY `referenceDatabase` (`referenceDatabase`),
@@ -975,7 +1001,7 @@ DROP TABLE IF EXISTS `Drug`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Drug` (
     `DB_ID` int(10) unsigned NOT NULL DEFAULT '0',
-    `referenceEntity` int(10) unsigned NOT NULL,
+    `referenceEntity` int(10) unsigned DEFAULT NULL,
     `referenceEntity_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
     KEY `referenceEntity` (`referenceEntity`),
     PRIMARY KEY (`DB_ID`)
@@ -1028,7 +1054,7 @@ DROP TABLE IF EXISTS `EntityFunctionalStatus`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `EntityFunctionalStatus` (
     `DB_ID` int(10) unsigned NOT NULL DEFAULT '0',
-    `diseaseEntity` int(10) unsigned NOT NULL,
+    `diseaseEntity` int(10) unsigned DEFAULT NULL,
     `diseaseEntity_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
     `normalEntity` int(10) unsigned DEFAULT NULL,
     `normalEntity_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
@@ -1139,9 +1165,9 @@ CREATE TABLE `EntityWithAccessionedSequence` (
     `DB_ID` int(10) unsigned NOT NULL DEFAULT '0',
     `endCoordinate` int(10) DEFAULT '-1',
     `startCoordinate` int(10) DEFAULT '1',
-    `referenceEntity` int(10) unsigned NOT NULL,
+    `referenceEntity` int(10) unsigned DEFAULT NULL,
     `referenceEntity_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
-    `species` int(10) unsigned NOT NULL,
+    `species` int(10) unsigned DEFAULT NULL,
     `species_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
     KEY `endCoordinate` (`endCoordinate`),
     KEY `startCoordinate` (`startCoordinate`),
@@ -1416,6 +1442,31 @@ CREATE TABLE `Event` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+DROP TABLE IF EXISTS `EvidenceType_2_instanceOf`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `EvidenceType_2_instanceOf` (
+  `DB_ID` int(10) unsigned DEFAULT NULL,
+  `instanceOf_rank` int(10) unsigned DEFAULT NULL,
+  `instanceOf` int(10) unsigned DEFAULT NULL,
+  `instanceOf_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
+  KEY `DB_ID` (`DB_ID`),
+  KEY `instanceOf` (`instanceOf`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+DROP TABLE IF EXISTS `EvidenceType_2_name`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `EvidenceType_2_name` (
+  `DB_ID` int(10) unsigned DEFAULT NULL,
+  `name_rank` int(10) unsigned DEFAULT NULL,
+  `name` mediumtext COLLATE utf8_unicode_ci,
+  KEY `DB_ID` (`DB_ID`),
+  KEY `name` (`name`(10))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
 --
 -- Table structure for table `EvidenceType`
 --
@@ -1475,7 +1526,7 @@ CREATE TABLE `ExternalOntology` (
     `DB_ID` int(10) unsigned NOT NULL DEFAULT '0',
     `definition` mediumtext COLLATE utf8_unicode_ci,
     `identifier` mediumtext COLLATE utf8_unicode_ci,
-    `referenceDatabase` int(10) unsigned NOT NULL,
+    `referenceDatabase` int(10) unsigned DEFAULT NULL,
     `referenceDatabase_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
     KEY `definition` (`definition`(10)),
     KEY `identifier` (`identifier`(10)),
@@ -1497,6 +1548,71 @@ CREATE TABLE `FailedReaction_2_catalystActivity` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+DROP TABLE IF EXISTS `FailedReaction_2_authored`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `FailedReaction_2_authored` (
+  `DB_ID` int(10) unsigned DEFAULT NULL,
+  `authored_rank` int(10) unsigned DEFAULT NULL,
+  `authored` int(10) unsigned DEFAULT NULL,
+  `authored_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
+  KEY `DB_ID` (`DB_ID`),
+  KEY `authored` (`authored`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+DROP TABLE IF EXISTS `FailedReaction_2_edited`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `FailedReaction_2_edited` (
+  `DB_ID` int(10) unsigned DEFAULT NULL,
+  `edited_rank` int(10) unsigned DEFAULT NULL,
+  `edited` int(10) unsigned DEFAULT NULL,
+  `edited_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
+  KEY `DB_ID` (`DB_ID`),
+  KEY `edited` (`edited`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+DROP TABLE IF EXISTS `FailedReaction_2_literatureReference`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `FailedReaction_2_literatureReference` (
+  `DB_ID` int(10) unsigned DEFAULT NULL,
+  `literatureReference_rank` int(10) unsigned DEFAULT NULL,
+  `literatureReference` int(10) unsigned DEFAULT NULL,
+  `literatureReference_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
+  KEY `DB_ID` (`DB_ID`),
+  KEY `literatureReference` (`literatureReference`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+DROP TABLE IF EXISTS `FailedReaction_2_output`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `FailedReaction_2_output` (
+  `DB_ID` int(10) unsigned DEFAULT NULL,
+  `output_rank` int(10) unsigned DEFAULT NULL,
+  `output` int(10) unsigned DEFAULT NULL,
+  `output_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
+  KEY `DB_ID` (`DB_ID`),
+  KEY `output` (`output`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+DROP TABLE IF EXISTS `FailedReaction_2_requiredInputComponent`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `FailedReaction_2_requiredInputComponent` (
+  `DB_ID` int(10) unsigned DEFAULT NULL,
+  `requiredInputComponent_rank` int(10) unsigned DEFAULT NULL,
+  `requiredInputComponent` int(10) unsigned DEFAULT NULL,
+  `requiredInputComponent_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
+  KEY `DB_ID` (`DB_ID`),
+  KEY `requiredInputComponent` (`requiredInputComponent`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
 --
 -- Table structure for table `FailedReaction`
 --
@@ -1505,6 +1621,12 @@ DROP TABLE IF EXISTS `FailedReaction`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `FailedReaction` (
     `DB_ID` int(10) unsigned NOT NULL DEFAULT '0',
+    `goBiologicalProcess` int(10) unsigned DEFAULT NULL,
+    `goBiologicalProcess_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
+    `normalReaction` int(10) unsigned DEFAULT NULL,
+    `normalReaction_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
+    KEY `goBiologicalProcess` (`goBiologicalProcess`),
+    KEY `normalReaction` (`normalReaction`),
     PRIMARY KEY (`DB_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1710,7 +1832,7 @@ CREATE TABLE `GO_BiologicalProcess` (
     `DB_ID` int(10) unsigned NOT NULL DEFAULT '0',
     `accession` mediumtext COLLATE utf8_unicode_ci,
     `definition` mediumtext COLLATE utf8_unicode_ci,
-    `referenceDatabase` int(10) unsigned NOT NULL,
+    `referenceDatabase` int(10) unsigned DEFAULT NULL,
     `referenceDatabase_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
     KEY `accession` (`accession`(10)),
     KEY `definition` (`definition`(10)),
@@ -1793,7 +1915,7 @@ CREATE TABLE `GO_CellularComponent` (
     `DB_ID` int(10) unsigned NOT NULL DEFAULT '0',
     `accession` mediumtext COLLATE utf8_unicode_ci,
     `definition` mediumtext COLLATE utf8_unicode_ci,
-    `referenceDatabase` int(10) unsigned NOT NULL,
+    `referenceDatabase` int(10) unsigned DEFAULT NULL,
     `referenceDatabase_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
     KEY `accession` (`accession`(10)),
     KEY `definition` (`definition`(10)),
@@ -1836,7 +1958,7 @@ CREATE TABLE `GO_MolecularFunction` (
     `DB_ID` int(10) unsigned NOT NULL DEFAULT '0',
     `accession` mediumtext COLLATE utf8_unicode_ci,
     `definition` mediumtext COLLATE utf8_unicode_ci,
-    `referenceDatabase` int(10) unsigned NOT NULL,
+    `referenceDatabase` int(10) unsigned DEFAULT NULL,
     `referenceDatabase_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
     KEY `accession` (`accession`(10)),
     KEY `definition` (`definition`(10)),
@@ -1853,9 +1975,12 @@ DROP TABLE IF EXISTS `GroupModifiedResidue`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `GroupModifiedResidue` (
     `DB_ID` int(10) unsigned NOT NULL DEFAULT '0',
-    `modification` int(10) unsigned NOT NULL,
+    `modification` int(10) unsigned DEFAULT NULL,
     `modification_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
+    `psiMod` int(10) unsigned DEFAULT NULL,
+    `psiMod_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
     KEY `modification` (`modification`),
+    KEY `psiMod` (`psiMod`),
     PRIMARY KEY (`DB_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2025,7 +2150,7 @@ DROP TABLE IF EXISTS `ModifiedNucleotide`;
 CREATE TABLE `ModifiedNucleotide` (
     `DB_ID` int(10) unsigned NOT NULL DEFAULT '0',
     `coordinate` int(10) DEFAULT NULL,
-    `modification` int(10) unsigned NOT NULL,
+    `modification` int(10) unsigned DEFAULT NULL,
     `modification_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
     KEY `coordinate` (`coordinate`),
     KEY `modification` (`modification`),
@@ -2041,6 +2166,9 @@ DROP TABLE IF EXISTS `ModifiedResidue`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `ModifiedResidue` (
     `DB_ID` int(10) unsigned NOT NULL DEFAULT '0',
+    `psiMod` int(10) unsigned DEFAULT NULL,
+    `psiMod_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
+    KEY `psiMod` (`psiMod`),
     PRIMARY KEY (`DB_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2107,6 +2235,9 @@ DROP TABLE IF EXISTS `NegativeRegulation`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `NegativeRegulation` (
     `DB_ID` int(10) unsigned NOT NULL DEFAULT '0',
+    `regulator` int(10) unsigned DEFAULT NULL,
+    `regulator_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
+    KEY `regulator` (`regulator`),
     PRIMARY KEY (`DB_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2159,6 +2290,19 @@ CREATE TABLE `OtherEntity` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+DROP TABLE IF EXISTS `Pathway_2_authored`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Pathway_2_authored` (
+  `DB_ID` int(10) unsigned DEFAULT NULL,
+  `authored_rank` int(10) unsigned DEFAULT NULL,
+  `authored` int(10) unsigned DEFAULT NULL,
+  `authored_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
+  KEY `DB_ID` (`DB_ID`),
+  KEY `authored` (`authored`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
 DROP TABLE IF EXISTS `Pathway_2_compartment`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -2169,6 +2313,19 @@ CREATE TABLE `Pathway_2_compartment` (
   `compartment_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
   KEY `DB_ID` (`DB_ID`),
   KEY `compartment` (`compartment`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+DROP TABLE IF EXISTS `Pathway_2_edited`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Pathway_2_edited` (
+  `DB_ID` int(10) unsigned DEFAULT NULL,
+  `edited_rank` int(10) unsigned DEFAULT NULL,
+  `edited` int(10) unsigned DEFAULT NULL,
+  `edited_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
+  KEY `DB_ID` (`DB_ID`),
+  KEY `edited` (`edited`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -2199,11 +2356,14 @@ CREATE TABLE `Pathway` (
     `normalPathway` int(10) unsigned DEFAULT NULL,
     `normalPathway_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
     `lastUpdatedDate` text COLLATE utf8_unicode_ci,
+    `goBiologicalProcess` int(10) unsigned DEFAULT NULL,
+    `goBiologicalProcess_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
     KEY `doi` (`doi`(10)),
     KEY `hasEHLD` (`hasEHLD`(10)),
     KEY `isCanonical` (`isCanonical`),
     KEY `normalPathway` (`normalPathway`),
     KEY `lastUpdatedDate` (`lastUpdatedDate`(10)),
+    KEY `goBiologicalProcess` (`goBiologicalProcess`),
     PRIMARY KEY (`DB_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2544,6 +2704,58 @@ CREATE TABLE `Polymerisation_2_catalystActivity` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+DROP TABLE IF EXISTS `Polymerisation_2_authored`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Polymerisation_2_authored` (
+  `DB_ID` int(10) unsigned DEFAULT NULL,
+  `authored_rank` int(10) unsigned DEFAULT NULL,
+  `authored` int(10) unsigned DEFAULT NULL,
+  `authored_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
+  KEY `DB_ID` (`DB_ID`),
+  KEY `authored` (`authored`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+DROP TABLE IF EXISTS `Polymerisation_2_edited`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Polymerisation_2_edited` (
+  `DB_ID` int(10) unsigned DEFAULT NULL,
+  `edited_rank` int(10) unsigned DEFAULT NULL,
+  `edited` int(10) unsigned DEFAULT NULL,
+  `edited_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
+  KEY `DB_ID` (`DB_ID`),
+  KEY `edited` (`edited`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+DROP TABLE IF EXISTS `Polymerisation_2_literatureReference`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Polymerisation_2_literatureReference` (
+  `DB_ID` int(10) unsigned DEFAULT NULL,
+  `literatureReference_rank` int(10) unsigned DEFAULT NULL,
+  `literatureReference` int(10) unsigned DEFAULT NULL,
+  `literatureReference_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
+  KEY `DB_ID` (`DB_ID`),
+  KEY `literatureReference` (`literatureReference`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+DROP TABLE IF EXISTS `Polymerisation_2_requiredInputComponent`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Polymerisation_2_requiredInputComponent` (
+  `DB_ID` int(10) unsigned DEFAULT NULL,
+  `requiredInputComponent_rank` int(10) unsigned DEFAULT NULL,
+  `requiredInputComponent` int(10) unsigned DEFAULT NULL,
+  `requiredInputComponent_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
+  KEY `DB_ID` (`DB_ID`),
+  KEY `requiredInputComponent` (`requiredInputComponent`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
 --
 -- Table structure for table `Polymerisation`
 --
@@ -2552,6 +2764,11 @@ DROP TABLE IF EXISTS `Polymerisation`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Polymerisation` (
     `DB_ID` int(10) unsigned NOT NULL DEFAULT '0',
+    `goBiologicalProcess` int(10) unsigned DEFAULT NULL,
+    `goBiologicalProcess_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
+    `releaseDate` date DEFAULT NULL,
+    KEY `goBiologicalProcess` (`goBiologicalProcess`),
+    KEY `releaseDate` (`releaseDate`),
     PRIMARY KEY (`DB_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2815,13 +3032,13 @@ CREATE TABLE `ReactionlikeEvent` (
     `systematicName` mediumtext COLLATE utf8_unicode_ci,
     `catalystActivityReference` int(10) unsigned DEFAULT NULL,
     `catalystActivityReference_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
+    `isChimeric` enum('TRUE','FALSE') COLLATE utf8_unicode_ci DEFAULT 'False',
     `normalReaction` int(10) unsigned DEFAULT NULL,
     `normalReaction_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
-    `isChimeric` enum('TRUE','FALSE') COLLATE utf8_unicode_ci DEFAULT 'False',
     KEY `systematicName` (`systematicName`(10)),
     KEY `catalystActivityReference` (`catalystActivityReference`),
-    KEY `normalReaction` (`normalReaction`),
     KEY `isChimeric` (`isChimeric`),
+    KEY `normalReaction` (`normalReaction`),
     PRIMARY KEY (`DB_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2926,7 +3143,7 @@ DROP TABLE IF EXISTS `ReferenceEntity`;
 CREATE TABLE `ReferenceEntity` (
     `DB_ID` int(10) unsigned NOT NULL DEFAULT '0',
     `identifier` mediumtext COLLATE utf8_unicode_ci,
-    `referenceDatabase` int(10) unsigned NOT NULL,
+    `referenceDatabase` int(10) unsigned DEFAULT NULL,
     `referenceDatabase_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
     KEY `identifier` (`identifier`(10)),
     KEY `referenceDatabase` (`referenceDatabase`),
@@ -3228,13 +3445,13 @@ CREATE TABLE `Regulation` (
     `DB_ID` int(10) unsigned NOT NULL DEFAULT '0',
     `activity` int(10) unsigned DEFAULT NULL,
     `activity_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
-    `regulator` int(10) unsigned DEFAULT NULL,
-    `regulator_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
     `goBiologicalProcess` int(10) unsigned DEFAULT NULL,
     `goBiologicalProcess_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
+    `regulator` int(10) unsigned DEFAULT NULL,
+    `regulator_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
     KEY `activity` (`activity`),
-    KEY `regulator` (`regulator`),
     KEY `goBiologicalProcess` (`goBiologicalProcess`),
+    KEY `regulator` (`regulator`),
     PRIMARY KEY (`DB_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
