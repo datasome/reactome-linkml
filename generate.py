@@ -93,6 +93,30 @@ CLASS_TO_PACKAGE_NAME = {
     "TargetNode": "org.springframework.data.neo4j.core.schema"
 }
 
+ATTRIBUTES_SLOTS_INHERITED_FOR_DATAMODEL = {
+    "AbstractModifiedResidue": [ "referenceSequence"],
+    "DatabaseObject" : [ "created", "modified" ],
+    "ControlReference": [ "literatureReference" ],
+    "CrosslinkedResidue": [ "secondCoordinate" ],
+    "EntitySet": [ "compartment" ],
+    "Event": [ "crossReference", "definition", "evidenceType", "figure",
+               "inferredFrom", "literatureReference", "name", "orthologousEvent", "precedingEvent",
+               "releaseDate", "reviewed", "revised", "species", "summation"],
+    "ExternalOntology": [ "definition", "identifier", "name", "referenceDatabase", "synonym" ],
+    "GenomeEncodedEntity": [ "compartment" ],
+    "GO_CellularComponent": [ "accession", "componentOf", "definition", "instanceOf", "referenceDatabase" ],
+    "PhysicalEntity": [ "authored", "crossReference", "definition", "edited",
+                        "figure", "goCellularComponent", "inferredFrom", "literatureReference",
+                        "name", "reviewed", "revised", "summation"],
+    "Publication": ["author", "title"],
+    "ReactionlikeEvent": ["compartment", "requiredInputComponent", "input", "output"],
+    "ReferenceEntity": [ "crossReference", "identifier", "name", "referenceDatabase"],
+    "Regulation": [ "regulator" ],
+    "ReplacedResidue": [ "psiMod" ],
+    "Taxon": ["crossReference", "superTaxon"],
+    "TranslationalModification": ["coordinate"]
+}
+
 # These java interfaces are not represented in yaml
 JAVA_INTERFACES_IN_MODEL = ["Trackable", "Deletable"]
 
@@ -1173,15 +1197,18 @@ def output_java(clazz: str, classes: dict, slots: dict, annot_attr2class: dict):
     fp.write("\n".join(lines))
     fp.close()
 
-def inherit_attributes_slots(class_entry: dict, attributes: dict, classes: dict, for_datamodel: bool):
+def inherit_attributes_slots(clazz: str, class_entry: dict, attributes: dict, classes: dict, for_datamodel: bool):
     """Inherit all attributes/slots of parents of clazz in class_entry - recursively to the top parent"""
     while 'is_a' in class_entry:
         parent_clazz = class_entry['is_a']
         parent_class_attributes = get_attr_slot_entries(classes[parent_clazz], slots)
         for attr in parent_class_attributes:
             if attr not in attributes and \
-                    (for_datamodel is False or attr not in ['_displayName', 'DB_ID', '_timestamp','stableIdentifier']):
-                    # For DataModel content, the above attributes are not inherited from DatabaseObject
+                    (for_datamodel is False or
+                     (parent_clazz in ATTRIBUTES_SLOTS_INHERITED_FOR_DATAMODEL and
+                     attr in ATTRIBUTES_SLOTS_INHERITED_FOR_DATAMODEL[parent_clazz])):
+                    # For DataModel content, the only attributes that are inherited are those
+                    # specified in ATTRIBUTES_SLOTS_INHERITED_FOR_DATAMODEL
                 attributes[attr] = copy.deepcopy(parent_class_attributes[attr])
         class_entry = classes[parent_clazz]
 
@@ -1247,7 +1274,7 @@ def get_filled_mysql_table_templates(clazz: str, classes: dict, slots: dict,
         ret_table = ret_table.replace("@AUTO_INCREMENT@", auto_increment)
         attributes = get_attr_slot_entries(class_entry, slots)
         attributes_for_datamodel = copy.deepcopy(attributes)
-        inherit_attributes_slots(class_entry, attributes_for_datamodel, classes, for_datamodel = True)
+        inherit_attributes_slots(clazz, class_entry, attributes_for_datamodel, classes, for_datamodel = True)
 
         for attr in attributes_for_datamodel:
             if attr != "explanation" and attr != "_class":
@@ -1359,7 +1386,7 @@ def generate_graphql(clazz: str, classes: dict, slots: dict):
     lines.append("{} {}{}".format(prefix, clazz, implements_clause))
     lines.append("{")
     attributes = get_attr_slot_entries(class_entry, slots)
-    inherit_attributes_slots(class_entry, attributes, classes, for_datamodel = False)
+    inherit_attributes_slots(clazz, class_entry, attributes, classes, for_datamodel = False)
     attr2line = {}
     for attr in attributes:
         attrLines = []

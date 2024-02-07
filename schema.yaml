@@ -100,6 +100,9 @@ classes:
       requiredInputComponent:
         annotations:
           constraint: OPTIONAL
+      catalystActivity:
+        annotations:
+          category:
     attributes:
       templateEvent:
         range: Event
@@ -220,6 +223,7 @@ classes:
     slots:
       - species
       - tissue
+      - cellType
     slot_usage:
       species:
         range: Taxon
@@ -227,6 +231,9 @@ classes:
           constraint: MANDATORY
           allowed: "{Species.class, Taxon.class}"
       tissue:
+        annotations:
+          constraint: MANDATORY
+      cellType:
         annotations:
           constraint: MANDATORY
     attributes:
@@ -578,12 +585,13 @@ classes:
         annotations:
           constraint: NOMANUALEDIT
           category: all
-          allowed: "{Taxon.class, Species.class}"
+          allowed: "{Species.class, Taxon.class}"
     attributes:
       class:
         range: AnnotationTextType
         annotations:
           constraint: NOMANUALEDIT
+          category: all
       deletedInstanceDB_ID:
         range: AnnotationLongType
         annotations:
@@ -945,8 +953,6 @@ classes:
           category: all
       instanceOf:
         range: ExternalOntology
-        addedField: false
-        type:
     attributes:
       synonym:
         multivalued: true
@@ -1877,6 +1883,11 @@ classes:
       suppress_warnings: "unused"
     slots:
       - explanation
+      - regulator
+    slot_usage:
+      regulator:
+        annotations:
+          constraint: MANDATORY
 
   #### ProteinDrug ####
   ProteinDrug:
@@ -1891,6 +1902,16 @@ classes:
     annotations:
       node: true
       suppress_warnings: "unused"
+    slots:
+      - instanceOf
+    slot_usage:
+      instanceOf:
+        category: all
+        range: ExternalOntology
+        annotations:
+          addedField: false
+          type:
+          allowed: "{PsiMod.class}"
     attributes:
       label:
         range: AnnotationTextType
@@ -1949,10 +1970,41 @@ classes:
     slots:
       - explanation
       - catalystActivity
+      - authored
+      - edited
+      - goBiologicalProcess
+      - literatureReference
+      - input
+      - output
+      - releaseDate
+      - requiredInputComponent
     slot_usage:
       catalystActivity:
         annotations:
           constraint: REQUIRED
+      authored:
+        multivalued: true
+        annotations:
+          constraint: REQUIRED
+      edited:
+        annotations:
+          constraint: REQUIRED
+      literatureReference:
+        annotations:
+          constraint: REQUIRED
+      input:
+        annotations:
+          constraint: MANDATORY
+      output:
+        annotations:
+          constraint: MANDATORY
+      releaseDate:
+        range: AnnotationDateType
+        annotations:
+          constraint: MANDATORY
+      requiredInputComponent:
+        annotations:
+          constraint: OPTIONAL
     attributes:
       reverseReaction:
         range: Reaction
@@ -2031,7 +2083,6 @@ classes:
   ReactionType:
     is_a: ControlledVocabulary
     annotations:
-      abstract: true
       node: true
       no_default_constructor: true
 
@@ -2046,7 +2097,8 @@ classes:
     slot_usage:
       name:
         annotations:
-          constraint: OPTIONAL
+          constraint: MANDATORY
+          category: any
     attributes:
       accessUrl:
         annotations:
@@ -2133,6 +2185,15 @@ classes:
       suppress_warnings: "unused"
     slots:
       - formula
+      - name
+      - otherIdentifier
+    slot_usage:
+      name:
+        annotations:
+          constraint: MANDATORY
+      otherIdentifier:
+        annotations:
+          constraint: NOMANUALEDIT
 
   #### ReferenceIsoform ####
   ReferenceIsoform:
@@ -2161,6 +2222,15 @@ classes:
       suppress_warnings: "unused"
     slots:
       - formula
+      - name
+      - otherIdentifier
+    slot_usage:
+      name:
+        annotations:
+          constraint: MANDATORY
+      otherIdentifier:
+        annotations:
+          constraint: NOMANUALEDIT
 
   #### ReferenceRNASequence ####
   ReferenceRNASequence:
@@ -2180,16 +2250,20 @@ classes:
   ReferenceSequence:
     is_a: ReferenceEntity
     annotations:
-      abstract: true
       node: true
       suppress_warnings: "unused"
     slots:
       - species
+      - otherIdentifier
     slot_usage:
       species:
         multivalued: false
         annotations:
           category: all
+          constraint: MANDATORY
+      otherIdentifier:
+        annotations:
+          constraint: NOMANUALEDIT
     attributes:
       checksum:
         annotations:
@@ -2258,10 +2332,11 @@ classes:
         range: AnnotationTextType
         annotations:
           addedField: false
+          constraint: OPTIONAL
       approved:
         range: boolean
         annotations:
-          constraint: REQUIRED
+          constraint: MANDATORY
           addedField: false
       withdrawn:
         range: boolean
@@ -2315,7 +2390,7 @@ classes:
       regulation:
         range: Regulation
         annotations:
-          constraint: REQUIRED
+          constraint: MANDATORY
           category: all
           type: "regulation"
 
@@ -2350,7 +2425,7 @@ classes:
       releaseNumber:
         range: integer
         annotations:
-          constraint: REQUIRED
+          constraint: MANDATORY
           addedField: false
           mysql_signed_int_type: true
 
@@ -2389,6 +2464,11 @@ classes:
       suppress_warnings: "unused"
     slots:
       - explanation
+      - regulator
+    slot_usage:
+      regulator:
+        annotations:
+          constraint: MANDATORY
 
   #### ReviewStatus ####
   ReviewStatus:
@@ -2409,6 +2489,18 @@ classes:
     annotations:
       node: true
       suppress_warnings: "unused"
+    slots:
+      - instanceOf
+      - identifier
+    slot_usage:
+      instanceOf:
+        range: ExternalOntology
+        annotations:
+          allowed: "{SequenceOntology.class}"
+      identifier:
+        annotations:
+          category: any
+          constraint: MANDATORY
 
   #### SimpleEntity ####
   SimpleEntity:
@@ -2434,7 +2526,7 @@ classes:
       referenceEntity:
         range: ReferenceMolecule
         annotations:
-          constraint: REQUIRED
+          constraint: MANDATORY
           category: all
           type: "referenceEntity"
 
@@ -2459,22 +2551,33 @@ classes:
     slots:
       - identifier
       - identifierVersion
+    slot_usage:
+      identifier:
+        annotations:
+          constraint: NOMANUALEDIT
+      identifierVersion:
+        annotations:
+          constraint: NOMANUALEDIT
     attributes:
       oldIdentifier:
         annotations:
           addedField: false
+          constraint: NOMANUALEDIT
       oldIdentifierVersion:
         annotations:
           addedField: false
+          constraint: NOMANUALEDIT
       released:
         range: boolean
         annotations:
           addedField: false
+          constraint: NOMANUALEDIT
       history:
         multivalued: true
         range: StableIdentifierHistory
         annotations:
           type: "history"
+          constraint: NOMANUALEDIT
 
   #### StableIdentifierHistory ####
   StableIdentifierHistory:
@@ -2488,14 +2591,19 @@ classes:
     slot_usage:
       identifier:
         range: AnnotationTextType
+        annotations:
+          constraint: NOMANUALEDIT
       identifierVersion:
         range: AnnotationTextType
+        annotations:
+          constraint: NOMANUALEDIT
     attributes:
       historyStatus:
         multivalued: true
         range: StableIdentifierReleaseStatus
         annotations:
           type: "historyStatus"
+          constraint: NOMANUALEDIT
 
   #### StableIdentifierReleaseStatus ####
   StableIdentifierReleaseStatus:
@@ -2510,12 +2618,14 @@ classes:
           addedField: false
           category: all
           mysql_signed_int_type: true
+          constraint: NOMANUALEDIT
       status:
         range: ReleaseStatusEnum
         annotations:
           addedField: false
           category: all
           no_default_getter_setter: true
+          constraint: NOMANUALEDIT
 
   #### Summation ####
   Summation:
@@ -2580,6 +2690,9 @@ classes:
       coordinate:
         annotations:
           mysql_signed_int_type: true
+      psiMod:
+        annotations:
+          constraint: MANDATORY
 
   #### _UpdateTracker ####
   _UpdateTracker:

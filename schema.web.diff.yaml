@@ -41,6 +41,7 @@ classes:
   Cell:
     is_a: PhysicalEntity
     annotations:
+      removed_slots: "cellType"
       removed_attributes: "RNAMarker"
     slot_usage:
       species:
@@ -781,6 +782,16 @@ classes:
     annotations:
       removed_slots: "catalystActivity, authored, edited, goBiologicalProcess, literatureReference, releaseDate, requiredInputComponent"
 
+  #### PositiveRegulation ####
+  PositiveRegulation:
+    annotations:
+      removed_slots: "regulator"
+
+  #### PsiMod ####
+  PsiMod:
+    annotations:
+      removed_slots: "instanceOf"
+
   #### Publication ####
   Publication:
     is_a: DatabaseObject
@@ -809,7 +820,8 @@ classes:
   Reaction:
     is_a: ReactionLikeEvent
     annotations:
-      removed_slots: "catalystActivity"
+      removed_slots: "authored, edited, catalystActivity, goBiologicalProcess, literatureReference, input, output, releaseDate, requiredInputComponent"
+
 
   #### ReactionlikeEvent ####
   ReactionlikeEvent:
@@ -840,6 +852,11 @@ classes:
         annotations:
           type: "normalReaction"
 
+  #### ReactionType ####
+  ReactionType:
+    annotations:
+      abstract: true
+
   #### ReferenceEntity ####
   ReferenceEntity:
     attributes:
@@ -859,8 +876,15 @@ classes:
     annotations:
       removed_attributes: "_chainChangeLog"
 
+  #### ReferenceGroup ####
+  ReferenceGroup:
+    annotations:
+      removed_slots: "name, otherIdentifier"
+
   #### ReferenceMolecule ####
   ReferenceMolecule:
+    annotations:
+      removed_slots: "name, otherIdentifier"
     attributes:
       trivial:
         range: boolean
@@ -871,10 +895,12 @@ classes:
 
   #### ReferenceSequence ####
   ReferenceSequence:
+    annotations:
+      abstract: true
+      removed_slots: "otherIdentifier"
     attributes:
       isSequenceChanged:
         range: boolean
-
 
   #### ReferenceTherapeutic ####
   ReferenceTherapeutic:
@@ -964,6 +990,16 @@ classes:
         range: Polymer
         annotations:
           target_node: true
+
+  #### Requirement ####
+  Requirement:
+    annotations:
+      removed_slots: "regulator"
+
+  #### SequenceOntology ####
+  SequenceOntology:
+    annotations:
+      removed_slots: "instanceOf, identifier"
 
   #### SimpleEntity ####
   SimpleEntity:

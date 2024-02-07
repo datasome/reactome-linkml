@@ -32,7 +32,7 @@ public class DeletedInstance extends MetaDatabaseObject {
     private String name;
 
     @Relationship(type = "species")
-    @ReactomeAllowedClasses(allowed = {Taxon.class, Species.class})
+    @ReactomeAllowedClasses(allowed = {Species.class, Taxon.class})
     private List<Taxon> species;
 
     public DeletedInstance() {}
@@ -61,16 +61,16 @@ public class DeletedInstance extends MetaDatabaseObject {
         this.name = name;
     }
 
-    @ReactomeAllowedClasses(allowed = {Taxon.class, Species.class})
+    @ReactomeAllowedClasses(allowed = {Species.class, Taxon.class})
     public List<Taxon> getSpecies() { return species; }
 
     public void setSpecies(List<Taxon> species) {
         if(species == null) return;
 
-        if (species instanceof Taxon || species instanceof Species) {
+        if (species instanceof Species || species instanceof Taxon) {
             this.species = species;
         } else {
-            throw new RuntimeException(species + " is none of: Taxon, Species");
+            throw new RuntimeException(species + " is none of: Species, Taxon");
         }
     }
 
