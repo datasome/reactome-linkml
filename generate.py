@@ -24,15 +24,23 @@ else:
     sys.exit(1)
 
 if len(sys.argv) > 2:
-    # If the second argument is provided, it is expected to be be the name of the linkml file that contains web schema-only content
+    # If the second argument is provided, it is expected to be be the name of the linkml file
+    # that contains web schema-only content
     web_schema_diff_file_name = sys.argv[2]
     OUTPUT_DIR = "graph-core-classes"
     CURATOR = ""
 else:
-    # If no arguments are provided, curator schema-only java classes are generated into curator-graph-core-classes
+    # If no arguments are provided, curator schema-only java classes are generated into
+    # curator-graph-core-classes
     OUTPUT_DIR = "curator-graph-core-classes"
     CURATOR = "curator."
 
+# Indentation used in generated java classes
+INDENT_0 = ""
+INDENT_1 = INDENT_0 + "    "
+INDENT_2 = INDENT_1 + "    "
+
+############ Constants related to Java model generation ############
 GETTER_ONLY_ANNOT_SUFFIX = "@getter"
 
 VALUE_TO_JAVA_ENUM = {
@@ -49,20 +57,6 @@ OTHER_ANNOTATIONS = ['abstract', 'implements', 'set', 'sorted_set', 'getter_only
                      'include_fetch', 'include_default_setter', 'no_default_getter_setter',
                      'no_default_getter', 'no_list_getter_setter', 'no_list_setter',
                      'include_stoichiometry', 'no_default_constructor', 'protected', 'public']
-
-NOW_TIMESTAMP = datetime.now(pytz.utc).strftime('%A, %d %B %Y %I:%M%p %Z%z')
-DATAMODEL_SCHEMA_ROWS = \
-    "('Schema','Schema','_timestamp',{},'STRING',0),".format(NOW_TIMESTAMP) + \
-    "('Schema','Schema','pins_file_stub',NULL,'STRING',0)," + \
-    "('Schema','Schema','pont_file_content',NULL,'STRING',0)," + \
-    "('Schema','Schema','pprj_file_content',NULL,'STRING',0),"
-
-CURATION_ONLY_ANNOTATIONS = ['category', 'constraint', 'mysql_signed_int_type',"mysql_inverse_slot"]
-
-# Indentation used in generated java classes
-INDENT_0 = ""
-INDENT_1 = INDENT_0 + "    "
-INDENT_2 = INDENT_1 + "    "
 
 CLASS_TO_PACKAGE_NAME = {
     "DatabaseObjectLike": "org.reactome.server.graph.{}domain.result".format(CURATOR),
@@ -93,6 +87,20 @@ CLASS_TO_PACKAGE_NAME = {
     "TargetNode": "org.springframework.data.neo4j.core.schema"
 }
 
+# These java interfaces are not represented in yaml
+JAVA_INTERFACES_IN_MODEL = ["Trackable", "Deletable"]
+
+############ Constants related to mysql DDL and DataModel table content generation ############
+NOW_TIMESTAMP = datetime.now(pytz.utc).strftime('%A, %d %B %Y %I:%M%p %Z%z')
+
+DATAMODEL_SCHEMA_ROWS = \
+    "('Schema','Schema','_timestamp',{},'STRING',0),".format(NOW_TIMESTAMP) + \
+    "('Schema','Schema','pins_file_stub',NULL,'STRING',0)," + \
+    "('Schema','Schema','pont_file_content',NULL,'STRING',0)," + \
+    "('Schema','Schema','pprj_file_content',NULL,'STRING',0),"
+
+CURATION_ONLY_ANNOTATIONS = ['category', 'constraint', 'mysql_signed_int_type',"mysql_inverse_slot"]
+
 ATTRIBUTES_SLOTS_INHERITED_FOR_DATAMODEL = {
     "AbstractModifiedResidue": [ "referenceSequence"],
     "DatabaseObject" : [ "created", "modified" ],
@@ -117,8 +125,48 @@ ATTRIBUTES_SLOTS_INHERITED_FOR_DATAMODEL = {
     "TranslationalModification": ["coordinate"]
 }
 
-# These java interfaces are not represented in yaml
-JAVA_INTERFACES_IN_MODEL = ["Trackable", "Deletable"]
+# These attributes/slots are needed for various curation-specific overrides (e.g. constraint)
+# in the content of DataModel table but are excluded from the DDL in gk_central.sql
+ATTRIBUTES_SLOTS_EXCLUDED_FROM_MYSQL_DDL = {
+    "BlackBoxEvent" : ["authored", "edited", "catalystActivity", "goBiologicalProcess",
+                       "literatureReference", "input", "output", "releaseDate",
+                       "requiredInputComponent"],
+    "CellDevelopmentStep" : [ "input", "output" ],
+    "EntityWithAccessionedSequence": [ "species" ],
+    "GroupModifiedResidue": [ "psiMod" ],
+    "Reaction": [ "goBiologicalProcess", "releaseDate" ],
+    "CandidateSet" : [ "hasMember" ],
+    "Cell": [ "cellType"],
+    "CellDevelopmentStep": [ "catalystActivity", "input", "output" ],
+    "CellType": [ "instanceOf" ],
+    "CellLineagePath" : [ "hasEvent" ],
+    "DefinedSet": [ "hasMember" ],
+    "Depolymerisation": [ "authored", "edited", "catalystActivity", "goBiologicalProcess",
+                       "literatureReference", "input", "output", "releaseDate",
+                       "requiredInputComponent" ],
+    "Disease": [ "instanceOf" ],
+    "Drug": [ "disease" ],
+    "EvidenceType": [ "instanceOf" ],
+    "FailedReaction": [ "authored", "edited", "catalystActivity", "goBiologicalProcess",
+                       "literatureReference", "input", "output", "normalReaction", "releaseDate",
+                       "requiredInputComponent" ],
+    "ModifiedResidue": [ "psiMod" ],
+    "NegativeRegulation": [ "regulator" ],
+    "Pathway": [ "authored", "edited" , "goBiologicalProcess"],
+    "Polymerisation": [ "authored", "edited", "catalystActivity", "goBiologicalProcess",
+                       "literatureReference", "input", "output", "releaseDate",
+                       "requiredInputComponent" ],
+    "PositiveRegulation": [ "regulator" ],
+    "PsiMod": [ "instanceOf" ],
+    "Reaction": [ "authored", "edited", "catalystActivity", "goBiologicalProcess",
+                       "literatureReference", "input", "output", "normalReaction", "releaseDate",
+                       "requiredInputComponent" ],
+    "ReferenceGroup": ["otherIdentifier"],
+    "ReferenceMolecule": ["otherIdentifier"],
+    "ReferenceSequence": ["otherIdentifier"],
+    "Requirement": ["regulator"],
+    "SequenceOntology": ["instanceOf", "identifier"]
+}
 
 # Mapping of range to MySQL types
 RANGE_TO_MYSQL_TYPE = {
@@ -148,7 +196,10 @@ REGULAR_TO_NONREGULAR_ATTR_NAME_FOR_MYSQL = {
     "rnaMarker" : "RNAMarker"
 }
 
-def get_type_for_datamodel(range: str, enums: dict, attr_entry: dict) -> str:
+def get_type_for_datamodel(range: str, attr_entry: dict) -> str:
+    """
+    Retrieve value for "type" property in the DataModel table insert statement
+    """
     ret = "db_string_type"
     if is_class_name(range):
         ret = "db_instance_type"
@@ -165,6 +216,10 @@ def get_type_for_datamodel(range: str, enums: dict, attr_entry: dict) -> str:
     return ret
 
 def get_property_value_type_from_type(type: str) -> str:
+    """
+    Returns the value for "property_value_type" corresponding to the value of "default"
+    property in the DataModel table insert statement.
+    """
     ret = None
     if type == "db_string_type":
         ret = 'STRING'
@@ -176,6 +231,9 @@ def get_property_value_type_from_type(type: str) -> str:
     return ret
 
 def get_db_col_type_for_datamodel(attr: str, attr_entry: dict, enums: dict):
+    """
+    Returns the value for "db_col_type" in the DataModel table insert statement.
+    """
     ret = None
     if attr in ['_timestamp', 'dateTime']:
         ret = "TIMESTAMP"
@@ -194,6 +252,9 @@ def get_db_col_type_for_datamodel(attr: str, attr_entry: dict, enums: dict):
     return ret
 
 def get_mysql_type_for_range(range: str, enums: dict, attr_entry: dict) -> str:
+    """
+    Returns mysql type corresponding to range, for the DDL
+    """
     ret = None
     if 'annotations' in attr_entry and \
         'mysql_signed_int_type' in attr_entry['annotations'] and \
@@ -337,7 +398,8 @@ def override_schema_slots(diff_slots: dict, slots: dict):
                 if key != 'annotations':
                     slots[slot][key] = diff_slots[slot][key]
 
-def get_web_yaml(web_schema_diff_file_name: str, schema_data: dict):
+def get_web_yaml(web_schema_diff_file_name: str, schema_data: dict) -> dict:
+    "Return dict containing schema_data merged with the diff web schema from web_schema_diff_file_name"
     with open(web_schema_diff_file_name, "r") as stream:
         try:
             # schema_data contains curator schema
@@ -659,7 +721,7 @@ def get_annotations(annotations: dict, annot_attr2class: dict,
     """
     Some annotation classes (e.g. @Relationship) have multiple attributes that each are assigned a value
     within Java annotation (e.g. Regulation.java, authored attr:
-    @Relationship(type = "authored", direction = Relationship.Direction.INCOMING)
+    @Relationship(type = "authored", direction = Relationship.Direction.INCOMING))
     We need to store each such assignment clause for an annotation class within class_to_annotation_clauses[annot_class]
     """
     class_to_annotation_clauses = {}
@@ -1152,7 +1214,8 @@ def get_dbid_variable_name(slots):
         return "dbId"
 
 def output_java(clazz: str, classes: dict, slots: dict, annot_attr2class: dict):
-    # Retrieve content for class clazz
+    """ Retrieve Java content for class clazz
+    """
     annotations_imports = set([])
     class_entry = classes[clazz]
     package = get_package(class_entry)
@@ -1212,7 +1275,10 @@ def inherit_attributes_slots(clazz: str, class_entry: dict, attributes: dict, cl
                 attributes[attr] = copy.deepcopy(parent_class_attributes[attr])
         class_entry = classes[parent_clazz]
 
-def get_filled_mysql_table_template_for_multivalued_attr(clazz: str, attr: str, range: range, enums: dict) -> str:
+def get_filled_mysql_table_template_for_multivalued_attr(clazz: str, attr: str, range: range) -> str:
+    """
+    Return DDL for attribute attr of range: range in mysql table corresponding to clazz
+    """
     if is_class_name(range):
         # The multivalued attribute's value is an instance
         template_file_name = "gk_class2instance_attr_table.sql"
@@ -1243,13 +1309,21 @@ def get_filled_mysql_table_template_for_multivalued_attr(clazz: str, attr: str, 
             ret = ret.replace("@DISPLAY_WIDTH@", "(10)")
         return ret
 
-# The multivalued attribute's value is a primitive
+def exclude_attribute_from_ddl(clazz: str, attr: str):
+    """
+    Return True if attr in clazz is meant to be excluded from the generated mysql DDL
+    """
+    if clazz in ATTRIBUTES_SLOTS_EXCLUDED_FROM_MYSQL_DDL \
+        and attr in ATTRIBUTES_SLOTS_EXCLUDED_FROM_MYSQL_DDL[clazz]:
+        return True
+    return False
 
 def get_filled_mysql_table_templates(clazz: str, classes: dict, slots: dict,
                                      enums: dict, single_attributes_in_datamodel: set) -> (list, str):
     """Generate mysql representation of clazz, by filling the table mysql template.
        The method returns a list of string table entries, one of which corresponds to clazz
-       and the remaining ones correspond to tables encoding multivalued (Instance or primitive) attributes
+       and the remaining ones correspond to additional tables encoding multivalued (Instance or primitive)
+       attributes.
     """
     ret_tables = []
     lines = []
@@ -1288,6 +1362,8 @@ def get_filled_mysql_table_templates(clazz: str, classes: dict, slots: dict,
             # DEBUG: print(clazz, attr, attributes, attributes[attr])
             attr_entry = attributes[attr]
             if attr in attributes and attributes[attr] is not None:
+                if exclude_attribute_from_ddl(clazz, attr):
+                    continue
                 if 'multivalued' in attr_entry and attr_entry['multivalued'] is True:
                     range = None
                     if 'range' in attr_entry:
@@ -1295,7 +1371,7 @@ def get_filled_mysql_table_templates(clazz: str, classes: dict, slots: dict,
                         if attr in REGULAR_TO_NONREGULAR_ATTR_NAME_FOR_MYSQL:
                             # Switch to non-regular attribute name if that's what mysql is using
                             attr = REGULAR_TO_NONREGULAR_ATTR_NAME_FOR_MYSQL[attr]
-                    ret_tables.append(get_filled_mysql_table_template_for_multivalued_attr(clazz, attr, range, enums))
+                    ret_tables.append(get_filled_mysql_table_template_for_multivalued_attr(clazz, attr, range))
                 else:
                     # attr is single-valued
                     if 'ifabsent' in attr_entry and attr_entry['ifabsent'] is not None:
@@ -1450,6 +1526,9 @@ def generate_graphql(clazz: str, classes: dict, slots: dict):
     return lines
 
 def get_schemaclass_rows_for_datamodel(clazz: str, class_entry: dict) -> str:
+    """
+    Generate entries for DataModel insert statement for 'thing_class' = 'SchemaClass'
+    """
     ret = ""
     if clazz != "DataModel":
         if clazz != "DatabaseObject":
@@ -1468,6 +1547,13 @@ def get_schemaclass_rows_for_datamodel(clazz: str, class_entry: dict) -> str:
 def append_to_schemaclassattribute_rows_for_datamodel(clazz: str, attr: str, property_name: str, property_value: str,
                                                       property_value_type: str, property_value_rank: int, ret: str,
                                                       single_attributes_in_datamodel: set):
+    """
+    Append to the DataModel insert statement row corresponding to attr in table clazz for
+    "thing_class" = "SchemaClassAttribute", using property_value, property_value_type
+    and property_value_rank. Note that each attribute attr in clazz has one entry
+    where "thing" = "clazz:attr". attr by itself (across all classes) also has one entry where
+    "thing" = "attr" - hence the check: "if attr not in single_attributes_in_datamodel" below.
+    """
     if property_name != "inverse_slots":
         thing = "{}:{}".format(clazz, attr)
         if property_value is None:
@@ -1491,6 +1577,10 @@ def append_to_schemaclassattribute_rows_for_datamodel(clazz: str, attr: str, pro
 def get_schemaclassattribute_rows_for_datamodel(clazz: str, attr: str, classes: dict, slots: dict,
                                                 attr_entry: str, enums: dict,
                                                 single_attributes_in_datamodel: set) -> str:
+    """
+    Append to the DataModel insert statement row corresponding to attr in table clazz for
+    "thing_class" = "SchemaClassAttribute"
+    """
     ret = ""
 
     ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'class', clazz,
@@ -1503,7 +1593,7 @@ def get_schemaclassattribute_rows_for_datamodel(clazz: str, attr: str, classes: 
     if 'range' not in attr_entry:
         type = "db_string_type"
     else:
-        type = get_type_for_datamodel(attr_entry['range'], enums, attr_entry)
+        type = get_type_for_datamodel(attr_entry['range'], attr_entry)
     ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'type', type,
                                                             'STRING', 0, ret, single_attributes_in_datamodel)
     if 'ifabsent' in attr_entry:
