@@ -572,6 +572,11 @@ classes:
     annotations:
       removed_slots: "regulator"
 
+  #### NonsenseMutation ####
+  NonsenseMutation:
+    annotations:
+      removed_slots: "psiMod"
+
   #### OtherEntity ####
   OtherEntity:
     annotations:
@@ -598,8 +603,6 @@ classes:
         removed_attributes: "lastUpdatedDate"
         removed_slots: "compartment, authored, edited, goBiologicalProcess"
     attributes:
-      hasEHLD:
-        range: boolean
       hasDiagram:
         range: boolean
         annotations:
@@ -790,7 +793,7 @@ classes:
   #### PsiMod ####
   PsiMod:
     annotations:
-      removed_slots: "instanceOf"
+      removed_slots: "instanceOf, name"
 
   #### Publication ####
   Publication:
@@ -999,7 +1002,7 @@ classes:
   #### SequenceOntology ####
   SequenceOntology:
     annotations:
-      removed_slots: "instanceOf, identifier"
+      removed_slots: "instanceOf, identifier, name"
 
   #### SimpleEntity ####
   SimpleEntity:

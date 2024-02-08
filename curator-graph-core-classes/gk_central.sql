@@ -410,7 +410,7 @@ DROP TABLE IF EXISTS `Complex`;
 CREATE TABLE `Complex` (
     `DB_ID` int(10) unsigned NOT NULL DEFAULT '0',
     `stoichiometryKnown` enum('TRUE','FALSE') COLLATE utf8_unicode_ci DEFAULT NULL,
-    `isChimeric` enum('TRUE','FALSE') COLLATE utf8_unicode_ci DEFAULT 'False',
+    `isChimeric` enum('TRUE','FALSE') COLLATE utf8_unicode_ci DEFAULT NULL,
     KEY `stoichiometryKnown` (`stoichiometryKnown`),
     KEY `isChimeric` (`isChimeric`),
     PRIMARY KEY (`DB_ID`)
@@ -910,8 +910,8 @@ DROP TABLE IF EXISTS `EntityWithAccessionedSequence`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `EntityWithAccessionedSequence` (
     `DB_ID` int(10) unsigned NOT NULL DEFAULT '0',
-    `endCoordinate` int(10) DEFAULT '-1',
-    `startCoordinate` int(10) DEFAULT '1',
+    `endCoordinate` int(10) DEFAULT NULL,
+    `startCoordinate` int(10) DEFAULT NULL,
     `referenceEntity` int(10) unsigned DEFAULT NULL,
     `referenceEntity_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
     KEY `endCoordinate` (`endCoordinate`),
@@ -1652,10 +1652,10 @@ CREATE TABLE `InstanceEdit` (
     `DB_ID` int(10) unsigned NOT NULL DEFAULT '0',
     `dateTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `note` mediumtext COLLATE utf8_unicode_ci,
-    `_applyToAllEditedInstances` mediumtext COLLATE utf8_unicode_ci,
+    `_applyToAllEditedInstances` enum('TRUE','FALSE') COLLATE utf8_unicode_ci DEFAULT NULL,
     KEY `dateTime` (`dateTime`),
     KEY `note` (`note`(10)),
-    KEY `_applyToAllEditedInstances` (`_applyToAllEditedInstances`(10)),
+    KEY `_applyToAllEditedInstances` (`_applyToAllEditedInstances`),
     PRIMARY KEY (`DB_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1963,13 +1963,13 @@ DROP TABLE IF EXISTS `Pathway`;
 CREATE TABLE `Pathway` (
     `DB_ID` int(10) unsigned NOT NULL DEFAULT '0',
     `doi` text COLLATE utf8_unicode_ci,
-    `hasEHLD` text COLLATE utf8_unicode_ci,
+    `hasEHLD` enum('TRUE','FALSE') COLLATE utf8_unicode_ci DEFAULT NULL,
     `isCanonical` enum('TRUE','FALSE') COLLATE utf8_unicode_ci DEFAULT NULL,
     `normalPathway` int(10) unsigned DEFAULT NULL,
     `normalPathway_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
     `lastUpdatedDate` text COLLATE utf8_unicode_ci,
     KEY `doi` (`doi`(10)),
-    KEY `hasEHLD` (`hasEHLD`(10)),
+    KEY `hasEHLD` (`hasEHLD`),
     KEY `isCanonical` (`isCanonical`),
     KEY `normalPathway` (`normalPathway`),
     KEY `lastUpdatedDate` (`lastUpdatedDate`(10)),
@@ -2558,7 +2558,7 @@ CREATE TABLE `ReactionlikeEvent` (
     `systematicName` mediumtext COLLATE utf8_unicode_ci,
     `catalystActivityReference` int(10) unsigned DEFAULT NULL,
     `catalystActivityReference_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
-    `isChimeric` enum('TRUE','FALSE') COLLATE utf8_unicode_ci DEFAULT 'False',
+    `isChimeric` enum('TRUE','FALSE') COLLATE utf8_unicode_ci DEFAULT NULL,
     `normalReaction` int(10) unsigned DEFAULT NULL,
     `normalReaction_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
     KEY `systematicName` (`systematicName`(10)),
@@ -2902,12 +2902,12 @@ DROP TABLE IF EXISTS `ReferenceSequence`;
 CREATE TABLE `ReferenceSequence` (
     `DB_ID` int(10) unsigned NOT NULL DEFAULT '0',
     `checksum` mediumtext COLLATE utf8_unicode_ci,
-    `isSequenceChanged` mediumtext COLLATE utf8_unicode_ci,
+    `isSequenceChanged` enum('TRUE','FALSE') COLLATE utf8_unicode_ci DEFAULT NULL,
     `sequenceLength` int(10) DEFAULT NULL,
     `species` int(10) unsigned DEFAULT NULL,
     `species_class` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
     KEY `checksum` (`checksum`(10)),
-    KEY `isSequenceChanged` (`isSequenceChanged`(10)),
+    KEY `isSequenceChanged` (`isSequenceChanged`),
     KEY `sequenceLength` (`sequenceLength`),
     KEY `species` (`species`),
     PRIMARY KEY (`DB_ID`)

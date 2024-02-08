@@ -101,30 +101,6 @@ DATAMODEL_SCHEMA_ROWS = \
 
 CURATION_ONLY_ANNOTATIONS = ['category', 'constraint', 'mysql_signed_int_type',"mysql_inverse_slot"]
 
-ATTRIBUTES_SLOTS_INHERITED_FOR_DATAMODEL = {
-    "AbstractModifiedResidue": [ "referenceSequence"],
-    "DatabaseObject" : [ "created", "modified" ],
-    "ControlReference": [ "literatureReference" ],
-    "CrosslinkedResidue": [ "secondCoordinate" ],
-    "EntitySet": [ "compartment" ],
-    "Event": [ "crossReference", "definition", "evidenceType", "figure",
-               "inferredFrom", "literatureReference", "name", "orthologousEvent", "precedingEvent",
-               "releaseDate", "reviewed", "revised", "species", "summation"],
-    "ExternalOntology": [ "definition", "identifier", "name", "referenceDatabase", "synonym" ],
-    "GenomeEncodedEntity": [ "compartment" ],
-    "GO_CellularComponent": [ "accession", "componentOf", "definition", "instanceOf", "referenceDatabase" ],
-    "PhysicalEntity": [ "authored", "crossReference", "definition", "edited",
-                        "figure", "goCellularComponent", "inferredFrom", "literatureReference",
-                        "name", "reviewed", "revised", "summation"],
-    "Publication": ["author", "title"],
-    "ReactionlikeEvent": ["compartment", "requiredInputComponent", "input", "output"],
-    "ReferenceEntity": [ "crossReference", "identifier", "name", "referenceDatabase"],
-    "Regulation": [ "regulator" ],
-    "ReplacedResidue": [ "psiMod" ],
-    "Taxon": ["crossReference", "superTaxon"],
-    "TranslationalModification": ["coordinate"]
-}
-
 # These attributes/slots are needed for various curation-specific overrides (e.g. constraint)
 # in the content of DataModel table but are excluded from the DDL in gk_central.sql
 ATTRIBUTES_SLOTS_EXCLUDED_FROM_MYSQL_DDL = {
@@ -152,20 +128,21 @@ ATTRIBUTES_SLOTS_EXCLUDED_FROM_MYSQL_DDL = {
                        "requiredInputComponent" ],
     "ModifiedResidue": [ "psiMod" ],
     "NegativeRegulation": [ "regulator" ],
+    "NonsenseMutation": ["psiMod"],
     "Pathway": [ "authored", "edited" , "goBiologicalProcess"],
     "Polymerisation": [ "authored", "edited", "catalystActivity", "goBiologicalProcess",
                        "literatureReference", "input", "output", "releaseDate",
                        "requiredInputComponent" ],
     "PositiveRegulation": [ "regulator" ],
-    "PsiMod": [ "instanceOf" ],
+    "PsiMod": [ "instanceOf", "name" ],
     "Reaction": [ "authored", "edited", "catalystActivity", "goBiologicalProcess",
-                       "literatureReference", "input", "output", "normalReaction", "releaseDate",
-                       "requiredInputComponent" ],
+                  "literatureReference", "input", "output", "normalReaction", "releaseDate",
+                  "requiredInputComponent" ],
     "ReferenceGroup": ["otherIdentifier"],
     "ReferenceMolecule": ["otherIdentifier"],
     "ReferenceSequence": ["otherIdentifier"],
     "Requirement": ["regulator"],
-    "SequenceOntology": ["instanceOf", "identifier"]
+    "SequenceOntology": ["instanceOf", "identifier", "name"]
 }
 
 # Mapping of range to MySQL types
@@ -228,27 +205,6 @@ def get_property_value_type_from_type(type: str) -> str:
             ret = 'INTEGER'
         elif type == "db_enum_type":
             ret = 'SYMBOL'
-    return ret
-
-def get_db_col_type_for_datamodel(attr: str, attr_entry: dict, enums: dict):
-    """
-    Returns the value for "db_col_type" in the DataModel table insert statement.
-    """
-    ret = None
-    if attr in ['_timestamp', 'dateTime']:
-        ret = "TIMESTAMP"
-    elif 'range' in attr_entry:
-        range = attr_entry['range']
-        if range == "AnnotationDateType":
-            ret = "date"
-        elif range == "boolean":
-            ret = "ENUM(\\'TRUE\\',\\'FALSE\\')"
-        elif range == "AnnotationLongBlobType":
-            ret = "LONGBLOB"
-        elif range.endswith("Enum"):
-            enum_values = enums[range]["permissible_values"]
-            ret = "ENUM({}{}{})" \
-                .format("\\'", enum_values.replace(" ", "\\',\\'"), "\\'")
     return ret
 
 def get_mysql_type_for_range(range: str, enums: dict, attr_entry: dict) -> str:
@@ -1260,16 +1216,13 @@ def output_java(clazz: str, classes: dict, slots: dict, annot_attr2class: dict):
     fp.write("\n".join(lines))
     fp.close()
 
-def inherit_attributes_slots(clazz: str, class_entry: dict, attributes: dict, classes: dict, for_datamodel: bool):
+def inherit_attributes_slots(clazz: str, class_entry: dict, attributes: dict, classes: dict):
     """Inherit all attributes/slots of parents of clazz in class_entry - recursively to the top parent"""
     while 'is_a' in class_entry:
         parent_clazz = class_entry['is_a']
         parent_class_attributes = get_attr_slot_entries(classes[parent_clazz], slots)
         for attr in parent_class_attributes:
-            if attr not in attributes and \
-                    (for_datamodel is False or
-                     (parent_clazz in ATTRIBUTES_SLOTS_INHERITED_FOR_DATAMODEL and
-                     attr in ATTRIBUTES_SLOTS_INHERITED_FOR_DATAMODEL[parent_clazz])):
+            if attr not in attributes:
                     # For DataModel content, the only attributes that are inherited are those
                     # specified in ATTRIBUTES_SLOTS_INHERITED_FOR_DATAMODEL
                 attributes[attr] = copy.deepcopy(parent_class_attributes[attr])
@@ -1348,7 +1301,6 @@ def get_filled_mysql_table_templates(clazz: str, classes: dict, slots: dict,
         ret_table = ret_table.replace("@AUTO_INCREMENT@", auto_increment)
         attributes = get_attr_slot_entries(class_entry, slots)
         attributes_for_datamodel = copy.deepcopy(attributes)
-        inherit_attributes_slots(clazz, class_entry, attributes_for_datamodel, classes, for_datamodel = True)
 
         for attr in attributes_for_datamodel:
             if attr != "explanation" and attr != "_class":
@@ -1375,7 +1327,10 @@ def get_filled_mysql_table_templates(clazz: str, classes: dict, slots: dict,
                 else:
                     # attr is single-valued
                     if 'ifabsent' in attr_entry and attr_entry['ifabsent'] is not None:
-                        if isinstance(attr_entry['ifabsent'], int):
+                        if isinstance(attr_entry['ifabsent'], bool):
+                            # See: https://stackoverflow.com/questions/37888620/comparing-boolean-and-int-using-isinstance
+                            suffix = " DEFAULT NULL"
+                        elif isinstance(attr_entry['ifabsent'], int):
                             # For now restrict it to just an int default
                             # e.g. property_value_rank in DataModel
                             suffix = " DEFAULT '{}'".format(attr_entry['ifabsent'])
@@ -1462,7 +1417,7 @@ def generate_graphql(clazz: str, classes: dict, slots: dict):
     lines.append("{} {}{}".format(prefix, clazz, implements_clause))
     lines.append("{")
     attributes = get_attr_slot_entries(class_entry, slots)
-    inherit_attributes_slots(clazz, class_entry, attributes, classes, for_datamodel = False)
+    inherit_attributes_slots(clazz, class_entry, attributes, classes)
     attr2line = {}
     for attr in attributes:
         attrLines = []
@@ -1604,10 +1559,6 @@ def get_schemaclassattribute_rows_for_datamodel(clazz: str, attr: str, classes: 
                                                                 property_value_type_for_default,
                                                                 0, ret, single_attributes_in_datamodel)
 
-    db_col_type = get_db_col_type_for_datamodel(attr, attr_entry, enums)
-    ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'db_col_type', db_col_type,
-                                                            'STRING', 0, ret, single_attributes_in_datamodel)
-
     # NB. According to Guanming, properties 'min_cardinality' and 'max_cardinality' are not used in Reactome
     # applications and has advised that they are set to 0
     for property_name in ['min_cardinality', 'max_cardinality']:
@@ -1622,7 +1573,9 @@ def get_schemaclassattribute_rows_for_datamodel(clazz: str, attr: str, classes: 
         ret = append_to_schemaclassattribute_rows_for_datamodel(clazz, attr, 'multiple', None,
                                                                 'SYMBOL', 0, ret, single_attributes_in_datamodel)
 
-    if 'range' in attr_entry and is_class_name(attr_entry['range']):
+    if 'range' in attr_entry \
+        and is_class_name(attr_entry['range']) \
+        and ('annotations' not in attr_entry or 'allowed' not in attr_entry['annotations']):
         allowed_class = attr_entry['range']
         # If attr_entry['range'] is a relationship class, use the class stored inside it as allowed_class instead
         allowed_class_entry = classes[allowed_class]
@@ -1669,6 +1622,11 @@ def get_schemaclassattribute_rows_for_datamodel(clazz: str, attr: str, classes: 
 
     single_attributes_in_datamodel.add(attr)
     return ret
+
+def is_class_deprecated(class_entry: dict):
+    return 'annotations' in class_entry \
+            and 'deprecated' in class_entry['annotations'] \
+            and class_entry['annotations']['deprecated'] is True
 
 # Main program body
 with open("schema.yaml", "r") as stream:
@@ -1718,8 +1676,9 @@ with open("schema.yaml", "r") as stream:
                     (mysql_content, schemaclassattribute_rows_str) = \
                         get_filled_mysql_table_templates(clazz, classes, slots, enums, single_attributes_in_datamodel)
                     mysql_lines += mysql_content
-                    datamodel_entries_str += get_schemaclass_rows_for_datamodel(clazz, classes[clazz])
-                    datamodel_entries_str += schemaclassattribute_rows_str
+                    if clazz != "DataModel" and not is_class_deprecated(classes[clazz]):
+                        datamodel_entries_str += get_schemaclass_rows_for_datamodel(clazz, classes[clazz])
+                        datamodel_entries_str += schemaclassattribute_rows_str
 
         if output_type == "graphql":
             # Write generated graphql content to a file
