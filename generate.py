@@ -94,7 +94,7 @@ JAVA_INTERFACES_IN_MODEL = ["Trackable", "Deletable"]
 NOW_TIMESTAMP = datetime.now(pytz.utc).strftime('%A, %d %B %Y %I:%M%p %Z%z')
 
 DATAMODEL_SCHEMA_ROWS = \
-    "('Schema','Schema','_timestamp',{},'STRING',0),".format(NOW_TIMESTAMP) + \
+    "('Schema','Schema','_timestamp','{}','STRING',0),".format(NOW_TIMESTAMP) + \
     "('Schema','Schema','pins_file_stub',NULL,'STRING',0)," + \
     "('Schema','Schema','pont_file_content',NULL,'STRING',0)," + \
     "('Schema','Schema','pprj_file_content',NULL,'STRING',0),"
@@ -108,7 +108,7 @@ ATTRIBUTES_SLOTS_EXCLUDED_FROM_MYSQL_DDL = {
                        "literatureReference", "input", "output", "releaseDate",
                        "requiredInputComponent"],
     "CellDevelopmentStep" : [ "input", "output" ],
-    "EntityWithAccessionedSequence": [ "species" ],
+    "EntityWithAccessionedSequence": [ "species", "name" ],
     "GroupModifiedResidue": [ "psiMod" ],
     "Reaction": [ "goBiologicalProcess", "releaseDate" ],
     "CandidateSet" : [ "hasMember" ],
@@ -122,7 +122,7 @@ ATTRIBUTES_SLOTS_EXCLUDED_FROM_MYSQL_DDL = {
                        "requiredInputComponent" ],
     "Disease": [ "instanceOf" ],
     "Drug": [ "disease" ],
-    "EvidenceType": [ "instanceOf" ],
+    "EvidenceType": [ "instanceOf", "name" ],
     "FailedReaction": [ "authored", "edited", "catalystActivity", "goBiologicalProcess",
                        "literatureReference", "input", "output", "normalReaction", "releaseDate",
                        "requiredInputComponent" ],
@@ -138,8 +138,8 @@ ATTRIBUTES_SLOTS_EXCLUDED_FROM_MYSQL_DDL = {
     "Reaction": [ "authored", "edited", "catalystActivity", "goBiologicalProcess",
                   "literatureReference", "input", "output", "normalReaction", "releaseDate",
                   "requiredInputComponent" ],
-    "ReferenceGroup": ["otherIdentifier"],
-    "ReferenceMolecule": ["otherIdentifier"],
+    "ReferenceGroup": ["otherIdentifier", "name"],
+    "ReferenceMolecule": ["otherIdentifier", "name"],
     "ReferenceSequence": ["otherIdentifier"],
     "Requirement": ["regulator"],
     "SequenceOntology": ["instanceOf", "identifier", "name"]
@@ -1283,11 +1283,11 @@ def get_filled_mysql_table_templates(clazz: str, classes: dict, slots: dict,
     schemaclassattribute_rows_str = ""
     if clazz not in ["DataModel", "Ontology"]:
         if clazz != "DatabaseObject":
-            lines.append("{}`DB_ID` int(10) unsigned NOT NULL DEFAULT '0',".format(INDENT_1))
+            lines.append("{}`DB_ID` int(10) unsigned NOT NULL DEFAULT '0'".format(INDENT_1))
         else:
             # N.B. Guanming wants DB_ID in DatabaseObject to remain just 'int '(while it is 'int unsigned' in
             # other tables)
-            lines.append("{}`DB_ID` int(10) NOT NULL AUTO_INCREMENT,".format(INDENT_1))
+            lines.append("{}`DB_ID` int(10) NOT NULL AUTO_INCREMENT".format(INDENT_1))
     class_entry = classes[clazz]
     table_keys = []
     fh = os.path.join("mysql_templates", "gk_table.sql")
@@ -1295,7 +1295,7 @@ def get_filled_mysql_table_templates(clazz: str, classes: dict, slots: dict,
         ret_table = mysql_table_template.read()
         ret_table = ret_table.replace("@TABLE_NAME@", clazz)
         if clazz == "DatabaseObject":
-            auto_increment = "AUTO_INCREMENT=9859833 "
+            auto_increment = " AUTO_INCREMENT=9859833"
         else:
             auto_increment = ""
         ret_table = ret_table.replace("@AUTO_INCREMENT@", auto_increment)
@@ -1349,9 +1349,9 @@ def get_filled_mysql_table_templates(clazz: str, classes: dict, slots: dict,
                         if is_class_name(range):
                             # The single-valued attribute's value is an Instance
                             additional_clazz_attribute = \
-                                "{}`{}` {} {},".format(INDENT_1, "{}_class".format(attr), \
+                                "{}`{}` {} {}".format(INDENT_1, "{}_class".format(attr), \
                                                        CLAZZ_TO_ATTRIBUTE_TO_MYSQL_TYPE["default"], "DEFAULT NULL")
-                            table_keys.append("{}KEY `{}` (`{}`),".format(INDENT_1, attr, attr))
+                            table_keys.append("{}KEY `{}` (`{}`)".format(INDENT_1, attr, attr))
                             mysql_type = get_mysql_type_for_range("integer", enums, attr_entry)
                         else:
                             # The single-valued attribute's value is primitive
@@ -1361,29 +1361,29 @@ def get_filled_mysql_table_templates(clazz: str, classes: dict, slots: dict,
                             if clazz != "DataModel" and (clazz != "DatabaseObject" or attr != "DB_ID"):
                                 if range != "AnnotationLongBlobType":
                                     if range == "string" or range == "AnnotationTextType":
-                                        table_keys.append("{}KEY `{}` (`{}`(10)),".format(INDENT_1, attr, attr))
+                                        table_keys.append("{}KEY `{}` (`{}`(10))".format(INDENT_1, attr, attr))
                                     else:
-                                        table_keys.append("{}KEY `{}` (`{}`),".format(INDENT_1, attr, attr))
+                                        table_keys.append("{}KEY `{}` (`{}`)".format(INDENT_1, attr, attr))
                     else:
                         # No 'range' in attr_entry
                         if attr in ['_timestamp', 'dateTime']:
                             mysql_type = 'timestamp'
                             suffix += " DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
                             if clazz != "DataModel":
-                                table_keys.append("{}KEY `{}` (`{}`),".format(INDENT_1, attr, attr))
+                                table_keys.append("{}KEY `{}` (`{}`)".format(INDENT_1, attr, attr))
                         else:
                             if attr == "_class":
                                 mysql_type = CLAZZ_TO_ATTRIBUTE_TO_MYSQL_TYPE["default"]
                                 if clazz != "DataModel":
-                                    table_keys.append("{}KEY `{}` (`{}`),".format(INDENT_1, attr, attr))
+                                    table_keys.append("{}KEY `{}` (`{}`)".format(INDENT_1, attr, attr))
                             else:
                                 mysql_type = get_mysql_type_for_range("string", enums, attr_entry)
                                 if clazz != "DataModel":
-                                    table_keys.append("{}KEY `{}` (`{}`(10)),".format(INDENT_1, attr, attr))
+                                    table_keys.append("{}KEY `{}` (`{}`(10))".format(INDENT_1, attr, attr))
 
                     if 'text' in mysql_type or mysql_type == 'longblob':
                         suffix = ""
-                    lines.append("{}`{}` {}{},".format(INDENT_1, attr, mysql_type, suffix))
+                    lines.append("{}`{}` {}{}".format(INDENT_1, attr, mysql_type, suffix))
                     if additional_clazz_attribute:
                         lines.append(additional_clazz_attribute)
             else:
@@ -1391,13 +1391,13 @@ def get_filled_mysql_table_templates(clazz: str, classes: dict, slots: dict,
                 range = "string"
                 suffix = "DEFAULT NULL"
                 mysql_type = get_mysql_type_for_range(range, enums, attr_entry)
-                lines.append("{}`{}` {}{},".format(INDENT_1, attr, mysql_type, suffix))
+                lines.append("{}`{}` {}{}".format(INDENT_1, attr, mysql_type, suffix))
         lines += table_keys
         if clazz not in ["DataModel", "Ontology"]:
             lines.append("{}PRIMARY KEY (`DB_ID`)".format(INDENT_1))
-        ret_table = ret_table.replace("@TABLE_CONTENT@", "\n".join(lines))
+        ret_table = ret_table.replace("@TABLE_CONTENT@", ",\n".join(lines))
         # Remove any empty lines
-        ret_table = "\n".join([s for s in ret_table.split("\n") if s])
+        ret_table = ",\n".join([s for s in ret_table.split(",\n") if s])
         ret_tables.append(ret_table)
 
     return (ret_tables, schemaclassattribute_rows_str)
@@ -1697,10 +1697,11 @@ with open("schema.yaml", "r") as stream:
                 # Write generated mysql content to a file
                 fp = open(os.path.join(OUTPUT_DIR, "gk_central.sql"), 'w')
                 fp.write(mysql_content)
+                datamodel_insert_stmt = "INSERT INTO `DataModel` VALUES {}{};".format(DATAMODEL_SCHEMA_ROWS,
+                                                                re.sub(r",$","", datamodel_entries_str))
+                # DEBUG print(datamodel_insert_stmt)
+                fp.write("\n\n{}".format(datamodel_insert_stmt))
                 fp.close()
-
-            print("INSERT INTO `DataModel` VALUES {}{};".format(DATAMODEL_SCHEMA_ROWS,
-                                                                re.sub(r",$","", datamodel_entries_str)))
 
     except yaml.YAMLError as exc:
         print(exc)
