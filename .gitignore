@@ -1,3 +1,6 @@
 .idea/
 schema.web.yaml
-__pycache__/ 
+__pycache__/
+curator-graph-core-classes/model/
+curator-graph-core-classes/relationship
+/ 
