@@ -29,20 +29,26 @@ if len(sys.argv) > 3:
 if len(sys.argv) > 4 and sys.argv[4] == "generate_update_ddl":
     generate_update_ddl = True
 
-
-# TODO: Document functions
-
-def clean(label: str) -> str:
+def remove_ticks(label: str) -> str:
     return label.replace("`","").strip()
 
-def get_sql_datamodel_content(file_path: str) -> (dict, dict, dict):
+def get_sql_datamodel_content(file_path: str) -> (dict, dict, dict, str):
+    """
+    Retrieve from file_path the SQL DDL and the content of DataModel table to be inserted, for the purpose of
+    comparison.
+    """
+    # Dict representing the DDL content
     sql_content = {}
+    # Dict storing various information that is needed from the DataModel content
     class2superclass = {}
     superclass2subclasses = {}
     class2instance_attributes = {}
+    datamodel_insert_stmt = None
+
     with open(file_path) as f:
         for line in f:
             if search(DATA_MODEL_INSERT_REGEX, line):
+                datamodel_insert_stmt = line
                 line = re.sub(r"" + DATA_MODEL_INSERT_REGEX,"", line)
                 line = re.sub(r"^\(|\);$", "", line)
                 data_model_lines = sorted(line.split("),("))
@@ -72,7 +78,7 @@ def get_sql_datamodel_content(file_path: str) -> (dict, dict, dict):
                 # Exclude lines that are irrelevant for the comparison
                 continue
             if line.startswith("CREATE TABLE"):
-                table_name = clean(line.split(" ")[2])
+                table_name = remove_ticks(line.split(" ")[2])
                 sql_content[table_name] = {}
             elif PK in line:
                 if PK not in sql_content[table_name]:
@@ -83,13 +89,16 @@ def get_sql_datamodel_content(file_path: str) -> (dict, dict, dict):
                     sql_content[table_name][K] = set()
                 sql_content[table_name][K].add(line.strip().replace(",",""))
             else:
-                field_name = clean(line.strip().split(" ")[0])
+                field_name = remove_ticks(line.strip().split(" ")[0])
                 if F not in sql_content[table_name]:
                     sql_content[table_name][F] = {}
                 sql_content[table_name][F][field_name] = line.strip().replace(",","")
-    return (sql_content, class2superclass, superclass2subclasses, class2instance_attributes)
+    return (sql_content, class2superclass, superclass2subclasses, class2instance_attributes, datamodel_insert_stmt)
 
 def get_table_ddl(clazz: str, table_dict: dict):
+    """
+    Construct from table_dict the DDL of the table corresponding to clazz
+    """
     fh = os.path.join("mysql_templates", "gk_table.sql")
     with open(fh, 'r') as mysql_table_template:
         ret_table = mysql_table_template.read()
@@ -112,6 +121,12 @@ def get_table_ddl(clazz: str, table_dict: dict):
 def compare_sql(first: dict, second: dict, first_desc: str,
                 ddl_creates: list, ddl_updates: list, ddl_drops: list,
                 ddl_update_actions: dict, raw_diff: dict) -> dict:
+    """
+    Compare the DDL SQL in first vs second, where first_desc describes whether first is the "original" DDL or
+    the "generated" one, and store the results in ddl_* dicts and raw_diff. raw_diff contains the precise information
+    which tables/attributes were created and dropped, but doesn't make clear which attributes were moved or
+    changed from single-valued to multi-valued or vice versa.
+    """
     for table in first:
         if table not in second:
             if first_desc == "original":
@@ -158,7 +173,11 @@ def compare_sql(first: dict, second: dict, first_desc: str,
                         raw_diff["created"][field].add(table)
                         ddl_updates.append("ALTER TABLE {} ADD COLUMN {}".format(table, first[table][F][field]))
                         if not field.endswith("_class"):
-                            ddl_updates.append("ALTER TABLE {} ADD KEY {}".format(table, field))
+                            if 'text ' in first[table][F][field]:
+                                suffix = '(10)'
+                            else:
+                                suffix = ''
+                            ddl_updates.append("ALTER TABLE {} ADD KEY `{}` (`{}`{})".format(table, field, field, suffix))
                         if table not in ddl_update_actions["new_attributes"]:
                             ddl_update_actions["new_attributes"][table] = set([])
                         ddl_update_actions["new_attributes"][table].add(field)
@@ -184,10 +203,17 @@ def compare_sql(first: dict, second: dict, first_desc: str,
                             ddl_updates.append("ALTER TABLE {} DROP KEY {}".format(table, field))
                         ddl_updates.append("ALTER TABLE {} MODIFY COLUMN {}".format(table, first[table][F][field]))
                         if not field.endswith("_class"):
-                            ddl_updates.append("ALTER TABLE {} ADD KEY {}".format(table, field))
+                            if 'text ' in first[table][F][field]:
+                                suffix = '(10)'
+                            else:
+                                suffix = ''
+                            ddl_updates.append("ALTER TABLE {} ADD KEY `{}` (`{}`{})".format(table, field, field, suffix))
     return raw_diff
 
 def contains_multivalued_table_for_attr(tables: list, attr: str) -> bool:
+    """
+    Returns True if tables contains a label of the form *_2_attr
+    """
     ret = False
     for table in tables:
         if table.endswith("_2_{}".format(attr)):
@@ -197,6 +223,12 @@ def contains_multivalued_table_for_attr(tables: list, attr: str) -> bool:
 
 def collect_attributes(raw_diff_key: str, opposite_raw_diff_key: str,
                        raw_diff: str, processed_diff_key: str, processed_diff: dict):
+    """
+    Collects from raw_diff attributes that are truly new or truly dropped from a given table
+    (i.e. have not just been moved from one class to another) and stores them in processed_diff
+    under processed_diff_key key. The possible values for processed_diff_key are:
+    "new_attributes" and "dropped_attributes".
+    """
     # Process single-valued attributes
     for attr in raw_diff[raw_diff_key]:
         if attr == "" or attr.endswith("_class"):
@@ -225,7 +257,12 @@ def collect_attributes(raw_diff_key: str, opposite_raw_diff_key: str,
 
 
 def process_raw_diff(raw_diff: dict, superclass2subclasses: dict, class2superclass: dict) -> dict:
-    # raw_diff = { "created": {}, "dropped": {}, "changed": {}, "missing": {}}
+    """
+    Convert information in raw_diff to processed_diff (initialised below), utilising additional information in
+    superclass2subclasses and class2superclass. Unlike raw_diff, processed_diff explicates which tables/attributes
+    are truly new or truly dropped, and lists precisely which attributes have been moved (e.g. from subclass to a
+    superclass) and/or changed from single-valued to multi-valued or vice versa.
+    """
     processed_diff = { "new_classes": {}, "dropped_classes": [],
                        "new_attributes": {}, "dropped_attributes": {},
                        "moved_attributes" : {"same_class": {}, "class2superclass": {}, "superclass2subclass": {}}
@@ -264,9 +301,9 @@ def process_raw_diff(raw_diff: dict, superclass2subclasses: dict, class2supercla
                     processed_diff["moved_attributes"]["class2superclass"][attr] = ((t, "sv"), (base_table_t1, "mv"))
                 elif class2superclass[base_table_t1] == t:
                     """
-                    TODO: Assumption: it's the user's responsibility to make sure that an attribute
-                    that is moved from a superclass to a subclass is moved (in linkml) to all subclasses of superclass
-                    Here, we just process what we're given in linkml
+                    Assumption: it's the user's responsibility to make sure that an attribute
+                    that is moved from a superclass down the hierarchy in linkml, it is always moved to all subclasses 
+                    of the superclass. Here, we just process what we're given in linkml.
                     """
                     processed_diff["moved_attributes"]["superclass2subclass"][attr] = ((t, "sv"), (base_table_t1, "mv"))
             if attr in raw_diff["created"]:
@@ -302,12 +339,20 @@ def process_raw_diff(raw_diff: dict, superclass2subclasses: dict, class2supercla
 
     return processed_diff
 
-def is_instance_attr(attr: str, table: str, gen_class2instance_attributes: dict):
-    if table in gen_class2instance_attributes and attr in gen_class2instance_attributes[table]:
+def is_instance_attr(attr: str, table: str, class2instance_attributes: dict):
+    """
+    Returns True in attr in table is an Instance attribute; False otherwise.
+    """
+    if table in class2instance_attributes and attr in class2instance_attributes[table]:
         return True
     return False
 
-def populate_data_transfer_statements(processed_diff: dict, ddl_populates: dict, gen_class2instance_attributes: dict):
+def populate_data_transfer_statements(processed_diff: dict, ddl_populates: dict, class2instance_attributes: dict):
+    """
+    Given information in processed_diff and class2instance_attributes, this function populates data transfer SQL
+    statements into ddl_populates that are required following attributes moves from one class to another, or attribute
+    changes between single-valued and multi-valued.
+    """
     for key in processed_diff["moved_attributes"]:
         for attr in processed_diff["moved_attributes"][key]:
             tuple = processed_diff["moved_attributes"][key][attr]
@@ -318,17 +363,20 @@ def populate_data_transfer_statements(processed_diff: dict, ddl_populates: dict,
             attr_to_type = to_tuple[1]
             to_table = to_tuple[0]
             if attr_from_type == "sv" and attr_to_type == "mv":
-                if is_instance_attr(attr, from_table, gen_class2instance_attributes):
-                    # TODO: It may be that we don't want 'WHERE O.{} IS NOT NULL' below if we're transferring between subclass/superclass
+                if from_table == to_table:
+                    suffix_clause = " IS NOT NULL"
+                else:
+                    suffix_clause = ""
+                if is_instance_attr(attr, from_table, class2instance_attributes):
                     ddl_populates.append(
-                        "INSERT INTO {}_2_{} (DB_ID, {}, {}_class, {}_rank) SELECT DB_ID, {}, {}_class, 0 FROM {} O WHERE O.{} IS NOT NULL"
-                            .format(to_table, attr, attr, attr, attr, attr, attr, from_table, attr))
+                        "INSERT INTO {}_2_{} (DB_ID, {}, {}_class, {}_rank) SELECT DB_ID, {}, {}_class, 0 FROM {} O WHERE O.{}{}"
+                            .format(to_table, attr, attr, attr, attr, attr, attr, from_table, attr, suffix_clause))
                 else:
                     ddl_populates.append(
-                        "INSERT INTO {}_2_{} (DB_ID, {}, {}_rank) SELECT DB_ID, {}, 0 FROM {} O WHERE O.{} IS NOT NULL"
-                            .format(to_table, attr, attr, attr, attr, from_table, attr))
+                        "INSERT INTO {}_2_{} (DB_ID, {}, {}_rank) SELECT DB_ID, {}, 0 FROM {} O WHERE O.{}{}"
+                            .format(to_table, attr, attr, attr, attr, from_table, attr, suffix_clause))
             elif attr_from_type == "mv" and attr_to_type == "sv":
-                if is_instance_attr(attr, from_table, gen_class2instance_attributes):
+                if is_instance_attr(attr, from_table, class2instance_attributes):
                     ddl_populates.append(
                         "UPDATE {} N, {}_2_{} O SET N.{}=O.{}, N.{}_class=O.{}_class WHERE N.DB_ID = O.DB_ID"
                         .format(to_table, from_table, attr, attr, attr, attr, attr))
@@ -338,7 +386,7 @@ def populate_data_transfer_statements(processed_diff: dict, ddl_populates: dict,
                             .format(to_table, from_table, attr, attr, attr))
             elif attr_from_type == "sv" and attr_to_type == "sv":
                 if from_table != to_table:
-                    if is_instance_attr(attr, from_table, gen_class2instance_attributes):
+                    if is_instance_attr(attr, from_table, class2instance_attributes):
                         ddl_populates.append(
                             "UPDATE {} N, {} O SET N.{}=O.{}, N.{}_class=O.{}_class WHERE N.DB_ID = O.DB_ID"
                                 .format(to_table, from_table, attr, attr, attr, attr))
@@ -348,13 +396,14 @@ def populate_data_transfer_statements(processed_diff: dict, ddl_populates: dict,
                                 .format(to_table, from_table, attr, attr))
             elif attr_from_type == "mv" and attr_to_type == "mv":
                 if from_table != to_table:
-                    ddl_populates.append(
-                        "INSERT INTO {}_2_{} (DB_ID, {}, {}_class, {}_rank) SELECT DB_ID, {}, {}_class, 0 FROM {}_2_{} O WHERE O.{} IS NOT NULL"
-                            .format(to_table, attr, attr, attr, attr, attr, attr, from_table, attr, attr))
-                else:
-                    ddl_populates.append(
-                        "INSERT INTO {}_2_{} (DB_ID, {}, {}_rank) SELECT DB_ID, {}, 0 FROM {}_2_{} O WHERE O.{} IS NOT NULL"
-                            .format(to_table, attr, attr, attr, attr, from_table, attr, attr))
+                    if is_instance_attr(attr, from_table, class2instance_attributes):
+                        ddl_populates.append(
+                            "INSERT INTO {}_2_{} (DB_ID, {}, {}_class, {}_rank) SELECT DB_ID, {}, {}_class, 0 FROM {}_2_{} O WHERE O.{}"
+                                .format(to_table, attr, attr, attr, attr, attr, attr, from_table, attr, attr))
+                    else:
+                        ddl_populates.append(
+                            "INSERT INTO {}_2_{} (DB_ID, {}, {}_rank) SELECT DB_ID, {}, 0 FROM {}_2_{} O WHERE O.{}"
+                                .format(to_table, attr, attr, attr, attr, from_table, attr, attr))
 
     for clazz in processed_diff["new_classes"]:
         subclasses = processed_diff["new_classes"][clazz]
@@ -365,8 +414,9 @@ def populate_data_transfer_statements(processed_diff: dict, ddl_populates: dict,
                     .format(clazz, "','".join(subclasses)))
 
 # Main program body
-gen_sql_content, gen_class2superclass, gen_superclass2subclasses, gen_class2instance_attributes = get_sql_datamodel_content(gen_sql)
-orig_sql_content, orig_class2superclass, orig_superclass2subclasses, orig_class2instance_attributes = get_sql_datamodel_content(orig_sql)
+gen_sql_content, class2superclass, superclass2subclasses, class2instance_attributes, datamodel_insert_stmt \
+    = get_sql_datamodel_content(gen_sql)
+orig_sql_content, _, _, _, _ = get_sql_datamodel_content(orig_sql)
 
 # pp = pprint.PrettyPrinter(indent=4)
 # pp.pprint(gen_sql_content)
@@ -386,12 +436,12 @@ print("******** RAW DIFF: *********\n")
 pp.pprint(raw_diff)
 
 # Generate processed diff output
-processed_diff = process_raw_diff(raw_diff, gen_superclass2subclasses, gen_class2superclass)
+processed_diff = process_raw_diff(raw_diff, superclass2subclasses, class2superclass)
 print("\n******** PROCESSED DIFF: *********\n")
 pp.pprint(processed_diff)
 
 # Populate data transfer statements into ddl_populates, based on processed_diff["moved_attributes"]
-populate_data_transfer_statements(processed_diff, ddl_populates, gen_class2instance_attributes)
+populate_data_transfer_statements(processed_diff, ddl_populates, class2instance_attributes)
 
 if generate_update_ddl:
     fp = open(os.path.join(output_dir, "gk_central.update.sql"), 'w')
@@ -407,4 +457,6 @@ if generate_update_ddl:
     if ddl_drops:
         fp.write("\n\n-- Drop columns/tables:\n")
         fp.write(";\n".join(ddl_drops) + ";")
+    fp.write("\nDELETE FROM DataModel;\n")
+    fp.write("{}".format(datamodel_insert_stmt))
     fp.close()
