@@ -301,8 +301,8 @@ classes:
       hasEvent:
         annotations:
           # Note that this restriction is for event field in HasEvent and not for hasEvent field here
-          # but we are not able to express it there the same hasEvent field is inherited from Pathway
-          # and used here, but the allowed restricted is pertinent to CellLineagePath only.
+          # but we are not able to express it there as the same hasEvent field is inherited from Pathway
+          # and used here, but the allowed restriction is pertinent to CellLineagePath only.
           allowed: "{CellLineagePath.class, CellDevelopmentStep.class}"
 
   #### CellType ####
