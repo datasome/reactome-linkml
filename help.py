@@ -8,7 +8,7 @@ help_content['./generate.py'] = [
     ("./generate.py graphql schema.web.diff.yaml",
         "Generate graph-core-classes/schema.web.graphql from schema.yaml merged with schema.web.diff.yaml"),
     ("./generate.py yaml schema.web.diff.yaml",
-        "Generate schema.web.yaml by merging schema.yaml and schema.web.diff.yaml - so that schema.web.yaml's syntax can be validated")
+        "Generate schema.web.yaml by merging schema.yaml and schema.web.diff.yaml - so that schema.web.yaml's syntax can be validated"),
     ("./generate.py mysql",
         "Generate the full SQL DDL/DataModel content - based on schema.yaml"
     )
