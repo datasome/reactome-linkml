@@ -9,6 +9,9 @@ help_content['./generate.py'] = [
         "Generate graph-core-classes/schema.web.graphql from schema.yaml merged with schema.web.diff.yaml"),
     ("./generate.py yaml schema.web.diff.yaml",
         "Generate schema.web.yaml by merging schema.yaml and schema.web.diff.yaml - so that schema.web.yaml's syntax can be validated")
+    ("./generate.py mysql",
+        "Generate the full SQL DDL/DataModel content - based on schema.yaml"
+    )
 ]
 help_content['gen-json-schema'] = [
     ("gen-json-schema schema.yaml", "Generate json schema from schema.yaml - can be used to validate linkml syntax of schema.yaml"),
@@ -21,9 +24,10 @@ help_content['./compare_java.py'] = [
         "Compare generated classes to those in graph-core repo")
 ]
 
-help_content['./compare_mysql.py'] = [
-    ("./compare_sql.py gk_current.create_schema.sql curator-graph-core-classes/gk_current.sql",
-        "Compare generated SQL schema to that in gk_current.create_schema.sql"),
+help_content['./compare_sql.py'] = [
+    ("./compare_sql.py <gk_central.create_schema.sql before change> <gk_central.create_schema.sql after change>",
+     "Compare the DDL schema before and after the change, and 1. Save a file called gk_central.update.sql that contains the content of the SQL DDL/DataModel content update; and 2. Print out a summary of the difference to the user."
+     )
 ]
 
 def print_help(script_name):
