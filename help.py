@@ -25,7 +25,7 @@ help_content['./compare_java.py'] = [
 ]
 
 help_content['./compare_sql.py'] = [
-    ("./compare_sql.py <gk_central.create_schema.sql before change> <gk_central.create_schema.sql after change>",
+    ("./compare_sql.py <gk_central.create_schema.sql before change> <gk_central.create_schema.sql after change> generate_update_ddl",
      "Compare the DDL schema before and after the change, and 1. Save a file called gk_central.update.sql that contains the content of the SQL DDL/DataModel content update; and 2. Print out a summary of the difference to the user."
      )
 ]
