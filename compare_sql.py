@@ -141,29 +141,30 @@ def compare_sql(first: dict, second: dict, first_desc: str,
             continue
         if PK in first[table]:
             if PK not in second[table]:
-                if first_desc == "generated":
+                if first_desc == "original":
                     if PK not in raw_diff["missing"]:
                         raw_diff["missing"][PK] = set()
                     raw_diff["missing"][PK].add(table)
             elif first[table][PK].symmetric_difference(second[table][PK]):
-                if first_desc == "generated":
+                if first_desc == "original":
                     if PK not in raw_diff["changed"]:
                         raw_diff["changed"][PK] = set()
                     raw_diff["changed"][PK].add(table)
         if K in first[table]:
             if K not in second[table]:
-                if first_desc == "generated":
+                if first_desc == "original":
                     if K not in raw_diff["missing"]:
                         raw_diff["missing"][K] = set()
                     raw_diff["missing"][K].add(table)
-                if first_desc == "generated":
+            elif first[table][K].symmetric_difference(second[table][K]):
+                if first_desc == "original":
                     if K not in raw_diff["changed"]:
                         raw_diff["changed"][K] = set()
                     raw_diff["changed"][K].add(table)
         if F in first[table]:
             if F not in second[table]:
                 # first[table] contains some columns, but second[table] doesn't at all
-                if first_desc == "generated":
+                if first_desc == "original":
                     raw_diff["missing"][F].add(table)
             for field in first[table][F]:
                 if field not in second[table][F]:
@@ -297,15 +298,16 @@ def process_raw_diff(raw_diff: dict, superclass2subclasses: dict, class2supercla
                 base_table_t1 = t1.split("_")[0]
                 if t1 == "{}_2_{}".format(t, attr):
                     processed_diff["moved_attributes"]["same_class"][attr] = ((t, "sv"), (t, "mv"))
-                elif class2superclass[t] == base_table_t1:
-                    processed_diff["moved_attributes"]["class2superclass"][attr] = ((t, "sv"), (base_table_t1, "mv"))
-                elif class2superclass[base_table_t1] == t:
-                    """
-                    Assumption: it's the user's responsibility to make sure that an attribute
-                    that is moved from a superclass down the hierarchy in linkml, it is always moved to all subclasses 
-                    of the superclass. Here, we just process what we're given in linkml.
-                    """
-                    processed_diff["moved_attributes"]["superclass2subclass"][attr] = ((t, "sv"), (base_table_t1, "mv"))
+                elif t1 == "{}_2_{}".format(base_table_t1, attr):
+                    if class2superclass[t] == base_table_t1:
+                        processed_diff["moved_attributes"]["class2superclass"][attr] = ((t, "sv"), (base_table_t1, "mv"))
+                    elif class2superclass[base_table_t1] == t:
+                        """
+                        Assumption: it's the user's responsibility to make sure that an attribute
+                        that is moved from a superclass down the hierarchy in linkml is always moved to all subclasses 
+                        of the superclass. Here, we just process what we're given in linkml.
+                        """
+                        processed_diff["moved_attributes"]["superclass2subclass"][attr] = ((t, "sv"), (base_table_t1, "mv"))
             if attr in raw_diff["created"]:
                 for t1 in raw_diff["created"][attr]:
                     if class2superclass[t] == t1:

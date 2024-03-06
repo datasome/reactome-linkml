@@ -1,7 +1,21 @@
 ******** RAW DIFF: *********
 
 {   'changed': {   '': set(),
-                   'KEY': {'InteractionEvent'},
+                   'KEY': {   'BlackBoxEvent',
+                              'Book',
+                              'Event',
+                              'InstanceEdit',
+                              'LiteratureReference',
+                              'PhysicalEntity',
+                              'PsiMod',
+                              'Publication',
+                              'ReactionlikeEvent',
+                              'ReferenceEntity',
+                              'ReferenceSequence',
+                              'SimpleEntity',
+                              'StableIdentifier',
+                              'Taxon',
+                              'URL'},
                    '_applyToAllEditedInstances': {'InstanceEdit'}},
     'created': {   '': {   'ControlReference_2_regulation',
                            'InstanceEdit_2_note',
@@ -61,7 +75,7 @@
                    'templateEvent': {'BlackBoxEvent'},
                    'templateEvent_class': {'BlackBoxEvent'},
                    'title': {'Publication'}},
-    'missing': {'': set(), 'KEY': {'InteractionEvent'}}}
+    'missing': {'': set(), 'KEY': {'RegulationReference'}}}
 
 ******** PROCESSED DIFF: *********
 
