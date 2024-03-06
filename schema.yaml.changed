@@ -1,0 +1,3196 @@
+id: org.reactome.server.graph.domain.model
+name: reactome-data-model
+description: Reactome Data Model
+prefixes:
+  linkml: https://w3id.org/linkml/
+default_prefix: https://w3id.org/linkml/
+default_range: string
+# version: TBC
+imports:
+  - linkml:types
+
+# types:
+# TBC
+
+classes:
+
+  #### AbstractModifiedResidue ####
+  AbstractModifiedResidue:
+    is_a: DatabaseObject
+    annotations:
+      abstract: true
+      constructor_parameter: "dbId"
+      node: true
+      suppress_warnings: "unused"
+    attributes:
+      referenceSequence:
+        range: ReferenceSequence
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "referenceSequence"
+
+  #### Affiliation ####
+  Affiliation:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - name
+    slot_usage:
+      name:
+        annotations:
+          category: all
+    attributes:
+      address:
+        annotations:
+          constraint: REQUIRED
+          addedField: false
+
+  #### Anatomy ####
+  Anatomy:
+    is_a: ExternalOntology
+    annotations:
+      node: true
+      no_default_constructor: true
+
+  #### BlackBoxEvent ####
+  BlackBoxEvent:
+    description: "Shortcut reactions that make the connection between input and output, but don't provide complete mechanistic detail. Used for reactions that do not balance, or complicated processes for which we either don't know all the details, or we choose not to represent every step. (e.g. degradation of a protein)"
+    is_a: ReactionlikeEvent
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - explanation
+      - authored
+      - edited
+      - catalystActivity
+      - goBiologicalProcess
+      - literatureReference
+      - input
+      - output
+      - releaseDate
+      - requiredInputComponent
+    slot_usage:
+      explanation:
+        annotations:
+          json_ignore: false
+      authored:
+        multivalued: true
+        annotations:
+          constraint: REQUIRED
+      edited:
+        annotations:
+          constraint: REQUIRED
+      literatureReference:
+        annotations:
+          constraint: REQUIRED
+      input:
+        annotations:
+          constraint: REQUIRED
+      output:
+        annotations:
+          constraint: REQUIRED
+      releaseDate:
+        range: AnnotationDateType
+        annotations:
+          constraint: MANDATORY
+      requiredInputComponent:
+        annotations:
+          constraint: OPTIONAL
+      catalystActivity:
+        annotations:
+          category:
+    attributes:
+      catalystActivityReference:
+        range: CatalystActivityReference
+        annotations:
+          constraint: OPTIONAL
+          type: "catalystActivityReference"
+
+  #### Book ####
+  Book:
+    is_a: Publication
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    attributes:
+      chapterTitle:
+        annotations:
+          constraint: OPTIONAL
+          category: any
+          addedField: false
+      pages:
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      year:
+        range: integer
+        annotations:
+          constraint: MANDATORY
+          addedField: false
+          mysql_signed_int_type: true
+      chapterAuthors:
+        multivalued: true
+        range: Person
+        annotations:
+          constraint: OPTIONAL
+          type: "chapterAuthors"
+      publisher:
+        range: Affiliation
+        annotations:
+          constraint: OPTIONAL
+          type: "publisher"
+
+  #### CandidateSet ####
+  CandidateSet:
+    description: "A set of entities that are interchangeable in function, with two subclasses, members that are hypothetical and members that have been demonstrated. Hypothetical members are identified as values of the hasCandidate slot. Members that have been demonstrated are identified in the hasMember slot. At least one hasCandidate value is required; hasMember values are optional"
+    is_a: EntitySet
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - explanation
+      - hasMember
+    slot_usage:
+      hasMember:
+        annotations:
+          constraint: REQUIRED
+    attributes:
+      hasCandidate:
+        multivalued: true
+        range: HasCandidate
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "hasCandidate"
+          sorted_set: true
+
+  #### CatalystActivity ####
+  CatalystActivity:
+    is_a: DatabaseObject
+    annotations:
+      constructor_parameter: "dbId"
+      node: true
+      suppress_warnings: "unused"
+    attributes:
+      activeUnit:
+        multivalued: true
+        range: PhysicalEntity
+        annotations:
+          constraint: OPTIONAL
+          category: all
+          type: "activeUnit"
+          set: true
+      activity:
+        range: GO_MolecularFunction
+        annotations:
+          constraint: REQUIRED
+          category: all
+          type: "activity"
+      physicalEntity:
+        range: PhysicalEntity
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "physicalEntity"
+
+  #### CatalystActivityReference ####
+  CatalystActivityReference:
+    is_a: ControlReference
+    annotations:
+      node: true
+    slots:
+      - catalystActivity
+    slot_usage:
+      catalystActivity:
+        multivalued: false
+        annotations:
+          constraint: MANDATORY
+
+  #### Cell ####
+  Cell:
+    is_a: PhysicalEntity
+    annotations:
+      node: true
+    slots:
+      - species
+      - tissue
+      - cellType
+    slot_usage:
+      species:
+        range: Taxon
+        annotations:
+          constraint: MANDATORY
+          allowed: "{Species.class, Taxon.class}"
+      tissue:
+        annotations:
+          constraint: MANDATORY
+    attributes:
+      RNAMarker:
+        multivalued: true
+        range: EntityWithAccessionedSequence
+        annotations:
+          constraint: REQUIRED
+          type: "rnaMarker"
+      markerReference:
+        multivalued: true
+        range: MarkerReference
+        annotations:
+          constraint: REQUIRED
+          type: "markerReference"
+      organ:
+        range: Anatomy
+        annotations:
+          constraint: OPTIONAL
+          type: "organ"
+      proteinMarker:
+        multivalued: true
+        range: PhysicalEntity
+        annotations:
+          constraint: REQUIRED
+          type: "proteinMarker"
+          allowed: "{EntityWithAccessionedSequence.class, Complex.class}"
+      tissueLayer:
+        range: Anatomy
+        annotations:
+          constraint: OPTIONAL
+          type: "tissueLayer"
+
+  #### CellDevelopmentStep ####
+  CellDevelopmentStep:
+    is_a: ReactionlikeEvent
+    annotations:
+      node: true
+    slots:
+      - tissue
+      - catalystActivity
+      - input
+      - output
+    slot_usage:
+      input:
+        multivalued: false
+        annotations:
+          allowed: "{Cell.class}"
+          category:
+      output:
+        multivalued: false
+        annotations:
+          allowed: "{Cell.class}"
+          category:
+      catalystActivity:
+        annotations:
+          category:
+
+  #### CellLineagePath ####
+  CellLineagePath:
+    is_a: Pathway
+    annotations:
+      node: true
+    slots:
+      - tissue
+      - hasEvent
+    slot_usage:
+      hasEvent:
+        annotations:
+          # Note that this restriction is for event field in HasEvent and not for hasEvent field here
+          # but we are not able to express it there the same hasEvent field is inherited from Pathway
+          # and used here, but the allowed restricted is pertinent to CellLineagePath only.
+          allowed: "{CellLineagePath.class, CellDevelopmentStep.class}"
+
+  #### CellType ####
+  CellType:
+    is_a: ExternalOntology
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - instanceOf
+    slot_usage:
+      instanceOf:
+        annotations:
+          allowed: "{CellType.class}"
+
+  #### ChemicalDrug ####
+  ChemicalDrug:
+    is_a: Drug
+    annotations:
+      node: true
+      suppress_warnings: "{\"unused\", \"WeakerAccess\"}"
+
+  #### Compartment ####
+  Compartment:
+    is_a: GO_CellularComponent
+    annotations:
+      constructor_parameter: "dbId"
+      node: true
+      suppress_warnings: "unused"
+
+  #### Complex ####
+  Complex:
+    description: "An entity formed by the association of two or more component entities (these components can themselves be complexes). At least one component must be specified. Complexes represent all experimentally verified components and their stoichiometry where this is known but may not include as yet unidentified components"
+    is_a: PhysicalEntity
+    annotations:
+      constructor_parameter: "dbId"
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - compartment
+      - entityOnOtherCell
+      - explanation
+      - isChimeric
+      - relatedSpecies
+      - species
+    attributes:
+      hasComponent:
+        multivalued: true
+        range: HasComponent
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "hasComponent"
+          sorted_set: true
+          include_stoichiometry: true
+      stoichiometryKnown:
+        range: boolean
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      includedLocation:
+        multivalued: true
+        range: HasCompartment
+        annotations:
+          constraint: NOMANUALEDIT
+          type: "includedLocation"
+          sorted_set: true
+          include_default_setter: true
+          no_list_setter: true
+
+  #### ControlledVocabulary ####
+  ControlledVocabulary:
+    is_a: DatabaseObject
+    annotations:
+      abstract: true
+      node: true
+    slots:
+      - definition
+      - name
+
+  #### ControlReference ####
+  ControlReference:
+    is_a: DatabaseObject
+    annotations:
+      abstract: true
+      node: true
+      suppress_warnings: "{\"unused\", \"WeakerAccess\"}"
+    slots:
+      - literatureReference
+    slot_usage:
+      literatureReference:
+        annotations:
+          constraint: MANDATORY
+    attributes:
+      regulation:
+        multivalued: true
+        range: Regulation
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "regulation"
+
+  #### CrosslinkedResidue ####
+  CrosslinkedResidue:
+    is_a: TranslationalModification
+    annotations:
+      abstract: true
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - modification
+    attributes:
+      secondCoordinate:
+        multivalued: true
+        range: integer
+        annotations:
+          constraint: REQUIRED
+          category: all
+          addedField: false
+
+  #### DatabaseIdentifier ####
+  DatabaseIdentifier:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - crossReference
+      - identifier
+      - referenceDatabase
+    slot_usage:
+      identifier:
+        annotations:
+          constraint: MANDATORY
+          category: all
+      referenceDatabase:
+        annotations:
+          category: all
+
+  #### DatabaseObject ####
+  DatabaseObject:
+    description: "Not available"
+    annotations:
+      abstract: true
+      constructor_parameter: "DB_ID"
+      implements: "Serializable, Comparable<DatabaseObject>, DatabaseObjectLike"
+      node: true
+      generator: "ObjectIdGenerators.PropertyGenerator.class"
+      property: "DB_ID"
+      suppress_warnings: "unused"
+    slots:
+      - _class
+      - DB_ID
+      - explanation
+    slot_usage:
+      DB_ID:
+        annotations:
+          json_property@getter: "DB_ID"
+          protected: true
+      explanation:
+        annotations:
+          override: false
+      _class:
+        ifabsent: "getClass().getSimpleName()"
+        annotations:
+          override: false
+    attributes:
+      _displayName:
+        annotations:
+          constraint: NOMANUALEDIT
+          addedField: false
+      _timestamp:
+        annotations:
+          constraint: MANDATORY
+          addedField: false
+      created:
+        range: InstanceEdit
+        annotations:
+          constraint: NOMANUALEDIT
+          type: "created"
+          direction: INCOMING
+      modified:
+        multivalued: true
+        range: InstanceEdit
+        annotations:
+          constraint: NOMANUALEDIT
+          type: "modified"
+          direction: INCOMING
+      stableIdentifier:
+        range: StableIdentifier
+        annotations:
+          constraint: NOMANUALEDIT
+          type: "stableIdentifier"
+
+  #### DataModel ####
+  DataModel:
+    attributes:
+      thing:
+        range: AnnotationTextType
+        annotations:
+          constraint: MANDATORY
+      thing_class:
+        range: AnnotationThingClassEnum
+      property_name:
+        range: AnnotationTextType
+        annotations:
+          constraint: MANDATORY
+      property_value:
+        range: AnnotationTextType
+      property_value_type:
+        range: AnnotationPropertyValueTypeEnum
+      property_value_rank:
+        range: integer
+        ifabsent: 0
+
+  #### DefinedSet ####
+  DefinedSet:
+    description: "Two or more entities that are interchangeable in function"
+    is_a: EntitySet
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - explanation
+      - hasMember
+    slot_usage:
+      hasMember:
+        annotations:
+          constraint: MANDATORY
+
+  #### _Deleted ####
+  _Deleted:
+    is_a: DatabaseObject
+    attributes:
+      curatorComment:
+        annotations:
+          constraint: NOMANUALEDIT
+          addedField: false
+      deletedInstanceDB_ID:
+        multivalued: true
+        range: AnnotationLongType
+        annotations:
+          constraint: NOMANUALEDIT
+          addedField: false
+      reason:
+        range: DeletedControlledVocabulary
+        annotations:
+          constraint: NOMANUALEDIT
+          type: "reason"
+      deletedInstance:
+        multivalued: true
+        range: _DeletedInstance
+        annotations:
+          constraint: NOMANUALEDIT
+          type: "deletedInstance"
+      replacementInstances:
+        multivalued: true
+        range: DatabaseObject
+        annotations:
+          constraint: NOMANUALEDIT
+          type: "replacementInstances"
+      replacementInstanceDB_IDs:
+        multivalued: true
+        range: AnnotationLongType
+        annotations:
+          constraint: NOMANUALEDIT
+          type: "replacementInstanceDB_IDs"
+
+  #### DeletedControlledVocabulary ####
+  DeletedControlledVocabulary:
+    is_a: ControlledVocabulary
+
+  #### _DeletedInstance ####
+  _DeletedInstance:
+    is_a: DatabaseObject
+    slots:
+      - name
+      - species
+    slot_usage:
+      name:
+        multivalued: false
+        range: AnnotationTextType
+        annotations:
+          constraint: NOMANUALEDIT
+          category: all
+      species:
+        range: Taxon
+        annotations:
+          constraint: NOMANUALEDIT
+          category: all
+          allowed: "{Species.class, Taxon.class}"
+    attributes:
+      class:
+        range: AnnotationTextType
+        annotations:
+          constraint: NOMANUALEDIT
+          category: all
+      deletedInstanceDB_ID:
+        range: AnnotationLongType
+        annotations:
+          constraint: NOMANUALEDIT
+          category: all
+          addedField: false
+      deletedStableIdentifier:
+        range: StableIdentifier
+        annotations:
+          constraint: NOMANUALEDIT
+          category: all
+          type: "deletedStableIdentifier"
+
+  #### Depolymerisation ####
+  Depolymerisation:
+    is_a: ReactionlikeEvent
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - catalystActivity
+      - authored
+      - edited
+      - goBiologicalProcess
+      - literatureReference
+      - releaseDate
+      - requiredInputComponent
+    slot_usage:
+      catalystActivity:
+        multivalued: false
+        annotations:
+          constraint: REQUIRED
+      authored:
+        multivalued: true
+        annotations:
+          constraint: REQUIRED
+      edited:
+        annotations:
+          constraint: REQUIRED
+      goBiologicalProcess:
+        annotations:
+          constraint: OPTIONAL
+      literatureReference:
+        annotations:
+          constraint: REQUIRED
+      releaseDate:
+        annotations:
+          constraint: MANDATORY
+      requiredInputComponent:
+        annotations:
+          constraint: OPTIONAL
+
+  #### Disease ####
+  Disease:
+    is_a: ExternalOntology
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - instanceOf
+    slot_usage:
+      instanceOf:
+        annotations:
+          allowed: "{Disease.class}"
+
+  #### Drug ####
+  Drug:
+    is_a: PhysicalEntity
+    annotations:
+      abstract: true
+      node: true
+      suppress_warnings: "{\"unused\", \"WeakerAccess\"}"
+    slots:
+      - compartment
+      - referenceEntity
+      - disease
+    slot_usage:
+      compartment:
+        annotations:
+          category: all
+      referenceEntity:
+        range: ReferenceTherapeutic
+        annotations:
+          constraint: MANDATORY
+      disease:
+        annotations:
+          constraint: MANDATORY
+
+  #### DrugActionType ####
+  DrugActionType:
+    is_a: ReactionType
+    annotations:
+      node: true
+    slots:
+      - instanceOf
+    slot_usage:
+      instanceOf:
+        range: DrugActionType
+
+  #### EntityFunctionalStatus ####
+  EntityFunctionalStatus:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    attributes:
+      functionalStatus:
+        multivalued: true
+        range: FunctionalStatus
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "functionalStatus"
+      diseaseEntity:
+        range: PhysicalEntity
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "diseaseEntity"
+      normalEntity:
+        range: PhysicalEntity
+        annotations:
+          constraint: REQUIRED
+          category: all
+          type: "normalEntity"
+
+  #### EntitySet ####
+  EntitySet:
+    description: "Two or more entities grouped because of a shared molecular feature. The superclass for CandidateSet and DefinedSet"
+    is_a: PhysicalEntity
+    annotations:
+      abstract: true
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - compartment
+      - explanation
+      - relatedSpecies
+      - species
+      - hasMember
+    slot_usage:
+      hasMember:
+        annotations:
+          category:
+      compartment:
+        annotations:
+          constraint:
+    attributes:
+      isOrdered:
+        range: boolean
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+
+  #### EntityWithAccessionedSequence ####
+  EntityWithAccessionedSequence:
+    description: "A protein, RNA, or DNA molecule or fragment thereof in a specified cellular compartment and specific post-translational state. Must be linked to an external database reference, given as the value of referenceSequence. An EWAS typically corresponds to the entire protein or polynucleotide described in the external database. Fragments are defined by setting the first and last residue using the numbering scheme of the external database, entered as startCoordinate and endCoordinate values. Values of 1 and -1 respectively indicate that the true start and end are unconfirmed. EWAS instances are specific to a subcellular compartment; if the same molecule is found in two cellular components it will have two EWASes. EWAS instances by default define an unmodified protein sequence, any post-translational modification (PTM), such as phosphorylation, requires a new EWAS instance. The location and type of any PTM are defined in the hasModifiedResidue slot"
+    is_a: GenomeEncodedEntity
+    annotations:
+      constructor_parameter: "dbId"
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - explanation
+      - referenceEntity
+      - name
+      - species
+    slot_usage:
+      name:
+        annotations:
+          category:
+      referenceEntity:
+        annotations:
+          constraint: MANDATORY
+      species:
+        multivalued: false
+        annotations:
+          category:
+          constraint: MANDATORY
+    attributes:
+      endCoordinate:
+        range: integer
+        annotations:
+          constraint: REQUIRED
+          category: all
+          addedField: false
+          mysql_signed_int_type: true
+      startCoordinate:
+        range: integer
+        annotations:
+          constraint: REQUIRED
+          category: all
+          addedField: false
+          mysql_signed_int_type: true
+      hasModifiedResidue:
+        multivalued: true
+        range: HasModifiedResidue
+        annotations:
+          constraint: REQUIRED
+          category: all
+          type: "hasModifiedResidue"
+          sorted_set: true
+          include_stoichiometry: true
+
+  #### Event ####
+  Event:
+    is_a: DatabaseObject
+    annotations:
+      abstract: true
+      constructor_parameter: "dbId"
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - authored
+      - edited
+      - crossReference
+      - definition
+      - figure
+      - goBiologicalProcess
+      - literatureReference
+      - name
+      - relatedSpecies
+      - revised
+      - species
+      - summation
+      - releaseDate
+    slot_usage:
+      authored:
+        multivalued: true
+      goBiologicalProcess:
+        annotations:
+          constraint: NOMANUALEDIT
+      name:
+        annotations:
+          category:
+      species:
+        annotations:
+          constraint: MANDATORY
+      summation:
+        annotations:
+          constraint: MANDATORY
+      releaseDate:
+        range: AnnotationDateType
+        annotations:
+          constraint: MANDATORY
+    attributes:
+      _doRelease:
+        range: boolean
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      releaseStatus:
+        annotations:
+          constraint: NOMANUALEDIT
+          addedField: false
+      evidenceType:
+        range: EvidenceType
+        annotations:
+          constraint: OPTIONAL
+          type: "evidenceType"
+      precedingEvent:
+        multivalued: true
+        range: Event
+        annotations:
+          constraint: OPTIONAL
+          type: "precedingEvent"
+      inferredFrom:
+        multivalued: true
+        range: Event
+        annotations:
+          constraint: OPTIONAL
+          type: "inferredFrom"
+          set: true
+      orthologousEvent:
+        multivalued: true
+        range: Event
+        annotations:
+          constraint: OPTIONAL
+          type: "orthologousEvent"
+          set: true
+          mysql_inverse_slot: true
+      reviewed:
+        multivalued: true
+        range: InstanceEdit
+        annotations:
+          constraint: REQUIRED
+          type: "reviewed"
+          direction: INCOMING
+      internalReviewed:
+        multivalued: true
+        range: InstanceEdit
+        annotations:
+          constraint: OPTIONAL
+          type: "internalReviewed"
+          direction: INCOMING
+      negativePrecedingEvent:
+        multivalued: true
+        range: NegativePrecedingEvent
+        annotations:
+          constraint: OPTIONAL
+          type: "negativePrecedingEvent"
+      reviewStatus:
+        range: ReviewStatus
+        annotations:
+          type: "reviewStatus"
+          constraint: OPTIONAL
+      previousReviewStatus:
+        range: ReviewStatus
+        annotations:
+          type: "previousReviewStatus"
+          constraint: OPTIONAL
+      structureModified:
+        multivalued: true
+        range: InstanceEdit
+        annotations:
+          type: "structureModified"
+          direction: INCOMING
+          constraint: NOMANUALEDIT
+      entityFunctionalStatus:
+        multivalued: false
+        range: EntityFunctionalStatus
+        annotations:
+          constraint: OPTIONAL
+          category: all
+          type: "entityFunctionalStatus"
+
+  #### EvidenceType ####
+  EvidenceType:
+    is_a: ExternalOntology
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - instanceOf
+      - name
+    slot_usage:
+      instanceOf:
+        annotations:
+          allowed: "{EvidenceType.class}"
+      name:
+        annotations:
+          category: any
+
+  #### ExternalOntology ####
+  ExternalOntology:
+    is_a: DatabaseObject
+    annotations:
+      abstract: true
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - definition
+      - identifier
+      - name
+      - referenceDatabase
+      - instanceOf
+    slot_usage:
+      identifier:
+        annotations:
+          constraint: MANDATORY
+          category: all
+
+  #### FailedReaction ####
+  FailedReaction:
+    description: "Defines an event where genetic mutations in the nucleotide sequence produces a protein with a very little or no activity. The consequence of this is that substrates are not converted to products and can therefore build up to cause pathological conditions. It could also mean entities are not moved between compartments again causing imbalances in entity concentrations which can lead to pathological conditions."
+    is_a: ReactionlikeEvent
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - explanation
+      - catalystActivity
+      - authored
+      - edited
+      - goBiologicalProcess
+      - literatureReference
+      - normalReaction
+      - output
+      - requiredInputComponent
+    slot_usage:
+      authored:
+        multivalued: true
+        annotations:
+          constraint: REQUIRED
+      edited:
+        annotations:
+          constraint: REQUIRED
+      goBiologicalProcess:
+        annotations:
+          constraint: OPTIONAL
+      literatureReference:
+        annotations:
+          constraint: REQUIRED
+      normalReaction:
+        annotations:
+          constraint: MANDATORY
+      output:
+        annotations:
+          constraint: NOMANUALEDIT
+          category:
+      requiredInputComponent:
+        annotations:
+          constraint: OPTIONAL
+
+  #### Figure ####
+  Figure:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    attributes:
+      url:
+        annotations:
+          constraint: MANDATORY
+          category: all
+          addedField: false
+          property1: false
+
+  #### FragmentDeletionModification ####
+  FragmentDeletionModification:
+    is_a: FragmentModification
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+
+  #### FragmentInsertionModification ####
+  FragmentInsertionModification:
+    is_a: FragmentModification
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - coordinate
+    slot_usage:
+      coordinate:
+        annotations:
+          mysql_signed_int_type: true
+
+  #### FragmentModification ####
+  FragmentModification:
+    is_a: GeneticallyModifiedResidue
+    annotations:
+      abstract: true
+      node: true
+      suppress_warnings: "unused"
+    attributes:
+      endPositionInReferenceSequence:
+        range: integer
+        annotations:
+          constraint: MANDATORY
+          category: all
+          addedField: false
+          mysql_signed_int_type: true
+      startPositionInReferenceSequence:
+        range: integer
+        annotations:
+          constraint: MANDATORY
+          category: all
+          addedField: false
+          mysql_signed_int_type: true
+
+  #### FragmentReplacedModification ####
+  FragmentReplacedModification:
+    is_a: FragmentModification
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    attributes:
+      alteredAminoAcidFragment:
+        annotations:
+          constraint: OPTIONAL
+          category: all
+          addedField: false
+
+#  #### FrontPage ####
+#  FrontPage:
+#    is_a: DatabaseObject
+#    annotations:
+#      node: true
+#    attributes:
+#      frontPageItem:
+#        multivalued: true
+#        range: Event
+#        annotations:
+#          constraint: MANDATORY
+#          type: "frontPageItem"
+
+  #### FunctionalStatus ####
+  FunctionalStatus:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    attributes:
+      functionalStatusType:
+        range: FunctionalStatusType
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "functionalStatusType"
+      structuralVariant:
+        range: SequenceOntology
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "structuralVariant"
+
+  #### FunctionalStatusType ####
+  FunctionalStatusType:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - definition
+      - name
+    slot_usage:
+      name:
+        annotations:
+          category: any
+
+  #### GeneticallyModifiedResidue ####
+  GeneticallyModifiedResidue:
+    is_a: AbstractModifiedResidue
+    annotations:
+      abstract: true
+      node: true
+      suppress_warnings: "unused"
+
+  #### GenomeEncodedEntity ####
+  GenomeEncodedEntity:
+    description: "A peptide or polynucleotide whose sequence is unknown and thus cannot be linked to external sequence databases or used for orthology inference"
+    is_a: PhysicalEntity
+    annotations:
+      constructor_parameter: "dbId"
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - compartment
+      - explanation
+      - species
+    slot_usage:
+      compartment:
+        annotations:
+          category: all
+      species:
+        range: Taxon
+        multivalued: false
+        annotations:
+          category: all
+          allowed: "{Taxon.class, Species.class}"
+          constraint: MANDATORY
+
+  #### GO_BiologicalProcess ####
+  GO_BiologicalProcess:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - accession
+      - definition
+      - name
+      - referenceDatabase
+
+  #### GO_CellularComponent ####
+  GO_CellularComponent:
+    is_a: DatabaseObject
+    annotations:
+      constructor_parameter: "dbId"
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - accession
+      - definition
+      - name
+      - referenceDatabase
+      - instanceOf
+    slot_usage:
+      instanceOf:
+        range: GO_CellularComponent
+        annotations:
+          constraint: REQUIRED
+    attributes:
+      componentOf:
+        multivalued: true
+        range: GO_CellularComponent
+        annotations:
+          constraint: REQUIRED
+          type: "componentOf"
+      hasPart:
+        multivalued: true
+        range: GO_CellularComponent
+        annotations:
+          constraint: OPTIONAL
+          type: "hasPart"
+      surroundedBy:
+        multivalued: true
+        range: GO_CellularComponent
+        annotations:
+          constraint: OPTIONAL
+          type: "surroundedBy"
+
+  #### GO_MolecularFunction ####
+  GO_MolecularFunction:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - accession
+      - definition
+      - name
+      - referenceDatabase
+    attributes:
+      ecNumber:
+        multivalued: true
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+
+  #### GroupModifiedResidue ####
+  GroupModifiedResidue:
+    is_a: TranslationalModification
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - modification
+      - psiMod
+    slot_usage:
+      modification:
+        annotations:
+          constraint: MANDATORY
+          allowed: "{Polymer.class, EntitySet.class, ReferenceGroup.class}"
+      psiMod:
+        annotations:
+          constraint: MANDATORY
+
+  #### HasCandidate ####
+  HasCandidate:
+    annotations:
+      relationship_properties: true
+      implements: "Comparable<HasCandidate>"
+    slots:
+      - id
+      - order
+      - physicalEntity
+      - stoichiometry
+
+  #### HasCompartment ####
+  HasCompartment:
+    annotations:
+      relationship_properties: true
+      implements: "Comparable<HasCompartment>"
+      suppress_warnings: "unused"
+    slots:
+      - id
+      - order
+    attributes:
+      compartment:
+        range: Compartment
+        annotations:
+          target_node: true
+
+  #### HasComponent ####
+  HasComponent:
+    annotations:
+      relationship_properties: true
+      implements: "Comparable<HasComponent>"
+      suppress_warnings: "unused"
+    slots:
+      - id
+      - order
+      - physicalEntity
+      - stoichiometry
+
+  #### HasEncapsulatedEvent ####
+  HasEncapsulatedEvent:
+    annotations:
+      relationship_properties: true
+      implements: "Comparable<HasEncapsulatedEvent>"
+      no_default_constructor: true
+    slots:
+      - id
+      - order
+    attributes:
+      event:
+        range: Event
+        annotations:
+          target_node: true
+
+  #### HasEvent ####
+  HasEvent:
+    annotations:
+      relationship_properties: true
+      implements: "Comparable<HasEvent>"
+      no_default_constructor: true
+    slots:
+      - id
+      - order
+      - stoichiometry
+    slot_usage:
+      stoichiometry:
+        ifabsent:
+    attributes:
+      event:
+        range: Event
+        annotations:
+          target_node: true
+
+  #### HasMember ####
+  HasMember:
+    annotations:
+      relationship_properties: true
+      implements: "Comparable<HasMember>"
+    slots:
+      - id
+      - order
+      - physicalEntity
+      - stoichiometry
+
+  #### HasModifiedResidue ####
+  HasModifiedResidue:
+    annotations:
+      relationship_properties: true
+      implements: "Comparable<HasModifiedResidue>"
+      suppress_warnings: "unused"
+    slots:
+      - id
+      - order
+      - stoichiometry
+    attributes:
+      abstractModifiedResidue:
+        range: AbstractModifiedResidue
+        annotations:
+          target_node: true
+
+  #### Input ####
+  Input:
+    annotations:
+      relationship_properties: true
+      implements: "Comparable<Input>"
+    slots:
+      - id
+      - order
+      - physicalEntity
+      - stoichiometry
+
+  #### InstanceEdit ####
+  InstanceEdit:
+    is_a: DatabaseObject
+    annotations:
+      constructor_parameter: "dbId"
+      node: true
+      suppress_warnings: "unused"
+    attributes:
+      dateTime:
+        annotations:
+          addedField: false
+      note:
+        multivalued: true
+        annotations:
+          addedField: false
+      _applyToAllEditedInstances:
+        # range: boolean
+        annotations:
+          addedField: false
+      author:
+        multivalued: true
+        range: Person
+        annotations:
+          type: "author"
+          direction: INCOMING
+
+  #### InteractionEvent ####
+  InteractionEvent:
+    is_a: Event
+    annotations:
+      node: true
+    attributes:
+      partners:
+        multivalued: true
+        range: PhysicalEntity
+        annotations:
+          constraint: MANDATORY
+          type: "partners"
+      disease:
+        multivalued: false
+        range: Disease
+        annotations:
+          constraint: OPTIONAL
+          type: "disease"
+
+  #### InterChainCrosslinkedResidue ####
+  InterChainCrosslinkedResidue:
+    is_a: CrosslinkedResidue
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    attributes:
+      equivalentNew:
+        multivalued: true
+        range: InterChainCrosslinkedResidue
+        annotations:
+          constraint: MANDATORY
+          type: "equivalentNew"
+      secondReferenceSequence:
+        multivalued: true
+        range: ReferenceSequence
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "secondReferenceSequence"
+          set: true
+
+  #### IntraChainCrosslinkedResidue ####
+  IntraChainCrosslinkedResidue:
+    is_a: CrosslinkedResidue
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+
+  #### LiteratureReference ####
+  LiteratureReference:
+    is_a: Publication
+    annotations:
+      constructor_parameter: "dbId"
+      node: true
+      suppress_warnings: "unused"
+    attributes:
+      fournal:
+        range: AnnotationTextType
+        annotations:
+          constraint: REQUIRED
+          addedField: false
+      pages:
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      pubMedIdentifier:
+        range: integer
+        annotations:
+          constraint: REQUIRED
+          category: all
+          addedField: false
+          mysql_signed_int_type: true
+      volume:
+        range: integer
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+          mysql_signed_int_type: true
+      year:
+        range: integer
+        annotations:
+          constraint: MANDATORY
+          addedField: false
+          mysql_signed_int_type: true
+
+  #### MarkerReference ####
+  MarkerReference:
+    is_a: ControlReference
+    annotations:
+      node: true
+    attributes:
+      marker:
+        range: EntityWithAccessionedSequence
+        annotations:
+          constraint: MANDATORY
+          type: "marker"
+      cell:
+        range: Cell
+        multivalued: true
+        annotations:
+          constraint: MANDATORY
+
+  #### ModifiedNucleotide ####
+  ModifiedNucleotide:
+    is_a: TranscriptionalModification
+    annotations:
+      node: true
+    slots:
+      - coordinate
+      - modification
+    slot_usage:
+      coordinate:
+        annotations:
+          mysql_signed_int_type: true
+          constraint: MANDATORY
+      modification:
+        annotations:
+          constraint: MANDATORY
+          allowed: "{ReferenceGroup.class, ReferenceMolecule.class, Polymer.class, EntitySet.class}"
+
+  #### ModifiedResidue ####
+  ModifiedResidue:
+    is_a: TranslationalModification
+    annotations:
+      constructor_parameter: "dbId"
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - psiMod
+    slot_usage:
+      psiMod:
+        annotations:
+          constraint: MANDATORY
+
+  #### NegativeGeneExpressionRegulation ####
+  NegativeGeneExpressionRegulation:
+     "A negative gene expression regulation"
+    is_a: NegativeRegulation
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - explanation
+
+  #### NegativePrecedingEvent ####
+  NegativePrecedingEvent:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+    attributes:
+      comment:
+        range: AnnotationTextType
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      precedingEvent:
+        multivalued: true
+        range: Event
+        annotations:
+          constraint: MANDATORY
+          type: "negativePrecedingEvent"
+          direction: INCOMING
+      reason:
+        range: NegativePrecedingEventReason
+        annotations:
+          constraint: REQUIRED
+          type: "reason"
+
+  #### NegativePrecedingEventReason ####
+  NegativePrecedingEventReason:
+    is_a: ControlledVocabulary
+    annotations:
+      node: true
+
+  #### NegativeRegulation ####
+  NegativeRegulation:
+    description: "This describes an Event/CatalystActivity that is negatively regulated by the Regulator (e.g., allosteric inhibition, competitive inhibition"
+    is_a: Regulation
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - explanation
+      - regulator
+    slot_usage:
+      regulator:
+        annotations:
+          constraint: MANDATORY
+
+  #### NonsenseMutation ####
+  NonsenseMutation:
+    is_a: ReplacedResidue
+    annotations:
+      node: true
+    slots:
+      - psiMod
+    slot_usage:
+      psiMod:
+        multivalued: false
+        annotations:
+          constraint: MANDATORY
+
+  #### Ontology ####
+  Ontology:
+    is_a: DatabaseObject
+    annotations:
+      deprecated: true
+      node: true
+      suppress_warnings: "unused"
+      constructor_parameter: "ontology"
+    slots:
+      - ontology
+
+  #### OtherEntity ####
+  OtherEntity:
+    description: "Entities that we are unable or unwilling to describe in chemical detail and cannot be put in any other class. Can be used to represent complex structures in the cell that take part in a reaction but which we cannot or do not want to define molecularly, e.g. cell membrane, Holliday structure"
+    is_a: PhysicalEntity
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - compartment
+      - explanation
+    slot_usage:
+      compartment:
+        annotations:
+          category: all
+
+  #### Output ####
+  Output:
+    annotations:
+      relationship_properties: true
+      implements: "Comparable<Output>"
+    slots:
+      - id
+      - order
+      - physicalEntity
+      - stoichiometry
+
+  #### Pathway ####
+  Pathway:
+    description: "A collection of related Events. These events can be ReactionLikeEvents or Pathways"
+    is_a: Event
+    annotations:
+      constructor_parameter: "dbId"
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - authored
+      - compartment
+      - edited
+      - explanation
+      - goBiologicalProcess
+      - hasEvent
+    slot_usage:
+      authored:
+        multivalued: true
+        annotations:
+          constraint: REQUIRED
+      compartment:
+        annotations:
+          constraint: REQUIRED
+      edited:
+        annotations:
+          constraint: REQUIRED
+      goBiologicalProcess:
+        annotations:
+          constraint: OPTIONAL
+    attributes:
+      doi:
+        range: AnnotationTextType
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      hasEHLD:
+        range: boolean
+        ifabsent: false
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      isCanonical:
+        range: boolean
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      normalPathway:
+        range: Pathway
+        annotations:
+          constraint: OPTIONAL
+          type: "normalPathway"
+      lastUpdatedDate:
+        range: AnnotationTextType
+        annotations:
+          constraint: REQUIRED
+
+  #### PathwayDiagram ####
+  PathwayDiagram:
+    is_a: DatabaseObject
+    attributes:
+      width:
+        range: integer
+        annotations:
+          constraint: REQUIRED
+          addedField: false
+          mysql_signed_int_type: true
+      height:
+        range: integer
+        annotations:
+          constraint: REQUIRED
+          addedField: false
+          mysql_signed_int_type: true
+      storedATXML:
+        range: AnnotationLongBlobType
+        annotations:
+          constraint: REQUIRED
+          addedField: false
+      representedPathway:
+        multivalued: true
+        range: RepresentedPathway
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "representedPathway"
+          sorted_set: true
+
+  #### Person ####
+  Person:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - crossReference
+      - figure
+    attributes:
+        firstname:
+          annotations:
+            constraint: OPTIONAL
+            category: all
+            addedField: false
+        initial:
+          annotations:
+            constraint: MANDATORY
+            category: all
+            addedField: false
+        project:
+          annotations:
+            constraint: OPTIONAL
+            category: all
+            addedField: false
+        surname:
+          annotations:
+            constraint: MANDATORY
+            category: all
+            addedField: false
+        url:
+          annotations:
+            constraint: OPTIONAL
+            addedField: false
+        affiliation:
+          multivalued: true
+          range: Affiliation
+          annotations:
+            constraint: OPTIONAL
+            type: "affiliation"
+
+  #### PhysicalEntity ####
+  PhysicalEntity:
+    is_a: DatabaseObject
+    annotations:
+      abstract: true
+      constructor_parameter: "dbId"
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - authored
+      - cellType
+      - crossReference
+      - definition
+      - edited
+      - figure
+      - literatureReference
+      - name
+      - revised
+      - summation
+      - disease
+    slot_usage:
+      cellType:
+        annotations:
+          constraint: OPTIONAL
+      disease:
+        annotations:
+          category:
+    attributes:
+      inferredTo:
+        multivalued: true
+        range: PhysicalEntity
+        annotations:
+          constraint: OPTIONAL
+          type: "inferredTo"
+      inferredFrom:
+        multivalued: true
+        range: PhysicalEntity
+        annotations:
+          constraint: OPTIONAL
+          type: "inferredTo"
+          direction: INCOMING
+          reactome_transient: true
+      reviewed:
+        multivalued: true
+        range: InstanceEdit
+        annotations:
+          constraint: OPTIONAL
+          type: "reviewed"
+          direction: INCOMING
+
+  #### Polymer ####
+  Polymer:
+    description: "Molecules that consist of an indeterminate number of repeated units. Includes complexes whose stoichiometry is variable or unknown. The repeated unit(s) is(are) identified in the repeatedUnit slot"
+    is_a: PhysicalEntity
+    annotations:
+      constructor_parameter: "dbId"
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - compartment
+      - explanation
+      - species
+    attributes:
+      maxUnitCount:
+        range: integer
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+          mysql_signed_int_type: true
+      minUnitCount:
+        range: integer
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+          mysql_signed_int_type: true
+      repeatedUnit:
+        multivalued: true
+        range: RepeatedUnit
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "repeatedUnit"
+          sorted_set: true
+          include_stoichiometry: true
+      systematicName:
+        multivalued: true
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      goCellularComponent:
+        multivalued: true
+        range: GO_CellularComponent
+        annotations:
+          constraint: OPTIONAL
+          type: "goCellularComponent"
+
+  #### Polymerisation ####
+  Polymerisation:
+    description: "Reactions that follow the pattern: Polymer + Unit -> Polymer (there may be a catalyst involved). Used to describe the mechanistic detail of a polymerisation"
+    is_a: ReactionlikeEvent
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - explanation
+      - catalystActivity
+      - authored
+      - edited
+      - goBiologicalProcess
+      - literatureReference
+      - releaseDate
+      - requiredInputComponent
+    slot_usage:
+      catalystActivity:
+        multivalued: false
+        annotations:
+          constraint: REQUIRED
+      authored:
+        multivalued: true
+        annotations:
+          constraint: REQUIRED
+      edited:
+        annotations:
+          constraint: REQUIRED
+      goBiologicalProcess:
+        annotations:
+          constraint: OPTIONAL
+      literatureReference:
+        annotations:
+          constraint: REQUIRED
+      releaseDate:
+        range: AnnotationDateType
+        annotations:
+          constraint: MANDATORY
+      requiredInputComponent:
+        annotations:
+          constraint: OPTIONAL
+
+  #### PositiveGeneExpressionRegulation ####
+  PositiveGeneExpressionRegulation:
+    description: "A positive gene expression regulation"
+    is_a: PositiveRegulation
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - explanation
+
+  #### PositiveRegulation ####
+  PositiveRegulation:
+    description: "This describes an Event/CatalystActivity that is positively regulated by the Regulator (e.g., allosteric activation)"
+    is_a: Regulation
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - explanation
+      - regulator
+    slot_usage:
+      regulator:
+        annotations:
+          constraint: MANDATORY
+
+  #### ProteinDrug ####
+  ProteinDrug:
+    is_a: Drug
+    annotations:
+      node: true
+      suppress_warnings: "{\"unused\", \"WeakerAccess\"}"
+
+  #### PsiMod ####
+  PsiMod:
+    is_a: ExternalOntology
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - instanceOf
+      - name
+    slot_usage:
+      instanceOf:
+        category: all
+        annotations:
+          addedField: false
+          type:
+          allowed: "{PsiMod.class}"
+      name:
+        multivalued: false
+    attributes:
+      label:
+        range: AnnotationTextType
+        annotations:
+          constraint: REQUIRED
+      synonym:
+        multivalued: false
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+
+  #### Publication ####
+  Publication:
+    is_a: DatabaseObject
+    annotations:
+      abstract: true
+      constructor_parameter: "dbId"
+      node: true
+      suppress_warnings: "unused"
+    attributes:
+      author:
+        multivalued: true
+        range: PublicationAuthor
+        annotations:
+          constraint: MANDATORY
+          type: "author"
+          direction: INCOMING
+          sorted_set: true
+          no_list_getter_setter: true
+      ISBN:
+        annotations:
+          constraint: OPTIONAL
+          category: any
+          addedField: false
+
+  #### PublicationAuthor ####
+  PublicationAuthor:
+    annotations:
+      relationship_properties: true
+      implements: "Comparable<PublicationAuthor>"
+      no_default_constructor: true
+    slots:
+      - id
+      - order
+    attributes:
+      author:
+        range: Person
+        annotations:
+          target_node: true
+
+  #### Reaction ####
+  Reaction:
+    description: "Defines a change of state for one or more molecular entities. Most reactions in Reactome involve either a) the interaction of entities to form a complex, or b) the movement of entities between compartments, or c) the chemical conversion of entities as part of a metabolic process. Reactions have a molecular balance between input and output entities"
+    is_a: ReactionlikeEvent
+    annotations:
+      constructor_parameter: "dbId"
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - explanation
+      - catalystActivity
+      - authored
+      - edited
+      - goBiologicalProcess
+      - literatureReference
+      - input
+      - output
+      - releaseDate
+      - requiredInputComponent
+    slot_usage:
+      catalystActivity:
+        multivalued: false
+        annotations:
+          constraint: REQUIRED
+      authored:
+        multivalued: true
+        annotations:
+          constraint: REQUIRED
+      edited:
+        annotations:
+          constraint: REQUIRED
+      literatureReference:
+        annotations:
+          constraint: REQUIRED
+      input:
+        annotations:
+          constraint: MANDATORY
+      output:
+        annotations:
+          constraint: MANDATORY
+      releaseDate:
+        range: AnnotationDateType
+        annotations:
+          constraint: MANDATORY
+      requiredInputComponent:
+        annotations:
+          constraint: OPTIONAL
+    attributes:
+      reverseReaction:
+        range: Reaction
+        annotations:
+          constraint: OPTIONAL
+          type: "reverseReaction"
+          mysql_inverse_slot: true
+
+  #### ReactionlikeEvent ####
+  ReactionlikeEvent:
+    is_a: Event
+    annotations:
+      abstract: true
+      constructor_parameter: "dbId"
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - catalystActivity
+      - compartment
+      - input
+      - output
+      - isChimeric
+      - entityOnOtherCell
+      - normalReaction
+      - requiredInputComponent
+    slot_usage:
+      catalystActivity:
+        annotations:
+          constraint:
+          category:
+      compartment:
+        annotations:
+          constraint: MANDATORY
+      input:
+        annotations:
+          constraint:
+          category:
+      output:
+        annotations:
+          constraint:
+          category:
+      requiredInputComponent:
+        annotations:
+          constraint:
+    attributes:
+      systematicName:
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      regulatedBy:
+        multivalued: true
+        range: Regulation
+        annotations:
+          constraint: OPTIONAL
+          type: "regulatedBy"
+      regulationReference:
+        multivalued: true
+        range: RegulationReference
+        annotations:
+          constraint: OPTIONAL
+          type: "regulationReference"
+      hasInteraction:
+        multivalued: true
+        range: InteractionEvent
+        annotations:
+          constraint: OPTIONAL
+          type: "hasInteraction"
+      reactionType:
+        multivalued: true
+        range: ReactionType
+        annotations:
+          constraint: OPTIONAL
+          type: "reactionType"
+      templateEvent:
+        range: Event
+        annotations:
+          constraint: OPTIONAL
+          type: "templateEvent"
+
+  #### ReactionType ####
+  ReactionType:
+    is_a: ControlledVocabulary
+    annotations:
+      node: true
+      no_default_constructor: true
+
+  #### ReferenceDatabase ####
+  ReferenceDatabase:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+      suppress_warnings: "{\"unused\", \"WeakerAccess\"}"
+    slots:
+      - name
+    slot_usage:
+      name:
+        annotations:
+          constraint: MANDATORY
+          category: any
+    attributes:
+      accessUrl:
+        annotations:
+          constraint: MANDATORY
+          addedField: false
+      url:
+        annotations:
+          constraint: MANDATORY
+          addedField: false
+      resourceIdentifier:
+        range: AnnotationTextType
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+
+  #### ReferenceDNASequence ####
+  ReferenceDNASequence:
+    is_a: ReferenceSequence
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+
+  #### ReferenceEntity ####
+  ReferenceEntity:
+    is_a: DatabaseObject
+    annotations:
+      abstract: true
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - crossReference
+      - identifier
+      - name
+      - otherIdentifier
+      - referenceDatabase
+    slot_usage:
+      referenceDatabase:
+        annotations:
+          constraint:
+      name:
+        annotations:
+          constraint: OPTIONAL
+      otherIdentifier:
+        annotations:
+          constraint: OPTIONAL
+    attributes:
+      comment:
+        multivalued: true
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      description:
+        multivalued: false
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      checksum:
+        multivalued: false
+        annotations:
+          constraint: NOMANUALEDIT
+          addedField: false
+
+  #### ReferenceGeneProduct ####
+  ReferenceGeneProduct:
+    is_a: ReferenceSequence
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    attributes:
+      _chainChangeLog:
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+
+  #### ReferenceGroup ####
+  ReferenceGroup:
+    is_a: ReferenceEntity
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - formula
+      - name
+      - otherIdentifier
+    slot_usage:
+      name:
+        annotations:
+          constraint: MANDATORY
+      otherIdentifier:
+        annotations:
+          constraint: NOMANUALEDIT
+
+  #### ReferenceIsoform ####
+  ReferenceIsoform:
+    is_a: ReferenceGeneProduct
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    attributes:
+      variantIdentifier:
+        annotations:
+          constraint: MANDATORY
+          category: all
+          addedField: false
+      isoformParent:
+        multivalued: true
+        range: ReferenceGeneProduct
+        annotations:
+          constraint: MANDATORY
+          type: "isoformParent"
+      chain:
+        multivalued: true
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      referenceTranscript:
+        multivalued: true
+        range: ReferenceRNASequence
+        annotations:
+          type: "referenceTranscript"
+
+  #### ReferenceMolecule ####
+  ReferenceMolecule:
+    is_a: ReferenceEntity
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - formula
+      - name
+      - otherIdentifier
+    slot_usage:
+      name:
+        annotations:
+          constraint: MANDATORY
+      otherIdentifier:
+        annotations:
+          constraint: NOMANUALEDIT
+
+  #### ReferenceRNASequence ####
+  ReferenceRNASequence:
+    is_a: ReferenceSequence
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    attributes:
+      referenceGene:
+        multivalued: true
+        range: ReferenceDNASequence
+        annotations:
+          constraint: OPTIONAL
+          type: "referenceGene"
+
+  #### ReferenceSequence ####
+  ReferenceSequence:
+    is_a: ReferenceEntity
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - species
+      - otherIdentifier
+    slot_usage:
+      species:
+        multivalued: false
+        annotations:
+          category: all
+          constraint: MANDATORY
+      otherIdentifier:
+        annotations:
+          constraint: NOMANUALEDIT
+    attributes:
+      geneName:
+        multivalued: true
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      isSequenceChanged:
+        range: boolean
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      keyword:
+        multivalued: true
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      secondaryIdentifier:
+        multivalued: true
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      sequenceLength:
+        range: integer
+        annotations:
+          addedField: false
+          mysql_signed_int_type: true
+      referenceGene:
+        multivalued: true
+        range: ReferenceDNASequence
+        annotations:
+          type: "referenceGene"
+
+  #### ReferenceTherapeutic ####
+  ReferenceTherapeutic:
+    is_a: ReferenceEntity
+    annotations:
+      node: true
+    attributes:
+      abbreviation:
+        range: AnnotationTextType
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      approvalSource:
+        multivalued: true
+        range: AnnotationTextType
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      activeDrugIds:
+        multivalued: true
+        range: AnnotationTextType
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      prodrugIds:
+        multivalued: true
+        range: AnnotationTextType
+        annotations:
+          addedField: false
+          constraint: OPTIONAL
+      approved:
+        range: boolean
+        annotations:
+          constraint: MANDATORY
+          addedField: false
+      withdrawn:
+        range: boolean
+        annotations:
+          constraint: OPTIONAL
+          addedField: false
+      inn:
+        range: AnnotationTextType
+        annotations:
+          constraint: REQUIRED
+          addedField: false
+      type:
+        range: AnnotationTextType
+        annotations:
+          constraint: REQUIRED
+          addedField: false
+
+  #### Regulation ####
+  Regulation:
+    is_a: DatabaseObject
+    annotations:
+      abstract: true
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - goBiologicalProcess
+      - regulator
+    slot_usage:
+      regulator:
+        annotations:
+          constraint:
+    attributes:
+      activeUnit:
+        multivalued: true
+        range: PhysicalEntity
+        annotations:
+          constraint: OPTIONAL
+          category: all
+          type: "activeUnit"
+          addedField: false
+      activity:
+        range: GO_MolecularFunction
+        annotations:
+          constraint: OPTIONAL
+          category: all
+          type: "activity"
+          addedField: false
+
+  #### RegulationReference ####
+  RegulationReference:
+    is_a: ControlReference
+    annotations:
+      node: true
+
+
+
+  #### ReplacedResidue ####
+  ReplacedResidue:
+    is_a: GeneticallyModifiedResidue
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - coordinate
+      - psiMod
+    slot_usage:
+      psiMod:
+        multivalued: true
+        annotations:
+          constraint: MANDATORY
+      coordinate:
+        annotations:
+          mysql_signed_int_type: true
+
+  #### _Release ####
+  _Release:
+    is_a: DatabaseObject
+    slots:
+      - releaseDate
+    slot_usage:
+      releaseDate:
+        annotations:
+          constraint: MANDATORY
+    attributes:
+      releaseNumber:
+        range: integer
+        annotations:
+          constraint: MANDATORY
+          addedField: false
+          mysql_signed_int_type: true
+
+  #### RepeatedUnit ####
+  RepeatedUnit:
+    annotations:
+      relationship_properties: true
+      implements: "Comparable<RepeatedUnit>"
+    slots:
+      - id
+      - order
+      - physicalEntity
+      - stoichiometry
+
+  #### RepresentedPathway ####
+  RepresentedPathway:
+    annotations:
+      relationship_properties: true
+      implements: "Comparable<RepresentedPathway>"
+    slots:
+      - id
+      - order
+      - stoichiometry
+    attributes:
+      pathway:
+        range: Pathway
+        annotations:
+          target_node: true
+
+  #### Requirement ####
+  Requirement:
+    description: "A regulator that is required for an Event/CatalystActivity to happen"
+    is_a: PositiveRegulation
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - explanation
+      - regulator
+    slot_usage:
+      regulator:
+        annotations:
+          constraint: MANDATORY
+
+  #### ReviewStatus ####
+  ReviewStatus:
+    is_a: ControlledVocabulary
+    annotations:
+      node: true
+
+  #### RNADrug ####
+  RNADrug:
+    is_a: Drug
+    annotations:
+      node: true
+      suppress_warnings: "{\"unused\", \"WeakerAccess\"}"
+
+
+  #### NewClass ####
+  NewClass:
+    is_a: ExternalOntology
+    slots:
+      - instanceOf
+    slot_usage:
+      instanceOf:
+        annotations:
+          allowed: "{NewClass.class}"
+
+  #### SequenceOntology ####
+  SequenceOntology:
+    is_a: ExternalOntology
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - instanceOf
+      - identifier
+      - name
+    slot_usage:
+      instanceOf:
+        annotations:
+          allowed: "{SequenceOntology.class}"
+      identifier:
+        annotations:
+          category: any
+          constraint: MANDATORY
+      name:
+        multivalued: false
+
+  #### SimpleEntity ####
+  SimpleEntity:
+    description: "A chemical species not encoded directly or indirectly in the genome, typically small molecules such as ATP or ethanol. The detailed structure of a simpleEntity is specified by linking it to details of the molecule in the ChEBI or KEGG databases via the referenceEntity slot. Use of KEGG is deprecated"
+    is_a: PhysicalEntity
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - compartment
+      - explanation
+      - species
+    slot_usage:
+      compartment:
+        annotations:
+          category: all
+      species:
+        multivalued: true
+        annotations:
+          constraint: OPTIONAL
+          category: all
+    attributes:
+      referenceEntity:
+        range: ReferenceMolecule
+        annotations:
+          constraint: MANDATORY
+          category: all
+          type: "referenceEntity"
+
+  #### Species ####
+  Species:
+    is_a: Taxon
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    attributes:
+      abbreviation:
+        range: AnnotationTextType
+        annotations:
+          constraint: MANDATORY
+          addedField: false
+
+  #### StableIdentifier ####
+  StableIdentifier:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+    slots:
+      - identifier
+      - identifierVersion
+    slot_usage:
+      identifier:
+        annotations:
+          constraint: NOMANUALEDIT
+      identifierVersion:
+        annotations:
+          constraint: NOMANUALEDIT
+    attributes:
+      oldIdentifier:
+        annotations:
+          addedField: false
+          constraint: NOMANUALEDIT
+      oldIdentifierVersion:
+        annotations:
+          addedField: false
+          constraint: NOMANUALEDIT
+      released:
+        range: boolean
+        annotations:
+          addedField: false
+          constraint: NOMANUALEDIT
+      history:
+        multivalued: false
+        range: StableIdentifierHistory
+        annotations:
+          type: "history"
+          constraint: NOMANUALEDIT
+
+  #### StableIdentifierHistory ####
+  StableIdentifierHistory:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+      no_default_constructor: true
+    slots:
+      - identifier
+      - identifierVersion
+    slot_usage:
+      identifier:
+        range: AnnotationTextType
+        annotations:
+          constraint: NOMANUALEDIT
+      identifierVersion:
+        range: AnnotationTextType
+        annotations:
+          constraint: NOMANUALEDIT
+    attributes:
+      historyStatus:
+        multivalued: true
+        range: StableIdentifierReleaseStatus
+        annotations:
+          type: "historyStatus"
+          constraint: NOMANUALEDIT
+
+  #### StableIdentifierReleaseStatus ####
+  StableIdentifierReleaseStatus:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+      no_default_constructor: true
+    attributes:
+      releaseNumber:
+        range: integer
+        annotations:
+          addedField: false
+          category: all
+          mysql_signed_int_type: true
+          constraint: NOMANUALEDIT
+      status:
+        range: ReleaseStatusEnum
+        annotations:
+          addedField: false
+          category: all
+          no_default_getter_setter: true
+          constraint: NOMANUALEDIT
+
+  #### Summation ####
+  Summation:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - literatureReference
+    attributes:
+      text:
+        annotations:
+          constraint: MANDATORY
+          category: all
+          addedField: false
+
+  #### Taxon ####
+  Taxon:
+    is_a: DatabaseObject
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - crossReference
+      - name
+    slot_usage:
+      crossReference:
+        annotations:
+          deprecated: true
+          constraint: MANDATORY
+      name:
+        multivalued: false
+        range: AnnotationTextType
+        annotations:
+          category: any
+    attributes:
+      superTaxon:
+        range: Taxon
+        annotations:
+          constraint: REQUIRED
+          type: "superTaxon"
+
+  #### TranscriptionalModification ####
+  TranscriptionalModification:
+    is_a: AbstractModifiedResidue
+    annotations:
+      abstract: true
+      node: true
+      suppress_warnings: "unused"
+
+  #### TranslationalModification ####
+  TranslationalModification:
+    is_a: AbstractModifiedResidue
+    annotations:
+      abstract: true
+      constructor_parameter: "dbId"
+      node: true
+      suppress_warnings: "unused"
+    slots:
+      - coordinate
+      - psiMod
+    slot_usage:
+      coordinate:
+        annotations:
+          mysql_signed_int_type: true
+      psiMod:
+        annotations:
+          constraint: MANDATORY
+
+  #### _UpdateTracker ####
+  _UpdateTracker:
+    is_a: DatabaseObject
+    attributes:
+      action:
+        multivalued: true
+        range: AnnotationTextType
+        annotations:
+          constraint: NOMANUALEDIT
+          addedField: false
+      _release:
+        range: _Release
+        annotations:
+          constraint: NOMANUALEDIT
+          type: "_release"
+      updatedInstance:
+        range: DatabaseObject
+        annotations:
+          constraint: NOMANUALEDIT
+          type: "updatedInstance"
+          allowed: "{Event.class, PhysicalEntity.class}"
+
+  #### URL ####
+  URL:
+    is_a: Publication
+    annotations:
+      node: true
+      suppress_warnings: "unused"
+    attributes:
+      uniformResourceLocator:
+        annotations:
+          constraint: MANDATORY
+          category: any
+          addedField: false
+      title:
+        annotations:
+          constraint: MANDATORY
+          addedField: false
+
+  #### Annotations classes - start ####
+  AnnotationBytesType:
+  AnnotationLongType:
+  AnnotationTextType:
+  AnnotationDateType:
+  AnnotationLongBlobType:
+  Annotations:
+    attributes:
+      abstract:
+        range: boolean
+      constructor_parameter:
+      deprecated:
+        range: boolean
+      # For relationship fields that are Sets, include in class a fetch method returning the field without converting
+      # it to List first
+      include_fetch:
+        range: boolean
+      generated_value:
+        range: boolean
+      getter_only:
+        range: boolean
+      id:
+        range: boolean
+      implements:
+      # For relationship fields that are Sets, include in class a setter method taking Set as a parameter
+      # (instead of a List)
+      include_default_setter:
+          range: boolean
+      # For non-relationship fields, do not output any getter or setter
+      # A non-standard getter and/or setter methods may have been provided in additional_class_content directory
+      # (e.g. getPublications() for publicationAuthorList in Person class)
+      no_default_getter_setter:
+          range: boolean
+      # For non-relationship fields, do not output any getter
+      no_default_getter:
+          range: boolean
+      # Don't output a default (i.e. parameterless) constructor
+      no_default_constructor:
+        range: boolean
+      # This is needed because getter method for attribute person in PublicationAuthor is non-standard: getAuthor()
+      # instead of getPerson(). This means that we need to pull the getter/setter methods for Publication class
+      # verbatim from additional_class_content instead of generating them using standard templates.
+      no_list_getter_setter:
+          range: boolean
+      include_stoichiometry:
+          range: boolean
+      json_identity_info:
+        range: JsonIdentityInfo
+      json_ignore:
+        range: boolean
+      json_property:
+      node:
+        range: boolean
+      reactome_allowed_classes:
+        range: ReactomeAllowedClasses
+      reactome_transient:
+        range: boolean
+      reactome_constraint:
+        range: ReactomeConstraint
+      reactome_property:
+        range: ReactomeProperty
+      reactome_relationship:
+        range: ReactomeRelationship
+      reactome_instance_defining_value:
+        range: ReactomeInstanceDefiningValue
+      reactome_schema_ignore:
+        range: boolean
+      override:
+        range: boolean
+      property:
+        range: boolean
+      property1:
+        range: Property
+      protected:
+        range: boolean
+      relationship:
+        range: Relationship
+      relationship_properties:
+        range: boolean
+      set:
+        range: boolean
+      sorted_set:
+        range: boolean
+      suppress_warnings:
+      target_node:
+        range: boolean
+
+  JsonIdentityInfo:
+    attributes:
+      generator:
+      property:
+
+  Property:
+
+  ReactomeAllowedClasses:
+    attributes:
+      allowed:
+
+  ReactomeConstraint:
+    attributes:
+      constraint:
+        range: ReactomeConstraintEnum
+
+  ReactomeInstanceDefiningValue:
+    attributes:
+      category:
+        range: CategoryEnum
+
+  ReactomeProperty:
+    attributes:
+      addedField:
+        range: boolean
+
+  ReactomeRelationship:
+    attributes:
+      # N.B. This cannot be addedField as this would make the mapping between the attribute name and the class
+      # ambiguous (we couldn't tell if it's ReactomeProperty or ReactomeRelationship)
+      addedField_ReactomeRelationship:
+        range: boolean
+      originName:
+
+  Relationship:
+    attributes:
+        type:
+        direction: RelationshipDirectionEnum
+  #### Annotations classes - end ####
+
+#### Enumerations ####
+enums:
+  ReactomeConstraintEnum:
+    permissible_values:
+      NOMANUALEDIT
+      MANDATORY
+      OPTIONAL
+      REQUIRED
+  RelationshipDirectionEnum:
+    permissible_values:
+      INCOMING
+      OUTGOING
+  ReleaseStatusEnum:
+    permissible_values:
+      EXISTS
+      CREATED
+      INCREMENTED
+      REPLACEMENT
+      ORTHO
+  CategoryEnum:
+     permissible_values:
+       none
+       any
+       all
+  AnnotationThingClassEnum:
+    permissible_values:
+      SchemaClass
+      SchemaClassAttribute
+      Schema
+  AnnotationPropertyValueTypeEnum:
+    permissible_values:
+      INTEGER
+      SYMBOL
+      STRING
+      INSTANCE
+      SchemaClass
+      SchemaClassAttribute
+
+#### Slots ####
+slots:
+  accession:
+    annotations:
+      constraint: MANDATORY
+      category: any
+      addedField: false
+  authored:
+    range: InstanceEdit
+    annotations:
+      constraint: OPTIONAL
+      type: "authored"
+      direction: INCOMING
+  catalystActivity:
+    multivalued: true
+    range: CatalystActivity
+    annotations:
+      type: "catalystActivity"
+      constraint: OPTIONAL
+      category: all
+  cellType:
+    multivalued: true
+    range: CellType
+    annotations:
+      constraint: MANDATORY
+      category: all
+      type: "cellType"
+  _class:
+    annotations:
+      getter_only: true
+      reactome_schema_ignore: true
+      override: true
+  coordinate:
+    range: integer
+    annotations:
+      constraint: REQUIRED
+      category: all
+      addedField: false
+  crossReference:
+    multivalued: true
+    range: DatabaseIdentifier
+    annotations:
+      constraint: OPTIONAL
+      type: "crossReference"
+  compartment:
+    range: Compartment
+    multivalued: true
+    annotations:
+      constraint: MANDATORY
+      type: "compartment"
+  DB_ID:
+    range: AnnotationLongType
+    annotations:
+      id: true
+      constraint: NOMANUALEDIT
+  dbId:
+    # dbId slot is needed only because in graph-core-curator parameterized constructors
+    # in various subclasses of DatabaseObject use dbId (instead of DB_ID) as a parameter
+    # name
+    range: AnnotationLongType
+  definition:
+    annotations:
+      constraint: OPTIONAL
+      addedField: False
+  disease:
+    multivalued: true
+    range: Disease
+    annotations:
+      constraint: OPTIONAL
+      category: all
+      type: "disease"
+  edited:
+    multivalued: true
+    range: InstanceEdit
+    annotations:
+      constraint: OPTIONAL
+      type: "edited"
+      direction: INCOMING
+  entityOnOtherCell:
+    multivalued: true
+    range: PhysicalEntity
+    annotations:
+      constraint: OPTIONAL
+      type: "entityOnOtherCell"
+  explanation:
+    annotations:
+      getter_only: true
+      reactome_schema_ignore: true
+      json_ignore: true
+      override: true
+  figure:
+    multivalued: true
+    range: Figure
+    annotations:
+      constraint: OPTIONAL
+      type: "figure"
+  formula:
+    annotations:
+      constraint: OPTIONAL
+      addedField: false
+  goBiologicalProcess:
+    range: GO_BiologicalProcess
+    annotations:
+      constraint: OPTIONAL
+      type: "goBiologicalProcess"
+  hasEvent:
+    multivalued: true
+    range: HasEvent
+    annotations:
+      constraint: MANDATORY
+      category: all
+      type: "hasEvent"
+      sorted_set: true
+  hasMember:
+    multivalued: true
+    range: HasMember
+    annotations:
+      category: all
+      type: "hasMember"
+      sorted_set: true
+  id:
+    range: AnnotationLongType
+    annotations:
+      id: true
+      generated_value: true
+      no_default_getter_setter: true
+  identifier:
+    annotations:
+      addedField: false
+  identifierVersion:
+    annotations:
+      addedField: false
+  input:
+    multivalued: true
+    range: Input
+    annotations:
+      constraint: MANDATORY
+      category: all
+      type: "input"
+      set: true
+      include_stoichiometry: true
+  instanceOf:
+    multivalued: true
+    range: ExternalOntology
+    annotations:
+      constraint: OPTIONAL
+      type: "instanceOf"
+  output:
+    multivalued: true
+    range: Output
+    annotations:
+      constraint: MANDATORY
+      category: all
+      type: "output"
+      set: true
+      include_stoichiometry: true
+      no_list_setter: true
+  isChimeric:
+    range: boolean
+    annotations:
+      constraint: OPTIONAL
+      addedField: false
+  literatureReference:
+    multivalued: true
+    range: Publication
+    annotations:
+      constraint: OPTIONAL
+      type: "literatureReference"
+  modification:
+    range: DatabaseObject
+    annotations:
+      constraint: OPTIONAL
+      category: all
+      type: "modification"
+      allowed: "{ReferenceGroup.class, Polymer.class, EntitySet.class}"
+  name:
+    multivalued: true
+    annotations:
+      constraint: MANDATORY
+      addedField: false
+  normalReaction:
+    range: ReactionlikeEvent
+    annotations:
+      constraint: OPTIONAL
+      type: "normalReaction"
+  ontology:
+    range: AnnotationLongBlobType
+  order:
+    range: integer
+  otherIdentifier:
+    multivalued: true
+    annotations:
+      constraint: NOMANUALEDIT
+      addedField: false
+  physicalEntity:
+    range: PhysicalEntity
+    annotations:
+      target_node: true
+  psiMod:
+    range: PsiMod
+    annotations:
+      constraint: REQUIRED
+      category: all
+      type: "psiMod"
+  referenceDatabase:
+    range: ReferenceDatabase
+    annotations:
+      constraint: MANDATORY
+      type: "referenceDatabase"
+  referenceEntity:
+    range: ReferenceSequence
+    annotations:
+      constraint: REQUIRED
+      category: all
+      type: "referenceEntity"
+  regulator:
+    range: PhysicalEntity
+    annotations:
+      constraint: REQUIRED
+      category: all
+      type: "regulator"
+  relatedSpecies:
+    multivalued: true
+    range: Species
+    annotations:
+      constraint: OPTIONAL
+      type: "relatedSpecies"
+  releaseDate:
+    annotations:
+      addedField: false
+  requiredInputComponent:
+    multivalued: true
+    range: PhysicalEntity
+    annotations:
+      constraint: REQUIRED
+      type: "requiredInputComponent"
+      set: true
+  revised:
+    multivalued: true
+    range: InstanceEdit
+    annotations:
+      constraint: OPTIONAL
+      type: "revised"
+      direction: INCOMING
+  species:
+    multivalued: true
+    range: Species
+    annotations:
+      constraint: REQUIRED
+      type: "species"
+  stoichiometry:
+    range: integer
+    ifabsent: int(1)
+  summation:
+    multivalued: true
+    range: Summation
+    annotations:
+      constraint: OPTIONAL
+      type: "summation"
+  tissue:
+    range: Anatomy
+    annotations:
+      constraint: REQUIRED
+      type: "tissue"
