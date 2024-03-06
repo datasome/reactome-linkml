@@ -1223,8 +1223,6 @@ def inherit_attributes_slots(clazz: str, class_entry: dict, attributes: dict, cl
         parent_class_attributes = get_attr_slot_entries(classes[parent_clazz], slots)
         for attr in parent_class_attributes:
             if attr not in attributes:
-                    # For DataModel content, the only attributes that are inherited are those
-                    # specified in ATTRIBUTES_SLOTS_INHERITED_FOR_DATAMODEL
                 attributes[attr] = copy.deepcopy(parent_class_attributes[attr])
         class_entry = classes[parent_clazz]
 
